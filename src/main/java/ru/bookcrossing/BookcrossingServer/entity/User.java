@@ -45,7 +45,7 @@ public class User implements UserDetails {
 
     private String city;
 
-    @OneToMany(mappedBy = "t_user")
+    @OneToMany(mappedBy = "t_user", fetch = FetchType.EAGER)
     @ToString.Exclude
     private Set<UserRole> userRoles;
 

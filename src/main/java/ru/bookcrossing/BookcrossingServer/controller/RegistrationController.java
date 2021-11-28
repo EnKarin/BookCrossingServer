@@ -23,6 +23,11 @@ public class RegistrationController {
         this.securityService = securityService;
     }
 
+    @GetMapping("/loginSuccessful")
+    public String loginSuccessful(){
+        return "Successful";
+    }
+
     @PostMapping("/registration")
     public Object addUser(@Valid @RequestBody User userForm, BindingResult bindingResult, Model model) {
 
