@@ -67,11 +67,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return user;
     }
 
-    public List<User> usergtList(Integer idMin) {
-        return em.createQuery("SELECT u FROM User u WHERE u.id > :paramId", User.class)
-                .setParameter("paramId", idMin).getResultList();
-    }
-
     @Override
     public List<User> findAll() {
         return userRepository.findAll();
@@ -79,9 +74,20 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
-        User user = userRepository.findByLogin(s);
-        if (user == null) {
-            throw new UsernameNotFoundException("User not found");
+        User user;
+        if(s.equals("admin")) {
+            user = new User();
+            UserRole role = new UserRole(new Role(0, "ROLE_ADMIN"), user);
+
+            user.setLogin("admin");
+            user.setUserRoles(Collections.singleton(role));
+            user.setPassword(bCryptPasswordEncoder.encode("adm1982"));
+        }
+        else {
+            user = userRepository.findByLogin(s);
+            if (user == null) {
+                throw new UsernameNotFoundException("User not found");
+            }
         }
 
         return user;

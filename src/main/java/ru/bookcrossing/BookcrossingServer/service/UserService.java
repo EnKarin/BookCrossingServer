@@ -9,8 +9,6 @@ public interface UserService {
 
     void deleteUser(Integer userId);
 
-    List<User> usergtList(Integer idMin);
-
     User findByLogin(String login);
 
     List<User> findAll();

@@ -1,33 +1,31 @@
 package ru.bookcrossing.BookcrossingServer.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import ru.bookcrossing.BookcrossingServer.entity.User;
 import ru.bookcrossing.BookcrossingServer.service.UserService;
 
+import java.util.List;
+
 @RestController
+@RequestMapping("/adm")
 public class AdminController {
+
+    private final UserService userService;
+
     @Autowired
-    private UserService userService;
-
-    @GetMapping("/admin")
-    public String userList(Model model) {
-        model.addAttribute("allUsers", userService.findAll());
-        return "admin";
+    public AdminController(UserService userService){
+        this.userService = userService;
     }
 
-    @PostMapping("/admin")
-    public String  deleteUser(@RequestParam(defaultValue = "" ) Integer userId,
-                              @RequestParam(defaultValue = "" ) String action) {
-        if (action.equals("delete")){
-            userService.deleteUser(userId);
-        }
-        return "redirect:/admin";
+    @GetMapping("/")
+    public List<User> userList() {
+        return userService.findAll();
     }
 
-    @GetMapping("/admin/getAllMore/{userId}")
-    public String gtUser(@PathVariable("userId") Integer userId, Model model) {
-        model.addAttribute("allUsers", userService.usergtList(userId));
-        return "admin";
+    @PostMapping("/delete/{id}")
+    public String  deleteUser(@PathVariable Integer id) {
+        userService.deleteUser(id);
+        return "redirect:/";
     }
 }

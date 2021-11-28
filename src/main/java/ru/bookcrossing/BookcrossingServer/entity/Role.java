@@ -1,5 +1,6 @@
 package ru.bookcrossing.BookcrossingServer.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.hibernate.Hibernate;
 import org.springframework.security.core.GrantedAuthority;
@@ -24,6 +25,7 @@ public class Role implements GrantedAuthority {
     @Transient
     @OneToMany(mappedBy = "t_role", fetch = FetchType.EAGER)
     @ToString.Exclude
+    @JsonIgnore
     private Set<UserRole> userRoles;
 
     public Role(Integer id) {

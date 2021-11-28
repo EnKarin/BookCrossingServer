@@ -1,5 +1,6 @@
 package ru.bookcrossing.BookcrossingServer.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.hibernate.Hibernate;
 import org.springframework.security.core.GrantedAuthority;
@@ -47,6 +48,7 @@ public class User implements UserDetails {
 
     @OneToMany(mappedBy = "t_user", fetch = FetchType.EAGER)
     @ToString.Exclude
+    @JsonIgnore
     private Set<UserRole> userRoles;
 
     @Override
