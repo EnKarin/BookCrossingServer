@@ -1,0 +1,13 @@
+{
+  "properties": [
+    {
+      "name": "spring.jpa.hibernate.dll-auto",
+      "type": "java.lang.String",
+      "description": "Description for spring.jpa.hibernate.dll-auto."
+    },
+    {
+      "name": "spring.jpa.hibernate.dll-auto",
+      "type": "java.lang.String",
+      "description": "Description for spring.jpa.hibernate.dll-auto."
+    }
+  ] }
