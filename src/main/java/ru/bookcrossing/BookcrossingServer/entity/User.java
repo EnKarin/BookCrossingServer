@@ -27,20 +27,20 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
-    @NotBlank
+    @NotBlank(message = "Имя должно содержать хотя бы один видимый символ")
     private String name;
 
-    @NotBlank
+    @NotBlank(message = "Логин должен содержать хотя бы один видимый символ")
     private String login;
 
-    @NotBlank
+    @NotBlank(message = "Пароль должен содержать хотя бы один видимый символ")
     @Size(min = 6, message = "Пароль должен содержать больше 6 символов")
     private String password;
 
     @Transient
     private String passwordConfirm;
 
-    @Email
+    @Email(message = "Некорректный почтовый адрес")
     private String email;
 
     private String city;
