@@ -4,8 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import ru.bookcrossing.BookcrossingServer.config.jwt.JwtProvider;
 import ru.bookcrossing.BookcrossingServer.entity.User;
-import ru.bookcrossing.BookcrossingServer.service.SecurityService;
+import ru.bookcrossing.BookcrossingServer.model.AuthResponse;
+import ru.bookcrossing.BookcrossingServer.model.Login;
 import ru.bookcrossing.BookcrossingServer.service.UserService;
 
 import javax.validation.Valid;
@@ -15,12 +17,12 @@ import java.util.Objects;
 public class RegistrationController {
 
     private final UserService userService;
-    private final SecurityService securityService;
+    private final JwtProvider jwtProvider;
 
     @Autowired
-    public RegistrationController(UserService userService, SecurityService securityService) {
+    public RegistrationController(UserService userService, JwtProvider provider) {
         this.userService = userService;
-        this.securityService = securityService;
+        jwtProvider = provider;
     }
 
     @GetMapping("/loginSuccessful")
@@ -29,7 +31,7 @@ public class RegistrationController {
     }
 
     @PostMapping("/registration")
-    public Object addUser(@Valid @RequestBody User userForm, BindingResult bindingResult, Model model) {
+    public Object registerUser(@Valid @RequestBody User userForm, BindingResult bindingResult, Model model) {
 
         if (bindingResult.hasErrors()) {
             StringBuilder allErrorMessage = new StringBuilder();
@@ -46,8 +48,15 @@ public class RegistrationController {
             return model.getAttribute("usernameError");
         }
 
-        securityService.autologin(userForm.getUsername(), userForm.getPasswordConfirm());
+        userService.saveUser(userForm);
 
         return "redirect:/";
+    }
+
+    @PostMapping("/auth")
+    public AuthResponse auth(@RequestBody Login request) {
+        User userEntity = userService.findByLoginAndPassword(request);
+        String token = jwtProvider.generateToken(userEntity.getLogin());
+        return new AuthResponse(token);
     }
 }

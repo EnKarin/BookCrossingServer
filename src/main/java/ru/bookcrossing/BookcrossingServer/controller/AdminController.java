@@ -18,7 +18,7 @@ public class AdminController {
         this.userService = userService;
     }
 
-    @GetMapping("/")
+    @GetMapping("/getAll")
     public List<User> userList() {
         return userService.findAll();
     }

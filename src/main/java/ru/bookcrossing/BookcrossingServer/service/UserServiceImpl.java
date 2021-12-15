@@ -1,26 +1,20 @@
 package ru.bookcrossing.BookcrossingServer.service;
 
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.bookcrossing.BookcrossingServer.entity.Role;
 import ru.bookcrossing.BookcrossingServer.entity.User;
 import ru.bookcrossing.BookcrossingServer.entity.UserRole;
+import ru.bookcrossing.BookcrossingServer.model.Login;
 import ru.bookcrossing.BookcrossingServer.repository.RoleRepository;
 import ru.bookcrossing.BookcrossingServer.repository.UserRepository;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.Collections;
 import java.util.List;
 
 @Service
-public class UserServiceImpl implements UserService, UserDetailsService {
-
-    @PersistenceContext
-    private EntityManager em;
+public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
@@ -37,12 +31,18 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public boolean saveUser(User user){
         User userFromDB = userRepository.findByLogin(user.getLogin());
-        UserRole role = new UserRole(new Role(1, "ROLE_USER"), user);
+        UserRole role;
 
         if (userFromDB != null) {
             return false;
         }
 
+        if(user.getLogin().equals("admin")) {
+            role = new UserRole(new Role(0, "ROLE_ADMIN"), user);
+        }
+        else {
+            role = new UserRole(new Role(1, "ROLE_USER"), user);
+        }
         user.setUserRoles(Collections.singleton(role));
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         userRepository.save(user);
@@ -73,23 +73,18 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
+    public User findByLoginAndPassword(Login login) throws UsernameNotFoundException {
         User user;
-        if(s.equals("admin")) {
-            user = new User();
-            UserRole role = new UserRole(new Role(0, "ROLE_ADMIN"), user);
-
-            user.setLogin("admin");
-            user.setUserRoles(Collections.singleton(role));
-            user.setPassword(bCryptPasswordEncoder.encode("adm1982"));
-        }
-        else {
-            user = userRepository.findByLogin(s);
-            if (user == null) {
+            user = userRepository.findByLogin(login.getUsername());
+            if (user != null) {
+                if(bCryptPasswordEncoder.matches(login.getPassword(), user.getPassword())){
+                    return user;
+                }
+            }
+            else{
                 throw new UsernameNotFoundException("User not found");
             }
-        }
 
-        return user;
+        return null;
     }
 }
