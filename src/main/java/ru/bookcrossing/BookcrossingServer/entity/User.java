@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 @ToString
 @RequiredArgsConstructor
 @Table(name = "t_user")
-public class User implements UserDetails {
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
@@ -50,41 +50,6 @@ public class User implements UserDetails {
     @ToString.Exclude
     @JsonIgnore
     private Set<UserRole> userRoles;
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return getUserRoles().stream().map(UserRole::getT_role).collect(Collectors.toSet());
-    }
-
-    @Override
-    public String getUsername() {
-        return name;
-    }
-
-    @Override
-    public String getPassword() {
-        return password;
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
 
     @Override
     public boolean equals(Object o) {

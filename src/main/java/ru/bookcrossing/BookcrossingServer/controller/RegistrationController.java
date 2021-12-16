@@ -1,7 +1,8 @@
 package ru.bookcrossing.BookcrossingServer.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ui.Model;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.bookcrossing.BookcrossingServer.config.jwt.JwtProvider;
@@ -25,38 +26,34 @@ public class RegistrationController {
         jwtProvider = provider;
     }
 
-    @GetMapping("/loginSuccessful")
-    public String loginSuccessful(){
-        return "Successful";
-    }
-
     @PostMapping("/registration")
-    public Object registerUser(@Valid @RequestBody User userForm, BindingResult bindingResult, Model model) {
-
+    public Object registerUser(@Valid @RequestBody User userForm, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             StringBuilder allErrorMessage = new StringBuilder();
             bindingResult.getAllErrors().forEach(f -> allErrorMessage.append(
                     Objects.requireNonNull(f.getDefaultMessage())).append("\n"));
-            return allErrorMessage.toString();
+            return new ResponseEntity<>(allErrorMessage.toString(), HttpStatus.NOT_ACCEPTABLE);
         }
         if (!userForm.getPassword().equals(userForm.getPasswordConfirm())){
-            model.addAttribute("passwordError", "Пароли не совпадают");
-            return model.getAttribute("passwordError");
+            return new ResponseEntity<>("Пароли не совпадают", HttpStatus.NOT_ACCEPTABLE);
         }
         if (!userService.saveUser(userForm)){
-            model.addAttribute("usernameError", "Пользователь с таким именем уже существует");
-            return model.getAttribute("usernameError");
+            return new ResponseEntity<>("Пользователь с таким именем уже существует", HttpStatus.NOT_ACCEPTABLE);
         }
 
         userService.saveUser(userForm);
 
-        return "redirect:/";
+        return new ResponseEntity<>("redirect:/", HttpStatus.OK);
     }
 
     @PostMapping("/auth")
-    public AuthResponse auth(@RequestBody Login request) {
+    public Object auth(@RequestBody Login request) {
         User userEntity = userService.findByLoginAndPassword(request);
+        if(userEntity == null){
+            return new ResponseEntity<>("Некорректный логин или пароль", HttpStatus.FORBIDDEN);
+        }
         String token = jwtProvider.generateToken(userEntity.getLogin());
-        return new AuthResponse(token);
+        String t = new AuthResponse(token).getToken();
+        return new ResponseEntity<>(t, HttpStatus.OK);
     }
 }
