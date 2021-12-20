@@ -9,5 +9,15 @@
       "name": "spring.jpa.hibernate.dll-auto",
       "type": "java.lang.String",
       "description": "Description for spring.jpa.hibernate.dll-auto."
+    },
+    {
+      "name": "jwt.secret",
+      "type": "java.lang.String",
+      "description": "Description for jwt.secret."
+    },
+    {
+      "name": "security.require-ssl",
+      "type": "java.lang.String",
+      "description": "Description for security.require-ssl."
     }
   ] }
