@@ -13,7 +13,7 @@ import javax.validation.constraints.Size;
 public class Login {
 
     @NotBlank
-    private String username;
+    private String login;
 
     @Size(min = 6, message = "Пароль слишком короткий")
     private String password;

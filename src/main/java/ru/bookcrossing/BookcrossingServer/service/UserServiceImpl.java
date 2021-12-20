@@ -75,7 +75,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User findByLoginAndPassword(Login login) throws UsernameNotFoundException {
         User user;
-            user = userRepository.findByLogin(login.getUsername());
+            user = userRepository.findByLogin(login.getLogin());
             if (user != null) {
                 if(bCryptPasswordEncoder.matches(login.getPassword(), user.getPassword())){
                     return user;
