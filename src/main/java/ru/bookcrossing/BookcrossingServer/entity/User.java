@@ -9,14 +9,10 @@ import org.hibernate.Hibernate;
 import org.springframework.validation.annotation.Validated;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
 import java.util.Objects;
 import java.util.Set;
 
 @Entity
-@Validated
 @Getter
 @Setter
 @ToString
@@ -27,20 +23,12 @@ public class User {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
-    @NotBlank(message = "Имя должно содержать хотя бы один видимый символ")
     private String name;
 
-    @NotBlank(message = "Логин должен содержать хотя бы один видимый символ")
     private String login;
 
-    @NotBlank(message = "Пароль должен содержать хотя бы один видимый символ")
-    @Size(min = 6, message = "Пароль должен содержать больше 6 символов")
     private String password;
 
-    @Transient
-    private String passwordConfirm;
-
-    @Email(message = "Некорректный почтовый адрес")
     private String email;
 
     private String city;

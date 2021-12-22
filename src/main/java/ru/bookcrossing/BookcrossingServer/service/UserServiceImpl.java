@@ -7,6 +7,7 @@ import ru.bookcrossing.BookcrossingServer.entity.Role;
 import ru.bookcrossing.BookcrossingServer.entity.User;
 import ru.bookcrossing.BookcrossingServer.entity.UserRole;
 import ru.bookcrossing.BookcrossingServer.model.Login;
+import ru.bookcrossing.BookcrossingServer.model.UserDTO;
 import ru.bookcrossing.BookcrossingServer.repository.RoleRepository;
 import ru.bookcrossing.BookcrossingServer.repository.UserRepository;
 
@@ -29,22 +30,27 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean saveUser(User user){
-        User userFromDB = userRepository.findByLogin(user.getLogin());
+    public boolean saveUser(UserDTO userDTO){
         UserRole role;
 
-        if (userFromDB != null) {
+        if (userRepository.findByLogin(userDTO.getLogin()) != null) {
             return false;
         }
+        
+        User user = new User();
+        user.setName(userDTO.getName());
+        user.setLogin(userDTO.getLogin());
+        user.setCity(userDTO.getCity());
+        user.setEmail(userDTO.getEmail());
 
-        if(user.getLogin().equals("admin")) {
+        if(userDTO.getLogin().equals("admin")) {
             role = new UserRole(new Role(0, "ROLE_ADMIN"), user);
         }
         else {
             role = new UserRole(new Role(1, "ROLE_USER"), user);
         }
         user.setUserRoles(Collections.singleton(role));
-        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+        user.setPassword(bCryptPasswordEncoder.encode(userDTO.getPassword()));
         userRepository.save(user);
         roleRepository.save(role);
         return true;
@@ -61,7 +67,7 @@ public class UserServiceImpl implements UserService {
     public User findByLogin(String login) {
         User user = userRepository.findByLogin(login);
         if (user == null) {
-            throw new UsernameNotFoundException("User not found");
+            throw new UsernameNotFoundException("Пользователь не найден");
         }
 
         return user;
@@ -82,7 +88,7 @@ public class UserServiceImpl implements UserService {
                 }
             }
             else{
-                throw new UsernameNotFoundException("User not found");
+                throw new UsernameNotFoundException("Пользователь не найден");
             }
 
         return null;

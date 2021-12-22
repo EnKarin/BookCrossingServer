@@ -1,12 +1,19 @@
 package ru.bookcrossing.BookcrossingServer.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.bookcrossing.BookcrossingServer.entity.User;
 import ru.bookcrossing.BookcrossingServer.service.UserService;
 
-import java.util.List;
 
+@Tag(
+        name="Управление пользователями для администратора",
+        description="Позволяет получить и удалять пользователей"
+)
 @RestController
 @RequestMapping("/adm")
 public class AdminController {
@@ -18,14 +25,22 @@ public class AdminController {
         this.userService = userService;
     }
 
+    @Operation(
+            summary = "Список пользователей",
+            description = "Позволяет получить список пользователей"
+    )
     @GetMapping("/getAll")
-    public List<User> userList() {
-        return userService.findAll();
+    public Object userList() {
+        return new ResponseEntity<>(userService.findAll(), HttpStatus.OK);
     }
 
+    @Operation(
+            summary = "Удаление пользователя",
+            description = "Позволяет удалить пользователя по его Id"
+    )
     @PostMapping("/delete/{id}")
-    public String  deleteUser(@PathVariable Integer id) {
+    public Object deleteUser(@PathVariable @Parameter(description = "Идентификатор пользователя") Integer id) {
         userService.deleteUser(id);
-        return "redirect:/";
+        return new ResponseEntity<>("redirect:/", HttpStatus.OK);
     }
 }
