@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.Hibernate;
-import org.springframework.validation.annotation.Validated;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -37,6 +36,10 @@ public class User {
     @ToString.Exclude
     @JsonIgnore
     private Set<UserRole> userRoles;
+
+    @OneToMany(mappedBy = "owner", fetch = FetchType.EAGER)
+    @ToString.Exclude
+    private Set<Book> books;
 
     @Override
     public boolean equals(Object o) {

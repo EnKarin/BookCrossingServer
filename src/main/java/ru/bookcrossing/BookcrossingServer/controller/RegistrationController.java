@@ -15,7 +15,7 @@ import ru.bookcrossing.BookcrossingServer.config.jwt.JwtProvider;
 import ru.bookcrossing.BookcrossingServer.entity.User;
 import ru.bookcrossing.BookcrossingServer.model.AuthResponse;
 import ru.bookcrossing.BookcrossingServer.model.Login;
-import ru.bookcrossing.BookcrossingServer.model.UserDTO;
+import ru.bookcrossing.BookcrossingServer.model.DTO.UserDTO;
 import ru.bookcrossing.BookcrossingServer.service.UserService;
 
 import javax.validation.Valid;

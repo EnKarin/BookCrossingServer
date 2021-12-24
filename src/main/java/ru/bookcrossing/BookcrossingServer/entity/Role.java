@@ -23,7 +23,7 @@ public class Role implements GrantedAuthority {
     private String name;
 
     @Transient
-    @OneToMany(mappedBy = "t_role", fetch = FetchType.EAGER)
+    @OneToMany(fetch = FetchType.EAGER)
     @ToString.Exclude
     @JsonIgnore
     private Set<UserRole> userRoles;

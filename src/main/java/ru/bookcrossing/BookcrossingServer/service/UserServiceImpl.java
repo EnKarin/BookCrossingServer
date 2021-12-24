@@ -7,7 +7,7 @@ import ru.bookcrossing.BookcrossingServer.entity.Role;
 import ru.bookcrossing.BookcrossingServer.entity.User;
 import ru.bookcrossing.BookcrossingServer.entity.UserRole;
 import ru.bookcrossing.BookcrossingServer.model.Login;
-import ru.bookcrossing.BookcrossingServer.model.UserDTO;
+import ru.bookcrossing.BookcrossingServer.model.DTO.UserDTO;
 import ru.bookcrossing.BookcrossingServer.repository.RoleRepository;
 import ru.bookcrossing.BookcrossingServer.repository.UserRepository;
 

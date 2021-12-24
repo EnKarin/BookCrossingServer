@@ -1,4 +1,4 @@
-package ru.bookcrossing.BookcrossingServer.model;
+package ru.bookcrossing.BookcrossingServer.model.DTO;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
@@ -9,9 +9,6 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
-/**
- * Сущность пользователя
- */
 @Validated
 @Getter
 @Setter

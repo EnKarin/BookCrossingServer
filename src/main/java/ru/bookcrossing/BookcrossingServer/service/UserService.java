@@ -2,7 +2,7 @@ package ru.bookcrossing.BookcrossingServer.service;
 
 import ru.bookcrossing.BookcrossingServer.entity.User;
 import ru.bookcrossing.BookcrossingServer.model.Login;
-import ru.bookcrossing.BookcrossingServer.model.UserDTO;
+import ru.bookcrossing.BookcrossingServer.model.DTO.UserDTO;
 
 import java.util.List;
 

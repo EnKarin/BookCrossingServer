@@ -3,29 +3,34 @@ package ru.bookcrossing.BookcrossingServer.entity;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.*;
 
 @Entity
 @Getter
 @Setter
+@ToString
 @RequiredArgsConstructor
-public class UserRole {
+@Table(name = "t_book")
+public class Book {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
+    private String title;
+
+    private String author;
+
+    private String genre;
+
+    private String publishingHouse;
+
+    private int year;
+
     @ManyToOne
-    @JoinColumn(name = "t_role_id")
-    private Role t_role;
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "t_user_id")
-    private User t_user;
-
-    public UserRole(Role r, User u){
-        t_role = r;
-        t_user = u;
-    }
+    @JoinColumn(name = "ownerBook")
+    @ToString.Exclude
+    private User owner;
 }
