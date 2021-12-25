@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface BookService {
 
-    boolean saveBook(BookDTO bookDTO);
+    void saveBook(BookDTO bookDTO);
 
     void deleteBook(BookDTO bookDTO);
 
@@ -16,4 +16,6 @@ public interface BookService {
     List<Book> findByAuthor(String a);
 
     List<Book> findByGenre(String g);
+
+    List<Book> findAll();
 }

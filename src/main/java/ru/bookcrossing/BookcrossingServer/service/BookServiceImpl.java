@@ -27,7 +27,7 @@ public class BookServiceImpl implements BookService{
     }
 
     @Override
-    public boolean saveBook(BookDTO bookDTO) {
+    public void saveBook(BookDTO bookDTO) {
         String login = jwtProvider.getLoginFromToken();
 
         Book book = new Book();
@@ -40,7 +40,13 @@ public class BookServiceImpl implements BookService{
         book.setOwner(userRepository.findByLogin(login));
 
         bookRepository.save(book);
-        return true;
+    }
+
+    @Override
+    public List<Book> findAll() {
+        String login = jwtProvider.getLoginFromToken();
+
+        return bookRepository.findBooksByOwner(userRepository.findByLogin(login));
     }
 
     @Override
@@ -62,4 +68,6 @@ public class BookServiceImpl implements BookService{
     public List<Book> findByGenre(String g) {
         return null;
     }
+
+
 }

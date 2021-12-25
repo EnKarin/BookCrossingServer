@@ -45,7 +45,8 @@ public class RegistrationController {
             @ApiResponse(responseCode = "409", description = "Пароли не совпадают"),
             @ApiResponse(responseCode = "406", description = "Пользователь с таким логином уже существует"),
             @ApiResponse(responseCode = "400", description = "Введены некорректные данные"),
-            @ApiResponse(responseCode = "200", description = "Возвращает на стартовую страницу")}
+            @ApiResponse(responseCode = "200", description = "Возвращает булевое значение, " +
+                    "false - если пользователь с таким логином  уже существует ")}
     )
     @PostMapping("/registration")
     public Object registerUser(@Valid @RequestBody UserDTO userForm, BindingResult bindingResult) {
@@ -62,9 +63,7 @@ public class RegistrationController {
             return new ResponseEntity<>("Пользователь с таким логином уже существует", HttpStatus.NOT_ACCEPTABLE);
         }
 
-        userService.saveUser(userForm);
-
-        return new ResponseEntity<>("redirect:/", HttpStatus.OK);
+        return new ResponseEntity<>(userService.saveUser(userForm), HttpStatus.OK);
     }
 
     @Operation(
