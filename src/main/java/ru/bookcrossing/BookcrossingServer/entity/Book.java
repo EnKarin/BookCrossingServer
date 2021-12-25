@@ -1,5 +1,6 @@
 package ru.bookcrossing.BookcrossingServer.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -32,5 +33,6 @@ public class Book {
     @ManyToOne
     @JoinColumn(name = "ownerBook")
     @ToString.Exclude
+    @JsonIgnore
     private User owner;
 }

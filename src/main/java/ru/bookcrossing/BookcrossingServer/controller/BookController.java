@@ -8,10 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.bookcrossing.BookcrossingServer.model.DTO.BookDTO;
 import ru.bookcrossing.BookcrossingServer.service.BookService;
 
@@ -40,7 +37,7 @@ public class BookController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "400", description = "Введены некорректные данные")}
     )
-    @GetMapping("/save")
+    @PostMapping("/save")
     public Object saveBook(@Valid @RequestBody BookDTO bookDTO, BindingResult bindingResult){
         if (bindingResult.hasErrors()) {
             StringBuilder allErrorMessage = new StringBuilder();

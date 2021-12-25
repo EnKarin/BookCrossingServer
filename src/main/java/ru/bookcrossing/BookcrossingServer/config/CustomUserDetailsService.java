@@ -17,9 +17,10 @@ public class CustomUserDetailsService implements UserDetailsService {
     private void setUserService(UserService service){
         userService = service;
     }
+
     @Override
-    public CustomUserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public User loadUserByUsername(String username) throws UsernameNotFoundException {
         User userEntity = userService.findByLogin(username);
-        return CustomUserDetails.fromUserEntityToCustomUserDetails(userEntity);
+        return userEntity;
     }
 }

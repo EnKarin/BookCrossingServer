@@ -63,7 +63,7 @@ public class RegistrationController {
             return new ResponseEntity<>("Пользователь с таким логином уже существует", HttpStatus.NOT_ACCEPTABLE);
         }
 
-        return new ResponseEntity<>(userService.saveUser(userForm), HttpStatus.OK);
+        return new ResponseEntity<>(true, HttpStatus.OK);
     }
 
     @Operation(
