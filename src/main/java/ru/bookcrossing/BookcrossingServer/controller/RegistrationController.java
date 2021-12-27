@@ -49,7 +49,7 @@ public class RegistrationController {
                     "false - если пользователь с таким логином  уже существует ")}
     )
     @PostMapping("/registration")
-    public Object registerUser(@Valid @RequestBody UserDTO userForm, BindingResult bindingResult) {
+    public ResponseEntity<?> registerUser(@Valid @RequestBody UserDTO userForm, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             StringBuilder allErrorMessage = new StringBuilder();
             bindingResult.getAllErrors().forEach(f -> allErrorMessage.append(
@@ -63,7 +63,7 @@ public class RegistrationController {
             return new ResponseEntity<>("Пользователь с таким логином уже существует", HttpStatus.NOT_ACCEPTABLE);
         }
 
-        return new ResponseEntity<>(true, HttpStatus.OK);
+        return ResponseEntity.ok("redirect:/");
     }
 
     @Operation(
@@ -80,13 +80,13 @@ public class RegistrationController {
             )}
     )
     @PostMapping("/auth")
-    public Object auth(@RequestBody Login request) {
+    public ResponseEntity<?> auth(@RequestBody Login request) {
         User userEntity = userService.findByLoginAndPassword(request);
         if(userEntity == null){
             return new ResponseEntity<>("Некорректный логин или пароль", HttpStatus.UNAUTHORIZED);
         }
         String token = jwtProvider.generateToken(userEntity.getLogin());
         String t = new AuthResponse(token).getToken();
-        return new ResponseEntity<>(t, HttpStatus.OK);
+        return ResponseEntity.ok(t);
     }
 }

@@ -38,7 +38,7 @@ public class BookController {
             @ApiResponse(responseCode = "400", description = "Введены некорректные данные")}
     )
     @PostMapping("/save")
-    public Object saveBook(@Valid @RequestBody BookDTO bookDTO, BindingResult bindingResult){
+    public ResponseEntity<?> saveBook(@Valid @RequestBody BookDTO bookDTO, BindingResult bindingResult){
         if (bindingResult.hasErrors()) {
             StringBuilder allErrorMessage = new StringBuilder();
             bindingResult.getAllErrors().forEach(f -> allErrorMessage.append(
@@ -48,7 +48,7 @@ public class BookController {
 
         bookService.saveBook(bookDTO);
 
-        return new ResponseEntity<>(true, HttpStatus.OK);
+        return ResponseEntity.ok("redirect:/");
     }
 
     @Operation(
@@ -56,8 +56,8 @@ public class BookController {
             description = "Позволяет получить список всех книг пользователя"
     )
     @GetMapping("/getAll")
-    public Object bookList(){
-        return new ResponseEntity<>(bookService.findAll(), HttpStatus.OK);
+    public ResponseEntity<?> bookList(){
+        return ResponseEntity.ok(bookService.findAll());
     }
 
 }

@@ -30,8 +30,8 @@ public class AdminController {
             description = "Позволяет получить список пользователей"
     )
     @GetMapping("/getAll")
-    public Object userList() {
-        return new ResponseEntity<>(userService.findAll(), HttpStatus.OK);
+    public ResponseEntity<?> userList() {
+        return ResponseEntity.ok(userService.findAll());
     }
 
     @Operation(
@@ -39,8 +39,8 @@ public class AdminController {
             description = "Позволяет удалить пользователя по его Id"
     )
     @PostMapping("/delete/{id}")
-    public Object deleteUser(@PathVariable @Parameter(description = "Идентификатор пользователя") Integer id) {
+    public ResponseEntity<?> deleteUser(@PathVariable @Parameter(description = "Идентификатор пользователя") Integer id) {
         userService.deleteUser(id);
-        return new ResponseEntity<>("redirect:/", HttpStatus.OK);
+        return ResponseEntity.ok("redirect:/");
     }
 }
