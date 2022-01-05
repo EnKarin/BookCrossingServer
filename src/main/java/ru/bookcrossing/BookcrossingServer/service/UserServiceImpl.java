@@ -5,7 +5,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.bookcrossing.BookcrossingServer.entity.Role;
 import ru.bookcrossing.BookcrossingServer.entity.User;
-import ru.bookcrossing.BookcrossingServer.entity.UserRole;
 import ru.bookcrossing.BookcrossingServer.model.Login;
 import ru.bookcrossing.BookcrossingServer.model.DTO.UserDTO;
 import ru.bookcrossing.BookcrossingServer.repository.RoleRepository;
@@ -31,7 +30,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean saveUser(UserDTO userDTO){
-        UserRole role;
+        Role role;
 
         if (userRepository.findByLogin(userDTO.getLogin()) != null) {
             return false;
@@ -44,10 +43,10 @@ public class UserServiceImpl implements UserService {
         user.setEmail(userDTO.getEmail());
 
         if(userDTO.getLogin().equals("admin")) {
-            role = new UserRole(new Role(0, "ROLE_ADMIN"), user);
+            role = new Role(0, "ROLE_ADMIN");
         }
         else {
-            role = new UserRole(new Role(1, "ROLE_USER"), user);
+            role = new Role(1, "ROLE_USER");
         }
         user.setUserRoles(Collections.singleton(role));
         user.setPassword(bCryptPasswordEncoder.encode(userDTO.getPassword()));

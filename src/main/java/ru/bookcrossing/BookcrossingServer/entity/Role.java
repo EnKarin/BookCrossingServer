@@ -4,10 +4,9 @@ import lombok.*;
 import org.hibernate.Hibernate;
 import org.springframework.security.core.GrantedAuthority;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -18,12 +17,16 @@ import java.util.Objects;
 public class Role implements GrantedAuthority {
 
     @Id
-    private int id;
+    private int role_id;
 
     private String name;
 
+    @ManyToMany(mappedBy = "userRoles")
+    @ToString.Exclude
+    private Set<User> users;
+
     public Role(Integer id, String name) {
-        this.id = id;
+        this.role_id = id;
         this.name = name;
     }
 
@@ -37,7 +40,7 @@ public class Role implements GrantedAuthority {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
         Role role = (Role) o;
-        return Objects.equals(id, role.id);
+        return Objects.equals(role_id, role.role_id);
     }
 
     @Override

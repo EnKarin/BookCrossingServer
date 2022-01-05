@@ -13,7 +13,6 @@ import javax.persistence.*;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -24,7 +23,7 @@ import java.util.stream.Collectors;
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int id;
+    private int user_id;
 
     private String name;
 
@@ -36,10 +35,15 @@ public class User implements UserDetails {
 
     private String city;
 
-    @OneToMany(mappedBy = "t_user", fetch = FetchType.EAGER)
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "User_Role",
+            joinColumns = { @JoinColumn(name = "user_id")},
+            inverseJoinColumns = { @JoinColumn(name = "role_id")}
+    )
     @ToString.Exclude
     @JsonIgnore
-    private Set<UserRole> userRoles;
+    private Set<Role> userRoles;
 
     @OneToMany(mappedBy = "owner", fetch = FetchType.EAGER)
     @ToString.Exclude
@@ -50,7 +54,7 @@ public class User implements UserDetails {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
         User user = (User) o;
-        return Objects.equals(id, user.id);
+        return Objects.equals(user_id, user.user_id);
     }
 
     @Override
@@ -59,8 +63,9 @@ public class User implements UserDetails {
     }
 
     @Override
+    @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return userRoles.stream().map(UserRole::getT_role).collect(Collectors.toSet());
+        return userRoles;
     }
 
     @Override
