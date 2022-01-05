@@ -27,7 +27,7 @@ public class UserDTO {
     @Size(min = 6, message = "Пароль должен содержать больше 6 символов")
     private String password;
 
-    @Schema(description = "Подвержение пароля", example = "123456")
+    @Schema(description = "Подвержение пароля", example = "123456", required = true)
     private String passwordConfirm;
 
     @Schema(description = "Почта", example = "al@yandex.ru")
