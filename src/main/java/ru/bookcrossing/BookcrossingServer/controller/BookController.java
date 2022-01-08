@@ -72,9 +72,13 @@ public class BookController {
     @GetMapping("/getAll")
     public ResponseEntity<?> bookList() {
         BookResponse response = new BookResponse();
-        response.setBookList(bookService.findAll().stream()
-                .map(BookDTO::new)
-                .collect(Collectors.toList()));
+        response.setBookList(bookService.findAll());
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/delete")
+    public ResponseEntity<?> deleteBook(@RequestParam Integer id){
+        bookService.deleteBook(id);
+        return ResponseEntity.ok("redirect:/");
     }
 }

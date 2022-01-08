@@ -2,7 +2,7 @@ package ru.bookcrossing.BookcrossingServer.model.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
-import ru.bookcrossing.BookcrossingServer.model.DTO.BookDTO;
+import ru.bookcrossing.BookcrossingServer.entity.Book;
 
 import java.util.List;
 
@@ -10,5 +10,5 @@ import java.util.List;
 public class BookResponse {
 
     @Schema(description = "Список книг пользователя")
-    private List<BookDTO> bookList;
+    private List<Book> bookList;
 }

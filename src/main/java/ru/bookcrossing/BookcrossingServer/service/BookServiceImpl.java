@@ -1,7 +1,6 @@
 package ru.bookcrossing.BookcrossingServer.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.bookcrossing.BookcrossingServer.config.jwt.JwtProvider;
 import ru.bookcrossing.BookcrossingServer.entity.Book;
@@ -10,6 +9,7 @@ import ru.bookcrossing.BookcrossingServer.repository.BookRepository;
 import ru.bookcrossing.BookcrossingServer.repository.UserRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -46,7 +46,9 @@ public class BookServiceImpl implements BookService{
 
     @Override
     public void deleteBook(int id) {
-
+        if(bookRepository.findById(id).isPresent()) {
+            bookRepository.deleteById(id);
+        }
     }
 
     @Override
