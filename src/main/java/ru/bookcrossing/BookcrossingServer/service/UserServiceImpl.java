@@ -1,5 +1,6 @@
 package ru.bookcrossing.BookcrossingServer.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+@RequiredArgsConstructor
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -23,16 +25,6 @@ public class UserServiceImpl implements UserService {
     private final RoleRepository roleRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final JwtProvider jwtProvider;
-
-    public UserServiceImpl(UserRepository user,
-                           JwtProvider jwt,
-                           RoleRepository role,
-                           BCryptPasswordEncoder bCrypt) {
-        userRepository = user;
-        roleRepository = role;
-        bCryptPasswordEncoder = bCrypt;
-        jwtProvider = jwt;
-    }
 
     @Override
     public boolean saveUser(UserDTO userDTO){

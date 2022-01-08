@@ -1,5 +1,6 @@
 package ru.bookcrossing.BookcrossingServer.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.bookcrossing.BookcrossingServer.config.jwt.JwtProvider;
@@ -10,21 +11,15 @@ import ru.bookcrossing.BookcrossingServer.repository.UserRepository;
 
 import java.util.List;
 
+@RequiredArgsConstructor
 @Service
 public class BookServiceImpl implements BookService{
 
-    JwtProvider jwtProvider;
+    private final JwtProvider jwtProvider;
 
-    UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    BookRepository bookRepository;
-
-    @Autowired
-    public BookServiceImpl(JwtProvider j, UserRepository r, BookRepository b){
-        jwtProvider = j;
-        userRepository = r;
-        bookRepository = b;
-    }
+    private final BookRepository bookRepository;
 
     @Override
     public void saveBook(BookDTO bookDTO) {

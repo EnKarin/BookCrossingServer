@@ -12,15 +12,15 @@ import javax.validation.constraints.NotBlank;
 @Data
 public class UserDTOResponse {
     @Schema(description = "Имя", example = "Alex")
-    @NotBlank(message = "Имя должно содержать хотя бы один видимый символ")
+    @NotBlank(message = "name: Имя должно содержать хотя бы один видимый символ")
     private String name;
 
     @Schema(description = "Логин", example = "LogAll")
-    @NotBlank(message = "Логин должен содержать хотя бы один видимый символ")
+    @NotBlank(message = "login: Логин должен содержать хотя бы один видимый символ")
     private String login;
 
     @Schema(description = "Почта", example = "al@yandex.ru")
-    @Email(message = "Некорректный почтовый адрес")
+    @Email(message = "email: Некорректный почтовый адрес")
     private String email;
 
     @Schema(description = "Город", example = "Новосибирск")

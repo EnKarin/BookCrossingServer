@@ -17,6 +17,7 @@ import ru.bookcrossing.BookcrossingServer.model.response.AuthResponse;
 import ru.bookcrossing.BookcrossingServer.model.request.LoginRequest;
 import ru.bookcrossing.BookcrossingServer.model.DTO.UserDTO;
 import ru.bookcrossing.BookcrossingServer.model.request.RefreshRequest;
+import ru.bookcrossing.BookcrossingServer.model.response.ErrorListResponse;
 import ru.bookcrossing.BookcrossingServer.service.RefreshService;
 import ru.bookcrossing.BookcrossingServer.service.UserService;
 
@@ -41,9 +42,15 @@ public class RegistrationController {
             description = "Возвращает токены, если пользователь успешно зарегистрирован"
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "409", description = "Пароли не совпадают"),
-            @ApiResponse(responseCode = "406", description = "Пользователь с таким логином уже существует"),
-            @ApiResponse(responseCode = "400", description = "Введены некорректные данные"),
+            @ApiResponse(responseCode = "409", description = "Пароли не совпадают",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorListResponse.class))}),
+            @ApiResponse(responseCode = "406", description = "Пользователь с таким логином уже существует",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorListResponse.class))}),
+            @ApiResponse(responseCode = "400", description = "Введены некорректные данные",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorListResponse.class))}),
             @ApiResponse(responseCode = "200", description = "Возвращает токены",
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = AuthResponse.class))})
@@ -51,17 +58,19 @@ public class RegistrationController {
     )
     @PostMapping("/registration")
     public ResponseEntity<?> registerUser(@Valid @RequestBody UserDTO userForm, BindingResult bindingResult) {
+        ErrorListResponse errorListResponse = new ErrorListResponse();
         if (bindingResult.hasErrors()) {
-            StringBuilder allErrorMessage = new StringBuilder();
-            bindingResult.getAllErrors().forEach(f -> allErrorMessage.append(
-                    Objects.requireNonNull(f.getDefaultMessage())).append("\n"));
-            return new ResponseEntity<>(allErrorMessage.toString(), HttpStatus.BAD_REQUEST);
+            bindingResult.getAllErrors().forEach(f -> errorListResponse.getErrors()
+                    .add(Objects.requireNonNull(f.getDefaultMessage())));
+            return new ResponseEntity<>(errorListResponse, HttpStatus.BAD_REQUEST);
         }
         if (!userForm.getPassword().equals(userForm.getPasswordConfirm())) {
-            return new ResponseEntity<>("Пароли не совпадают", HttpStatus.CONFLICT);
+            errorListResponse.getErrors().add("passwordConfirm: Пароли не совпадают");
+            return new ResponseEntity<>(errorListResponse, HttpStatus.CONFLICT);
         }
         if (!userService.saveUser(userForm)) {
-            return new ResponseEntity<>("Пользователь с таким логином уже существует", HttpStatus.NOT_ACCEPTABLE);
+            errorListResponse.getErrors().add("login: Пользователь с таким логином уже существует");
+            return new ResponseEntity<>(errorListResponse, HttpStatus.NOT_ACCEPTABLE);
         }
 
         AuthResponse response = new AuthResponse();
@@ -76,7 +85,9 @@ public class RegistrationController {
             description = "Выдает токены, если пользователь с таким логином существует и пароль корректен"
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "401", description = "Некорректные данные"),
+            @ApiResponse(responseCode = "401", description = "Некорректные данные",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorListResponse.class))}),
             @ApiResponse(responseCode = "200", description = "Возвращает токены",
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = AuthResponse.class))}
@@ -86,7 +97,9 @@ public class RegistrationController {
     public ResponseEntity<?> auth(@RequestBody LoginRequest request) {
         Optional<User> userEntity = userService.findByLoginAndPassword(request);
         if (userEntity.isEmpty()) {
-            return new ResponseEntity<>("Некорректный логин или пароль", HttpStatus.UNAUTHORIZED);
+            ErrorListResponse response = new ErrorListResponse();
+            response.getErrors().add("account: Некорректный логин или пароль");
+            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
         }
 
         AuthResponse authResponse = new AuthResponse();
@@ -101,7 +114,9 @@ public class RegistrationController {
             description = "Выдает токены, если refresh корректен"
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "403", description = "Токена не существует или истек срок его действия"),
+            @ApiResponse(responseCode = "403", description = "Токена не существует или истек срок его действия",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorListResponse.class))}),
             @ApiResponse(responseCode = "200", description = "Возвращает токены",
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = AuthResponse.class))}
@@ -117,6 +132,8 @@ public class RegistrationController {
 
             return ResponseEntity.ok(authResponse);
         }
-        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        ErrorListResponse response = new ErrorListResponse();
+        response.getErrors().add("Неверный или истекший токен");
+        return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
     }
 }

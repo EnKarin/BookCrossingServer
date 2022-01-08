@@ -12,7 +12,7 @@ import java.util.UUID;
 @Service
 public class RefreshServiceImpl implements RefreshService{
 
-    RefreshRepository refreshRepository;
+    private RefreshRepository refreshRepository;
 
     @Autowired
     public void setRefreshRepository(RefreshRepository refreshRepository) {
