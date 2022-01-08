@@ -35,7 +35,7 @@ public class User implements UserDetails {
 
     private String city;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany
     @JoinTable(
             name = "User_Role",
             joinColumns = { @JoinColumn(name = "user_id")},

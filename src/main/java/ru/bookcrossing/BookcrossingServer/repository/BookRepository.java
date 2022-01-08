@@ -16,4 +16,6 @@ public interface BookRepository extends JpaRepository<Book, Integer> {
 
     List<Book> findBooksByOwner(User user);
 
+    void deleteByOwner(User user);
+
 }

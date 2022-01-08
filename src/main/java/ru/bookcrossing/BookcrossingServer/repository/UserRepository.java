@@ -5,10 +5,11 @@ import ru.bookcrossing.BookcrossingServer.entity.Role;
 import ru.bookcrossing.BookcrossingServer.entity.User;
 
 import java.util.List;
-import java.util.Set;
 
 public interface UserRepository extends JpaRepository<User, Integer> {
     User findByLogin(String login);
 
     List<User> findByUserRoles(Role userRoles);
+
+    void deleteByLogin(String login);
 }

@@ -45,7 +45,7 @@ public class BookServiceImpl implements BookService{
     }
 
     @Override
-    public void deleteBook(BookDTO bookDTO) {
+    public void deleteBook(int id) {
 
     }
 

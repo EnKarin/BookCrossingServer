@@ -10,9 +10,11 @@ import ru.bookcrossing.BookcrossingServer.entity.User;
 import ru.bookcrossing.BookcrossingServer.model.request.LoginRequest;
 import ru.bookcrossing.BookcrossingServer.model.DTO.UserDTO;
 import ru.bookcrossing.BookcrossingServer.model.request.UserPutRequest;
+import ru.bookcrossing.BookcrossingServer.repository.BookRepository;
 import ru.bookcrossing.BookcrossingServer.repository.RoleRepository;
 import ru.bookcrossing.BookcrossingServer.repository.UserRepository;
 
+import javax.transaction.Transactional;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -22,6 +24,7 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final BookRepository bookRepository;
     private final RoleRepository roleRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final JwtProvider jwtProvider;
@@ -52,11 +55,12 @@ public class UserServiceImpl implements UserService {
         return true;
     }
 
+    @Transactional
     @Override
-    public void deleteUser(Integer userId) {
-        if (userRepository.findById(userId).isPresent()) {
-            userRepository.deleteById(userId);
-        }
+    public void deleteUser(String login) {
+        User user = userRepository.findByLogin(login);
+        bookRepository.deleteByOwner(user);
+        userRepository.deleteByLogin(login);
     }
 
     @Override

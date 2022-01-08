@@ -50,15 +50,15 @@ public class AdminController {
 
     @Operation(
             summary = "Удаление пользователя",
-            description = "Позволяет удалить пользователя по его Id"
+            description = "Позволяет удалить пользователя по его логину"
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Возвращает на стартовую страницу")
     }
     )
-    @PostMapping("/delete/{id}")
-    public ResponseEntity<?> deleteUser(@PathVariable @Parameter(description = "Идентификатор пользователя") Integer id) {
-        userService.deleteUser(id);
+    @PostMapping("/delete")
+    public ResponseEntity<?> deleteUser(@RequestParam String login) {
+        userService.deleteUser(login);
         return ResponseEntity.ok("redirect:/");
     }
 }

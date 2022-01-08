@@ -9,13 +9,13 @@ public interface BookService {
 
     void saveBook(BookDTO bookDTO);
 
-    void deleteBook(BookDTO bookDTO);
+    void deleteBook(int id);
 
-    List<Book> findByTitle(String t);
+    List<Book> findByTitle(String title);
 
-    List<Book> findByAuthor(String a);
+    List<Book> findByAuthor(String author);
 
-    List<Book> findByGenre(String g);
+    List<Book> findByGenre(String genre);
 
     List<Book> findAll();
 }
