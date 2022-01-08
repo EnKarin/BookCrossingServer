@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.validation.annotation.Validated;
+import ru.bookcrossing.BookcrossingServer.entity.Book;
 
 import javax.validation.constraints.NotBlank;
 
@@ -29,4 +30,12 @@ public class BookDTO {
 
     @Schema(description = "Год издания", example = "2004")
     private int year;
+
+    public BookDTO(Book book){
+        title = book.getTitle();
+        author = book.getAuthor();
+        genre = book.getGenre();
+        publishingHouse = book.getPublishingHouse();
+        year = book.getYear();
+    }
 }

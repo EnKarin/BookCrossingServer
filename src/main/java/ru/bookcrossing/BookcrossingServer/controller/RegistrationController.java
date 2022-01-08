@@ -2,22 +2,21 @@ package ru.bookcrossing.BookcrossingServer.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.bookcrossing.BookcrossingServer.config.jwt.JwtProvider;
 import ru.bookcrossing.BookcrossingServer.entity.User;
-import ru.bookcrossing.BookcrossingServer.model.AuthResponse;
-import ru.bookcrossing.BookcrossingServer.model.Login;
+import ru.bookcrossing.BookcrossingServer.model.response.AuthResponse;
+import ru.bookcrossing.BookcrossingServer.model.request.LoginRequest;
 import ru.bookcrossing.BookcrossingServer.model.DTO.UserDTO;
-import ru.bookcrossing.BookcrossingServer.model.RefreshRequest;
+import ru.bookcrossing.BookcrossingServer.model.request.RefreshRequest;
 import ru.bookcrossing.BookcrossingServer.service.RefreshService;
 import ru.bookcrossing.BookcrossingServer.service.UserService;
 
@@ -47,15 +46,7 @@ public class RegistrationController {
             @ApiResponse(responseCode = "400", description = "Введены некорректные данные"),
             @ApiResponse(responseCode = "200", description = "Возвращает токены",
                     content = {@Content(mediaType = "application/json",
-                            examples = {
-                                    @ExampleObject(
-                                            name = "accessToken",
-                                            value = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJUZXN0IiwiZXhwIjoxNjQwNzk3MjAwfQ"),
-                                    @ExampleObject(
-                                            name = "refreshToken",
-                                            value = "cac2ce3e-9ff0-49a7-8afc-3dcae34eafea"
-                                    )
-                            })})
+                            schema = @Schema(implementation = AuthResponse.class))})
     }
     )
     @PostMapping("/registration")
@@ -88,21 +79,13 @@ public class RegistrationController {
             @ApiResponse(responseCode = "401", description = "Некорректные данные"),
             @ApiResponse(responseCode = "200", description = "Возвращает токены",
                     content = {@Content(mediaType = "application/json",
-                            examples = {
-                                    @ExampleObject(
-                                            name = "accessToken",
-                                            value = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJUZXN0IiwiZXhwIjoxNjQwNzk3MjAwfQ"),
-                                    @ExampleObject(
-                                            name = "refreshToken",
-                                            value = "cac2ce3e-9ff0-49a7-8afc-3dcae34eafea"
-                                    )
-                            })}
+                            schema = @Schema(implementation = AuthResponse.class))}
             )}
     )
     @PostMapping("/auth")
-    public ResponseEntity<?> auth(@RequestBody Login request) {
-        User userEntity = userService.findByLoginAndPassword(request);
-        if (userEntity == null) {
+    public ResponseEntity<?> auth(@RequestBody LoginRequest request) {
+        Optional<User> userEntity = userService.findByLoginAndPassword(request);
+        if (userEntity.isEmpty()) {
             return new ResponseEntity<>("Некорректный логин или пароль", HttpStatus.UNAUTHORIZED);
         }
 
@@ -121,15 +104,7 @@ public class RegistrationController {
             @ApiResponse(responseCode = "403", description = "Токена не существует или истек срок его действия"),
             @ApiResponse(responseCode = "200", description = "Возвращает токены",
                     content = {@Content(mediaType = "application/json",
-                            examples = {
-                                    @ExampleObject(
-                                            name = "accessToken",
-                                            value = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJUZXN0IiwiZXhwIjoxNjQwNzk3MjAwfQ"),
-                                    @ExampleObject(
-                                            name = "refreshToken",
-                                            value = "cac2ce3e-9ff0-49a7-8afc-3dcae34eafea"
-                                    )
-                            })}
+                            schema = @Schema(implementation = AuthResponse.class))}
             )}
     )
     @PostMapping("/refresh")

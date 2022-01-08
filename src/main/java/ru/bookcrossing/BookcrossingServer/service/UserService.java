@@ -1,19 +1,25 @@
 package ru.bookcrossing.BookcrossingServer.service;
 
 import ru.bookcrossing.BookcrossingServer.entity.User;
-import ru.bookcrossing.BookcrossingServer.model.Login;
+import ru.bookcrossing.BookcrossingServer.model.request.LoginRequest;
 import ru.bookcrossing.BookcrossingServer.model.DTO.UserDTO;
+import ru.bookcrossing.BookcrossingServer.model.request.UserPutRequest;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface UserService {
     boolean saveUser(UserDTO user);
 
     void deleteUser(Integer userId);
 
-    User findByLogin(String login);
+    Optional<User> findByLogin(String login);
 
-    User findByLoginAndPassword(Login login);
+    Optional<User> findById(int id);
 
-    List<User> findAll();
+    Optional<User> findByLoginAndPassword(LoginRequest login);
+
+    List<User> findAllUsers();
+
+    Optional<User> putUserInfo(UserPutRequest userPutRequest);
 }

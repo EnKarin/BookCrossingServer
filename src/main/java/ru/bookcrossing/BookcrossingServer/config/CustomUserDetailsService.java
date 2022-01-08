@@ -1,7 +1,6 @@
 package ru.bookcrossing.BookcrossingServer.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
@@ -20,7 +19,6 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public User loadUserByUsername(String username) throws UsernameNotFoundException {
-        User userEntity = userService.findByLogin(username);
-        return userEntity;
+        return userService.findByLogin(username).get();
     }
 }

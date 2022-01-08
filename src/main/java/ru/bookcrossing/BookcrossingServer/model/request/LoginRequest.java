@@ -1,4 +1,4 @@
-package ru.bookcrossing.BookcrossingServer.model;
+package ru.bookcrossing.BookcrossingServer.model.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
@@ -11,7 +11,7 @@ import javax.validation.constraints.Size;
 @Validated
 @Getter
 @Setter
-public class Login {
+public class LoginRequest {
 
     @Schema(description = "Логин", example = "LogAll")
     @NotBlank

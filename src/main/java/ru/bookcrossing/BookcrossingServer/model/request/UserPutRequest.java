@@ -1,9 +1,8 @@
-package ru.bookcrossing.BookcrossingServer.model.DTO;
+package ru.bookcrossing.BookcrossingServer.model.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import org.springframework.validation.annotation.Validated;
-import ru.bookcrossing.BookcrossingServer.entity.User;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -11,22 +10,23 @@ import javax.validation.constraints.Size;
 
 @Validated
 @Data
-@Schema(description = "Сущность пользователя")
-public class UserDTO {
+@Schema(description = "Сущность для изменения данных пользователя")
+public class UserPutRequest {
+
     @Schema(description = "Имя", example = "Alex")
     @NotBlank(message = "Имя должно содержать хотя бы один видимый символ")
     private String name;
 
-    @Schema(description = "Логин", example = "LogAll")
-    @NotBlank(message = "Логин должен содержать хотя бы один видимый символ")
-    private String login;
+    @Schema(description = "Старый пароль", example = "123456")
+    @NotBlank(message = "Пароль должен содержать хотя бы один видимый символ")
+    private String oldPassword;
 
-    @Schema(description = "Пароль", example = "123456")
+    @Schema(description = "Новый пароль", example = "123456s", required = true)
     @NotBlank(message = "Пароль должен содержать хотя бы один видимый символ")
     @Size(min = 6, message = "Пароль должен содержать больше 6 символов")
-    private String password;
+    private String newPassword;
 
-    @Schema(description = "Подвержение пароля", example = "123456", required = true)
+    @Schema(description = "Подвержение пароля", example = "123456s", required = true)
     private String passwordConfirm;
 
     @Schema(description = "Почта", example = "al@yandex.ru")
@@ -35,11 +35,4 @@ public class UserDTO {
 
     @Schema(description = "Город", example = "Новосибирск")
     private String city;
-
-    public UserDTO(User user){
-        name = user.getName();
-        login = user.getLogin();
-        email = user.getEmail();
-        city = user.getCity();
-    }
 }

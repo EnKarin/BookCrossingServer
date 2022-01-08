@@ -3,15 +3,18 @@ package ru.bookcrossing.BookcrossingServer.service;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import ru.bookcrossing.BookcrossingServer.config.jwt.JwtProvider;
 import ru.bookcrossing.BookcrossingServer.entity.Role;
 import ru.bookcrossing.BookcrossingServer.entity.User;
-import ru.bookcrossing.BookcrossingServer.model.Login;
+import ru.bookcrossing.BookcrossingServer.model.request.LoginRequest;
 import ru.bookcrossing.BookcrossingServer.model.DTO.UserDTO;
+import ru.bookcrossing.BookcrossingServer.model.request.UserPutRequest;
 import ru.bookcrossing.BookcrossingServer.repository.RoleRepository;
 import ru.bookcrossing.BookcrossingServer.repository.UserRepository;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -19,13 +22,16 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final JwtProvider jwtProvider;
 
-    public UserServiceImpl(UserRepository usersRepository,
-                           RoleRepository roleRepository,
-                           BCryptPasswordEncoder bCryptPasswordEncoder) {
-        this.userRepository = usersRepository;
-        this.roleRepository = roleRepository;
-        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+    public UserServiceImpl(UserRepository user,
+                           JwtProvider jwt,
+                           RoleRepository role,
+                           BCryptPasswordEncoder bCrypt) {
+        userRepository = user;
+        roleRepository = role;
+        bCryptPasswordEncoder = bCrypt;
+        jwtProvider = jwt;
     }
 
     @Override
@@ -43,15 +49,14 @@ public class UserServiceImpl implements UserService {
         user.setEmail(userDTO.getEmail());
 
         if(userDTO.getLogin().equals("admin")) {
-            role = new Role(0, "ROLE_ADMIN");
+            role = roleRepository.getById(0);
         }
         else {
-            role = new Role(1, "ROLE_USER");
+            role = roleRepository.getById(1);
         }
         user.setUserRoles(Collections.singleton(role));
         user.setPassword(bCryptPasswordEncoder.encode(userDTO.getPassword()));
         userRepository.save(user);
-        roleRepository.save(role);
         return true;
     }
 
@@ -63,33 +68,43 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User findByLogin(String login) {
-        User user = userRepository.findByLogin(login);
-        if (user == null) {
-            throw new UsernameNotFoundException("Пользователь не найден");
+    public Optional<User> findByLogin(String login) {
+        return Optional.of(userRepository.findByLogin(login));
+    }
+
+    @Override
+    public Optional<User> findById(int id) {
+        return userRepository.findById(id);
+    }
+
+    @Override
+    public List<User> findAllUsers() {
+        Role role = roleRepository.getById(1);
+        return userRepository.findByUserRoles(role);
+    }
+
+    @Override
+    public Optional<User> findByLoginAndPassword(LoginRequest login) throws UsernameNotFoundException {
+        Optional<User> user = Optional.of(userRepository.findByLogin(login.getLogin()));
+        if(bCryptPasswordEncoder.matches(login.getPassword(), user.get().getPassword())){
+            return user;
         }
-
-        return user;
+        return Optional.empty();
     }
 
     @Override
-    public List<User> findAll() {
-        return userRepository.findAll();
-    }
-
-    @Override
-    public User findByLoginAndPassword(Login login) throws UsernameNotFoundException {
-        User user;
-            user = userRepository.findByLogin(login.getLogin());
-            if (user != null) {
-                if(bCryptPasswordEncoder.matches(login.getPassword(), user.getPassword())){
-                    return user;
-                }
+    public Optional<User> putUserInfo(UserPutRequest userPutRequest){
+        Optional<User> user = findByLogin(jwtProvider.getLoginFromToken());
+        if(user.isPresent()) {
+            if (bCryptPasswordEncoder.matches(userPutRequest.getOldPassword(), user.get().getPassword())) {
+                user.get().setName(userPutRequest.getName());
+                user.get().setCity(userPutRequest.getCity());
+                user.get().setEmail(userPutRequest.getEmail());
+                user.get().setPassword(bCryptPasswordEncoder.encode(userPutRequest.getNewPassword()));
+                user = Optional.of(userRepository.save(user.get()));
+                return user;
             }
-            else{
-                throw new UsernameNotFoundException("Пользователь не найден");
-            }
-
-        return null;
+        }
+        return Optional.empty();
     }
 }
