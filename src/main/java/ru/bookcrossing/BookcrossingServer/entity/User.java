@@ -29,13 +29,19 @@ public class User implements UserDetails {
 
     private String login;
 
+    @ToString.Exclude
+    @JsonIgnore
     private String password;
 
     private String email;
 
     private String city;
 
-    @ManyToMany
+    @ManyToMany(cascade = {
+            CascadeType.PERSIST,
+            CascadeType.REFRESH,
+            CascadeType.MERGE
+    })
     @JoinTable(
             name = "User_Role",
             joinColumns = { @JoinColumn(name = "user_id")},

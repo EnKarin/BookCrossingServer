@@ -2,7 +2,6 @@ package ru.bookcrossing.BookcrossingServer.model.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import ru.bookcrossing.BookcrossingServer.entity.User;
 
 import javax.validation.constraints.Email;
@@ -15,10 +14,6 @@ public class UserDTOResponse {
     @NotBlank(message = "name: Имя должно содержать хотя бы один видимый символ")
     private String name;
 
-    @Schema(description = "Логин", example = "LogAll")
-    @NotBlank(message = "login: Логин должен содержать хотя бы один видимый символ")
-    private String login;
-
     @Schema(description = "Почта", example = "al@yandex.ru")
     @Email(message = "email: Некорректный почтовый адрес")
     private String email;
@@ -28,7 +23,6 @@ public class UserDTOResponse {
 
     public UserDTOResponse(User user){
         name = user.getName();
-        login = user.getLogin();
         email = user.getEmail();
         city = user.getCity();
     }

@@ -37,11 +37,4 @@ public class UserDTO {
 
     @Schema(description = "Город", example = "Новосибирск")
     private String city;
-
-    public UserDTO(User user){
-        name = user.getName();
-        login = user.getLogin();
-        email = user.getEmail();
-        city = user.getCity();
-    }
 }

@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.bookcrossing.BookcrossingServer.model.response.AdmUserListResponse;
 import ru.bookcrossing.BookcrossingServer.model.response.UserDTOResponse;
 import ru.bookcrossing.BookcrossingServer.model.response.UserResponse;
 import ru.bookcrossing.BookcrossingServer.service.UserService;
@@ -36,15 +37,13 @@ public class AdminController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Возвращает список пользователей",
                     content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = UserResponse.class))})
+                            schema = @Schema(implementation = AdmUserListResponse.class))})
     }
     )
     @GetMapping("/getAll")
     public ResponseEntity<?> userList() {
-        UserResponse response = new UserResponse();
-        response.setUserList(userService.findAllUsers().stream()
-                .map(UserDTOResponse::new)
-                .collect(Collectors.toList()));
+        AdmUserListResponse response = new AdmUserListResponse();
+        response.setUserList(userService.findAllUsers());
         return ResponseEntity.ok(response);
     }
 

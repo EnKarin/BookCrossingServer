@@ -11,6 +11,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ErrorListResponse {
 
-    @Schema(description = "Список ошибок", example = "passwordConfirm: Пароли не совпадают")
+    @Schema(description = "Список ошибок", example = "источник: причина")
     private final List<String> errors = new LinkedList<>();
 }

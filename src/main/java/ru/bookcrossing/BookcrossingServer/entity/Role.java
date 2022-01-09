@@ -25,11 +25,6 @@ public class Role implements GrantedAuthority {
     @ToString.Exclude
     private Set<User> users;
 
-    public Role(Integer id, String name) {
-        this.role_id = id;
-        this.name = name;
-    }
-
     @Override
     public String getAuthority() {
         return getName();
