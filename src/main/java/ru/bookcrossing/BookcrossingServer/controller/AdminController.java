@@ -1,7 +1,6 @@
 package ru.bookcrossing.BookcrossingServer.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -12,11 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.bookcrossing.BookcrossingServer.model.response.AdmUserListResponse;
-import ru.bookcrossing.BookcrossingServer.model.response.UserDTOResponse;
-import ru.bookcrossing.BookcrossingServer.model.response.UserResponse;
 import ru.bookcrossing.BookcrossingServer.service.UserService;
 
-import java.util.stream.Collectors;
 
 
 @Tag(

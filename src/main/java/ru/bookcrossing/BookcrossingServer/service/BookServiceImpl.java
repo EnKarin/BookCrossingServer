@@ -9,7 +9,6 @@ import ru.bookcrossing.BookcrossingServer.repository.BookRepository;
 import ru.bookcrossing.BookcrossingServer.repository.UserRepository;
 
 import java.util.List;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
