@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import ru.bookcrossing.BookcrossingServer.config.jwt.JwtFilter;
 
 @Configuration
@@ -25,8 +26,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
+                .requiresChannel().antMatchers().requiresSecure()
+                .and()
                 .httpBasic().disable()
                 .csrf().disable()
+
+                //работает только для браузеров
+
+                // .csrf(csrf -> csrf
+                //        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()

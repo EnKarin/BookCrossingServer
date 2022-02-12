@@ -8,14 +8,9 @@ import java.util.List;
 
 public interface BookRepository extends JpaRepository<Book, Integer> {
 
-    List<Book> findBooksByAuthor(String author);
-
-    List<Book> findBooksByTitle(String title);
-
-    List<Book> findBooksByGenre(String genre);
+    List<Book> findBooksByTitleIgnoreCase(String title);
 
     List<Book> findBooksByOwner(User user);
 
     void deleteByOwner(User user);
-
 }

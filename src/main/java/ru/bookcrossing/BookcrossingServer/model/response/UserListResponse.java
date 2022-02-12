@@ -6,7 +6,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class UserResponse {
+public class UserListResponse {
 
     @Schema(description = "Список пользователей")
     private List<UserDTOResponse> userList;

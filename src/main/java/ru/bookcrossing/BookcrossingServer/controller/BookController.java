@@ -9,24 +9,23 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import ru.bookcrossing.BookcrossingServer.model.DTO.BookDTO;
+import ru.bookcrossing.BookcrossingServer.entity.Book;
+import ru.bookcrossing.BookcrossingServer.model.request.BookFiltersRequest;
+import ru.bookcrossing.BookcrossingServer.model.response.BookListResponse;
 import ru.bookcrossing.BookcrossingServer.model.response.BookResponse;
 import ru.bookcrossing.BookcrossingServer.model.response.ErrorListResponse;
 import ru.bookcrossing.BookcrossingServer.service.BookService;
 
-import javax.validation.Valid;
-import java.util.Objects;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 @Tag(
-        name = "Раздел работы с книгами",
-        description = "Позволяет ользователю управлять своими книгами"
+        name = "Раздел со всеми книгами в системе",
+        description = "Позволяет пользователю получить все книги, доступные для обмена"
 )
 
 @RestController
-@RequestMapping("/user/myBook")
+@RequestMapping("/user/books")
 public class BookController {
 
     private BookService bookService;
@@ -37,48 +36,76 @@ public class BookController {
     }
 
     @Operation(
-            summary = "Добавление книги",
-            description = "Позволяет сохранить книгу для обмена"
+            summary = "Все книги в системе",
+            description = "Позволяет получить книги всех пользователей"
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "400", description = "Введены некорректные данные",
+            @ApiResponse(responseCode = "200", description = "Возвращает все книги",
                     content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = ErrorListResponse.class))}),
-            @ApiResponse(responseCode = "200", description = "Возвращает на стартовую страницу")}
+                            schema = @Schema(implementation = BookListResponse.class))})}
     )
-    @PostMapping("/save")
-    public ResponseEntity<?> saveBook(@Valid @RequestBody BookDTO bookDTO, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            ErrorListResponse response = new ErrorListResponse();
-            bindingResult.getAllErrors().forEach(f -> response.getErrors()
-                    .add(Objects.requireNonNull(f.getDefaultMessage())));
-            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-        }
-
-        bookService.saveBook(bookDTO);
-
-        return ResponseEntity.ok("redirect:/");
+    @GetMapping("/getAll")
+    public ResponseEntity<?> books() {
+        BookListResponse bookResponse = new BookListResponse();
+        bookResponse.setBookList(bookService.findAll());
+        return ResponseEntity.ok(bookResponse);
     }
 
     @Operation(
-            summary = "Список книг",
-            description = "Позволяет получить список всех книг пользователя"
+            summary = "Страница книги",
+            description = "Позволяет получить данные выбранной книги"
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Возвращает список книг",
+            @ApiResponse(responseCode = "400", description = "Книга не найдена",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorListResponse.class))}),
+            @ApiResponse(responseCode = "200", description = "Возвращает данные книги",
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = BookResponse.class))})}
     )
-    @GetMapping("/getAll")
-    public ResponseEntity<?> bookList() {
-        BookResponse response = new BookResponse();
-        response.setBookList(bookService.findAll());
+    @GetMapping("/getInfo")
+    public ResponseEntity<?> bookInfo(@RequestParam Integer id) {
+        BookResponse bookResponse;
+        Optional<Book> book = bookService.findById(id);
+        if (book.isPresent()) {
+            bookResponse = new BookResponse(book.get());
+        } else {
+            ErrorListResponse response = new ErrorListResponse();
+            response.getErrors().add("book: Книга не найдена");
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
+        return ResponseEntity.ok(bookResponse);
+    }
+
+    @Operation(
+            summary = "Поиск книг по названию",
+            description = "Позволяет найти книги по названию"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Возвращает найденные книги",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = BookListResponse.class))})}
+    )
+    @GetMapping("/searchByTitle")
+    public ResponseEntity<?> searchByTitle(@RequestParam String title) {
+        BookListResponse response = new BookListResponse();
+        response.setBookList(bookService.findByTitle(title));
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/delete")
-    public ResponseEntity<?> deleteBook(@RequestParam Integer id){
-        bookService.deleteBook(id);
-        return ResponseEntity.ok("redirect:/");
+    @Operation(
+            summary = "Поиск книг с фильтрацией",
+            description = "Позволяет найти книги с помощью фильтров"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Возвращает найденные книги",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = BookListResponse.class))})}
+    )
+    @GetMapping("/searchWithFilters")
+    public ResponseEntity<?> searchWithFilters(@RequestBody BookFiltersRequest filters) {
+        BookListResponse response = new BookListResponse();
+        response.setBookList(bookService.filter(filters));
+        return ResponseEntity.ok(response);
     }
 }

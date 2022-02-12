@@ -13,8 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.bookcrossing.BookcrossingServer.model.response.AdmUserListResponse;
 import ru.bookcrossing.BookcrossingServer.service.UserService;
 
-
-
 @Tag(
         name="Управление пользователями для администратора",
         description="Позволяет получить и удалять пользователей"

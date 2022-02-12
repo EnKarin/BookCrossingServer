@@ -1,12 +1,14 @@
-package ru.bookcrossing.BookcrossingServer.model.response;
+package ru.bookcrossing.BookcrossingServer.model.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
-import ru.bookcrossing.BookcrossingServer.entity.Book;
 
-@Schema(description = "Данные книги для общего доступа")
+@Schema(description = "Фильтры для книг")
 @Data
-public class BookResponse {
+public class BookFiltersRequest {
+    @Schema(description = "Город", example = "Новосибирск")
+    private String city;
+
     @Schema(description = "Название", example = "Портрет Дориана Грея")
     private String title;
 
@@ -21,12 +23,4 @@ public class BookResponse {
 
     @Schema(description = "Год издания", example = "2004")
     private int year;
-
-    public BookResponse(Book book){
-        title = book.getTitle();
-        author = book.getAuthor();
-        genre = book.getGenre();
-        publishingHouse = book.getPublishingHouse();
-        year = book.getYear();
-    }
 }

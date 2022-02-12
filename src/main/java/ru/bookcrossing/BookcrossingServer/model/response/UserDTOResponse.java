@@ -7,7 +7,7 @@ import ru.bookcrossing.BookcrossingServer.entity.User;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
-@Schema(description = "Сущность пользователя")
+@Schema(description = "Данные пользователя для общего доступа")
 @Data
 public class UserDTOResponse {
     @Schema(description = "Имя", example = "Alex")

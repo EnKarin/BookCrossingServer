@@ -5,10 +5,13 @@ import org.springframework.stereotype.Service;
 import ru.bookcrossing.BookcrossingServer.config.jwt.JwtProvider;
 import ru.bookcrossing.BookcrossingServer.entity.Book;
 import ru.bookcrossing.BookcrossingServer.model.DTO.BookDTO;
+import ru.bookcrossing.BookcrossingServer.model.request.BookFiltersRequest;
 import ru.bookcrossing.BookcrossingServer.repository.BookRepository;
 import ru.bookcrossing.BookcrossingServer.repository.UserRepository;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -37,10 +40,44 @@ public class BookServiceImpl implements BookService{
     }
 
     @Override
-    public List<Book> findAll() {
+    public List<Book> findBookForOwner() {
         String login = jwtProvider.getLoginFromToken();
 
         return bookRepository.findBooksByOwner(userRepository.findByLogin(login));
+    }
+
+    @Override
+    public Optional<Book> findById(int id) {
+        return bookRepository.findById(id);
+    }
+
+    @Override
+    public List<Book> filter(BookFiltersRequest request) {
+        List<Book> books = bookRepository.findAll();
+        if(request.getGenre() != null)
+            books = books.stream().filter(book -> book.getGenre().equals(request.getGenre()))
+        .collect(Collectors.toList());
+        if(request.getAuthor() != null)
+            books = books.stream().filter(book -> book.getAuthor().equals(request.getAuthor()))
+                    .collect(Collectors.toList());
+        if(request.getPublishingHouse() != null)
+            books = books.stream().filter(book -> book.getPublishingHouse().equals(request.getPublishingHouse()))
+                    .collect(Collectors.toList());
+        if(request.getYear() != 0)
+            books = books.stream().filter(book -> book.getYear() == (request.getYear()))
+                    .collect(Collectors.toList());
+        if(request.getTitle() != null)
+            books = books.stream().filter(book -> book.getTitle().equals(request.getTitle()))
+                    .collect(Collectors.toList());
+        if(request.getCity() != null)
+            books = books.stream().filter(book -> book.getOwner().getCity().equals(request.getCity()))
+                    .collect(Collectors.toList());
+        return books;
+    }
+
+    @Override
+    public List<Book> findAll() {
+        return bookRepository.findAll();
     }
 
     @Override
@@ -52,18 +89,6 @@ public class BookServiceImpl implements BookService{
 
     @Override
     public List<Book> findByTitle(String t) {
-        return null;
+       return bookRepository.findBooksByTitleIgnoreCase(t);
     }
-
-    @Override
-    public List<Book> findByAuthor(String a) {
-        return null;
-    }
-
-    @Override
-    public List<Book> findByGenre(String g) {
-        return null;
-    }
-
-
 }
