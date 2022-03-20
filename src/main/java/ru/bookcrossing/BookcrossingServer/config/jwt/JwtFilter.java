@@ -15,6 +15,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.NoSuchElementException;
 
 import static org.springframework.util.StringUtils.hasText;
 
@@ -43,11 +44,14 @@ public class JwtFilter extends GenericFilterBean {
             throws IOException, ServletException {
         String token = getTokenFromRequest((HttpServletRequest) servletRequest);
         if (token != null && jwtProvider.validateToken(token)) {
-            String userLogin = jwtProvider.getLoginFromToken(token);
-            User customUserDetails = customUserDetailsService.loadUserByUsername(userLogin);
-            UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(customUserDetails,
-                    null, customUserDetails.getAuthorities());
-            SecurityContextHolder.getContext().setAuthentication(auth);
+            try {
+                String userLogin = jwtProvider.getLoginFromToken(token);
+                User customUserDetails = customUserDetailsService.loadUserByUsername(userLogin);
+                UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(customUserDetails,
+                        null, customUserDetails.getAuthorities());
+                SecurityContextHolder.getContext().setAuthentication(auth);
+            }catch (NoSuchElementException ignored){
+            }
         }
         filterChain.doFilter(servletRequest, servletResponse);
     }

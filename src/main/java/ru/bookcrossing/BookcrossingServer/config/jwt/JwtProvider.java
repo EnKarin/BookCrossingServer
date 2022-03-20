@@ -1,16 +1,16 @@
 package ru.bookcrossing.BookcrossingServer.config.jwt;
 
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
-import java.util.Objects;
 
 @Component
 @Log
@@ -20,7 +20,7 @@ public class JwtProvider {
     private String jwtSecret;
 
     public String generateToken(String login) {
-        Date date = Date.from(LocalDateTime.now().plusMinutes(15).atZone(ZoneId.systemDefault()).toInstant());
+        Date date = Date.from(LocalDateTime.now().plusMinutes(1).atZone(ZoneId.systemDefault()).toInstant());
         return Jwts.builder()
                 .setSubject(login)
                 .setExpiration(date)
@@ -34,12 +34,6 @@ public class JwtProvider {
             return true;
         } catch (ExpiredJwtException expEx) {
             log.severe("Token expired");
-        } catch (UnsupportedJwtException unsEx) {
-            log.severe("Unsupported jwt");
-        } catch (MalformedJwtException mjEx) {
-            log.severe("Malformed jwt");
-        } catch (SignatureException sEx) {
-            log.severe("Invalid signature");
         } catch (Exception e) {
             log.severe("invalid token");
         }

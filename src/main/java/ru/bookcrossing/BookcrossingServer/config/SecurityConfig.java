@@ -9,7 +9,6 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import ru.bookcrossing.BookcrossingServer.config.jwt.JwtFilter;
 
 @Configuration
@@ -18,9 +17,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private JwtFilter jwtFilter;
 
+    private AuthenticationEntryPointHandler handler;
+
     @Autowired
     private void setJwtFilter(JwtFilter filter){
         jwtFilter = filter;
+    }
+
+    @Autowired
+    private void setAuthenticationEntryPointHandler(AuthenticationEntryPointHandler hand){
+        handler = hand;
     }
 
     @Override
@@ -41,6 +47,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/adm/**").hasRole("ADMIN")
                 .antMatchers("/user/**").hasRole("USER")
                 .antMatchers("/register", "/auth", "/refresh").permitAll()
+                .and()
+                .exceptionHandling().authenticationEntryPoint(handler)
                 .and()
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
     }
