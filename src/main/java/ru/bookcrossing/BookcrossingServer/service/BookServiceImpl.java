@@ -24,9 +24,7 @@ public class BookServiceImpl implements BookService{
     private final BookRepository bookRepository;
 
     @Override
-    public void saveBook(BookDTO bookDTO) {
-        String login = jwtProvider.getLoginFromToken();
-
+    public void saveBook(BookDTO bookDTO, String login) {
         Book book = new Book();
         book.setAuthor(bookDTO.getAuthor());
         book.setGenre(bookDTO.getGenre());
@@ -40,9 +38,7 @@ public class BookServiceImpl implements BookService{
     }
 
     @Override
-    public List<Book> findBookForOwner() {
-        String login = jwtProvider.getLoginFromToken();
-
+    public List<Book> findBookForOwner(String login) {
         return bookRepository.findBooksByOwner(userRepository.findByLogin(login));
     }
 

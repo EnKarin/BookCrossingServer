@@ -21,5 +21,5 @@ public interface UserService {
 
     List<User> findAllUsers();
 
-    Optional<User> putUserInfo(UserPutRequest userPutRequest);
+    Optional<User> putUserInfo(UserPutRequest userPutRequest, String login);
 }

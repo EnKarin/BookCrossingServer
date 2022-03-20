@@ -17,6 +17,7 @@ import ru.bookcrossing.BookcrossingServer.model.response.ErrorListResponse;
 import ru.bookcrossing.BookcrossingServer.service.BookService;
 
 import javax.validation.Valid;
+import java.security.Principal;
 import java.util.Objects;
 
 @Tag(
@@ -46,7 +47,9 @@ public class MyBookController {
             @ApiResponse(responseCode = "200", description = "Возвращает на стартовую страницу")}
     )
     @PostMapping("/save")
-    public ResponseEntity<?> saveBook(@Valid @RequestBody BookDTO bookDTO, BindingResult bindingResult) {
+    public ResponseEntity<?> saveBook(@Valid @RequestBody BookDTO bookDTO,
+                                      Principal principal,
+                                      BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             ErrorListResponse response = new ErrorListResponse();
             bindingResult.getAllErrors().forEach(f -> response.getErrors()
@@ -54,7 +57,7 @@ public class MyBookController {
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
 
-        bookService.saveBook(bookDTO);
+        bookService.saveBook(bookDTO, principal.getName());
 
         return ResponseEntity.ok("redirect:/");
     }
@@ -69,9 +72,9 @@ public class MyBookController {
                             schema = @Schema(implementation = BookListResponse.class))})}
     )
     @GetMapping("/getAll")
-    public ResponseEntity<?> bookList() {
+    public ResponseEntity<?> bookList(Principal principal) {
         BookListResponse response = new BookListResponse();
-        response.setBookList(bookService.findBookForOwner());
+        response.setBookList(bookService.findBookForOwner(principal.getName()));
         return ResponseEntity.ok(response);
     }
 

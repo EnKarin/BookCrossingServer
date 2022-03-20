@@ -27,7 +27,6 @@ public class UserServiceImpl implements UserService {
     private final BookRepository bookRepository;
     private final RoleRepository roleRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
-    private final JwtProvider jwtProvider;
 
     @Override
     public boolean saveUser(UserDTO userDTO){
@@ -89,8 +88,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<User> putUserInfo(UserPutRequest userPutRequest){
-        Optional<User> user = findByLogin(jwtProvider.getLoginFromToken());
+    public Optional<User> putUserInfo(UserPutRequest userPutRequest, String login){
+        Optional<User> user = findByLogin(login);
         if(user.isPresent()) {
             if (bCryptPasswordEncoder.matches(userPutRequest.getOldPassword(), user.get().getPassword())) {
                 user.get().setName(userPutRequest.getName());

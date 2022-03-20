@@ -22,6 +22,7 @@ import ru.bookcrossing.BookcrossingServer.service.RefreshService;
 import ru.bookcrossing.BookcrossingServer.service.UserService;
 
 import javax.validation.Valid;
+import java.security.Principal;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -133,7 +134,7 @@ public class RegistrationController {
             return ResponseEntity.ok(authResponse);
         }
         ErrorListResponse response = new ErrorListResponse();
-        response.getErrors().add("Неверный или истекший токен");
+        response.getErrors().add("refresh: Неверный или истекший токен");
         return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
     }
 }

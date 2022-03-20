@@ -12,7 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import ru.bookcrossing.BookcrossingServer.config.jwt.JwtProvider;
 import ru.bookcrossing.BookcrossingServer.entity.User;
 import ru.bookcrossing.BookcrossingServer.model.request.UserPutRequest;
 import ru.bookcrossing.BookcrossingServer.model.response.ErrorListResponse;
@@ -20,6 +19,7 @@ import ru.bookcrossing.BookcrossingServer.model.response.UserDTOResponse;
 import ru.bookcrossing.BookcrossingServer.service.UserService;
 
 import javax.validation.Valid;
+import java.security.Principal;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -29,11 +29,10 @@ import java.util.Optional;
 )
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/user/")
+@RequestMapping("/user")
 public class UserProfileController {
 
     private final UserService userService;
-    private final JwtProvider jwtProvider;
 
     @Operation(
             summary = "Получение профиля",
@@ -50,11 +49,12 @@ public class UserProfileController {
     )
     @GetMapping("/profile")
     public ResponseEntity<?> getProfile(@RequestParam @Parameter(description = "Идентификатор пользователя," +
-            " -1 для собственного") int id) {
+            " -1 для собственного") int id,
+                                        Principal principal) {
         UserDTOResponse userDTOResponse;
         Optional<User> user;
         if (id == -1) {
-            user = userService.findByLogin(jwtProvider.getLoginFromToken());
+            user = userService.findByLogin(principal.getName());
             userDTOResponse = new UserDTOResponse(user.get());
         } else {
             user = userService.findById(id);
@@ -88,8 +88,10 @@ public class UserProfileController {
                             schema = @Schema(implementation = UserDTOResponse.class))})
     }
     )
-    @PutMapping("/profile")
-    public ResponseEntity<?> putProfile(@Valid @RequestBody UserPutRequest userPutRequest, BindingResult bindingResult) {
+    @PutMapping("/profile/edit")
+    public ResponseEntity<?> putProfile(@Valid @RequestBody UserPutRequest userPutRequest,
+                                        Principal principal,
+                                        BindingResult bindingResult) {
         ErrorListResponse response = new ErrorListResponse();
         if (bindingResult.hasErrors()) {
             bindingResult.getAllErrors().forEach(f -> response.getErrors()
@@ -100,8 +102,11 @@ public class UserProfileController {
             response.getErrors().add("passwordConfirm: Пароли не совпадают");
             return new ResponseEntity<>(response, HttpStatus.CONFLICT);
         }
-        Optional<User> user = userService.putUserInfo(userPutRequest);
+        Optional<User> user = userService.putUserInfo(userPutRequest, principal.getName());
         if (user.isPresent()) {
+            if(!userPutRequest.getNewPassword().equals(userPutRequest.getOldPassword())){
+                return ResponseEntity.ok(new UserDTOResponse(user.get()));
+            }
             return ResponseEntity.ok(new UserDTOResponse(user.get()));
         }
         response.getErrors().add("oldPassword: Старый пароль неверен");

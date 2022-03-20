@@ -50,16 +50,4 @@ public class JwtProvider {
         Claims claims = Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody();
         return claims.getSubject();
     }
-
-    public String getLoginFromToken() {
-        Claims claims = Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(getBearerTokenHeader()).getBody();
-        return claims.getSubject();
-    }
-
-    private static String getBearerTokenHeader() {
-        return ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes()))
-                .getRequest()
-                .getHeader("Authorization")
-                .substring(7);
-    }
 }

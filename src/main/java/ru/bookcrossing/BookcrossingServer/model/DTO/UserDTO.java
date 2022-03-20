@@ -4,7 +4,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.validation.annotation.Validated;
-import ru.bookcrossing.BookcrossingServer.entity.User;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;

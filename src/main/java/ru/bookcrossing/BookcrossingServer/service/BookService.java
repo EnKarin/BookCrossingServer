@@ -9,13 +9,13 @@ import java.util.Optional;
 
 public interface BookService {
 
-    void saveBook(BookDTO bookDTO);
+    void saveBook(BookDTO bookDTO, String login);
 
     void deleteBook(int id);
 
     List<Book> findByTitle(String title);
 
-    List<Book> findBookForOwner();
+    List<Book> findBookForOwner(String login);
 
     Optional<Book> findById(int id);
 
