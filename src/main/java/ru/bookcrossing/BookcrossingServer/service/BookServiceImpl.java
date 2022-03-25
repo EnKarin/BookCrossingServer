@@ -1,8 +1,10 @@
 package ru.bookcrossing.BookcrossingServer.service;
 
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeMap;
+import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.stereotype.Service;
-import ru.bookcrossing.BookcrossingServer.config.jwt.JwtProvider;
 import ru.bookcrossing.BookcrossingServer.entity.Book;
 import ru.bookcrossing.BookcrossingServer.model.DTO.BookDTO;
 import ru.bookcrossing.BookcrossingServer.model.request.BookFiltersRequest;
@@ -17,23 +19,14 @@ import java.util.stream.Collectors;
 @Service
 public class BookServiceImpl implements BookService{
 
-    private final JwtProvider jwtProvider;
-
     private final UserRepository userRepository;
-
     private final BookRepository bookRepository;
+    private final ModelMapper modelMapper;
+    private TypeMap<BookDTO, Book> bookDtoMapper = null;
 
     @Override
     public void saveBook(BookDTO bookDTO, String login) {
-        Book book = new Book();
-        book.setAuthor(bookDTO.getAuthor());
-        book.setGenre(bookDTO.getGenre());
-        book.setTitle(bookDTO.getTitle());
-        book.setPublishingHouse(bookDTO.getPublishingHouse());
-        book.setYear(bookDTO.getYear());
-
-        book.setOwner(userRepository.findByLogin(login));
-
+        Book book = convertToBook(bookDTO, login);
         bookRepository.save(book);
     }
 
@@ -86,5 +79,16 @@ public class BookServiceImpl implements BookService{
     @Override
     public List<Book> findByTitle(String t) {
        return bookRepository.findBooksByTitleIgnoreCase(t);
+    }
+
+    private Book convertToBook(BookDTO bookDTO, String login){
+        if(bookDtoMapper == null){
+            modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.LOOSE);
+            bookDtoMapper = modelMapper.createTypeMap(BookDTO.class, Book.class);
+            bookDtoMapper.addMappings(ms -> ms.skip(Book::setOwner));
+            }
+        Book book = modelMapper.map(bookDTO, Book.class);
+        book.setOwner(userRepository.findByLogin(login));
+        return book;
     }
 }

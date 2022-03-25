@@ -37,7 +37,7 @@ public class User implements UserDetails {
 
     private String city;
 
-    private boolean accountNonExpired;
+    private boolean accountNonLocked;
 
     @ManyToMany(cascade = {
             CascadeType.PERSIST,
@@ -82,16 +82,18 @@ public class User implements UserDetails {
     }
 
     @Override
+    @JsonIgnore
     public boolean isAccountNonExpired() {
         return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return accountNonLocked;
     }
 
     @Override
+    @JsonIgnore
     public boolean isCredentialsNonExpired() {
         return true;
     }
