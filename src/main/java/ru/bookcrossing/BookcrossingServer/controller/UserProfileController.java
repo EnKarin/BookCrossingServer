@@ -90,8 +90,8 @@ public class UserProfileController {
     )
     @PutMapping("/profile/edit")
     public ResponseEntity<?> putProfile(@Valid @RequestBody UserPutRequest userPutRequest,
-                                        Principal principal,
-                                        BindingResult bindingResult) {
+                                        BindingResult bindingResult,
+                                        Principal principal) {
         ErrorListResponse response = new ErrorListResponse();
         if (bindingResult.hasErrors()) {
             bindingResult.getAllErrors().forEach(f -> response.getErrors()
@@ -102,14 +102,21 @@ public class UserProfileController {
             response.getErrors().add("passwordConfirm: Пароли не совпадают");
             return new ResponseEntity<>(response, HttpStatus.CONFLICT);
         }
-        Optional<User> user = userService.putUserInfo(userPutRequest, principal.getName());
-        if (user.isPresent()) {
-            if(!userPutRequest.getNewPassword().equals(userPutRequest.getOldPassword())){
+        try {
+            Optional<User> user = userService.putUserInfo(userPutRequest, principal.getName());
+            if (user.isPresent()) {
+                if(!userPutRequest.getNewPassword().equals(userPutRequest.getOldPassword())){
+                    return ResponseEntity.ok(new UserDTOResponse(user.get()));
+                }
                 return ResponseEntity.ok(new UserDTOResponse(user.get()));
             }
-            return ResponseEntity.ok(new UserDTOResponse(user.get()));
+            else {
+                response.getErrors().add("oldPassword: Старый пароль неверен");
+                return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
+            }
+        }catch (IllegalArgumentException e){
+            response.getErrors().add("email: Пользователь с таким почтовым адресом уже существует");
+            return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
         }
-        response.getErrors().add("oldPassword: Старый пароль неверен");
-        return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
     }
 }

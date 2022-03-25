@@ -33,13 +33,16 @@ public class UserServiceImpl implements UserService {
     private TypeMap<UserDTO, User> userDtoMapper = null;
 
     @Override
-    public boolean saveUser(UserDTO userDTO){
+    public Optional<String> saveUser(UserDTO userDTO){
         if (userRepository.findByLogin(userDTO.getLogin()) != null) {
-            return false;
+            return Optional.of("login: Пользователь с таким логином уже существует");
+        }
+        if (userRepository.findByEmail(userDTO.getEmail()) != null) {
+            return Optional.of("email: Пользователь с таким почтовым адресом уже существует");
         }
         User user = convertToUser(userDTO);
         userRepository.save(user);
-        return true;
+        return Optional.empty();
     }
 
     @Transactional
@@ -79,14 +82,17 @@ public class UserServiceImpl implements UserService {
     public Optional<User> putUserInfo(UserPutRequest userPutRequest, String login){
         Optional<User> user = findByLogin(login);
         if (bCryptPasswordEncoder.matches(userPutRequest.getOldPassword(), user.get().getPassword())) {
-            user.get().setName(userPutRequest.getName());
-            user.get().setCity(userPutRequest.getCity());
-            user.get().setEmail(userPutRequest.getEmail());
-            user.get().setPassword(bCryptPasswordEncoder.encode(userPutRequest.getNewPassword()));
-            user = Optional.of(userRepository.save(user.get()));
+            User check = userRepository.findByEmail(userPutRequest.getEmail());
+            if(login.equals(check.getLogin())) {
+                user.get().setEmail(userPutRequest.getEmail());
+                user.get().setName(userPutRequest.getName());
+                user.get().setCity(userPutRequest.getCity());
+                user.get().setPassword(bCryptPasswordEncoder.encode(userPutRequest.getNewPassword()));
+                user = Optional.of(userRepository.save(user.get()));
+            }
+            else return Optional.empty();
             return user;
-        }
-        return Optional.empty();
+        } else throw  new IllegalArgumentException();
     }
 
     private User convertToUser(UserDTO userDTO){

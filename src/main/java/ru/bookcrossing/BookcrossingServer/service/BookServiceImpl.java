@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import ru.bookcrossing.BookcrossingServer.entity.Book;
 import ru.bookcrossing.BookcrossingServer.model.DTO.BookDTO;
 import ru.bookcrossing.BookcrossingServer.model.request.BookFiltersRequest;
+import ru.bookcrossing.BookcrossingServer.model.response.BookResponse;
 import ru.bookcrossing.BookcrossingServer.repository.BookRepository;
 import ru.bookcrossing.BookcrossingServer.repository.UserRepository;
 
@@ -25,9 +26,10 @@ public class BookServiceImpl implements BookService{
     private TypeMap<BookDTO, Book> bookDtoMapper = null;
 
     @Override
-    public void saveBook(BookDTO bookDTO, String login) {
+    public BookResponse saveBook(BookDTO bookDTO, String login) {
         Book book = convertToBook(bookDTO, login);
-        bookRepository.save(book);
+        book = bookRepository.save(book);
+        return new BookResponse(book);
     }
 
     @Override

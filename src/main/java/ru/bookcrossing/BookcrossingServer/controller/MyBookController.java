@@ -13,6 +13,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.bookcrossing.BookcrossingServer.model.DTO.BookDTO;
 import ru.bookcrossing.BookcrossingServer.model.response.BookListResponse;
+import ru.bookcrossing.BookcrossingServer.model.response.BookResponse;
 import ru.bookcrossing.BookcrossingServer.model.response.ErrorListResponse;
 import ru.bookcrossing.BookcrossingServer.service.BookService;
 
@@ -44,22 +45,21 @@ public class MyBookController {
             @ApiResponse(responseCode = "400", description = "Введены некорректные данные",
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = ErrorListResponse.class))}),
-            @ApiResponse(responseCode = "200", description = "Возвращает на стартовую страницу")}
+            @ApiResponse(responseCode = "200", description = "Возвращает сохраненную книгу",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = BookResponse.class))})}
     )
     @PostMapping("/save")
     public ResponseEntity<?> saveBook(@Valid @RequestBody BookDTO bookDTO,
-                                      Principal principal,
-                                      BindingResult bindingResult) {
+                                      BindingResult bindingResult,
+                                      Principal principal) {
         if (bindingResult.hasErrors()) {
             ErrorListResponse response = new ErrorListResponse();
             bindingResult.getAllErrors().forEach(f -> response.getErrors()
                     .add(Objects.requireNonNull(f.getDefaultMessage())));
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
-
-        bookService.saveBook(bookDTO, principal.getName());
-
-        return ResponseEntity.ok("redirect:/");
+        return ResponseEntity.ok(bookService.saveBook(bookDTO, principal.getName()));
     }
 
     @Operation(

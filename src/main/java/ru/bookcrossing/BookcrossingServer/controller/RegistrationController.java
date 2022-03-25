@@ -70,8 +70,9 @@ public class RegistrationController {
             errorListResponse.getErrors().add("passwordConfirm: Пароли не совпадают");
             return new ResponseEntity<>(errorListResponse, HttpStatus.CONFLICT);
         }
-        if (!userService.saveUser(userForm)) {
-            errorListResponse.getErrors().add("login: Пользователь с таким логином уже существует");
+        Optional<String> result = userService.saveUser(userForm);
+        if (result.isPresent()) {
+            errorListResponse.getErrors().add(result.get());
             return new ResponseEntity<>(errorListResponse, HttpStatus.NOT_ACCEPTABLE);
         }
 

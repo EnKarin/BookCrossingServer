@@ -2,17 +2,14 @@ package ru.bookcrossing.BookcrossingServer.model.DTO;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.validation.annotation.Validated;
-import ru.bookcrossing.BookcrossingServer.entity.Book;
 
 import javax.validation.constraints.NotBlank;
 
 @Validated
 @Getter
 @Setter
-@NoArgsConstructor
 @Schema(description = "Сущность книги")
 public class BookDTO {
 

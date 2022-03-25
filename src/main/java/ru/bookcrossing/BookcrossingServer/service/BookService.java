@@ -3,13 +3,14 @@ package ru.bookcrossing.BookcrossingServer.service;
 import ru.bookcrossing.BookcrossingServer.entity.Book;
 import ru.bookcrossing.BookcrossingServer.model.DTO.BookDTO;
 import ru.bookcrossing.BookcrossingServer.model.request.BookFiltersRequest;
+import ru.bookcrossing.BookcrossingServer.model.response.BookResponse;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface BookService {
 
-    void saveBook(BookDTO bookDTO, String login);
+    BookResponse saveBook(BookDTO bookDTO, String login);
 
     void deleteBook(int id);
 
