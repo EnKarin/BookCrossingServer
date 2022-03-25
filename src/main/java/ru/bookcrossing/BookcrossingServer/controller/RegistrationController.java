@@ -99,17 +99,21 @@ public class RegistrationController {
     @PostMapping("/auth")
     public ResponseEntity<?> auth(@RequestBody LoginRequest request) {
         Optional<User> userEntity = userService.findByLoginAndPassword(request);
+        ErrorListResponse response = new ErrorListResponse();
         if (userEntity.isEmpty()) {
-            ErrorListResponse response = new ErrorListResponse();
             response.getErrors().add("account: Некорректный логин или пароль");
             return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
         }
-
-        AuthResponse authResponse = new AuthResponse();
-        authResponse.setAccessToken(jwtProvider.generateToken(request.getLogin()));
-        authResponse.setRefreshToken(refreshService.createToken(request.getLogin()));
-
-        return ResponseEntity.ok(authResponse);
+        if(userEntity.get().isAccountNonLocked()) {
+            AuthResponse authResponse = new AuthResponse();
+            authResponse.setAccessToken(jwtProvider.generateToken(request.getLogin()));
+            authResponse.setRefreshToken(refreshService.createToken(request.getLogin()));
+            return ResponseEntity.ok(authResponse);
+        }
+        else {
+            response.getErrors().add("account: Аккаунт заблокирован");
+            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+        }
     }
 
     @Operation(

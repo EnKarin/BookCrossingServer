@@ -11,7 +11,9 @@ import java.util.Optional;
 public interface UserService {
     Optional<String> saveUser(UserDTO user);
 
-    void deleteUser(String login);
+    boolean lockedUser(String login);
+
+    boolean nonLockedUser(String login);
 
     Optional<User> findByLogin(String login);
 

@@ -16,7 +16,6 @@ import ru.bookcrossing.BookcrossingServer.repository.BookRepository;
 import ru.bookcrossing.BookcrossingServer.repository.RoleRepository;
 import ru.bookcrossing.BookcrossingServer.repository.UserRepository;
 
-import javax.transaction.Transactional;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -45,12 +44,26 @@ public class UserServiceImpl implements UserService {
         return Optional.empty();
     }
 
-    @Transactional
     @Override
-    public void deleteUser(String login) {
-        User user = userRepository.findByLogin(login);
-        bookRepository.deleteByOwner(user);
-        userRepository.deleteByLogin(login);
+    public boolean lockedUser(String login) {
+        Optional<User> user = Optional.ofNullable(userRepository.findByLogin(login));
+        if(user.isPresent()) {
+            user.get().setAccountNonLocked(false);
+            userRepository.save(user.get());
+            return true;
+        }
+        else return false;
+    }
+
+    @Override
+    public boolean nonLockedUser(String login) {
+        Optional<User> user = Optional.ofNullable(userRepository.findByLogin(login));
+        if(user.isPresent()) {
+            user.get().setAccountNonLocked(true);
+            userRepository.save(user.get());
+            return true;
+        }
+        else return false;
     }
 
     @Override
@@ -71,8 +84,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Optional<User> findByLoginAndPassword(LoginRequest login) throws UsernameNotFoundException {
-        Optional<User> user = Optional.of(userRepository.findByLogin(login.getLogin()));
-        if(bCryptPasswordEncoder.matches(login.getPassword(), user.get().getPassword())){
+        Optional<User> user = Optional.ofNullable(userRepository.findByLogin(login.getLogin()));
+        if(user.isPresent() && bCryptPasswordEncoder.matches(login.getPassword(), user.get().getPassword())){
             return user;
         }
         return Optional.empty();

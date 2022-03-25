@@ -34,7 +34,8 @@ public class BookServiceImpl implements BookService{
 
     @Override
     public List<Book> findBookForOwner(String login) {
-        return bookRepository.findBooksByOwner(userRepository.findByLogin(login));
+        List<Book> books = bookRepository.findBooksByOwner(userRepository.findByLogin(login));
+        return books.stream().filter(b -> b.getOwner().isAccountNonLocked()).collect(Collectors.toList());
     }
 
     @Override
@@ -63,12 +64,14 @@ public class BookServiceImpl implements BookService{
         if(request.getCity() != null)
             books = books.stream().filter(book -> book.getOwner().getCity().equals(request.getCity()))
                     .collect(Collectors.toList());
-        return books;
+        return books.stream().filter(b -> b.getOwner().isAccountNonLocked()).collect(Collectors.toList());
     }
 
     @Override
     public List<Book> findAll() {
-        return bookRepository.findAll();
+        return bookRepository.findAll().stream()
+                .filter(b -> b.getOwner().isAccountNonLocked())
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -80,7 +83,9 @@ public class BookServiceImpl implements BookService{
 
     @Override
     public List<Book> findByTitle(String t) {
-       return bookRepository.findBooksByTitleIgnoreCase(t);
+       return bookRepository.findBooksByTitleIgnoreCase(t).stream()
+               .filter(b -> b.getOwner().isAccountNonLocked())
+               .collect(Collectors.toList());
     }
 
     private Book convertToBook(BookDTO bookDTO, String login){

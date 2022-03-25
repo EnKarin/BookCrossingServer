@@ -7,10 +7,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.bookcrossing.BookcrossingServer.model.response.AdmUserListResponse;
+import ru.bookcrossing.BookcrossingServer.model.response.ErrorListResponse;
 import ru.bookcrossing.BookcrossingServer.service.UserService;
 
 @Tag(
@@ -42,16 +43,47 @@ public class AdminController {
     }
 
     @Operation(
-            summary = "Удаление пользователя",
-            description = "Позволяет удалить пользователя по его логину"
+            summary = "Блокирование пользователя",
+            description = "Позволяет заблокировать пользователя по его логину"
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Возвращает на стартовую страницу")
+            @ApiResponse(responseCode = "200", description = "Возвращает на стартовую страницу"),
+            @ApiResponse(responseCode = "403", description = "Пользователя с таким логином не существует",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorListResponse.class))})
     }
     )
-    @PostMapping("/delete")
-    public ResponseEntity<?> deleteUser(@RequestParam String login) {
-        userService.deleteUser(login);
-        return ResponseEntity.ok("redirect:/");
+    @PostMapping("/locked")
+    public ResponseEntity<?> lockedUser(@RequestParam String login) {
+        if(userService.lockedUser(login)){
+            return ResponseEntity.ok("redirect:/");
+        }
+        else{
+            ErrorListResponse response = new ErrorListResponse();
+            response.getErrors().add("login: Некорректный логин пользователя");
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @Operation(
+            summary = "Разблокировка пользователя",
+            description = "Позволяет разблокировать пользователя по его логину"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Возвращает на стартовую страницу"),
+            @ApiResponse(responseCode = "403", description = "Пользователя с таким логином не существует",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorListResponse.class))})
+    })
+    @PostMapping("/nonLocked")
+    public ResponseEntity<?> nonLockedUser(@RequestParam String login) {
+        if(userService.nonLockedUser(login)){
+            return ResponseEntity.ok("redirect:/");
+        }
+        else{
+            ErrorListResponse response = new ErrorListResponse();
+            response.getErrors().add("login: Некорректный логин пользователя");
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
     }
 }
