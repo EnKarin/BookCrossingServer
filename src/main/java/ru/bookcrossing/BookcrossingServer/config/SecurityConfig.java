@@ -10,6 +10,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import ru.bookcrossing.BookcrossingServer.config.jwt.JwtFilter;
+import ru.bookcrossing.BookcrossingServer.exception.AuthenticationEntryPointHandler;
 
 @Configuration
 @EnableWebSecurity
@@ -46,6 +47,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/adm/**").hasRole("ADMIN")
                 .antMatchers("/user/**").hasRole("USER")
+                .antMatchers("/books/**").permitAll()
                 .antMatchers("/register", "/auth", "/refresh").permitAll()
                 .and()
                 .exceptionHandling().authenticationEntryPoint(handler)

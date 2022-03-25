@@ -37,6 +37,8 @@ public class User implements UserDetails {
 
     private String city;
 
+    private boolean accountNonExpired;
+
     @ManyToMany(cascade = {
             CascadeType.PERSIST,
             CascadeType.REFRESH,

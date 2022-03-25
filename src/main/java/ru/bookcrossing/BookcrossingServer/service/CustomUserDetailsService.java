@@ -1,11 +1,10 @@
-package ru.bookcrossing.BookcrossingServer.config;
+package ru.bookcrossing.BookcrossingServer.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import ru.bookcrossing.BookcrossingServer.entity.User;
-import ru.bookcrossing.BookcrossingServer.service.UserService;
 
 @Component
 public class CustomUserDetailsService implements UserDetailsService {

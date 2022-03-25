@@ -25,7 +25,7 @@ import java.util.Optional;
 )
 
 @RestController
-@RequestMapping("/user/books")
+@RequestMapping("/books")
 public class BookController {
 
     private BookService bookService;
