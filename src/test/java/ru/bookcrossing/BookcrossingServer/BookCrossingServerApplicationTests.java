@@ -8,8 +8,8 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.junit4.SpringRunner;
-import ru.bookcrossing.BookcrossingServer.user.model.User;
-import ru.bookcrossing.BookcrossingServer.user.repository.UserRepository;
+import ru.bookcrossing.BookcrossingServer.entity.User;
+import ru.bookcrossing.BookcrossingServer.repository.UserRepository;
 
 import javax.persistence.EntityManager;
 import javax.validation.ConstraintViolationException;
