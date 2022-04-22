@@ -2,7 +2,6 @@ package ru.bookcrossing.BookcrossingServer.user.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.Hibernate;
@@ -18,13 +17,11 @@ import java.util.Set;
 @Entity
 @Getter
 @Setter
-@ToString
-@RequiredArgsConstructor
 @Table(name = "t_user")
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int user_id;
+    private int userId;
 
     private String name;
 
@@ -39,6 +36,8 @@ public class User implements UserDetails {
     private String city;
 
     private boolean accountNonLocked;
+
+    private boolean enabled;
 
     @ManyToMany(cascade = {
             CascadeType.PERSIST,
@@ -63,7 +62,7 @@ public class User implements UserDetails {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
         User user = (User) o;
-        return Objects.equals(user_id, user.user_id);
+        return Objects.equals(userId, user.userId);
     }
 
     @Override
@@ -101,6 +100,6 @@ public class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return enabled;
     }
 }

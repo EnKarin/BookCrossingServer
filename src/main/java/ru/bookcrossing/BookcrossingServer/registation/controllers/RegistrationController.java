@@ -10,10 +10,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.bookcrossing.BookcrossingServer.errors.ErrorListResponse;
+import ru.bookcrossing.BookcrossingServer.exception.EmailFailedException;
+import ru.bookcrossing.BookcrossingServer.exception.LoginFailedException;
 import ru.bookcrossing.BookcrossingServer.mail.service.MailService;
 import ru.bookcrossing.BookcrossingServer.refresh.request.RefreshRequest;
 import ru.bookcrossing.BookcrossingServer.refresh.service.RefreshService;
@@ -72,15 +72,15 @@ public class RegistrationController {
             errorListResponse.getErrors().add("passwordConfirm: Пароли не совпадают");
             return new ResponseEntity<>(errorListResponse, HttpStatus.CONFLICT);
         }
-        Optional<String> result = userService.saveUser(userForm);
-        if (result.isPresent()) {
-            errorListResponse.getErrors().add(result.get());
+        try {
+            User result = userService.saveUser(userForm);
+            mailService.sendMail(result);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        catch (LoginFailedException | EmailFailedException failedException){
+            errorListResponse.getErrors().add(failedException.getMessage());
             return new ResponseEntity<>(errorListResponse, HttpStatus.NOT_ACCEPTABLE);
         }
-
-        mailService.sendMail(userForm.getEmail());
-
-        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @Operation(
@@ -104,13 +104,21 @@ public class RegistrationController {
             response.getErrors().add("account: Некорректный логин или пароль");
             return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
         }
-        if(userEntity.get().isAccountNonLocked()) {
-            AuthResponse authResponse = new AuthResponse();
-            authResponse.setAccessToken(jwtProvider.generateToken(request.getLogin()));
-            authResponse.setRefreshToken(refreshService.createToken(request.getLogin()));
-            return ResponseEntity.ok(authResponse);
+        boolean t = userEntity.get().isEnabled();
+        if(userEntity.get().isEnabled()) {
+            if (userEntity.get().isAccountNonLocked()) {
+                AuthResponse authResponse = new AuthResponse();
+                authResponse.setAccessToken(jwtProvider.generateToken(request.getLogin()));
+                authResponse.setRefreshToken(refreshService.createToken(request.getLogin()));
+                return ResponseEntity.ok(authResponse);
+            }
+            else {
+                response.getErrors().add("account: Аккаунт заблокирован");
+                return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+            }
         }
-        else {            response.getErrors().add("account: Аккаунт заблокирован");
+        else {
+            response.getErrors().add("account: Аккаунт не подтвержден");
             return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
         }
     }
@@ -141,5 +149,13 @@ public class RegistrationController {
         ErrorListResponse response = new ErrorListResponse();
         response.getErrors().add("refresh: Неверный или истекший токен");
         return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
+    }
+
+    @GetMapping("/registration/confirmation")
+    public ResponseEntity<?> mailConfirm(@RequestParam String token){
+        if(userService.confirmMail(token)){
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        else return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 }

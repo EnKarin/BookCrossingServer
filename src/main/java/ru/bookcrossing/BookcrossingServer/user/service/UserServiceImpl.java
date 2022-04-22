@@ -7,6 +7,10 @@ import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import ru.bookcrossing.BookcrossingServer.exception.EmailFailedException;
+import ru.bookcrossing.BookcrossingServer.exception.LoginFailedException;
+import ru.bookcrossing.BookcrossingServer.mail.model.ConfirmationMailUser;
+import ru.bookcrossing.BookcrossingServer.mail.repository.ConfirmationMailUserRepository;
 import ru.bookcrossing.BookcrossingServer.registation.request.LoginRequest;
 import ru.bookcrossing.BookcrossingServer.user.dto.UserDTO;
 import ru.bookcrossing.BookcrossingServer.user.model.Role;
@@ -24,22 +28,33 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final ConfirmationMailUserRepository confirmationMailUserRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final ModelMapper modelMapper;
     private TypeMap<UserDTO, User> userDtoMapper = null;
 
     @Override
-    public Optional<String> saveUser(UserDTO userDTO){
-        User user2  = userRepository.findByLogin(userDTO.getLogin());
-        if (user2 != null) {
-            return Optional.of("login: Пользователь с таким логином уже существует");
+    public User saveUser(UserDTO userDTO){
+        if (userRepository.findByLogin(userDTO.getLogin()) != null) {
+            throw new LoginFailedException();
         }
         if (userRepository.findByEmail(userDTO.getEmail()) != null) {
-            return Optional.of("email: Пользователь с таким почтовым адресом уже существует");
+            throw new EmailFailedException();
         }
         User user = convertToUser(userDTO);
-        userRepository.save(user);
-        return Optional.empty();
+        return userRepository.save(user);
+    }
+
+    @Override
+    public boolean confirmMail(String token){
+        Optional<ConfirmationMailUser> confirmationMailUser = confirmationMailUserRepository.findById(token);
+        if(confirmationMailUser.isPresent()){
+            User user = confirmationMailUser.get().getUser();
+            user.setEnabled(true);
+            confirmationMailUserRepository.delete(confirmationMailUser.get());
+            return true;
+        }
+        else return false;
     }
 
     @Override
@@ -114,11 +129,13 @@ public class UserServiceImpl implements UserService {
                 ms.skip(User::setUserRoles);
                 ms.skip(User::setAccountNonLocked);
                 ms.skip(User::setPassword);
+                ms.skip(User::setEnabled);
             });
         }
         User user = modelMapper.map(userDTO, User.class);
         user.setUserRoles(Collections.singleton(roleRepository.getById(1)));
         user.setAccountNonLocked(true);
+        user.setEnabled(false);
         user.setPassword(bCryptPasswordEncoder.encode(userDTO.getPassword()));
         return user;
     }
