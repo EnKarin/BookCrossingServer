@@ -151,6 +151,15 @@ public class RegistrationController {
         return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
     }
 
+    @Operation(
+            summary = "Подтвержение почты",
+            description = "Изменяет стату аккаунта"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "400", description = "Токена не существует"),
+            @ApiResponse(responseCode = "200", description = "Подтверждает почту для аккаунта")
+    }
+    )
     @GetMapping("/registration/confirmation")
     public ResponseEntity<?> mailConfirm(@RequestParam String token){
         if(userService.confirmMail(token)){
