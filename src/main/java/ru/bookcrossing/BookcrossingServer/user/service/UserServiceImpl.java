@@ -34,7 +34,7 @@ public class UserServiceImpl implements UserService {
     private TypeMap<UserDto, User> userDtoMapper = null;
 
     @Override
-    public User saveUser(UserDto userDTO){
+    public User saveUser(UserDto userDTO) {
         if (userRepository.findByLogin(userDTO.getLogin()) != null) {
             throw new LoginFailedException();
         }
@@ -46,37 +46,34 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean confirmMail(String token){
+    public boolean confirmMail(String token) {
         Optional<ConfirmationMailUser> confirmationMailUser = confirmationMailUserRepository.findById(token);
-        if(confirmationMailUser.isPresent()){
+        if (confirmationMailUser.isPresent()) {
             User user = confirmationMailUser.get().getUser();
             user.setEnabled(true);
             confirmationMailUserRepository.delete(confirmationMailUser.get());
             return true;
-        }
-        else return false;
+        } else return false;
     }
 
     @Override
     public boolean lockedUser(String login) {
         Optional<User> user = Optional.ofNullable(userRepository.findByLogin(login));
-        if(user.isPresent()) {
+        if (user.isPresent()) {
             user.get().setAccountNonLocked(false);
             userRepository.save(user.get());
             return true;
-        }
-        else return false;
+        } else return false;
     }
 
     @Override
     public boolean nonLockedUser(String login) {
         Optional<User> user = Optional.ofNullable(userRepository.findByLogin(login));
-        if(user.isPresent()) {
+        if (user.isPresent()) {
             user.get().setAccountNonLocked(true);
             userRepository.save(user.get());
             return true;
-        }
-        else return false;
+        } else return false;
     }
 
     @Override
@@ -98,31 +95,27 @@ public class UserServiceImpl implements UserService {
     @Override
     public Optional<User> findByLoginAndPassword(LoginRequest login) throws UsernameNotFoundException {
         Optional<User> user = Optional.ofNullable(userRepository.findByLogin(login.getLogin()));
-        if(user.isPresent() && bCryptPasswordEncoder.matches(login.getPassword(), user.get().getPassword())){
+        if (user.isPresent() && bCryptPasswordEncoder.matches(login.getPassword(), user.get().getPassword())) {
             return user;
         }
         return Optional.empty();
     }
 
     @Override
-    public Optional<User> putUserInfo(UserPutRequest userPutRequest, String login){
+    public Optional<User> putUserInfo(UserPutRequest userPutRequest, String login) {
         Optional<User> user = findByLogin(login);
-        if (bCryptPasswordEncoder.matches(userPutRequest.getOldPassword(), user.get().getPassword())) {
-            User check = userRepository.findByEmail(userPutRequest.getEmail());
-            if(login.equals(check.getLogin())) {
-                user.get().setEmail(userPutRequest.getEmail());
-                user.get().setName(userPutRequest.getName());
-                user.get().setCity(userPutRequest.getCity());
-                user.get().setPassword(bCryptPasswordEncoder.encode(userPutRequest.getNewPassword()));
-                user = Optional.of(userRepository.save(user.get()));
-            }
-            else return Optional.empty();
+        if (user.isPresent()) {
+            user.get().setName(userPutRequest.getName());
+            user.get().setCity(userPutRequest.getCity());
+            user = Optional.of(userRepository.save(user.get()));
             return user;
-        } else throw  new IllegalArgumentException();
+        }
+        return Optional.empty();
     }
 
-    private User convertToUser(UserDto userDTO){
-        if(userDtoMapper == null){
+
+    private User convertToUser(UserDto userDTO) {
+        if (userDtoMapper == null) {
             modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.LOOSE);
             userDtoMapper = modelMapper.createTypeMap(UserDto.class, User.class);
             userDtoMapper.addMappings(ms -> {

@@ -21,6 +21,7 @@ public class UserDTOResponse {
     private String city;
 
     public UserDTOResponse(User user){
+        userId = user.getUserId();
         name = user.getName();
         email = user.getEmail();
         city = user.getCity();

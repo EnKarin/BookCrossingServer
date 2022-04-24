@@ -74,13 +74,7 @@ public class UserProfileController {
             description = "Возвращает обновленный профиль"
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "409", description = "Пароли не совпадают",
-                    content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = ErrorListResponse.class))}),
-            @ApiResponse(responseCode = "403", description = "Введен неверный старый пароль",
-                    content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = ErrorListResponse.class))}),
-            @ApiResponse(responseCode = "400", description = "Введены неверные данные",
+            @ApiResponse(responseCode = "400", description = "Пользователь не найден",
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = ErrorListResponse.class))}),
             @ApiResponse(responseCode = "200", description = "Возвращает обновленный профиль пользователя",
@@ -98,25 +92,12 @@ public class UserProfileController {
                     .add(Objects.requireNonNull(f.getDefaultMessage())));
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
-        if (!userPutRequest.getNewPassword().equals(userPutRequest.getPasswordConfirm())) {
-            response.getErrors().add("passwordConfirm: Пароли не совпадают");
-            return new ResponseEntity<>(response, HttpStatus.CONFLICT);
+        Optional<User> user = userService.putUserInfo(userPutRequest, principal.getName());
+        if (user.isPresent()) {
+            return ResponseEntity.ok(new UserDTOResponse(user.get()));
         }
-        try {
-            Optional<User> user = userService.putUserInfo(userPutRequest, principal.getName());
-            if (user.isPresent()) {
-                if(!userPutRequest.getNewPassword().equals(userPutRequest.getOldPassword())){
-                    return ResponseEntity.ok(new UserDTOResponse(user.get()));
-                }
-                return ResponseEntity.ok(new UserDTOResponse(user.get()));
-            }
-            else {
-                response.getErrors().add("oldPassword: Старый пароль неверен");
-                return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
-            }
-        }catch (IllegalArgumentException e){
-            response.getErrors().add("email: Пользователь с таким почтовым адресом уже существует");
-            return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
-        }
+        response.getErrors().add("user: Пользователь не найден");
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 }
+
