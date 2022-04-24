@@ -2,8 +2,8 @@ package ru.bookcrossing.BookcrossingServer.user.service;
 
 import ru.bookcrossing.BookcrossingServer.registation.request.LoginRequest;
 import ru.bookcrossing.BookcrossingServer.user.dto.UserDto;
+import ru.bookcrossing.BookcrossingServer.user.dto.UserPutRequest;
 import ru.bookcrossing.BookcrossingServer.user.model.User;
-import ru.bookcrossing.BookcrossingServer.user.request.UserPutRequest;
 
 import java.util.List;
 import java.util.Optional;

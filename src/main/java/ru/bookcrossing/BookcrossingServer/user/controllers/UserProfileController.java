@@ -13,9 +13,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.bookcrossing.BookcrossingServer.errors.ErrorListResponse;
+import ru.bookcrossing.BookcrossingServer.user.dto.UserDTOResponse;
+import ru.bookcrossing.BookcrossingServer.user.dto.UserPutRequest;
 import ru.bookcrossing.BookcrossingServer.user.model.User;
-import ru.bookcrossing.BookcrossingServer.user.request.UserPutRequest;
-import ru.bookcrossing.BookcrossingServer.user.response.UserDTOResponse;
 import ru.bookcrossing.BookcrossingServer.user.service.UserService;
 
 import javax.validation.Valid;

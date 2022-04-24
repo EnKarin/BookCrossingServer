@@ -13,11 +13,11 @@ import ru.bookcrossing.BookcrossingServer.mail.model.ConfirmationMailUser;
 import ru.bookcrossing.BookcrossingServer.mail.repository.ConfirmationMailUserRepository;
 import ru.bookcrossing.BookcrossingServer.registation.request.LoginRequest;
 import ru.bookcrossing.BookcrossingServer.user.dto.UserDto;
+import ru.bookcrossing.BookcrossingServer.user.dto.UserPutRequest;
 import ru.bookcrossing.BookcrossingServer.user.model.Role;
 import ru.bookcrossing.BookcrossingServer.user.model.User;
 import ru.bookcrossing.BookcrossingServer.user.repository.RoleRepository;
 import ru.bookcrossing.BookcrossingServer.user.repository.UserRepository;
-import ru.bookcrossing.BookcrossingServer.user.request.UserPutRequest;
 
 import java.util.Collections;
 import java.util.List;

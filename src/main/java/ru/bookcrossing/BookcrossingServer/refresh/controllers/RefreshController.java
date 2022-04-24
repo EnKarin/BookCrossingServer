@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import ru.bookcrossing.BookcrossingServer.errors.ErrorListResponse;
-import ru.bookcrossing.BookcrossingServer.refresh.request.RefreshRequest;
+import ru.bookcrossing.BookcrossingServer.refresh.dto.RefreshRequest;
 import ru.bookcrossing.BookcrossingServer.refresh.service.RefreshService;
 import ru.bookcrossing.BookcrossingServer.registation.response.AuthResponse;
 import ru.bookcrossing.BookcrossingServer.security.jwt.JwtProvider;

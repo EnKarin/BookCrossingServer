@@ -10,10 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.bookcrossing.BookcrossingServer.books.dto.BookFiltersRequest;
+import ru.bookcrossing.BookcrossingServer.books.dto.BookListResponse;
+import ru.bookcrossing.BookcrossingServer.books.dto.BookResponse;
 import ru.bookcrossing.BookcrossingServer.books.model.Book;
-import ru.bookcrossing.BookcrossingServer.books.request.BookFiltersRequest;
-import ru.bookcrossing.BookcrossingServer.books.response.BookListResponse;
-import ru.bookcrossing.BookcrossingServer.books.response.BookResponse;
 import ru.bookcrossing.BookcrossingServer.books.service.BookService;
 import ru.bookcrossing.BookcrossingServer.errors.ErrorListResponse;
 

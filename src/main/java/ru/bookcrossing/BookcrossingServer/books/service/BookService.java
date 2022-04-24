@@ -1,9 +1,9 @@
 package ru.bookcrossing.BookcrossingServer.books.service;
 
 import ru.bookcrossing.BookcrossingServer.books.dto.BookDto;
+import ru.bookcrossing.BookcrossingServer.books.dto.BookFiltersRequest;
+import ru.bookcrossing.BookcrossingServer.books.dto.BookResponse;
 import ru.bookcrossing.BookcrossingServer.books.model.Book;
-import ru.bookcrossing.BookcrossingServer.books.request.BookFiltersRequest;
-import ru.bookcrossing.BookcrossingServer.books.response.BookResponse;
 
 import java.util.List;
 import java.util.Optional;

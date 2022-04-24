@@ -1,4 +1,4 @@
-package ru.bookcrossing.BookcrossingServer.refresh.request;
+package ru.bookcrossing.BookcrossingServer.refresh.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;

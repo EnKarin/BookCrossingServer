@@ -6,10 +6,10 @@ import org.modelmapper.TypeMap;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.stereotype.Service;
 import ru.bookcrossing.BookcrossingServer.books.dto.BookDto;
+import ru.bookcrossing.BookcrossingServer.books.dto.BookFiltersRequest;
+import ru.bookcrossing.BookcrossingServer.books.dto.BookResponse;
 import ru.bookcrossing.BookcrossingServer.books.model.Book;
 import ru.bookcrossing.BookcrossingServer.books.repository.BookRepository;
-import ru.bookcrossing.BookcrossingServer.books.request.BookFiltersRequest;
-import ru.bookcrossing.BookcrossingServer.books.response.BookResponse;
 import ru.bookcrossing.BookcrossingServer.user.repository.UserRepository;
 
 import java.util.List;

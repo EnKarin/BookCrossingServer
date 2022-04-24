@@ -10,7 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.bookcrossing.BookcrossingServer.admin.response.AdmUserListResponse;
+import ru.bookcrossing.BookcrossingServer.admin.dto.AdmUserListResponse;
 import ru.bookcrossing.BookcrossingServer.errors.ErrorListResponse;
 import ru.bookcrossing.BookcrossingServer.user.service.UserService;
 

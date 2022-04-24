@@ -1,4 +1,4 @@
-package ru.bookcrossing.BookcrossingServer.admin.response;
+package ru.bookcrossing.BookcrossingServer.admin.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
