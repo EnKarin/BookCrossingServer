@@ -1,4 +1,4 @@
-package ru.bookcrossing.BookcrossingServer.registation.jwt;
+package ru.bookcrossing.BookcrossingServer.security.jwt;
 
 import lombok.extern.java.Log;
 import org.springframework.beans.factory.annotation.Autowired;

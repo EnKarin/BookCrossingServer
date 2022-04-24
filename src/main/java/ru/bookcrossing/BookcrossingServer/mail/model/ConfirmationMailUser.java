@@ -4,14 +4,12 @@ import lombok.Getter;
 import lombok.Setter;
 import ru.bookcrossing.BookcrossingServer.user.model.User;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 
 @Entity
 @Getter
 @Setter
+@Table(name = "confirmation_mail_user")
 public class ConfirmationMailUser {
 
     @Id

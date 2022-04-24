@@ -15,11 +15,10 @@ import ru.bookcrossing.BookcrossingServer.errors.ErrorListResponse;
 import ru.bookcrossing.BookcrossingServer.exception.EmailFailedException;
 import ru.bookcrossing.BookcrossingServer.exception.LoginFailedException;
 import ru.bookcrossing.BookcrossingServer.mail.service.MailService;
-import ru.bookcrossing.BookcrossingServer.refresh.request.RefreshRequest;
 import ru.bookcrossing.BookcrossingServer.refresh.service.RefreshService;
-import ru.bookcrossing.BookcrossingServer.registation.jwt.JwtProvider;
 import ru.bookcrossing.BookcrossingServer.registation.request.LoginRequest;
 import ru.bookcrossing.BookcrossingServer.registation.response.AuthResponse;
+import ru.bookcrossing.BookcrossingServer.security.jwt.JwtProvider;
 import ru.bookcrossing.BookcrossingServer.user.dto.UserDTO;
 import ru.bookcrossing.BookcrossingServer.user.model.User;
 import ru.bookcrossing.BookcrossingServer.user.service.UserService;
@@ -29,7 +28,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Tag(
-        name = "Регистрация и аутентификация пользователей",
+        name = "Регистрация и авторизация пользователей",
         description = "Позволяет регистрироваться новым пользователям и выдает токен при аутентификации"
 )
 @RestController
@@ -84,7 +83,7 @@ public class RegistrationController {
     }
 
     @Operation(
-            summary = "Аутентификация пользователя",
+            summary = "Авторизация пользователя",
             description = "Выдает токены, если пользователь с таким логином существует и пароль корректен"
     )
     @ApiResponses(value = {
@@ -104,7 +103,6 @@ public class RegistrationController {
             response.getErrors().add("account: Некорректный логин или пароль");
             return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
         }
-        boolean t = userEntity.get().isEnabled();
         if(userEntity.get().isEnabled()) {
             if (userEntity.get().isAccountNonLocked()) {
                 AuthResponse authResponse = new AuthResponse();
@@ -121,34 +119,6 @@ public class RegistrationController {
             response.getErrors().add("account: Аккаунт не подтвержден");
             return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
         }
-    }
-
-    @Operation(
-            summary = "Обновление токенов",
-            description = "Выдает токены, если refresh корректен"
-    )
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "403", description = "Токена не существует или истек срок его действия",
-                    content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = ErrorListResponse.class))}),
-            @ApiResponse(responseCode = "200", description = "Возвращает токены",
-                    content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = AuthResponse.class))}
-            )}
-    )
-    @PostMapping("/refresh")
-    public ResponseEntity<?> refresh(@RequestBody RefreshRequest request) {
-        Optional<String> login = refreshService.findByToken(request.getRefresh());
-        if (login.isPresent()) {
-            AuthResponse authResponse = new AuthResponse();
-            authResponse.setAccessToken(jwtProvider.generateToken(login.get()));
-            authResponse.setRefreshToken(refreshService.createToken(login.get()));
-
-            return ResponseEntity.ok(authResponse);
-        }
-        ErrorListResponse response = new ErrorListResponse();
-        response.getErrors().add("refresh: Неверный или истекший токен");
-        return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
     }
 
     @Operation(

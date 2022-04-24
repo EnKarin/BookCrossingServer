@@ -1,4 +1,4 @@
-package ru.bookcrossing.BookcrossingServer.registation.jwt;
+package ru.bookcrossing.BookcrossingServer.security.jwt;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;

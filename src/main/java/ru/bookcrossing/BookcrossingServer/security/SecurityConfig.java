@@ -1,4 +1,4 @@
-package ru.bookcrossing.BookcrossingServer.registation;
+package ru.bookcrossing.BookcrossingServer.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -10,7 +10,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import ru.bookcrossing.BookcrossingServer.handlers.AuthenticationEntryPointHandler;
-import ru.bookcrossing.BookcrossingServer.registation.jwt.JwtFilter;
+import ru.bookcrossing.BookcrossingServer.security.jwt.JwtFilter;
 
 @Configuration
 @EnableWebSecurity

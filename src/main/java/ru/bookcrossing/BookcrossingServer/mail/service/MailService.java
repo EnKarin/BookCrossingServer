@@ -34,6 +34,6 @@ public class MailService {
         message.setText("Перейдите по ссылке, чтобы подтвердить создание аккаунта: "
                 + String.format("https://localhost:%s/registration/confirmation?token=%s", port, token));
 
-        this.emailSender.send(message);
+        emailSender.send(message);
     }
 }
