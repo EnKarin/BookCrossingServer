@@ -36,4 +36,8 @@ public class Book {
     @ToString.Exclude
     @JsonIgnore
     private User owner;
+
+    @OneToOne
+    @JoinColumn(name = "attachId")
+    private Attachment attachment;
 }

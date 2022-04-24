@@ -12,7 +12,7 @@ import ru.bookcrossing.BookcrossingServer.exception.LoginFailedException;
 import ru.bookcrossing.BookcrossingServer.mail.model.ConfirmationMailUser;
 import ru.bookcrossing.BookcrossingServer.mail.repository.ConfirmationMailUserRepository;
 import ru.bookcrossing.BookcrossingServer.registation.request.LoginRequest;
-import ru.bookcrossing.BookcrossingServer.user.dto.UserDTO;
+import ru.bookcrossing.BookcrossingServer.user.dto.UserDto;
 import ru.bookcrossing.BookcrossingServer.user.model.Role;
 import ru.bookcrossing.BookcrossingServer.user.model.User;
 import ru.bookcrossing.BookcrossingServer.user.repository.RoleRepository;
@@ -31,10 +31,10 @@ public class UserServiceImpl implements UserService {
     private final ConfirmationMailUserRepository confirmationMailUserRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final ModelMapper modelMapper;
-    private TypeMap<UserDTO, User> userDtoMapper = null;
+    private TypeMap<UserDto, User> userDtoMapper = null;
 
     @Override
-    public User saveUser(UserDTO userDTO){
+    public User saveUser(UserDto userDTO){
         if (userRepository.findByLogin(userDTO.getLogin()) != null) {
             throw new LoginFailedException();
         }
@@ -121,10 +121,10 @@ public class UserServiceImpl implements UserService {
         } else throw  new IllegalArgumentException();
     }
 
-    private User convertToUser(UserDTO userDTO){
+    private User convertToUser(UserDto userDTO){
         if(userDtoMapper == null){
             modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.LOOSE);
-            userDtoMapper = modelMapper.createTypeMap(UserDTO.class, User.class);
+            userDtoMapper = modelMapper.createTypeMap(UserDto.class, User.class);
             userDtoMapper.addMappings(ms -> {
                 ms.skip(User::setUserRoles);
                 ms.skip(User::setAccountNonLocked);

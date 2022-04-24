@@ -11,7 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import ru.bookcrossing.BookcrossingServer.books.dto.BookDTO;
+import ru.bookcrossing.BookcrossingServer.books.dto.BookDto;
 import ru.bookcrossing.BookcrossingServer.books.response.BookListResponse;
 import ru.bookcrossing.BookcrossingServer.books.response.BookResponse;
 import ru.bookcrossing.BookcrossingServer.books.service.BookService;
@@ -50,7 +50,7 @@ public class MyBookController {
                             schema = @Schema(implementation = BookResponse.class))})}
     )
     @PostMapping("/save")
-    public ResponseEntity<?> saveBook(@Valid @RequestBody BookDTO bookDTO,
+    public ResponseEntity<?> saveBook(@Valid @RequestBody BookDto bookDTO,
                                       BindingResult bindingResult,
                                       Principal principal) {
         if (bindingResult.hasErrors()) {

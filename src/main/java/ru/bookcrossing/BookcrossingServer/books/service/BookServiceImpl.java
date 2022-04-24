@@ -5,7 +5,7 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeMap;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.stereotype.Service;
-import ru.bookcrossing.BookcrossingServer.books.dto.BookDTO;
+import ru.bookcrossing.BookcrossingServer.books.dto.BookDto;
 import ru.bookcrossing.BookcrossingServer.books.model.Book;
 import ru.bookcrossing.BookcrossingServer.books.repository.BookRepository;
 import ru.bookcrossing.BookcrossingServer.books.request.BookFiltersRequest;
@@ -23,10 +23,10 @@ public class BookServiceImpl implements BookService{
     private final UserRepository userRepository;
     private final BookRepository bookRepository;
     private final ModelMapper modelMapper;
-    private TypeMap<BookDTO, Book> bookDtoMapper = null;
+    private TypeMap<BookDto, Book> bookDtoMapper = null;
 
     @Override
-    public BookResponse saveBook(BookDTO bookDTO, String login) {
+    public BookResponse saveBook(BookDto bookDTO, String login) {
         Book book = convertToBook(bookDTO, login);
         book = bookRepository.save(book);
         return new BookResponse(book);
@@ -88,10 +88,10 @@ public class BookServiceImpl implements BookService{
                .collect(Collectors.toList());
     }
 
-    private Book convertToBook(BookDTO bookDTO, String login){
+    private Book convertToBook(BookDto bookDTO, String login){
         if(bookDtoMapper == null){
             modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.LOOSE);
-            bookDtoMapper = modelMapper.createTypeMap(BookDTO.class, Book.class);
+            bookDtoMapper = modelMapper.createTypeMap(BookDto.class, Book.class);
             bookDtoMapper.addMappings(ms -> ms.skip(Book::setOwner));
             }
         Book book = modelMapper.map(bookDTO, Book.class);

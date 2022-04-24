@@ -19,7 +19,7 @@ import ru.bookcrossing.BookcrossingServer.refresh.service.RefreshService;
 import ru.bookcrossing.BookcrossingServer.registation.request.LoginRequest;
 import ru.bookcrossing.BookcrossingServer.registation.response.AuthResponse;
 import ru.bookcrossing.BookcrossingServer.security.jwt.JwtProvider;
-import ru.bookcrossing.BookcrossingServer.user.dto.UserDTO;
+import ru.bookcrossing.BookcrossingServer.user.dto.UserDto;
 import ru.bookcrossing.BookcrossingServer.user.model.User;
 import ru.bookcrossing.BookcrossingServer.user.service.UserService;
 
@@ -60,7 +60,7 @@ public class RegistrationController {
     }
     )
     @PostMapping("/registration")
-    public ResponseEntity<?> registerUser(@Valid @RequestBody UserDTO userForm, BindingResult bindingResult) {
+    public ResponseEntity<?> registerUser(@Valid @RequestBody UserDto userForm, BindingResult bindingResult) {
         ErrorListResponse errorListResponse = new ErrorListResponse();
         if (bindingResult.hasErrors()) {
             bindingResult.getAllErrors().forEach(f -> errorListResponse.getErrors()

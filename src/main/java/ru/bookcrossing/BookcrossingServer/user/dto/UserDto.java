@@ -13,7 +13,7 @@ import javax.validation.constraints.Size;
 @Data
 @Schema(description = "Сущность пользователя")
 @NoArgsConstructor
-public class UserDTO {
+public class UserDto {
     @Schema(description = "Имя", example = "Alex")
     @NotBlank(message = "name: Имя должно содержать хотя бы один видимый символ")
     private String name;

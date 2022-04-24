@@ -7,6 +7,10 @@ import ru.bookcrossing.BookcrossingServer.user.model.User;
 @Schema(description = "Данные пользователя для общего доступа")
 @Data
 public class UserDTOResponse {
+
+    @Schema(description = "Идентификатор", example = "0")
+    private int userId;
+
     @Schema(description = "Имя", example = "Alex")
     private String name;
 

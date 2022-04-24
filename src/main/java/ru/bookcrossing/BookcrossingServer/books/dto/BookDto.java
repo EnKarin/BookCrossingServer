@@ -1,17 +1,18 @@
 package ru.bookcrossing.BookcrossingServer.books.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotBlank;
 
 @Validated
-@Getter
-@Setter
+@Data
 @Schema(description = "Сущность книги")
-public class BookDTO {
+public class BookDto {
+
+    @Schema(description = "Идентификатор", example = "15")
+    private int bookId;
 
     @Schema(description = "Название", example = "Портрет Дориана Грея")
     @NotBlank(message = "title: Название должно содержать хотя бы один видимый символ")
