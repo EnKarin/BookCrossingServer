@@ -5,6 +5,7 @@ import lombok.Data;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 @Validated
 @Data
@@ -16,7 +17,15 @@ public class UserPutRequest {
 
     @Schema(description = "Старый пароль", example = "123456")
     @NotBlank(message = "Пароль должен содержать хотя бы один видимый символ")
-    private String password;
+    private String oldPassword;
+
+    @Schema(description = "Новый пароль", example = "123456s", required = true)
+    @NotBlank(message = "Пароль должен содержать хотя бы один видимый символ")
+    @Size(min = 6, message = "Пароль должен содержать больше 6 символов")
+    private String newPassword;
+
+    @Schema(description = "Подвержение пароля", example = "123456s", required = true)
+    private String passwordConfirm;
 
     @Schema(description = "Город", example = "Новосибирск")
     private String city;

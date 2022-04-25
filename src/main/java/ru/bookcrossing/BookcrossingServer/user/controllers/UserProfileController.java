@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.bookcrossing.BookcrossingServer.errors.ErrorListResponse;
+import ru.bookcrossing.BookcrossingServer.exception.UserNotFoundException;
 import ru.bookcrossing.BookcrossingServer.user.dto.UserDTOResponse;
 import ru.bookcrossing.BookcrossingServer.user.dto.UserPutRequest;
 import ru.bookcrossing.BookcrossingServer.user.model.User;
@@ -74,7 +75,16 @@ public class UserProfileController {
             description = "Возвращает обновленный профиль"
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "400", description = "Пользователь не найден",
+            @ApiResponse(responseCode = "409", description = "Пароли не совпадают",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorListResponse.class))}),
+            @ApiResponse(responseCode = "404", description = "Пользователь не найден",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorListResponse.class))}),
+            @ApiResponse(responseCode = "403", description = "Введен неверный старый пароль",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorListResponse.class))}),
+            @ApiResponse(responseCode = "400", description = "Некорректный пароль",
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = ErrorListResponse.class))}),
             @ApiResponse(responseCode = "200", description = "Возвращает обновленный профиль пользователя",
@@ -92,12 +102,22 @@ public class UserProfileController {
                     .add(Objects.requireNonNull(f.getDefaultMessage())));
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
-        Optional<User> user = userService.putUserInfo(userPutRequest, principal.getName());
-        if (user.isPresent()) {
-            return ResponseEntity.ok(new UserDTOResponse(user.get()));
+        if (!userPutRequest.getNewPassword().equals(userPutRequest.getPasswordConfirm())) {
+            response.getErrors().add("passwordConfirm: Пароли не совпадают");
+            return new ResponseEntity<>(response, HttpStatus.CONFLICT);
         }
-        response.getErrors().add("user: Пользователь не найден");
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        try {
+            Optional<User> user = userService.putUserInfo(userPutRequest, principal.getName());
+            if (user.isPresent()) {
+                return ResponseEntity.ok(new UserDTOResponse(user.get()));
+            } else {
+                response.getErrors().add("oldPassword: Старый пароль неверен");
+                return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
+            }
+        }catch (UserNotFoundException e){
+            response.getErrors().add("user: Пользователь не найден");
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        }
     }
 }
 

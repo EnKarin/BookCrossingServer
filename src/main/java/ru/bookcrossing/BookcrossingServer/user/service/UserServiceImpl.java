@@ -11,6 +11,7 @@ import ru.bookcrossing.BookcrossingServer.approvemail.model.ActionMailUser;
 import ru.bookcrossing.BookcrossingServer.approvemail.repository.ActionMailUserRepository;
 import ru.bookcrossing.BookcrossingServer.exception.EmailFailedException;
 import ru.bookcrossing.BookcrossingServer.exception.LoginFailedException;
+import ru.bookcrossing.BookcrossingServer.exception.UserNotFoundException;
 import ru.bookcrossing.BookcrossingServer.registation.request.LoginRequest;
 import ru.bookcrossing.BookcrossingServer.user.dto.UserDto;
 import ru.bookcrossing.BookcrossingServer.user.dto.UserPutRequest;
@@ -104,13 +105,16 @@ public class UserServiceImpl implements UserService {
     @Override
     public Optional<User> putUserInfo(UserPutRequest userPutRequest, String login) {
         Optional<User> user = findByLogin(login);
-        if (user.isPresent()) {
-            user.get().setName(userPutRequest.getName());
-            user.get().setCity(userPutRequest.getCity());
-            user = Optional.of(userRepository.save(user.get()));
-            return user;
+        if(user.isPresent()) {
+            if (bCryptPasswordEncoder.matches(userPutRequest.getOldPassword(), user.get().getPassword())) {
+                user.get().setName(userPutRequest.getName());
+                user.get().setCity(userPutRequest.getCity());
+                user.get().setPassword(bCryptPasswordEncoder.encode(userPutRequest.getNewPassword()));
+                user = Optional.of(userRepository.save(user.get()));
+                return user;
+            } else return Optional.empty();
         }
-        return Optional.empty();
+        else throw new UserNotFoundException();
     }
 
 

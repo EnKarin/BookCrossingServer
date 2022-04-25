@@ -63,6 +63,9 @@ public class PasswordResetController {
             @ApiResponse(responseCode = "400", description = "Введенный пароль некорректен",
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = ErrorListResponse.class))}),
+            @ApiResponse(responseCode = "403", description = "Ссылка недействительна",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorListResponse.class))}),
             @ApiResponse(responseCode = "200", description = "Пароль успешно изменен")
     }
     )
