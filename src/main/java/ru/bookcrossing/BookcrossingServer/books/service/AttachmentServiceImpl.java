@@ -25,7 +25,7 @@ public class AttachmentServiceImpl implements AttachmentService{
     @Override
     public ErrorListResponse saveAttachment(AttachmentDto attachmentDto, String login) throws IOException {
         ErrorListResponse response = new ErrorListResponse();
-        Optional<Book> book = userRepository.findByLogin(login).getBooks().stream()
+        Optional<Book> book = userRepository.findByLogin(login).get().getBooks().stream()
                 .filter(b -> b.getId() ==attachmentDto.getBookId()).findFirst();
         if(book.isPresent()){
             Attachment attachment = new Attachment();

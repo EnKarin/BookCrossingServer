@@ -10,6 +10,7 @@ import ru.bookcrossing.BookcrossingServer.books.dto.BookFiltersRequest;
 import ru.bookcrossing.BookcrossingServer.books.dto.BookResponse;
 import ru.bookcrossing.BookcrossingServer.books.model.Book;
 import ru.bookcrossing.BookcrossingServer.books.repository.BookRepository;
+import ru.bookcrossing.BookcrossingServer.user.model.User;
 import ru.bookcrossing.BookcrossingServer.user.repository.UserRepository;
 
 import java.util.List;
@@ -26,16 +27,25 @@ public class BookServiceImpl implements BookService{
     private TypeMap<BookDto, Book> bookDtoMapper = null;
 
     @Override
-    public BookResponse saveBook(BookDto bookDTO, String login) {
-        Book book = convertToBook(bookDTO, login);
-        book = bookRepository.save(book);
-        return new BookResponse(book);
+    public Optional<BookResponse> saveBook(BookDto bookDTO, String login) {
+        Optional<Book> book = convertToBook(bookDTO, login);
+        if(book.isEmpty()){
+            return Optional.empty();
+        }
+        book = Optional.of(bookRepository.save(book.get()));
+        BookResponse response = new BookResponse(book.get());
+        return Optional.of(response);
     }
 
     @Override
     public List<Book> findBookForOwner(String login) {
-        List<Book> books = bookRepository.findBooksByOwner(userRepository.findByLogin(login));
-        return books.stream().filter(b -> b.getOwner().isAccountNonLocked()).collect(Collectors.toList());
+        Optional<User> user = userRepository.findByLogin(login);
+        List<Book> books;
+        if (user.isPresent()) {
+            books = bookRepository.findBooksByOwner(user.get());
+            return books.stream().filter(b -> b.getOwner().isAccountNonLocked()).collect(Collectors.toList());
+        }
+        else return null;
     }
 
     @Override
@@ -88,14 +98,18 @@ public class BookServiceImpl implements BookService{
                .collect(Collectors.toList());
     }
 
-    private Book convertToBook(BookDto bookDTO, String login){
+    private Optional<Book> convertToBook(BookDto bookDTO, String login){
+        Optional<User> user = userRepository.findByLogin(login);
         if(bookDtoMapper == null){
             modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.LOOSE);
             bookDtoMapper = modelMapper.createTypeMap(BookDto.class, Book.class);
             bookDtoMapper.addMappings(ms -> ms.skip(Book::setOwner));
             }
-        Book book = modelMapper.map(bookDTO, Book.class);
-        book.setOwner(userRepository.findByLogin(login));
-        return book;
+        if(user.isPresent()) {
+            Book book = modelMapper.map(bookDTO, Book.class);
+            book.setOwner(user.get());
+            return Optional.of(book);
+        }
+        return Optional.empty();
     }
 }

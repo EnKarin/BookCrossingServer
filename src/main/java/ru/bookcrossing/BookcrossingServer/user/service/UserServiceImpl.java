@@ -7,10 +7,10 @@ import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import ru.bookcrossing.BookcrossingServer.approvemail.model.ActionMailUser;
+import ru.bookcrossing.BookcrossingServer.approvemail.repository.ActionMailUserRepository;
 import ru.bookcrossing.BookcrossingServer.exception.EmailFailedException;
 import ru.bookcrossing.BookcrossingServer.exception.LoginFailedException;
-import ru.bookcrossing.BookcrossingServer.mail.model.ConfirmationMailUser;
-import ru.bookcrossing.BookcrossingServer.mail.repository.ConfirmationMailUserRepository;
 import ru.bookcrossing.BookcrossingServer.registation.request.LoginRequest;
 import ru.bookcrossing.BookcrossingServer.user.dto.UserDto;
 import ru.bookcrossing.BookcrossingServer.user.dto.UserPutRequest;
@@ -28,17 +28,17 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
-    private final ConfirmationMailUserRepository confirmationMailUserRepository;
+    private final ActionMailUserRepository confirmationMailUserRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final ModelMapper modelMapper;
     private TypeMap<UserDto, User> userDtoMapper = null;
 
     @Override
     public User saveUser(UserDto userDTO) {
-        if (userRepository.findByLogin(userDTO.getLogin()) != null) {
+        if (userRepository.findByLogin(userDTO.getLogin()).isPresent()) {
             throw new LoginFailedException();
         }
-        if (userRepository.findByEmail(userDTO.getEmail()) != null) {
+        if (userRepository.findByEmail(userDTO.getEmail()).isPresent()) {
             throw new EmailFailedException();
         }
         User user = convertToUser(userDTO);
@@ -47,7 +47,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean confirmMail(String token) {
-        Optional<ConfirmationMailUser> confirmationMailUser = confirmationMailUserRepository.findById(token);
+        Optional<ActionMailUser> confirmationMailUser = confirmationMailUserRepository.findById(token);
         if (confirmationMailUser.isPresent()) {
             User user = confirmationMailUser.get().getUser();
             user.setEnabled(true);
@@ -58,7 +58,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean lockedUser(String login) {
-        Optional<User> user = Optional.ofNullable(userRepository.findByLogin(login));
+        Optional<User> user = userRepository.findByLogin(login);
         if (user.isPresent()) {
             user.get().setAccountNonLocked(false);
             userRepository.save(user.get());
@@ -68,7 +68,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean nonLockedUser(String login) {
-        Optional<User> user = Optional.ofNullable(userRepository.findByLogin(login));
+        Optional<User> user = userRepository.findByLogin(login);
         if (user.isPresent()) {
             user.get().setAccountNonLocked(true);
             userRepository.save(user.get());
@@ -78,7 +78,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Optional<User> findByLogin(String login) {
-        return Optional.of(userRepository.findByLogin(login));
+        return userRepository.findByLogin(login);
     }
 
     @Override
@@ -94,7 +94,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Optional<User> findByLoginAndPassword(LoginRequest login) throws UsernameNotFoundException {
-        Optional<User> user = Optional.ofNullable(userRepository.findByLogin(login.getLogin()));
+        Optional<User> user = userRepository.findByLogin(login.getLogin());
         if (user.isPresent() && bCryptPasswordEncoder.matches(login.getPassword(), user.get().getPassword())) {
             return user;
         }

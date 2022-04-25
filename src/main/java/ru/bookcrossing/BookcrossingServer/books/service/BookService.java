@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public interface BookService {
 
-    BookResponse saveBook(BookDto bookDTO, String login);
+    Optional<BookResponse> saveBook(BookDto bookDTO, String login);
 
     void deleteBook(int id);
 

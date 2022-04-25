@@ -1,4 +1,4 @@
-package ru.bookcrossing.BookcrossingServer.mail.config;
+package ru.bookcrossing.BookcrossingServer.approvemail.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
