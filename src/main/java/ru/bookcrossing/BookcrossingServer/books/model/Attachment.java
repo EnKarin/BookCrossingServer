@@ -17,6 +17,7 @@ public class Attachment {
     private String name;
 
     @Lob
+    @Column(length = 3_145_728)
     private byte[] data;
 
     private String expansion;

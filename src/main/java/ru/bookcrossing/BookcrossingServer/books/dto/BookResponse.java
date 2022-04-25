@@ -31,6 +31,7 @@ public class BookResponse {
     private Attachment attachment;
 
     public BookResponse(Book book){
+        bookId = book.getId();
         title = book.getTitle();
         author = book.getAuthor();
         genre = book.getGenre();
