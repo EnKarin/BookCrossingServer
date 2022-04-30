@@ -39,6 +39,8 @@ public class User implements UserDetails {
 
     private boolean enabled;
 
+    private long loginDate;
+
     @ManyToMany(cascade = {
             CascadeType.PERSIST,
             CascadeType.REFRESH,

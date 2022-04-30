@@ -18,4 +18,7 @@ public class LoginRequest {
     @Schema(description = "Пароль", example = "123456")
     @Size(min = 6, message = "Пароль слишком короткий")
     private String password;
+
+    @Schema(description = "Часовой пояс пользователя", example = "7")
+    private int zone;
 }

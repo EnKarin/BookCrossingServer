@@ -123,7 +123,7 @@ public class RegistrationController {
 
     @Operation(
             summary = "Подтвержение почты",
-            description = "Изменяет стату аккаунта"
+            description = "Изменяет стату аккаунта на подтвержденный"
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "400", description = "Токена не существует"),
