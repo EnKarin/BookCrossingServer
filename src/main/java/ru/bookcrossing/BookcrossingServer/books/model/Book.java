@@ -2,18 +2,16 @@ package ru.bookcrossing.BookcrossingServer.books.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import ru.bookcrossing.BookcrossingServer.user.model.User;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 @Getter
 @Setter
-@ToString
-@RequiredArgsConstructor
 @Table(name = "t_book")
 public class Book {
 
@@ -40,4 +38,8 @@ public class Book {
     @OneToOne
     @JoinColumn(name = "attachId")
     private Attachment attachment;
+
+    @ManyToMany(mappedBy = "bookmarks")
+    @JsonIgnore
+    private Set<User> usersBookmarks;
 }

@@ -59,6 +59,15 @@ public class User implements UserDetails {
     @ToString.Exclude
     private Set<Book> books;
 
+    @ManyToMany
+    @JoinTable(
+            name = "t_bookmarks",
+            joinColumns = {@JoinColumn(name = "user_id")},
+            inverseJoinColumns = {@JoinColumn(name = "book_id")}
+    )
+    @JsonIgnore
+    private Set<Book> bookmarks;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

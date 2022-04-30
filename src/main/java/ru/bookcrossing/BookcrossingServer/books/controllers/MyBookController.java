@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -28,15 +28,11 @@ import java.util.Optional;
 )
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/user/myBook")
 public class MyBookController {
 
-    private BookService bookService;
-
-    @Autowired
-    private void setBookService(BookService s) {
-        bookService = s;
-    }
+    private final BookService bookService;
 
     @Operation(
             summary = "Добавление книги",

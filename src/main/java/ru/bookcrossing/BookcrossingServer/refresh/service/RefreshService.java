@@ -33,7 +33,7 @@ public class RefreshService {
 
         refreshRepository.save(refresh);
         Optional<User> user = userRepository.findByLogin(login);
-        user.get().setLoginDate(LocalDateTime.now()
+        user.orElseThrow().setLoginDate(LocalDateTime.now()
                 .toEpochSecond(ZoneOffset.systemDefault().getRules().getOffset(Instant.now())));
         userRepository.save(user.get());
         return token;

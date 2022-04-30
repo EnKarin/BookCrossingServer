@@ -1,7 +1,6 @@
 package ru.bookcrossing.BookcrossingServer.user.model;
 
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.Hibernate;
@@ -18,7 +17,6 @@ import java.util.Set;
 @Getter
 @Setter
 @ToString
-@RequiredArgsConstructor
 @Table(name = "t_role")
 public class Role implements GrantedAuthority {
 
