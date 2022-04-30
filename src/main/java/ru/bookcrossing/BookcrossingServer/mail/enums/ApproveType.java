@@ -1,4 +1,4 @@
-package ru.bookcrossing.BookcrossingServer.approvemail.enums;
+package ru.bookcrossing.BookcrossingServer.mail.enums;
 
 import lombok.Getter;
 

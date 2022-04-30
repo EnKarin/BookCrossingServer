@@ -1,13 +1,13 @@
-package ru.bookcrossing.BookcrossingServer.approvemail.service;
+package ru.bookcrossing.BookcrossingServer.mail.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
-import ru.bookcrossing.BookcrossingServer.approvemail.enums.ApproveType;
-import ru.bookcrossing.BookcrossingServer.approvemail.model.ActionMailUser;
-import ru.bookcrossing.BookcrossingServer.approvemail.repository.ActionMailUserRepository;
+import ru.bookcrossing.BookcrossingServer.mail.enums.ApproveType;
+import ru.bookcrossing.BookcrossingServer.mail.model.ActionMailUser;
+import ru.bookcrossing.BookcrossingServer.mail.repository.ActionMailUserRepository;
 import ru.bookcrossing.BookcrossingServer.user.model.User;
 import ru.bookcrossing.BookcrossingServer.user.repository.UserRepository;
 
@@ -62,5 +62,22 @@ public class MailService {
             return true;
         }
         else return false;
+    }
+
+    public void sendBlockingMessage(User user, String comment){
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(user.getEmail());
+        message.setSubject("Ваш аккаунт заблокирован");
+        message.setText("Аккаунт на сервисе BookCrossing был заблокирован администратором. Причина:"
+                + comment);
+        emailSender.send(message);
+    }
+
+    public void sendUnlockMessage(User user){
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(user.getEmail());
+        message.setSubject("Ваш аккаунт разблокирован");
+        message.setText("Аккаунт на сервисе BookCrossing был разблокирован.");
+        emailSender.send(message);
     }
 }

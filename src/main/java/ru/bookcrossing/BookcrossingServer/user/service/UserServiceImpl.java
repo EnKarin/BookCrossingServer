@@ -7,11 +7,11 @@ import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import ru.bookcrossing.BookcrossingServer.approvemail.model.ActionMailUser;
-import ru.bookcrossing.BookcrossingServer.approvemail.repository.ActionMailUserRepository;
 import ru.bookcrossing.BookcrossingServer.exception.EmailFailedException;
 import ru.bookcrossing.BookcrossingServer.exception.LoginFailedException;
 import ru.bookcrossing.BookcrossingServer.exception.UserNotFoundException;
+import ru.bookcrossing.BookcrossingServer.mail.model.ActionMailUser;
+import ru.bookcrossing.BookcrossingServer.mail.repository.ActionMailUserRepository;
 import ru.bookcrossing.BookcrossingServer.registation.request.LoginRequest;
 import ru.bookcrossing.BookcrossingServer.user.dto.UserDto;
 import ru.bookcrossing.BookcrossingServer.user.dto.UserPutRequest;
@@ -53,26 +53,6 @@ public class UserServiceImpl implements UserService {
             User user = confirmationMailUser.get().getUser();
             user.setEnabled(true);
             confirmationMailUserRepository.delete(confirmationMailUser.get());
-            return true;
-        } else return false;
-    }
-
-    @Override
-    public boolean lockedUser(String login) {
-        Optional<User> user = userRepository.findByLogin(login);
-        if (user.isPresent()) {
-            user.get().setAccountNonLocked(false);
-            userRepository.save(user.get());
-            return true;
-        } else return false;
-    }
-
-    @Override
-    public boolean nonLockedUser(String login) {
-        Optional<User> user = userRepository.findByLogin(login);
-        if (user.isPresent()) {
-            user.get().setAccountNonLocked(true);
-            userRepository.save(user.get());
             return true;
         } else return false;
     }

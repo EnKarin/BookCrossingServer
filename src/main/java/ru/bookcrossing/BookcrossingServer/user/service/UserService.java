@@ -13,10 +13,6 @@ public interface UserService {
 
     boolean confirmMail(String token);
 
-    boolean lockedUser(String login);
-
-    boolean nonLockedUser(String login);
-
     Optional<User> findByLogin(String login);
 
     Optional<User> findById(int id);
