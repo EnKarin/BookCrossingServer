@@ -7,6 +7,7 @@ import ru.bookcrossing.BookcrossingServer.refresh.repository.RefreshRepository;
 import ru.bookcrossing.BookcrossingServer.user.model.User;
 import ru.bookcrossing.BookcrossingServer.user.repository.UserRepository;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -20,7 +21,7 @@ public class RefreshService {
     private final RefreshRepository refreshRepository;
     private final UserRepository userRepository;
 
-    public String createToken(String login, int zone) {
+    public String createToken(String login) {
         refreshRepository.findByUser(login).ifPresent(refreshRepository::delete);
 
         String token = UUID.randomUUID().toString();
@@ -32,7 +33,8 @@ public class RefreshService {
 
         refreshRepository.save(refresh);
         Optional<User> user = userRepository.findByLogin(login);
-        user.get().setLoginDate(LocalDateTime.now().toEpochSecond(ZoneOffset.ofHours(zone)));
+        user.get().setLoginDate(LocalDateTime.now()
+                .toEpochSecond(ZoneOffset.systemDefault().getRules().getOffset(Instant.now())));
         userRepository.save(user.get());
         return token;
     }

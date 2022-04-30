@@ -43,6 +43,8 @@ public class InfoUsersDto {
         city = user.getCity();
         accountNonLocked = user.isAccountNonLocked();
         enabled = user.isEnabled();
-        loginDate = LocalDateTime.ofEpochSecond(user.getLoginDate(), 0, ZoneOffset.ofHours(zone)).toString();
+        if(user.getLoginDate() != 0) {
+            loginDate = LocalDateTime.ofEpochSecond(user.getLoginDate(), 0, ZoneOffset.ofHours(zone)).toString();
+        }
     }
 }

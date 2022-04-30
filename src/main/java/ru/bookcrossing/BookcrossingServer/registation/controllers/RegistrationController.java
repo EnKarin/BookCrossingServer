@@ -107,7 +107,7 @@ public class RegistrationController {
             if (userEntity.get().isAccountNonLocked()) {
                 AuthResponse authResponse = new AuthResponse();
                 authResponse.setAccessToken(jwtProvider.generateToken(request.getLogin()));
-                authResponse.setRefreshToken(refreshService.createToken(request.getLogin(), request.getZone()));
+                authResponse.setRefreshToken(refreshService.createToken(request.getLogin()));
                 return ResponseEntity.ok(authResponse);
             }
             else {

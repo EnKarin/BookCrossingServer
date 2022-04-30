@@ -2,10 +2,12 @@ package ru.bookcrossing.BookcrossingServer.user.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+import ru.bookcrossing.BookcrossingServer.books.model.Book;
 import ru.bookcrossing.BookcrossingServer.user.model.User;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.Set;
 
 @Schema(description = "Данные пользователя для общего доступа")
 @Data
@@ -26,11 +28,17 @@ public class UserDTOResponse {
     @Schema(description = "Время последнего входа", example = "2022-11-03T23:15:09.61")
     private String loginDate;
 
+    @Schema(description = "Книги пользователя")
+    private Set<Book> books;
+
     public UserDTOResponse(User user, int zone){
         userId = user.getUserId();
         name = user.getName();
         email = user.getEmail();
         city = user.getCity();
-        loginDate = LocalDateTime.ofEpochSecond(user.getLoginDate(), 0, ZoneOffset.ofHours(zone)).toString();
+        if(user.getLoginDate() != 0) {
+            loginDate = LocalDateTime.ofEpochSecond(user.getLoginDate(), 0, ZoneOffset.ofHours(zone)).toString();
+        }
+        books = user.getBooks();
     }
 }

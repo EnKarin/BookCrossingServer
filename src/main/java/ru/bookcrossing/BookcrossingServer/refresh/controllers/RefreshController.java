@@ -50,7 +50,7 @@ public class RefreshController {
         if (login.isPresent()) {
             AuthResponse authResponse = new AuthResponse();
             authResponse.setAccessToken(jwtProvider.generateToken(login.get()));
-            authResponse.setRefreshToken(refreshService.createToken(login.get(), request.getZone()));
+            authResponse.setRefreshToken(refreshService.createToken(login.get()));
 
             return ResponseEntity.ok(authResponse);
         }
