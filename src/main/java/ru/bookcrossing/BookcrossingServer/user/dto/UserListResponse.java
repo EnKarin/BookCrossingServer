@@ -10,4 +10,8 @@ public class UserListResponse {
 
     @Schema(description = "Список пользователей")
     private List<UserDTOResponse> userList;
+
+    public UserListResponse(List<UserDTOResponse> list){
+        userList = list;
+    }
 }

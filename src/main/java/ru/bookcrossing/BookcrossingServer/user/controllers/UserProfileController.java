@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.bookcrossing.BookcrossingServer.errors.ErrorListResponse;
 import ru.bookcrossing.BookcrossingServer.exception.UserNotFoundException;
 import ru.bookcrossing.BookcrossingServer.user.dto.UserDTOResponse;
+import ru.bookcrossing.BookcrossingServer.user.dto.UserListResponse;
 import ru.bookcrossing.BookcrossingServer.user.dto.UserPutRequest;
 import ru.bookcrossing.BookcrossingServer.user.model.User;
 import ru.bookcrossing.BookcrossingServer.user.service.UserService;
@@ -119,6 +120,11 @@ public class UserProfileController {
             response.getErrors().add("user: Пользователь не найден");
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<?> getAllProfile(@RequestParam int zone){
+        return new ResponseEntity<>(new UserListResponse(userService.findAllUsers(zone)), HttpStatus.OK);
     }
 }
 
