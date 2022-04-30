@@ -1,6 +1,7 @@
 package ru.bookcrossing.BookcrossingServer.admin.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -15,7 +16,6 @@ import ru.bookcrossing.BookcrossingServer.admin.dto.AdmUserListResponse;
 import ru.bookcrossing.BookcrossingServer.admin.dto.LockedUserDto;
 import ru.bookcrossing.BookcrossingServer.admin.service.AdminService;
 import ru.bookcrossing.BookcrossingServer.errors.ErrorListResponse;
-import ru.bookcrossing.BookcrossingServer.user.service.UserService;
 
 import javax.validation.Valid;
 import java.util.Objects;
@@ -29,7 +29,6 @@ import java.util.Objects;
 @RequestMapping("/adm")
 public class AdminController {
 
-    private final UserService userService;
     private final AdminService adminService;
 
     @Operation(
@@ -43,9 +42,9 @@ public class AdminController {
     }
     )
     @GetMapping("/getAll")
-    public ResponseEntity<?> userList() {
+    public ResponseEntity<?> userList(@RequestParam @Parameter(description = "Часовой пояс") int zone) {
         AdmUserListResponse response = new AdmUserListResponse();
-        response.setUserList(userService.findAllUsers());
+        response.setUserList(adminService.findAllUsers(zone));
         return ResponseEntity.ok(response);
     }
 

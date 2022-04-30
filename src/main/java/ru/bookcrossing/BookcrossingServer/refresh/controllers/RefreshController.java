@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.bookcrossing.BookcrossingServer.errors.ErrorListResponse;
 import ru.bookcrossing.BookcrossingServer.refresh.dto.RefreshRequest;
 import ru.bookcrossing.BookcrossingServer.refresh.service.RefreshService;
-import ru.bookcrossing.BookcrossingServer.registation.response.AuthResponse;
+import ru.bookcrossing.BookcrossingServer.registation.dto.AuthResponse;
 import ru.bookcrossing.BookcrossingServer.security.jwt.JwtProvider;
 
 import java.util.Optional;
@@ -50,7 +50,7 @@ public class RefreshController {
         if (login.isPresent()) {
             AuthResponse authResponse = new AuthResponse();
             authResponse.setAccessToken(jwtProvider.generateToken(login.get()));
-            authResponse.setRefreshToken(refreshService.createToken(login.get()));
+            authResponse.setRefreshToken(refreshService.createToken(login.get(), request.getZone()));
 
             return ResponseEntity.ok(authResponse);
         }

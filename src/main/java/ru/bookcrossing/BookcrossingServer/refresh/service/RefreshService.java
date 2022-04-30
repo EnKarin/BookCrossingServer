@@ -4,8 +4,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.bookcrossing.BookcrossingServer.refresh.model.Refresh;
 import ru.bookcrossing.BookcrossingServer.refresh.repository.RefreshRepository;
+import ru.bookcrossing.BookcrossingServer.user.model.User;
+import ru.bookcrossing.BookcrossingServer.user.repository.UserRepository;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -14,8 +18,9 @@ import java.util.UUID;
 public class RefreshService {
 
     private final RefreshRepository refreshRepository;
+    private final UserRepository userRepository;
 
-    public String createToken(String login) {
+    public String createToken(String login, int zone) {
         refreshRepository.findByUser(login).ifPresent(refreshRepository::delete);
 
         String token = UUID.randomUUID().toString();
@@ -26,7 +31,9 @@ public class RefreshService {
         refresh.setUser(login);
 
         refreshRepository.save(refresh);
-
+        Optional<User> user = userRepository.findByLogin(login);
+        user.get().setLoginDate(LocalDateTime.now().toEpochSecond(ZoneOffset.ofHours(zone)));
+        userRepository.save(user.get());
         return token;
     }
 

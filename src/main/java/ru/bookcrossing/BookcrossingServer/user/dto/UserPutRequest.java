@@ -29,4 +29,7 @@ public class UserPutRequest {
 
     @Schema(description = "Город", example = "Новосибирск")
     private String city;
+
+    @Schema(description = "Часовой пояс", example = "7")
+    private int zone;
 }

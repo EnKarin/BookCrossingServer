@@ -51,16 +51,17 @@ public class UserProfileController {
     @GetMapping("/profile")
     public ResponseEntity<?> getProfile(@RequestParam @Parameter(description = "Идентификатор пользователя," +
             " -1 для собственного") int id,
+                                        @RequestParam @Parameter(description = "Часовой пояс пользователя") int zone,
                                         Principal principal) {
         UserDTOResponse userDTOResponse;
         Optional<User> user;
         if (id == -1) {
             user = userService.findByLogin(principal.getName());
-            userDTOResponse = new UserDTOResponse(user.get());
+            userDTOResponse = new UserDTOResponse(user.get(), zone);
         } else {
             user = userService.findById(id);
             if (user.isPresent()) {
-                userDTOResponse = new UserDTOResponse(user.get());
+                userDTOResponse = new UserDTOResponse(user.get(), zone);
             } else {
                 ErrorListResponse response = new ErrorListResponse();
                 response.getErrors().add("user: Пользователь не найден");
@@ -109,7 +110,7 @@ public class UserProfileController {
         try {
             Optional<User> user = userService.putUserInfo(userPutRequest, principal.getName());
             if (user.isPresent()) {
-                return ResponseEntity.ok(new UserDTOResponse(user.get()));
+                return ResponseEntity.ok(new UserDTOResponse(user.get(), userPutRequest.getZone()));
             } else {
                 response.getErrors().add("oldPassword: Старый пароль неверен");
                 return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);

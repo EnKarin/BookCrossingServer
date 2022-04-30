@@ -16,8 +16,8 @@ import ru.bookcrossing.BookcrossingServer.exception.EmailFailedException;
 import ru.bookcrossing.BookcrossingServer.exception.LoginFailedException;
 import ru.bookcrossing.BookcrossingServer.mail.service.MailService;
 import ru.bookcrossing.BookcrossingServer.refresh.service.RefreshService;
-import ru.bookcrossing.BookcrossingServer.registation.request.LoginRequest;
-import ru.bookcrossing.BookcrossingServer.registation.response.AuthResponse;
+import ru.bookcrossing.BookcrossingServer.registation.dto.AuthResponse;
+import ru.bookcrossing.BookcrossingServer.registation.dto.LoginRequest;
 import ru.bookcrossing.BookcrossingServer.security.jwt.JwtProvider;
 import ru.bookcrossing.BookcrossingServer.user.dto.UserDto;
 import ru.bookcrossing.BookcrossingServer.user.model.User;
@@ -107,7 +107,7 @@ public class RegistrationController {
             if (userEntity.get().isAccountNonLocked()) {
                 AuthResponse authResponse = new AuthResponse();
                 authResponse.setAccessToken(jwtProvider.generateToken(request.getLogin()));
-                authResponse.setRefreshToken(refreshService.createToken(request.getLogin()));
+                authResponse.setRefreshToken(refreshService.createToken(request.getLogin(), request.getZone()));
                 return ResponseEntity.ok(authResponse);
             }
             else {

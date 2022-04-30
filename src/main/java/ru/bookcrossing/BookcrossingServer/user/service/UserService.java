@@ -12,7 +12,8 @@ import ru.bookcrossing.BookcrossingServer.exception.LoginFailedException;
 import ru.bookcrossing.BookcrossingServer.exception.UserNotFoundException;
 import ru.bookcrossing.BookcrossingServer.mail.model.ActionMailUser;
 import ru.bookcrossing.BookcrossingServer.mail.repository.ActionMailUserRepository;
-import ru.bookcrossing.BookcrossingServer.registation.request.LoginRequest;
+import ru.bookcrossing.BookcrossingServer.registation.dto.LoginRequest;
+import ru.bookcrossing.BookcrossingServer.user.dto.UserDTOResponse;
 import ru.bookcrossing.BookcrossingServer.user.dto.UserDto;
 import ru.bookcrossing.BookcrossingServer.user.dto.UserPutRequest;
 import ru.bookcrossing.BookcrossingServer.user.model.Role;
@@ -20,11 +21,10 @@ import ru.bookcrossing.BookcrossingServer.user.model.User;
 import ru.bookcrossing.BookcrossingServer.user.repository.RoleRepository;
 import ru.bookcrossing.BookcrossingServer.user.repository.UserRepository;
 
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -65,16 +65,17 @@ public class UserService {
         return userRepository.findById(id);
     }
 
-    public List<User> findAllUsers() {
+    public List<UserDTOResponse> findAllUsers(int zone) {
         Role role = roleRepository.getById(1);
-        return userRepository.findByUserRoles(role);
+        return userRepository.findByUserRoles(role).stream()
+                .map(u -> new UserDTOResponse(u, zone))
+                .collect(Collectors.toList());
     }
 
     public Optional<User> findByLoginAndPassword(LoginRequest login) throws UsernameNotFoundException {
         Optional<User> user = userRepository.findByLogin(login.getLogin());
         if (user.isPresent() && bCryptPasswordEncoder.matches(login.getPassword(), user.get().getPassword())) {
-            user.get().setLoginDate(LocalDateTime.now().toEpochSecond(ZoneOffset.ofHours(login.getZone())));
-            return Optional.of(userRepository.save(user.get()));
+            return user;
         }
         return Optional.empty();
     }
