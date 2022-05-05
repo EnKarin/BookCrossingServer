@@ -5,8 +5,8 @@ import org.springframework.stereotype.Service;
 import ru.bookcrossing.BookcrossingServer.chat.model.Correspondence;
 import ru.bookcrossing.BookcrossingServer.chat.model.UsersCorrKey;
 import ru.bookcrossing.BookcrossingServer.chat.repository.CorrespondenceRepository;
-import ru.bookcrossing.BookcrossingServer.chat.repository.MessageRepository;
 import ru.bookcrossing.BookcrossingServer.errors.ErrorListResponse;
+import ru.bookcrossing.BookcrossingServer.exception.ChatAlreadyCreatedException;
 import ru.bookcrossing.BookcrossingServer.user.model.User;
 import ru.bookcrossing.BookcrossingServer.user.repository.UserRepository;
 
@@ -17,7 +17,6 @@ import java.util.Optional;
 public class CorrespondenceService {
 
     private final CorrespondenceRepository correspondenceRepository;
-    private final MessageRepository messageRepository;
     private final UserRepository userRepository;
 
     public Optional<ErrorListResponse> createChat(int userId, String login){
@@ -30,7 +29,7 @@ public class CorrespondenceService {
                 usersCorrKey.setFirstUser(fUser);
                 usersCorrKey.setSecondUser(sUser.get());
                 if(correspondenceRepository.findById(usersCorrKey).isPresent()){
-                    response.getErrors().add("correspondence: Чат уже существует");
+                    throw new ChatAlreadyCreatedException();
                 }
                 else{
                     Correspondence correspondence = new Correspondence();
@@ -47,5 +46,19 @@ public class CorrespondenceService {
             response.getErrors().add("user: Пользователь не найден");
         }
         return Optional.of(response);
+    }
+
+    public boolean deleteChat(int userId, String login){
+        User fUser = userRepository.findByLogin(login).orElseThrow();
+        User sUser = userRepository.findById(userId).orElseThrow();
+        UsersCorrKey usersCorrKey = new UsersCorrKey();
+        usersCorrKey.setFirstUser(fUser);
+        usersCorrKey.setSecondUser(sUser);
+        Optional<Correspondence> correspondence = correspondenceRepository.findById(usersCorrKey);
+        if(correspondence.isPresent()){
+            correspondenceRepository.delete(correspondence.get());
+            return true;
+        }
+        else return false;
     }
 }

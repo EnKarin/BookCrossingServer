@@ -15,13 +15,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.bookcrossing.BookcrossingServer.chat.service.CorrespondenceService;
 import ru.bookcrossing.BookcrossingServer.errors.ErrorListResponse;
+import ru.bookcrossing.BookcrossingServer.exception.ChatAlreadyCreatedException;
 
 import java.security.Principal;
 import java.util.Optional;
 
 @Tag(
-        name = "Сообщения",
-        description = "Позволяет создавать чаты и отправлять сообщения"
+        name = "Чаты",
+        description = "Позволяет создавать чаты с пользователями"
 )
 @RequiredArgsConstructor
 @RestController
@@ -35,6 +36,9 @@ public class CorrespondenceController {
             description = "Позволяет создать чат с выбранным пользователем"
     )
     @ApiResponses(value = {
+            @ApiResponse(responseCode = "409", description = "Чат уже существует",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorListResponse.class))}),
             @ApiResponse(responseCode = "406", description = "Нельзя создать чат с данным пользователем",
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = ErrorListResponse.class))}),
@@ -44,12 +48,39 @@ public class CorrespondenceController {
     @PostMapping("/create")
     public ResponseEntity<?> createCorrespondence(@RequestParam int userId,
                                                   Principal principal){
-        Optional<ErrorListResponse> response = correspondenceService.createChat(userId, principal.getName());
-        if(response.isEmpty()){
+        try {
+            Optional<ErrorListResponse> response = correspondenceService.createChat(userId, principal.getName());
+            if(response.isEmpty()){
+                return new ResponseEntity<>(HttpStatus.OK);
+            }
+            else {
+                return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
+            }
+        }
+        catch (ChatAlreadyCreatedException e){
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
+    }
+
+    @Operation(
+            summary = "Удаление чата",
+            description = "Позволяет удалить чат с выбранным пользователем"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "404", description = "Чата не существует",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorListResponse.class))}),
+            @ApiResponse(responseCode = "200", description = "Чат удален")
+    }
+    )
+    @PostMapping("/delete")
+    public ResponseEntity<?> deleteCorrespondence(@RequestParam int userId,
+                                                  Principal principal){
+        if(correspondenceService.deleteChat(userId, principal.getName())){
             return new ResponseEntity<>(HttpStatus.OK);
         }
         else {
-            return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 }
