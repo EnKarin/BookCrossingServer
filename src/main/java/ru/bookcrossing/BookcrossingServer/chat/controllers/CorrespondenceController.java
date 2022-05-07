@@ -13,9 +13,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import ru.bookcrossing.BookcrossingServer.chat.model.Correspondence;
 import ru.bookcrossing.BookcrossingServer.chat.service.CorrespondenceService;
 import ru.bookcrossing.BookcrossingServer.errors.ErrorListResponse;
 import ru.bookcrossing.BookcrossingServer.exception.ChatAlreadyCreatedException;
+import ru.bookcrossing.BookcrossingServer.exception.UserNotFoundException;
 
 import java.security.Principal;
 import java.util.Optional;
@@ -42,23 +44,32 @@ public class CorrespondenceController {
             @ApiResponse(responseCode = "406", description = "Нельзя создать чат с данным пользователем",
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = ErrorListResponse.class))}),
-            @ApiResponse(responseCode = "200", description = "Чат создан")
+            @ApiResponse(responseCode = "200", description = "Чат создан",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Correspondence.class))})
     }
     )
     @PostMapping("/create")
     public ResponseEntity<?> createCorrespondence(@RequestParam int userId,
                                                   Principal principal){
+        ErrorListResponse response = new ErrorListResponse();
         try {
-            Optional<ErrorListResponse> response = correspondenceService.createChat(userId, principal.getName());
-            if(response.isEmpty()){
-                return new ResponseEntity<>(HttpStatus.OK);
+            Optional<Correspondence> correspondence = correspondenceService.createChat(userId, principal.getName());
+            if(correspondence.isPresent()){
+                return new ResponseEntity<>(correspondence.get(), HttpStatus.OK);
             }
             else {
+                response.getErrors().add("user: Пользователь заблокирован");
                 return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
             }
         }
         catch (ChatAlreadyCreatedException e){
-            return new ResponseEntity<>(HttpStatus.CONFLICT);
+            response.getErrors().add("correspondence: Чат уже существует");
+            return new ResponseEntity<>(response, HttpStatus.CONFLICT);
+        }
+        catch (UserNotFoundException e){
+            response.getErrors().add("user: Пользователь не найден");
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
     }
 

@@ -5,8 +5,8 @@ import org.springframework.stereotype.Service;
 import ru.bookcrossing.BookcrossingServer.chat.model.Correspondence;
 import ru.bookcrossing.BookcrossingServer.chat.model.UsersCorrKey;
 import ru.bookcrossing.BookcrossingServer.chat.repository.CorrespondenceRepository;
-import ru.bookcrossing.BookcrossingServer.errors.ErrorListResponse;
 import ru.bookcrossing.BookcrossingServer.exception.ChatAlreadyCreatedException;
+import ru.bookcrossing.BookcrossingServer.exception.UserNotFoundException;
 import ru.bookcrossing.BookcrossingServer.user.model.User;
 import ru.bookcrossing.BookcrossingServer.user.repository.UserRepository;
 
@@ -19,8 +19,7 @@ public class CorrespondenceService {
     private final CorrespondenceRepository correspondenceRepository;
     private final UserRepository userRepository;
 
-    public Optional<ErrorListResponse> createChat(int userId, String login){
-        ErrorListResponse response = new ErrorListResponse();
+    public Optional<Correspondence> createChat(int userId, String login){
         User fUser = userRepository.findByLogin(login).orElseThrow();
         Optional<User> sUser = userRepository.findById(userId);
         if(sUser.isPresent()){
@@ -34,18 +33,17 @@ public class CorrespondenceService {
                 else{
                     Correspondence correspondence = new Correspondence();
                     correspondence.setUsersCorrKey(usersCorrKey);
-                    correspondenceRepository.save(correspondence);
-                    return Optional.empty();
+                    correspondence = correspondenceRepository.save(correspondence);
+                    return Optional.of(correspondence);
                 }
             }
             else{
-                response.getErrors().add("user: Пользователь заблокирован");
+                return Optional.empty();
             }
         }
         else{
-            response.getErrors().add("user: Пользователь не найден");
+            throw new UserNotFoundException();
         }
-        return Optional.of(response);
     }
 
     public boolean deleteChat(int userId, String login){

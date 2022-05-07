@@ -15,12 +15,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.bookcrossing.BookcrossingServer.chat.dto.MessageDto;
+import ru.bookcrossing.BookcrossingServer.chat.model.Message;
 import ru.bookcrossing.BookcrossingServer.chat.service.MessageService;
 import ru.bookcrossing.BookcrossingServer.errors.ErrorListResponse;
 
 import javax.validation.Valid;
 import java.security.Principal;
 import java.util.Objects;
+import java.util.Optional;
 
 @Tag(
         name = "Сообщения",
@@ -44,7 +46,9 @@ public class MessageController {
             @ApiResponse(responseCode = "400", description = "Сообщение должно содержать хотя бы 1 видимый символ",
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = ErrorListResponse.class))}),
-            @ApiResponse(responseCode = "200", description = "Сообщение отправлено")
+            @ApiResponse(responseCode = "200", description = "Сообщение отправлено",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Message.class))})
     }
     )
     @PostMapping("/send")
@@ -57,8 +61,9 @@ public class MessageController {
                     .add(Objects.requireNonNull(f.getDefaultMessage())));
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
-        if(messageService.sendMessage(messageDto, principal.getName())){
-            return new ResponseEntity<>(HttpStatus.OK);
+        Optional<Message> message = messageService.sendMessage(messageDto, principal.getName());
+        if(message.isPresent()){
+            return new ResponseEntity<>(message.get(), HttpStatus.OK);
         }
         else {
             response.getErrors().add("correspondence: Нет доступа к чату");

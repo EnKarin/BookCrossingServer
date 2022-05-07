@@ -23,7 +23,7 @@ public class MessageService {
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
 
-    public boolean sendMessage(MessageDto dto, String login){
+    public Optional<Message> sendMessage(MessageDto dto, String login){
         User user = userRepository.findByLogin(login).orElseThrow();
         Optional<User> firstUser = userRepository.findById(dto.getUsersCorrKeyDto().getFirstUserId());
         Optional<User> secondUser = userRepository.findById(dto.getUsersCorrKeyDto().getSecondUserId());
@@ -37,11 +37,11 @@ public class MessageService {
                     Message message = modelMapper.map(dto, Message.class);
                     message.setCorrespondence(correspondence.get());
                     message.setSender(user);
-                    messageRepository.save(message);
-                    return true;
+                    message = messageRepository.save(message);
+                    return Optional.of(message);
                 }
             }
         }
-        return false;
+        return Optional.empty();
     }
 }
