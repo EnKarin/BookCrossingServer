@@ -24,7 +24,7 @@ import java.util.Optional;
 
 @Tag(
         name = "Чаты",
-        description = "Позволяет создавать чаты с пользователями"
+        description = "Редактирование и создание чатов с пользователями"
 )
 @RequiredArgsConstructor
 @RestController
@@ -47,8 +47,7 @@ public class CorrespondenceController {
             @ApiResponse(responseCode = "200", description = "Чат создан",
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = Correspondence.class))})
-    }
-    )
+    })
     @PostMapping("/create")
     public ResponseEntity<?> createCorrespondence(@RequestParam int userId,
                                                   Principal principal){
@@ -94,4 +93,6 @@ public class CorrespondenceController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
+
 }

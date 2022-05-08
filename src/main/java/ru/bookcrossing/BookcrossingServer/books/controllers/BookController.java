@@ -42,8 +42,8 @@ public class BookController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Возвращает все книги",
                     content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = BookListResponse.class))})}
-    )
+                            schema = @Schema(implementation = BookListResponse.class))})
+    })
     @GetMapping("/getAll")
     public ResponseEntity<?> books() {
         BookListResponse bookResponse = new BookListResponse();
@@ -61,8 +61,8 @@ public class BookController {
                             schema = @Schema(implementation = ErrorListResponse.class))}),
             @ApiResponse(responseCode = "200", description = "Возвращает данные книги",
                     content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = BookResponse.class))})}
-    )
+                            schema = @Schema(implementation = BookResponse.class))})
+    })
     @GetMapping("/getInfo")
     public ResponseEntity<?> bookInfo(@RequestParam Integer id) {
         BookResponse bookResponse;
@@ -84,8 +84,8 @@ public class BookController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Возвращает найденные книги",
                     content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = BookListResponse.class))})}
-    )
+                            schema = @Schema(implementation = BookListResponse.class))})
+    })
     @GetMapping("/searchByTitle")
     public ResponseEntity<?> searchByTitle(@RequestParam String title) {
         BookListResponse response = new BookListResponse();
@@ -100,8 +100,8 @@ public class BookController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Возвращает найденные книги",
                     content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = BookListResponse.class))})}
-    )
+                            schema = @Schema(implementation = BookListResponse.class))})
+    })
     @GetMapping("/searchWithFilters")
     public ResponseEntity<?> searchWithFilters(@RequestBody BookFiltersRequest filters) {
         BookListResponse response = new BookListResponse();

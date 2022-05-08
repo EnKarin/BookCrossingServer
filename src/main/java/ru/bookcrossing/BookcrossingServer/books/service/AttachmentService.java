@@ -24,8 +24,8 @@ public class AttachmentService {
 
     public ErrorListResponse saveAttachment(AttachmentDto attachmentDto, String login) throws IOException {
         ErrorListResponse response = new ErrorListResponse();
-        Optional<Book> book = userRepository.findByLogin(login).get().getBooks().stream()
-                .filter(b -> b.getId() ==attachmentDto.getBookId()).findFirst();
+        Optional<Book> book = userRepository.findByLogin(login).orElseThrow().getBooks().stream()
+                .filter(b -> b.getId() == attachmentDto.getBookId()).findFirst();
         if(book.isPresent()){
             Attachment attachment = new Attachment();
             attachment.setData(attachmentDto.getFile().getBytes());
@@ -43,6 +43,22 @@ public class AttachmentService {
             }
             else response.getErrors().add("attachment: Имя не должно быть пустым");
         } else{
+            response.getErrors().add("attachment: Нет доступа к данной книге");
+        }
+        return response;
+    }
+
+    public ErrorListResponse deleteAttachment(int bookId, String login){
+        ErrorListResponse response = new ErrorListResponse();
+        Optional<Book> book = userRepository.findByLogin(login).orElseThrow().getBooks().stream()
+                .filter(b -> b.getId() == bookId).findFirst();
+        if(book.isPresent()){
+            Optional<Attachment> attachment = Optional.ofNullable(book.get().getAttachment());
+            if(attachment.isPresent()) {
+                attachmentRepository.delete(book.get().getAttachment());
+            }
+        }
+        else{
             response.getErrors().add("attachment: Нет доступа к данной книге");
         }
         return response;

@@ -10,10 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.bookcrossing.BookcrossingServer.chat.dto.MessageDto;
 import ru.bookcrossing.BookcrossingServer.chat.model.Message;
 import ru.bookcrossing.BookcrossingServer.chat.service.MessageService;
@@ -49,10 +46,9 @@ public class MessageController {
             @ApiResponse(responseCode = "200", description = "Сообщение отправлено",
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = Message.class))})
-    }
-    )
+    })
     @PostMapping("/send")
-    public ResponseEntity<?> createCorrespondence(@Valid @RequestBody MessageDto messageDto,
+    public ResponseEntity<?> sendMessage(@Valid @RequestBody MessageDto messageDto,
                                                   BindingResult bindingResult,
                                                   Principal principal){
         ErrorListResponse response = new ErrorListResponse();
@@ -68,6 +64,30 @@ public class MessageController {
         else {
             response.getErrors().add("correspondence: Нет доступа к чату");
             return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
+        }
+    }
+
+    @Operation(
+            summary = "Удаление сообщения",
+            description = "Позволяет удалить сообщение из чата"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "400", description = "Нет доступа",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorListResponse.class))}),
+            @ApiResponse(responseCode = "200", description = "Сообщение удалено",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Message.class))})
+    })
+    @PostMapping("/delete")
+    public ResponseEntity<?> deleteMessage(@RequestParam long messageId,
+                                                  Principal principal){
+        ErrorListResponse response = messageService.deleteMessage(messageId, principal.getName());
+        if(response.getErrors().isEmpty()){
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        else {
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
     }
 }

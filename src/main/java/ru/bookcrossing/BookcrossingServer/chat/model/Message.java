@@ -19,9 +19,12 @@ public class Message {
 
     @ManyToOne
     @JoinColumn(name = "sender_user_id")
+    @JsonIgnore
     private User sender;
 
     private String text;
+
+    private long date;
 
     @ManyToOne
     @JoinColumns({
