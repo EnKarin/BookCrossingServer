@@ -24,6 +24,7 @@ public class Message {
 
     private String text;
 
+    @JsonIgnore
     private long date;
 
     @ManyToOne

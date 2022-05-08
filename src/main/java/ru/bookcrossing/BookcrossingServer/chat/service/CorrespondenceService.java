@@ -37,8 +37,7 @@ public class CorrespondenceService {
                 else{
                     Correspondence correspondence = new Correspondence();
                     correspondence.setUsersCorrKey(usersCorrKey);
-                    correspondence = correspondenceRepository.save(correspondence);
-                    return Optional.of(correspondence);
+                    return Optional.of(correspondenceRepository.save(correspondence));
                 }
             }
             else{
@@ -53,30 +52,32 @@ public class CorrespondenceService {
     public boolean deleteChat(int userId, String login){
         UsersCorrKey usersCorrKey = new UsersCorrKey();
         usersCorrKey.setFirstUser(userRepository.findByLogin(login).orElseThrow());
-        usersCorrKey.setSecondUser(userRepository.findById(userId).orElseThrow());
-        Optional<Correspondence> correspondence = correspondenceRepository.findById(usersCorrKey);
-        if(correspondence.isPresent()){
-            correspondenceRepository.delete(correspondence.get());
-            return true;
+        Optional<User> sUser = userRepository.findById(userId);
+        if(sUser.isPresent()) {
+            usersCorrKey.setSecondUser(sUser.get());
+            Optional<Correspondence> correspondence = correspondenceRepository.findById(usersCorrKey);
+            if (correspondence.isPresent()) {
+                correspondenceRepository.delete(correspondence.get());
+                return true;
+            }
         }
-        else return false;
+        return false;
     }
 
     public Optional<List<MessageResponse>> getChat(ZonedUserCorrKeyDto zonedUserCorrKeyDto,
                                           String login){
         User user = userRepository.findByLogin(login).orElseThrow();
-        User fUser = userRepository.getById(zonedUserCorrKeyDto.getFirstUserId());
-        User sUser = userRepository.getById(zonedUserCorrKeyDto.getSecondUserId());
-        if(user.equals(fUser) || user.equals(sUser)) {
+        Optional<User> fUser = userRepository.findById(zonedUserCorrKeyDto.getFirstUserId());
+        Optional<User> sUser = userRepository.findById(zonedUserCorrKeyDto.getSecondUserId());
+        if(fUser.isPresent() && sUser.isPresent() && (user.equals(fUser.get()) || user.equals(sUser.get()))) {
             UsersCorrKey usersCorrKey = new UsersCorrKey();
-            usersCorrKey.setFirstUser(fUser);
-            usersCorrKey.setSecondUser(sUser);
+            usersCorrKey.setFirstUser(fUser.get());
+            usersCorrKey.setSecondUser(sUser.get());
             Optional<Correspondence> correspondence = correspondenceRepository.findById(usersCorrKey);
             if(correspondence.isPresent()){
-                List<MessageResponse> messageResponses = correspondence.get().getMessage().stream()
+                return Optional.of(correspondence.get().getMessage().stream()
                         .map(m -> new MessageResponse(m, zonedUserCorrKeyDto.getZone()))
-                        .collect(Collectors.toList());
-                return Optional.of(messageResponses);
+                        .collect(Collectors.toList()));
             }
         }
         return Optional.empty();

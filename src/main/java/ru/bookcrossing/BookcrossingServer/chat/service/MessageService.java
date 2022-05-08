@@ -3,6 +3,7 @@ package ru.bookcrossing.BookcrossingServer.chat.service;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import ru.bookcrossing.BookcrossingServer.chat.dto.MessagePutRequest;
 import ru.bookcrossing.BookcrossingServer.chat.dto.MessageRequest;
 import ru.bookcrossing.BookcrossingServer.chat.model.Correspondence;
 import ru.bookcrossing.BookcrossingServer.chat.model.Message;
@@ -10,6 +11,7 @@ import ru.bookcrossing.BookcrossingServer.chat.model.UsersCorrKey;
 import ru.bookcrossing.BookcrossingServer.chat.repository.CorrespondenceRepository;
 import ru.bookcrossing.BookcrossingServer.chat.repository.MessageRepository;
 import ru.bookcrossing.BookcrossingServer.errors.ErrorListResponse;
+import ru.bookcrossing.BookcrossingServer.exception.MessageNotFountException;
 import ru.bookcrossing.BookcrossingServer.user.model.User;
 import ru.bookcrossing.BookcrossingServer.user.repository.UserRepository;
 
@@ -43,8 +45,7 @@ public class MessageService {
                             .toEpochSecond(ZoneOffset.systemDefault().getRules().getOffset(Instant.now())));
                     message.setCorrespondence(correspondence.get());
                     message.setSender(user);
-                    message = messageRepository.save(message);
-                    return Optional.of(message);
+                    return Optional.of(messageRepository.save(message));
                 }
             }
         }
@@ -74,5 +75,22 @@ public class MessageService {
             response.getErrors().add("message: Сообщения не существует");
         }
         return response;
+    }
+
+    public Optional<Message> putMessage(MessagePutRequest messagePutRequest, String login){
+        User user = userRepository.findByLogin(login).orElseThrow();
+        Optional<Message> message = messageRepository.findById(messagePutRequest.getMessageId());
+        if(message.isPresent() && user.equals(message.get().getSender())){
+            Correspondence correspondence = message.get().getCorrespondence();
+            if(user.equals(correspondence.getUsersCorrKey().getFirstUser())
+                    || user.equals(correspondence.getUsersCorrKey().getSecondUser())){
+                message.get().setDate(LocalDateTime.now()
+                        .toEpochSecond(ZoneOffset.systemDefault().getRules().getOffset(Instant.now())));
+                message.get().setText(messagePutRequest.getText());
+                return Optional.of(messageRepository.save(message.get()));
+            }
+            else return Optional.empty();
+        }
+        else throw new MessageNotFountException();
     }
 }
