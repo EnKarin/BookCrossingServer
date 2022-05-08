@@ -9,10 +9,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import ru.bookcrossing.BookcrossingServer.chat.dto.MessageResponse;
+import ru.bookcrossing.BookcrossingServer.chat.dto.ZonedUserCorrKeyDto;
 import ru.bookcrossing.BookcrossingServer.chat.model.Correspondence;
 import ru.bookcrossing.BookcrossingServer.chat.service.CorrespondenceService;
 import ru.bookcrossing.BookcrossingServer.errors.ErrorListResponse;
@@ -20,6 +19,7 @@ import ru.bookcrossing.BookcrossingServer.exception.ChatAlreadyCreatedException;
 import ru.bookcrossing.BookcrossingServer.exception.UserNotFoundException;
 
 import java.security.Principal;
+import java.util.List;
 import java.util.Optional;
 
 @Tag(
@@ -94,5 +94,30 @@ public class CorrespondenceController {
         }
     }
 
-
+    @Operation(
+            summary = "Получение чата",
+            description = "Позволяет получить чат с выбранным пользователем"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "404", description = "Чата не существует",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorListResponse.class))}),
+            @ApiResponse(responseCode = "200", description = "Возвращает список сообщений",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = MessageResponse.class))})
+    }
+    )
+    @GetMapping("/get")
+    public ResponseEntity<?> getCorrespondence(@RequestBody ZonedUserCorrKeyDto dto,
+                                               Principal principal){
+        Optional<List<MessageResponse>> messageResponse = correspondenceService.getChat(dto, principal.getName());
+        if(messageResponse.isPresent()){
+            return ResponseEntity.ok(messageResponse.get());
+        }
+        else {
+            ErrorListResponse response = new ErrorListResponse();
+            response.getErrors().add("correspondence: Чата не существует");
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        }
+    }
 }

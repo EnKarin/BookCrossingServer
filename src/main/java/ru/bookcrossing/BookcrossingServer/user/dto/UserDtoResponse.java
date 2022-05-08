@@ -11,7 +11,7 @@ import java.util.Set;
 
 @Schema(description = "Данные пользователя для общего доступа")
 @Data
-public class UserDTOResponse {
+public class UserDtoResponse {
 
     @Schema(description = "Идентификатор", example = "0")
     private int userId;
@@ -31,7 +31,7 @@ public class UserDTOResponse {
     @Schema(description = "Книги пользователя")
     private Set<Book> books;
 
-    public UserDTOResponse(User user, int zone){
+    public UserDtoResponse(User user, int zone){
         userId = user.getUserId();
         name = user.getName();
         email = user.getEmail();

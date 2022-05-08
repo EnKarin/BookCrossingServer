@@ -13,8 +13,8 @@ import ru.bookcrossing.BookcrossingServer.exception.UserNotFoundException;
 import ru.bookcrossing.BookcrossingServer.mail.model.ActionMailUser;
 import ru.bookcrossing.BookcrossingServer.mail.repository.ActionMailUserRepository;
 import ru.bookcrossing.BookcrossingServer.registation.dto.LoginRequest;
-import ru.bookcrossing.BookcrossingServer.user.dto.UserDTOResponse;
 import ru.bookcrossing.BookcrossingServer.user.dto.UserDto;
+import ru.bookcrossing.BookcrossingServer.user.dto.UserDtoResponse;
 import ru.bookcrossing.BookcrossingServer.user.dto.UserPutRequest;
 import ru.bookcrossing.BookcrossingServer.user.model.Role;
 import ru.bookcrossing.BookcrossingServer.user.model.User;
@@ -65,10 +65,10 @@ public class UserService {
         return userRepository.findById(id);
     }
 
-    public List<UserDTOResponse> findAllUsers(int zone) {
+    public List<UserDtoResponse> findAllUsers(int zone) {
         Role role = roleRepository.getById(1);
         return userRepository.findByUserRoles(role).stream()
-                .map(u -> new UserDTOResponse(u, zone))
+                .map(u -> new UserDtoResponse(u, zone))
                 .collect(Collectors.toList());
     }
 

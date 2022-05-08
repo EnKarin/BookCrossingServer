@@ -9,7 +9,7 @@ import javax.validation.constraints.NotBlank;
 @Validated
 @Data
 @Schema(description = "Сущность для сообщения")
-public class MessageDto {
+public class MessageRequest {
 
     @Schema(description = "Идентификатор чата")
     private UsersCorrKeyDto usersCorrKeyDto;

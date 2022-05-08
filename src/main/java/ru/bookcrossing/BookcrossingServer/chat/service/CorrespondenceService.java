@@ -2,6 +2,8 @@ package ru.bookcrossing.BookcrossingServer.chat.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.bookcrossing.BookcrossingServer.chat.dto.MessageResponse;
+import ru.bookcrossing.BookcrossingServer.chat.dto.ZonedUserCorrKeyDto;
 import ru.bookcrossing.BookcrossingServer.chat.model.Correspondence;
 import ru.bookcrossing.BookcrossingServer.chat.model.UsersCorrKey;
 import ru.bookcrossing.BookcrossingServer.chat.repository.CorrespondenceRepository;
@@ -10,7 +12,9 @@ import ru.bookcrossing.BookcrossingServer.exception.UserNotFoundException;
 import ru.bookcrossing.BookcrossingServer.user.model.User;
 import ru.bookcrossing.BookcrossingServer.user.repository.UserRepository;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -47,16 +51,34 @@ public class CorrespondenceService {
     }
 
     public boolean deleteChat(int userId, String login){
-        User fUser = userRepository.findByLogin(login).orElseThrow();
-        User sUser = userRepository.findById(userId).orElseThrow();
         UsersCorrKey usersCorrKey = new UsersCorrKey();
-        usersCorrKey.setFirstUser(fUser);
-        usersCorrKey.setSecondUser(sUser);
+        usersCorrKey.setFirstUser(userRepository.findByLogin(login).orElseThrow());
+        usersCorrKey.setSecondUser(userRepository.findById(userId).orElseThrow());
         Optional<Correspondence> correspondence = correspondenceRepository.findById(usersCorrKey);
         if(correspondence.isPresent()){
             correspondenceRepository.delete(correspondence.get());
             return true;
         }
         else return false;
+    }
+
+    public Optional<List<MessageResponse>> getChat(ZonedUserCorrKeyDto zonedUserCorrKeyDto,
+                                          String login){
+        User user = userRepository.findByLogin(login).orElseThrow();
+        User fUser = userRepository.getById(zonedUserCorrKeyDto.getFirstUserId());
+        User sUser = userRepository.getById(zonedUserCorrKeyDto.getSecondUserId());
+        if(user.equals(fUser) || user.equals(sUser)) {
+            UsersCorrKey usersCorrKey = new UsersCorrKey();
+            usersCorrKey.setFirstUser(fUser);
+            usersCorrKey.setSecondUser(sUser);
+            Optional<Correspondence> correspondence = correspondenceRepository.findById(usersCorrKey);
+            if(correspondence.isPresent()){
+                List<MessageResponse> messageResponses = correspondence.get().getMessage().stream()
+                        .map(m -> new MessageResponse(m, zonedUserCorrKeyDto.getZone()))
+                        .collect(Collectors.toList());
+                return Optional.of(messageResponses);
+            }
+        }
+        return Optional.empty();
     }
 }

@@ -3,7 +3,7 @@ package ru.bookcrossing.BookcrossingServer.chat.service;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
-import ru.bookcrossing.BookcrossingServer.chat.dto.MessageDto;
+import ru.bookcrossing.BookcrossingServer.chat.dto.MessageRequest;
 import ru.bookcrossing.BookcrossingServer.chat.model.Correspondence;
 import ru.bookcrossing.BookcrossingServer.chat.model.Message;
 import ru.bookcrossing.BookcrossingServer.chat.model.UsersCorrKey;
@@ -27,7 +27,7 @@ public class MessageService {
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
 
-    public Optional<Message> sendMessage(MessageDto dto, String login){
+    public Optional<Message> sendMessage(MessageRequest dto, String login){
         User user = userRepository.findByLogin(login).orElseThrow();
         Optional<User> firstUser = userRepository.findById(dto.getUsersCorrKeyDto().getFirstUserId());
         Optional<User> secondUser = userRepository.findById(dto.getUsersCorrKeyDto().getSecondUserId());

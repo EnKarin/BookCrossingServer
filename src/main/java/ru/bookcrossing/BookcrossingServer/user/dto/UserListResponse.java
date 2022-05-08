@@ -9,9 +9,9 @@ import java.util.List;
 public class UserListResponse {
 
     @Schema(description = "Список пользователей")
-    private List<UserDTOResponse> userList;
+    private List<UserDtoResponse> userList;
 
-    public UserListResponse(List<UserDTOResponse> list){
+    public UserListResponse(List<UserDtoResponse> list){
         userList = list;
     }
 }

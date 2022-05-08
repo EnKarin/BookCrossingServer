@@ -11,7 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import ru.bookcrossing.BookcrossingServer.chat.dto.MessageDto;
+import ru.bookcrossing.BookcrossingServer.chat.dto.MessageRequest;
 import ru.bookcrossing.BookcrossingServer.chat.model.Message;
 import ru.bookcrossing.BookcrossingServer.chat.service.MessageService;
 import ru.bookcrossing.BookcrossingServer.errors.ErrorListResponse;
@@ -48,7 +48,7 @@ public class MessageController {
                             schema = @Schema(implementation = Message.class))})
     })
     @PostMapping("/send")
-    public ResponseEntity<?> sendMessage(@Valid @RequestBody MessageDto messageDto,
+    public ResponseEntity<?> sendMessage(@Valid @RequestBody MessageRequest messageRequest,
                                                   BindingResult bindingResult,
                                                   Principal principal){
         ErrorListResponse response = new ErrorListResponse();
@@ -57,7 +57,7 @@ public class MessageController {
                     .add(Objects.requireNonNull(f.getDefaultMessage())));
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
-        Optional<Message> message = messageService.sendMessage(messageDto, principal.getName());
+        Optional<Message> message = messageService.sendMessage(messageRequest, principal.getName());
         if(message.isPresent()){
             return new ResponseEntity<>(message.get(), HttpStatus.OK);
         }

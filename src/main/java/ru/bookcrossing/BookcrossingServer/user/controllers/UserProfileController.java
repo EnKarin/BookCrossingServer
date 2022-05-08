@@ -14,7 +14,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.bookcrossing.BookcrossingServer.errors.ErrorListResponse;
 import ru.bookcrossing.BookcrossingServer.exception.UserNotFoundException;
-import ru.bookcrossing.BookcrossingServer.user.dto.UserDTOResponse;
+import ru.bookcrossing.BookcrossingServer.user.dto.UserDtoResponse;
 import ru.bookcrossing.BookcrossingServer.user.dto.UserListResponse;
 import ru.bookcrossing.BookcrossingServer.user.dto.UserPutRequest;
 import ru.bookcrossing.BookcrossingServer.user.model.User;
@@ -46,7 +46,7 @@ public class UserProfileController {
                             schema = @Schema(implementation = ErrorListResponse.class))}),
             @ApiResponse(responseCode = "200", description = "Возвращает профиль пользователя",
                     content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = UserDTOResponse.class))})
+                            schema = @Schema(implementation = UserDtoResponse.class))})
     }
     )
     @GetMapping("/profile")
@@ -54,15 +54,15 @@ public class UserProfileController {
             " -1 для собственного") int id,
                                         @RequestParam @Parameter(description = "Часовой пояс пользователя") int zone,
                                         Principal principal) {
-        UserDTOResponse userDTOResponse;
+        UserDtoResponse userDTOResponse;
         Optional<User> user;
         if (id == -1) {
             user = userService.findByLogin(principal.getName());
-            userDTOResponse = new UserDTOResponse(user.get(), zone);
+            userDTOResponse = new UserDtoResponse(user.get(), zone);
         } else {
             user = userService.findById(id);
             if (user.isPresent()) {
-                userDTOResponse = new UserDTOResponse(user.get(), zone);
+                userDTOResponse = new UserDtoResponse(user.get(), zone);
             } else {
                 ErrorListResponse response = new ErrorListResponse();
                 response.getErrors().add("user: Пользователь не найден");
@@ -91,7 +91,7 @@ public class UserProfileController {
                             schema = @Schema(implementation = ErrorListResponse.class))}),
             @ApiResponse(responseCode = "200", description = "Возвращает обновленный профиль пользователя",
                     content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = UserDTOResponse.class))})
+                            schema = @Schema(implementation = UserDtoResponse.class))})
     }
     )
     @PutMapping("/profile/edit")
@@ -111,7 +111,7 @@ public class UserProfileController {
         try {
             Optional<User> user = userService.putUserInfo(userPutRequest, principal.getName());
             if (user.isPresent()) {
-                return ResponseEntity.ok(new UserDTOResponse(user.get(), userPutRequest.getZone()));
+                return ResponseEntity.ok(new UserDtoResponse(user.get(), userPutRequest.getZone()));
             } else {
                 response.getErrors().add("oldPassword: Старый пароль неверен");
                 return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
