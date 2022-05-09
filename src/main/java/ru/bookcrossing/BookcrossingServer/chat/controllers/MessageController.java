@@ -70,30 +70,6 @@ public class MessageController {
     }
 
     @Operation(
-            summary = "Удаление сообщения",
-            description = "Позволяет удалить сообщение из чата"
-    )
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "400", description = "Нет доступа",
-                    content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = ErrorListResponse.class))}),
-            @ApiResponse(responseCode = "200", description = "Сообщение удалено",
-                    content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = Message.class))})
-    })
-    @PostMapping("/delete")
-    public ResponseEntity<?> deleteMessage(@RequestParam long messageId,
-                                                  Principal principal){
-        ErrorListResponse response = messageService.deleteMessage(messageId, principal.getName());
-        if(response.getErrors().isEmpty()){
-            return new ResponseEntity<>(HttpStatus.OK);
-        }
-        else {
-            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    @Operation(
             summary = "Редактирование сообщения",
             description = "Позволяет изменить сообщение в чате"
     )
@@ -134,6 +110,54 @@ public class MessageController {
         catch (MessageNotFountException e){
             response.getErrors().add("message: Сообщение не найдено");
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @Operation(
+            summary = "Удаление сообщения у всех",
+            description = "Позволяет удалить сообщение из чата"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "400", description = "Нет доступа",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorListResponse.class))}),
+            @ApiResponse(responseCode = "200", description = "Сообщение удалено",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Message.class))})
+    })
+    @PostMapping("/delete")
+    public ResponseEntity<?> deleteForEveryoneMessage(@RequestParam long messageId,
+                                           Principal principal){
+        ErrorListResponse response = messageService.deleteForEveryoneMessage(messageId, principal.getName());
+        if(response.getErrors().isEmpty()){
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        else {
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @Operation(
+            summary = "Удаление сообщения у себя",
+            description = "Позволяет удалить сообщение из чата"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "400", description = "Нет доступа",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorListResponse.class))}),
+            @ApiResponse(responseCode = "200", description = "Сообщение удалено",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = Message.class))})
+    })
+    @PostMapping("/deleteForMe")
+    public ResponseEntity<?> deleteForMeMessage(@RequestParam long messageId,
+                                           Principal principal){
+        ErrorListResponse response = messageService.deleteForMeMessage(messageId, principal.getName());
+        if(response.getErrors().isEmpty()){
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        else {
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
     }
 }

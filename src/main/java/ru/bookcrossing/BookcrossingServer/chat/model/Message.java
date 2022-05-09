@@ -27,6 +27,12 @@ public class Message {
     @JsonIgnore
     private long date;
 
+    @JsonIgnore
+    private boolean shownFirstUser;
+
+    @JsonIgnore
+    private boolean shownSecondUser;
+
     @ManyToOne
     @JoinColumns({
             @JoinColumn(name = "correspondence_first_user_id", referencedColumnName = "first_user_id"),
