@@ -35,6 +35,9 @@ public class Message {
 
     private boolean declaim;
 
+    @JsonIgnore
+    private boolean alertSent;
+
     @ManyToOne
     @JoinColumns({
             @JoinColumn(name = "correspondence_first_user_id", referencedColumnName = "first_user_id"),

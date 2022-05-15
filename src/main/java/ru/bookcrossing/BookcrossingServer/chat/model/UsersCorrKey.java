@@ -34,4 +34,9 @@ public class UsersCorrKey implements Serializable {
         return Objects.equals(firstUser, usersCorrKey.firstUser)
                 && Objects.equals(secondUser, usersCorrKey.secondUser);
     }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(firstUser, secondUser);
+    }
 }

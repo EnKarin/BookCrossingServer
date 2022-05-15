@@ -80,4 +80,12 @@ public class MailService {
         message.setText("Аккаунт на сервисе BookCrossing был разблокирован.");
         emailSender.send(message);
     }
+
+    public void sendAlertsMessage(User user, int count){
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(user.getEmail());
+        message.setSubject("Непрочитанные сообщения");
+        message.setText(String.format("В вашем аккаунте есть непрочитанные сообщения: %s", count));
+        emailSender.send(message);
+    }
 }

@@ -54,6 +54,7 @@ public class UserService {
             User user = confirmationMailUser.get().getUser();
             user.setEnabled(true);
             confirmationMailUserRepository.delete(confirmationMailUser.get());
+            userRepository.save(user);
             return true;
         } else return false;
     }

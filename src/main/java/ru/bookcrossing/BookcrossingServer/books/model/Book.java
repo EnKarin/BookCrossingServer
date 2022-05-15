@@ -3,7 +3,6 @@ package ru.bookcrossing.BookcrossingServer.books.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 import ru.bookcrossing.BookcrossingServer.user.model.User;
 
 import javax.persistence.*;
@@ -31,7 +30,6 @@ public class Book {
 
     @ManyToOne
     @JoinColumn(name = "ownerBook")
-    @ToString.Exclude
     @JsonIgnore
     private User owner;
 

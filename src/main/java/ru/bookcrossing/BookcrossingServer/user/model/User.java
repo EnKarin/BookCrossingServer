@@ -41,11 +41,7 @@ public class User implements UserDetails {
 
     private long loginDate;
 
-    @ManyToMany(cascade = {
-            CascadeType.PERSIST,
-            CascadeType.REFRESH,
-            CascadeType.MERGE
-    })
+    @ManyToMany
     @JoinTable(
             name = "t_user_role",
             joinColumns = { @JoinColumn(name = "user_id")},

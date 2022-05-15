@@ -12,8 +12,8 @@ import javax.persistence.*;
 @Table(name = "t_attach")
 public class Attachment {
     @Id
-    @GeneratedValue(generator="system-uuid")
-    @GenericGenerator(name="system-uuid", strategy = "uuid")
+    @GeneratedValue(generator="uuid")
+    @GenericGenerator(name="uuid", strategy = "uuid2")
     private String name;
 
     @Lob
