@@ -9,7 +9,7 @@ import javax.persistence.*;
 @Getter
 @Setter
 @Entity
-@Table(name = "attach")
+@Table(name = "t_attach")
 public class Attachment {
     @Id
     @GeneratedValue(generator="system-uuid")

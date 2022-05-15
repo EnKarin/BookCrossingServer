@@ -8,6 +8,7 @@ import ru.bookcrossing.BookcrossingServer.chat.model.Correspondence;
 import ru.bookcrossing.BookcrossingServer.chat.model.Message;
 import ru.bookcrossing.BookcrossingServer.chat.model.UsersCorrKey;
 import ru.bookcrossing.BookcrossingServer.chat.repository.CorrespondenceRepository;
+import ru.bookcrossing.BookcrossingServer.chat.repository.MessageRepository;
 import ru.bookcrossing.BookcrossingServer.exception.ChatAlreadyCreatedException;
 import ru.bookcrossing.BookcrossingServer.exception.UserNotFoundException;
 import ru.bookcrossing.BookcrossingServer.user.model.User;
@@ -16,6 +17,7 @@ import ru.bookcrossing.BookcrossingServer.user.repository.UserRepository;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -23,6 +25,7 @@ import java.util.stream.Collectors;
 public class CorrespondenceService {
 
     private final CorrespondenceRepository correspondenceRepository;
+    private final MessageRepository messageRepository;
     private final UserRepository userRepository;
 
     public Optional<Correspondence> createChat(int userId, String login) {
@@ -75,21 +78,28 @@ public class CorrespondenceService {
             Optional<Correspondence> correspondence = correspondenceRepository.findById(usersCorrKey);
             if (correspondence.isPresent()) {
                 if (user.equals(fUser.get())) {
-                    return Optional.of(correspondence.get().getMessage().stream()
-                            .filter(Message::isShownFirstUser)
-                            .map(m -> new MessageResponse(m, zonedUserCorrKeyDto.getZone()))
-                            .sorted(Comparator.comparing(MessageResponse::getDate))
-                            .collect(Collectors.toList()));
+                    return Optional.of(getMessages(Message::isShownFirstUser, correspondence.get(), zonedUserCorrKeyDto));
                 }
                 if(user.equals(sUser.get())) {
-                    return Optional.of(correspondence.get().getMessage().stream()
-                            .filter(Message::isShownSecondUser)
-                            .map(m -> new MessageResponse(m, zonedUserCorrKeyDto.getZone()))
-                            .sorted(Comparator.comparing(MessageResponse::getDate))
-                            .collect(Collectors.toList()));
+                    return Optional.of(getMessages(Message::isShownSecondUser, correspondence.get(), zonedUserCorrKeyDto));
                 }
             }
         }
         return Optional.empty();
+    }
+
+    private List<MessageResponse> getMessages(Predicate<Message> rules, Correspondence correspondence,
+                                              ZonedUserCorrKeyDto zonedUserCorrKeyDto) {
+        List<MessageResponse> responses = correspondence.getMessage().stream()
+                .filter(rules)
+                .map(m -> new MessageResponse(m, zonedUserCorrKeyDto.getZone()))
+                .sorted(Comparator.comparing(MessageResponse::getDate))
+                .collect(Collectors.toList());
+        correspondence.setMessage(correspondence.getMessage().stream()
+                .filter(Predicate.not(Message::isDeclaim))
+                .peek(m -> m.setDeclaim(true))
+                .map(messageRepository::save)
+                .collect(Collectors.toList()));
+        return responses;
     }
 }

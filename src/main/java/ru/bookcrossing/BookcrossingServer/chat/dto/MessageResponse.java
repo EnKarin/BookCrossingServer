@@ -17,10 +17,13 @@ public class MessageResponse {
 
     private String date;
 
+    private boolean declaim;
+
     public MessageResponse(Message message, int zone){
         messageId = message.getMessageId();
         userId = message.getSender().getUserId();
         text = message.getText();
-        date = LocalDateTime.ofEpochSecond(message.getDate(), 0, ZoneOffset.ofHours(zone)).toString();
+        date = LocalDateTime.ofEpochSecond(message.getDepartureDate(), 0, ZoneOffset.ofHours(zone)).toString();
+        declaim = message.isDeclaim();
     }
 }

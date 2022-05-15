@@ -47,7 +47,7 @@ public class User implements UserDetails {
             CascadeType.MERGE
     })
     @JoinTable(
-            name = "User_Role",
+            name = "t_user_role",
             joinColumns = { @JoinColumn(name = "user_id")},
             inverseJoinColumns = { @JoinColumn(name = "role_id")}
     )

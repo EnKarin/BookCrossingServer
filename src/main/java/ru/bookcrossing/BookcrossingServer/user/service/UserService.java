@@ -97,7 +97,7 @@ public class UserService {
 
     private User convertToUser(UserDto userDTO) {
         if (userDtoMapper == null) {
-            modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.LOOSE);
+            modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
             userDtoMapper = modelMapper.createTypeMap(UserDto.class, User.class);
             userDtoMapper.addMappings(ms -> {
                 ms.skip(User::setUserRoles);

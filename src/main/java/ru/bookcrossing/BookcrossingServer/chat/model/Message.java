@@ -10,7 +10,7 @@ import javax.persistence.*;
 @Entity
 @Getter
 @Setter
-@Table(name = "t_message")
+@Table(name = "t_messages")
 public class Message {
 
     @Id
@@ -25,13 +25,15 @@ public class Message {
     private String text;
 
     @JsonIgnore
-    private long date;
+    private long departureDate;
 
     @JsonIgnore
     private boolean shownFirstUser;
 
     @JsonIgnore
     private boolean shownSecondUser;
+
+    private boolean declaim;
 
     @ManyToOne
     @JoinColumns({

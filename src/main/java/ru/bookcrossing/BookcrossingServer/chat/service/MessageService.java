@@ -41,7 +41,7 @@ public class MessageService {
                 Optional<Correspondence> correspondence = correspondenceRepository.findById(usersCorrKey);
                 if (correspondence.isPresent()) {
                     Message message = modelMapper.map(dto, Message.class);
-                    message.setDate(LocalDateTime.now()
+                    message.setDepartureDate(LocalDateTime.now()
                             .toEpochSecond(ZoneOffset.systemDefault().getRules().getOffset(Instant.now())));
                     message.setCorrespondence(correspondence.get());
                     message.setSender(user);
@@ -61,7 +61,7 @@ public class MessageService {
             Correspondence correspondence = message.get().getCorrespondence();
             if (user.equals(correspondence.getUsersCorrKey().getFirstUser())
                     || user.equals(correspondence.getUsersCorrKey().getSecondUser())) {
-                message.get().setDate(LocalDateTime.now()
+                message.get().setDepartureDate(LocalDateTime.now()
                         .toEpochSecond(ZoneOffset.systemDefault().getRules().getOffset(Instant.now())));
                 message.get().setText(messagePutRequest.getText());
                 return Optional.of(messageRepository.save(message.get()));

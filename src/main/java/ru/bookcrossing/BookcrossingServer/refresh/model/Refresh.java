@@ -1,20 +1,18 @@
 package ru.bookcrossing.BookcrossingServer.refresh.model;
 
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 import org.hibernate.Hibernate;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
 import java.util.Objects;
 
 @Entity
 @Getter
 @Setter
-@ToString
-@RequiredArgsConstructor
+@Table(name = "t_refresh")
 public class Refresh {
 
     @Id
