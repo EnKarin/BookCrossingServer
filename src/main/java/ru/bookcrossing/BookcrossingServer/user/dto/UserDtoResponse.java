@@ -19,9 +19,6 @@ public class UserDtoResponse {
     @Schema(description = "Имя", example = "Alex")
     private String name;
 
-    @Schema(description = "Почта", example = "al@yandex.ru")
-    private String email;
-
     @Schema(description = "Город", example = "Новосибирск")
     private String city;
 
@@ -34,7 +31,6 @@ public class UserDtoResponse {
     public UserDtoResponse(User user, int zone){
         userId = user.getUserId();
         name = user.getName();
-        email = user.getEmail();
         city = user.getCity();
         if(user.getLoginDate() != 0) {
             loginDate = LocalDateTime.ofEpochSecond(user.getLoginDate(), 0, ZoneOffset.ofHours(zone)).toString();

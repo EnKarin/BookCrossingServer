@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.bookcrossing.BookcrossingServer.chat.dto.MessageResponse;
+import ru.bookcrossing.BookcrossingServer.chat.dto.UsersCorrKeyDto;
 import ru.bookcrossing.BookcrossingServer.chat.dto.ZonedUserCorrKeyDto;
 import ru.bookcrossing.BookcrossingServer.chat.model.Correspondence;
 import ru.bookcrossing.BookcrossingServer.chat.service.CorrespondenceService;
@@ -53,9 +54,9 @@ public class CorrespondenceController {
                                                   Principal principal){
         ErrorListResponse response = new ErrorListResponse();
         try {
-            Optional<Correspondence> correspondence = correspondenceService.createChat(userId, principal.getName());
-            if(correspondence.isPresent()){
-                return new ResponseEntity<>(correspondence.get(), HttpStatus.OK);
+            Optional<UsersCorrKeyDto> usersCorrKeyDto = correspondenceService.createChat(userId, principal.getName());
+            if(usersCorrKeyDto.isPresent()){
+                return new ResponseEntity<>(usersCorrKeyDto.get(), HttpStatus.OK);
             }
             else {
                 response.getErrors().add("user: Пользователь заблокирован");

@@ -3,6 +3,7 @@ package ru.bookcrossing.BookcrossingServer.chat.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.bookcrossing.BookcrossingServer.chat.dto.MessageResponse;
+import ru.bookcrossing.BookcrossingServer.chat.dto.UsersCorrKeyDto;
 import ru.bookcrossing.BookcrossingServer.chat.dto.ZonedUserCorrKeyDto;
 import ru.bookcrossing.BookcrossingServer.chat.model.Correspondence;
 import ru.bookcrossing.BookcrossingServer.chat.model.Message;
@@ -28,7 +29,7 @@ public class CorrespondenceService {
     private final MessageRepository messageRepository;
     private final UserRepository userRepository;
 
-    public Optional<Correspondence> createChat(int userId, String login) {
+    public Optional<UsersCorrKeyDto> createChat(int userId, String login) {
         User fUser = userRepository.findByLogin(login).orElseThrow();
         Optional<User> sUser = userRepository.findById(userId);
         if (sUser.isPresent()) {
@@ -41,7 +42,11 @@ public class CorrespondenceService {
                 } else {
                     Correspondence correspondence = new Correspondence();
                     correspondence.setUsersCorrKey(usersCorrKey);
-                    return Optional.of(correspondenceRepository.save(correspondence));
+                    correspondence = correspondenceRepository.save(correspondence);
+                    UsersCorrKeyDto result = new UsersCorrKeyDto();
+                    result.setFirstUserId(correspondence.getUsersCorrKey().getFirstUser().getUserId());
+                    result.setSecondUserId(correspondence.getUsersCorrKey().getSecondUser().getUserId());
+                    return Optional.of(result);
                 }
             } else {
                 return Optional.empty();

@@ -15,6 +15,7 @@ import ru.bookcrossing.BookcrossingServer.mail.repository.ActionMailUserReposito
 import ru.bookcrossing.BookcrossingServer.registation.dto.LoginRequest;
 import ru.bookcrossing.BookcrossingServer.user.dto.UserDto;
 import ru.bookcrossing.BookcrossingServer.user.dto.UserDtoResponse;
+import ru.bookcrossing.BookcrossingServer.user.dto.UserProfileResponse;
 import ru.bookcrossing.BookcrossingServer.user.dto.UserPutRequest;
 import ru.bookcrossing.BookcrossingServer.user.model.Role;
 import ru.bookcrossing.BookcrossingServer.user.model.User;
@@ -63,6 +64,11 @@ public class UserService {
 
     public Optional<User> findById(int id) {
         return userRepository.findById(id);
+    }
+
+    public UserProfileResponse getProfile(String login){
+        User user = userRepository.findByLogin(login).orElseThrow();
+        return modelMapper.map(user, UserProfileResponse.class);
     }
 
     public List<UserDtoResponse> findAllUsers(int zone) {

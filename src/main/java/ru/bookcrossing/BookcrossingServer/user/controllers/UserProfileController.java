@@ -37,7 +37,7 @@ public class UserProfileController {
     private final UserService userService;
 
     @Operation(
-            summary = "Получение профиля",
+            summary = "Получение чужого профиля",
             description = "Возвращает данные профиля по id"
     )
     @ApiResponses(value = {
@@ -50,15 +50,14 @@ public class UserProfileController {
     }
     )
     @GetMapping("/profile")
-    public ResponseEntity<?> getProfile(@RequestParam @Parameter(description = "Идентификатор пользователя," +
-            " -1 для собственного") int id,
+    public ResponseEntity<?> getProfile(@RequestParam @Parameter(description = "Идентификатор пользователя") int id,
                                         @RequestParam @Parameter(description = "Часовой пояс пользователя") int zone,
                                         Principal principal) {
         UserDtoResponse userDTOResponse;
         Optional<User> user;
         if (id == -1) {
             user = userService.findByLogin(principal.getName());
-            userDTOResponse = new UserDtoResponse(user.get(), zone);
+            userDTOResponse = new UserDtoResponse(user.orElseThrow(), zone);
         } else {
             user = userService.findById(id);
             if (user.isPresent()) {
@@ -70,6 +69,21 @@ public class UserProfileController {
             }
         }
         return ResponseEntity.ok(userDTOResponse);
+    }
+
+    @Operation(
+            summary = "Получение своего профиля",
+            description = "Возвращает данные профиля пользователя"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Возвращает данные пользователя",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = UserDtoResponse.class))})
+    }
+    )
+    @GetMapping("/myProfile")
+    public ResponseEntity<?> getMyProfile(Principal principal) {
+        return ResponseEntity.ok(userService.getProfile(principal.getName()));
     }
 
     @Operation(
