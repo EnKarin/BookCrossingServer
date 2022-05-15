@@ -13,6 +13,7 @@ import ru.bookcrossing.BookcrossingServer.exception.UserNotFoundException;
 import ru.bookcrossing.BookcrossingServer.user.model.User;
 import ru.bookcrossing.BookcrossingServer.user.repository.UserRepository;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -77,12 +78,14 @@ public class CorrespondenceService {
                     return Optional.of(correspondence.get().getMessage().stream()
                             .filter(Message::isShownFirstUser)
                             .map(m -> new MessageResponse(m, zonedUserCorrKeyDto.getZone()))
+                            .sorted(Comparator.comparing(MessageResponse::getDate))
                             .collect(Collectors.toList()));
                 }
                 if(user.equals(sUser.get())) {
                     return Optional.of(correspondence.get().getMessage().stream()
                             .filter(Message::isShownSecondUser)
                             .map(m -> new MessageResponse(m, zonedUserCorrKeyDto.getZone()))
+                            .sorted(Comparator.comparing(MessageResponse::getDate))
                             .collect(Collectors.toList()));
                 }
             }
