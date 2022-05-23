@@ -48,15 +48,15 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public boolean confirmMail(String token) {
+    public Optional<String> confirmMail(String token) {
         Optional<ActionMailUser> confirmationMailUser = confirmationMailUserRepository.findById(token);
         if (confirmationMailUser.isPresent()) {
             User user = confirmationMailUser.get().getUser();
             user.setEnabled(true);
             confirmationMailUserRepository.delete(confirmationMailUser.get());
             userRepository.save(user);
-            return true;
-        } else return false;
+            return Optional.of(user.getLogin());
+        } else return Optional.empty();
     }
 
     public Optional<User> findByLogin(String login) {

@@ -132,8 +132,12 @@ public class RegistrationController {
     )
     @GetMapping("/registration/confirmation")
     public ResponseEntity<?> mailConfirm(@RequestParam String token){
-        if(userService.confirmMail(token)){
-            return new ResponseEntity<>(HttpStatus.OK);
+        Optional<String> login = userService.confirmMail(token);
+        if(login.isPresent()){
+            AuthResponse authResponse = new AuthResponse();
+            authResponse.setAccessToken(jwtProvider.generateToken(login.get()));
+            authResponse.setRefreshToken(refreshService.createToken(login.get()));
+            return ResponseEntity.ok(authResponse);
         }
         else return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
