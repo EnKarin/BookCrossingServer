@@ -46,7 +46,7 @@ public class MyBookController {
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = BookResponse.class))})}
     )
-    @PostMapping("/save")
+    @PostMapping
     public ResponseEntity<?> saveBook(@Valid @RequestBody BookDto bookDTO,
                                       BindingResult bindingResult,
                                       Principal principal) {
@@ -73,7 +73,7 @@ public class MyBookController {
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = BookListResponse.class))})}
     )
-    @GetMapping("/getAll")
+    @GetMapping("/all")
     public ResponseEntity<?> bookList(Principal principal) {
         BookListResponse response = new BookListResponse();
         response.setBookList(bookService.findBookForOwner(principal.getName()));
@@ -87,7 +87,7 @@ public class MyBookController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Удаляет книгу из бд")}
     )
-    @PostMapping("/delete")
+    @DeleteMapping
     public ResponseEntity<?> deleteBook(@RequestParam Integer id){
         bookService.deleteBook(id);
         return new ResponseEntity<>(HttpStatus.OK);

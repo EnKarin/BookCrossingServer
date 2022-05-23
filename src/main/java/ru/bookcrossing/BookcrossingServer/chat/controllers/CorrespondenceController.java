@@ -49,7 +49,7 @@ public class CorrespondenceController {
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = Correspondence.class))})
     })
-    @PostMapping("/create")
+    @PostMapping
     public ResponseEntity<?> createCorrespondence(@RequestParam int userId,
                                                   Principal principal){
         ErrorListResponse response = new ErrorListResponse();
@@ -84,7 +84,7 @@ public class CorrespondenceController {
             @ApiResponse(responseCode = "200", description = "Чат удален")
     }
     )
-    @PostMapping("/delete")
+    @DeleteMapping
     public ResponseEntity<?> deleteCorrespondence(@RequestParam int userId,
                                                   Principal principal){
         if(correspondenceService.deleteChat(userId, principal.getName())){
@@ -108,7 +108,7 @@ public class CorrespondenceController {
                             schema = @Schema(implementation = MessageResponse.class))})
     }
     )
-    @GetMapping("/get")
+    @GetMapping
     public ResponseEntity<?> getCorrespondence(@RequestBody ZonedUserCorrKeyDto dto,
                                                Principal principal){
         Optional<List<MessageResponse>> messageResponse = correspondenceService.getChat(dto, principal.getName());

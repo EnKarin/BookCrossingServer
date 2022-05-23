@@ -41,7 +41,7 @@ public class AdminController {
                             schema = @Schema(implementation = AdmUserListResponse.class))})
     }
     )
-    @GetMapping("/getAll")
+    @GetMapping("/all")
     public ResponseEntity<?> userList(@RequestParam @Parameter(description = "Часовой пояс") int zone) {
         AdmUserListResponse response = new AdmUserListResponse();
         response.setUserList(adminService.findAllUsers(zone));

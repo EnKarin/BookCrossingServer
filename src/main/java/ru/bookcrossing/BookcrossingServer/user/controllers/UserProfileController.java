@@ -108,7 +108,7 @@ public class UserProfileController {
                             schema = @Schema(implementation = UserDtoResponse.class))})
     }
     )
-    @PutMapping("/profile/edit")
+    @PutMapping("/profile")
     public ResponseEntity<?> putProfile(@Valid @RequestBody UserPutRequest userPutRequest,
                                         BindingResult bindingResult,
                                         Principal principal) {
@@ -136,7 +136,7 @@ public class UserProfileController {
         }
     }
 
-    @GetMapping("/all")
+    @GetMapping("/users")
     public ResponseEntity<?> getAllProfile(@RequestParam int zone){
         return new ResponseEntity<>(new UserListResponse(userService.findAllUsers(zone)), HttpStatus.OK);
     }

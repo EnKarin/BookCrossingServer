@@ -44,7 +44,7 @@ public class BookController {
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = BookListResponse.class))})
     })
-    @GetMapping("/getAll")
+    @GetMapping("/all")
     public ResponseEntity<?> books() {
         BookListResponse bookResponse = new BookListResponse();
         bookResponse.setBookList(bookService.findAll());
@@ -63,7 +63,7 @@ public class BookController {
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = BookResponse.class))})
     })
-    @GetMapping("/getInfo")
+    @GetMapping("/info")
     public ResponseEntity<?> bookInfo(@RequestParam Integer id) {
         BookResponse bookResponse;
         Optional<Book> book = bookService.findById(id);

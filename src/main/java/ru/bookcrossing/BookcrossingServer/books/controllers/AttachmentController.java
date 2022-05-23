@@ -38,7 +38,7 @@ public class AttachmentController {
                             schema = @Schema(implementation = ErrorListResponse.class))}),
             @ApiResponse(responseCode = "200", description = "Вложение сохранено")
     })
-    @PostMapping("/save/attachment")
+    @PostMapping("/attachment")
     public ResponseEntity<?> saveAttachment(@ModelAttribute AttachmentDto attachmentDto,
                                             Principal principal) throws IOException {
         ErrorListResponse response = attachmentService.saveAttachment(attachmentDto, principal.getName());
@@ -58,7 +58,7 @@ public class AttachmentController {
                             schema = @Schema(implementation = ErrorListResponse.class))}),
             @ApiResponse(responseCode = "200", description = "Вложение удалено")
     })
-    @DeleteMapping("/delete/attachment")
+    @DeleteMapping("/attachment")
     public ResponseEntity<?> deleteAttachment(@RequestParam int bookId,
                                             Principal principal){
         ErrorListResponse response = attachmentService.deleteAttachment(bookId, principal.getName());

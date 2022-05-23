@@ -49,7 +49,7 @@ public class MessageController {
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = Message.class))})
     })
-    @PostMapping("/send")
+    @PostMapping
     public ResponseEntity<?> sendMessage(@Valid @RequestBody MessageRequest messageRequest,
                                                   BindingResult bindingResult,
                                                   Principal principal){
@@ -87,7 +87,7 @@ public class MessageController {
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = Message.class))})
     })
-    @PutMapping("/put")
+    @PutMapping
     public ResponseEntity<?> putMessage(@Valid @RequestBody MessagePutRequest messageRequest,
                                         BindingResult bindingResult,
                                         Principal principal){
@@ -125,7 +125,7 @@ public class MessageController {
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = Message.class))})
     })
-    @PostMapping("/delete")
+    @DeleteMapping
     public ResponseEntity<?> deleteForEveryoneMessage(@RequestParam long messageId,
                                            Principal principal){
         ErrorListResponse response = messageService.deleteForEveryoneMessage(messageId, principal.getName());

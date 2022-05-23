@@ -33,7 +33,7 @@ public class BookmarksController {
             @ApiResponse(responseCode = "200", description = "Книга добавлена")
     }
     )
-    @PostMapping("/save")
+    @PostMapping
     public ResponseEntity<?> saveBookmarks(@RequestParam @Parameter(description = "Идентификатор книги") int bookId,
                                            Principal principal){
         if(bookmarksService.saveBookmarks(bookId, principal.getName())){
@@ -51,7 +51,7 @@ public class BookmarksController {
             @ApiResponse(responseCode = "200", description = "Книга удалена")
     }
     )
-    @PostMapping("/delete")
+    @DeleteMapping
     public ResponseEntity<?> deleteBookmarks(@RequestParam @Parameter(description = "Идентификатор книги") int bookId,
                                            Principal principal){
         if(bookmarksService.deleteBookmarks(bookId, principal.getName())){
@@ -68,7 +68,7 @@ public class BookmarksController {
             @ApiResponse(responseCode = "200", description = "Возвращает список закладок")
     }
     )
-    @GetMapping("/get")
+    @GetMapping
     public ResponseEntity<?> getAll(Principal principal){
         return new ResponseEntity<>(bookmarksService.getAll(principal.getName()), HttpStatus.OK);
     }
