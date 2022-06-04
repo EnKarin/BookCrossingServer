@@ -1,8 +1,6 @@
 package ru.bookcrossing.BookcrossingServer.schedulingtasks;
 
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import ru.bookcrossing.BookcrossingServer.chat.model.Message;
@@ -10,7 +8,6 @@ import ru.bookcrossing.BookcrossingServer.chat.repository.MessageRepository;
 import ru.bookcrossing.BookcrossingServer.mail.service.MailService;
 import ru.bookcrossing.BookcrossingServer.user.model.User;
 
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,8 +20,6 @@ public class MessageAlertsService {
 
     private final MessageRepository messageRepository;
     private final MailService mailService;
-
-    private static final Logger log = LoggerFactory.getLogger(MessageAlertsService.class);
 
     @Scheduled(cron = "0 */30 * * * *")
     public void sendAlerts(){
@@ -60,6 +55,5 @@ public class MessageAlertsService {
                 messageRepository.save(m);
             });
         }
-        log.info("The time is now {}", LocalDateTime.now());
     }
 }

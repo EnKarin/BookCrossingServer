@@ -83,10 +83,12 @@ public class CorrespondenceService {
             Optional<Correspondence> correspondence = correspondenceRepository.findById(usersCorrKey);
             if (correspondence.isPresent()) {
                 if (user.equals(fUser.get())) {
-                    return Optional.of(getMessages(Message::isShownFirstUser, correspondence.get(), zonedUserCorrKeyDto));
+                    return Optional.of(getMessages(Message::isShownFirstUser, correspondence.get(), zonedUserCorrKeyDto,
+                            user));
                 }
                 if(user.equals(sUser.get())) {
-                    return Optional.of(getMessages(Message::isShownSecondUser, correspondence.get(), zonedUserCorrKeyDto));
+                    return Optional.of(getMessages(Message::isShownSecondUser, correspondence.get(), zonedUserCorrKeyDto,
+                            user));
                 }
             }
         }
@@ -94,13 +96,14 @@ public class CorrespondenceService {
     }
 
     private List<MessageResponse> getMessages(Predicate<Message> rules, Correspondence correspondence,
-                                              ZonedUserCorrKeyDto zonedUserCorrKeyDto) {
+                                              ZonedUserCorrKeyDto zonedUserCorrKeyDto, User user) {
         List<MessageResponse> responses = correspondence.getMessage().stream()
                 .filter(rules)
                 .map(m -> new MessageResponse(m, zonedUserCorrKeyDto.getZone()))
                 .sorted(Comparator.comparing(MessageResponse::getDate))
                 .collect(Collectors.toList());
         correspondence.setMessage(correspondence.getMessage().stream()
+                .filter(m -> !user.equals(m.getSender()))
                 .filter(Predicate.not(Message::isDeclaim))
                 .peek(m -> m.setDeclaim(true))
                 .map(messageRepository::save)

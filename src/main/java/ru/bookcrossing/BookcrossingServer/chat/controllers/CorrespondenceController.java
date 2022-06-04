@@ -1,6 +1,7 @@
 package ru.bookcrossing.BookcrossingServer.chat.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -85,7 +86,8 @@ public class CorrespondenceController {
     }
     )
     @DeleteMapping
-    public ResponseEntity<?> deleteCorrespondence(@RequestParam int userId,
+    public ResponseEntity<?> deleteCorrespondence(@RequestParam @Parameter(description = "Идентификатор пользователя")
+                                                              int userId,
                                                   Principal principal){
         if(correspondenceService.deleteChat(userId, principal.getName())){
             return new ResponseEntity<>(HttpStatus.OK);

@@ -13,7 +13,7 @@ import ru.bookcrossing.BookcrossingServer.exception.UserNotFoundException;
 import ru.bookcrossing.BookcrossingServer.mail.model.ActionMailUser;
 import ru.bookcrossing.BookcrossingServer.mail.repository.ActionMailUserRepository;
 import ru.bookcrossing.BookcrossingServer.registation.dto.LoginRequest;
-import ru.bookcrossing.BookcrossingServer.user.dto.UserDto;
+import ru.bookcrossing.BookcrossingServer.registation.dto.UserDto;
 import ru.bookcrossing.BookcrossingServer.user.dto.UserDtoResponse;
 import ru.bookcrossing.BookcrossingServer.user.dto.UserProfileResponse;
 import ru.bookcrossing.BookcrossingServer.user.dto.UserPutRequest;

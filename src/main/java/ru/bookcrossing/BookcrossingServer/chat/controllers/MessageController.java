@@ -149,7 +149,7 @@ public class MessageController {
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = Message.class))})
     })
-    @PostMapping("/deleteForMe")
+    @DeleteMapping("/deleteForMe")
     public ResponseEntity<?> deleteForMeMessage(@RequestParam long messageId,
                                            Principal principal){
         ErrorListResponse response = messageService.deleteForMeMessage(messageId, principal.getName());

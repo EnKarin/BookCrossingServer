@@ -37,11 +37,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .httpBasic().disable()
                 .csrf().disable()
-
-                //работает только для браузеров
-
-                // .csrf(csrf -> csrf
-                //        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
+//                работает только для браузеров
+//
+//                .csrf()
+//                .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()

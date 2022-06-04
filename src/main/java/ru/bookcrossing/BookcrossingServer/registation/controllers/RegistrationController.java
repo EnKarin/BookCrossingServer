@@ -18,8 +18,8 @@ import ru.bookcrossing.BookcrossingServer.mail.service.MailService;
 import ru.bookcrossing.BookcrossingServer.refresh.service.RefreshService;
 import ru.bookcrossing.BookcrossingServer.registation.dto.AuthResponse;
 import ru.bookcrossing.BookcrossingServer.registation.dto.LoginRequest;
+import ru.bookcrossing.BookcrossingServer.registation.dto.UserDto;
 import ru.bookcrossing.BookcrossingServer.security.jwt.JwtProvider;
-import ru.bookcrossing.BookcrossingServer.user.dto.UserDto;
 import ru.bookcrossing.BookcrossingServer.user.model.User;
 import ru.bookcrossing.BookcrossingServer.user.service.UserService;
 

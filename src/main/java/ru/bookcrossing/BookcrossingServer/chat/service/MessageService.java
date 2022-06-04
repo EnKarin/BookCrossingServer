@@ -1,7 +1,6 @@
 package ru.bookcrossing.BookcrossingServer.chat.service;
 
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import ru.bookcrossing.BookcrossingServer.chat.dto.MessagePutRequest;
 import ru.bookcrossing.BookcrossingServer.chat.dto.MessageRequest;
@@ -27,7 +26,6 @@ public class MessageService {
     private final MessageRepository messageRepository;
     private final CorrespondenceRepository correspondenceRepository;
     private final UserRepository userRepository;
-    private final ModelMapper modelMapper;
 
     public Optional<Message> sendMessage(MessageRequest dto, String login) {
         User user = userRepository.findByLogin(login).orElseThrow();
@@ -40,7 +38,8 @@ public class MessageService {
             if (usersCorrKey.getFirstUser().equals(user) || usersCorrKey.getSecondUser().equals(user)) {
                 Optional<Correspondence> correspondence = correspondenceRepository.findById(usersCorrKey);
                 if (correspondence.isPresent()) {
-                    Message message = modelMapper.map(dto, Message.class);
+                    Message message = new Message();
+                    message.setText(dto.getText());
                     message.setDepartureDate(LocalDateTime.now()
                             .toEpochSecond(ZoneOffset.systemDefault().getRules().getOffset(Instant.now())));
                     message.setCorrespondence(correspondence.get());
