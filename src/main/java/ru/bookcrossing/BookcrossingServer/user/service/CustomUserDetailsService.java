@@ -1,20 +1,16 @@
 package ru.bookcrossing.BookcrossingServer.user.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import ru.bookcrossing.BookcrossingServer.user.model.User;
 
 @Component
+@RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
 
-    private UserService userService;
-
-    @Autowired
-    private void setUserService(UserService service){
-        userService = service;
-    }
+    private final UserService userService;
 
     @Override
     public User loadUserByUsername(String username) throws UsernameNotFoundException {

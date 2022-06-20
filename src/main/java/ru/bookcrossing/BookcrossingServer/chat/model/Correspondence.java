@@ -31,4 +31,8 @@ public class Correspondence {
         return Objects.equals(usersCorrKey, correspondence.usersCorrKey);
     }
 
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 }

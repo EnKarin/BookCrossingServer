@@ -62,7 +62,7 @@ public class BookService{
             books = books.stream().filter(book -> book.getPublishingHouse().equals(request.getPublishingHouse()))
                     .collect(Collectors.toList());
         if(request.getYear() != 0)
-            books = books.stream().filter(book -> book.getYear() == (request.getYear()))
+            books = books.stream().filter(book -> book.getYear() == request.getYear())
                     .collect(Collectors.toList());
         if(request.getTitle() != null)
             books = books.stream().filter(book -> book.getTitle().equals(request.getTitle()))

@@ -27,7 +27,7 @@ public class Refresh {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
         Refresh refresh1 = (Refresh) o;
-        return refresh != null && Objects.equals(refresh, refresh1.refresh);
+        return Objects.equals(refresh, refresh1.refresh);
     }
 
     @Override

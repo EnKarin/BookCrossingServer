@@ -1,7 +1,7 @@
 package ru.bookcrossing.BookcrossingServer.security.jwt;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -21,23 +21,14 @@ import static org.springframework.util.StringUtils.hasText;
 
 @Component
 @Log
+@RequiredArgsConstructor
 public class JwtFilter extends GenericFilterBean {
 
     public static final String AUTHORIZATION = "Authorization";
 
-    private JwtProvider jwtProvider;
+    private final JwtProvider jwtProvider;
 
-    private CustomUserDetailsService customUserDetailsService;
-
-    @Autowired
-    private void setJwtProvider(JwtProvider provider){
-        jwtProvider = provider;
-    }
-
-    @Autowired
-    private void setCustomUserDetailsService(CustomUserDetailsService custService){
-        customUserDetailsService = custService;
-    }
+    private final CustomUserDetailsService customUserDetailsService;
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)

@@ -1,6 +1,6 @@
 package ru.bookcrossing.BookcrossingServer.security;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -12,23 +12,14 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import ru.bookcrossing.BookcrossingServer.handlers.AuthenticationEntryPointHandler;
 import ru.bookcrossing.BookcrossingServer.security.jwt.JwtFilter;
 
+@RequiredArgsConstructor
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private JwtFilter jwtFilter;
+    private final JwtFilter jwtFilter;
 
-    private AuthenticationEntryPointHandler handler;
-
-    @Autowired
-    private void setJwtFilter(JwtFilter filter){
-        jwtFilter = filter;
-    }
-
-    @Autowired
-    private void setAuthenticationEntryPointHandler(AuthenticationEntryPointHandler hand){
-        handler = hand;
-    }
+    private final AuthenticationEntryPointHandler handler;
 
     @Override
     protected void configure(HttpSecurity httpSecurity) throws Exception {
@@ -37,10 +28,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .httpBasic().disable()
                 .csrf().disable()
-//                работает только для браузеров
-//
-//                .csrf()
-//                .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()

@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,17 +23,12 @@ import java.util.Optional;
         name = "Раздел со всеми книгами в системе",
         description = "Позволяет пользователю получить все книги, доступные для обмена"
 )
-
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/books")
 public class BookController {
 
-    private BookService bookService;
-
-    @Autowired
-    private void setBookService(BookService s) {
-        bookService = s;
-    }
+    private final BookService bookService;
 
     @Operation(
             summary = "Все книги в системе",
