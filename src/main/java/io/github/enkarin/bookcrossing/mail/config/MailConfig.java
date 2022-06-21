@@ -12,10 +12,10 @@ import java.util.Properties;
 public class MailConfig {
 
     @Value("${mail.password}")
-    private static String pass;
+    private String pass;
 
     @Value("${mail.username}")
-    private static String user;
+    private String user;
 
     @Bean
     public JavaMailSender getJavaMailSender() {

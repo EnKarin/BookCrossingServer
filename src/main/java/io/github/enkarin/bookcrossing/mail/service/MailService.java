@@ -23,7 +23,7 @@ public class MailService {
     private final UserRepository userRepository;
 
     @Value("${server.port}")
-    private static String port;
+    private String port;
 
     public void sendApproveMail(final User user){
         final String token = UUID.randomUUID().toString();
