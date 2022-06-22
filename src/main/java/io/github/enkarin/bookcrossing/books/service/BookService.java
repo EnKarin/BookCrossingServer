@@ -42,8 +42,7 @@ public class BookService{
         if (user.isPresent()) {
             books = bookRepository.findBooksByOwner(user.get());
             return books.stream().filter(b -> b.getOwner().isAccountNonLocked()).collect(Collectors.toList());
-        }
-        else {
+        } else {
             return null;
         }
     }

@@ -109,8 +109,7 @@ public class MessageService {
                     message.get().setShownSecondUser(false);
                     messageRepository.save(message.get());
                 }
-            }
-            else {
+            } else {
                 response.getErrors().add("message: Пользователь не является отправителем");
             }
         } else {

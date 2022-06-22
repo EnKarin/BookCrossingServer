@@ -100,8 +100,7 @@ public class UserService {
             } else {
                 return Optional.empty();
             }
-        }
-        else {
+        } else {
             throw new UserNotFoundException();
         }
     }

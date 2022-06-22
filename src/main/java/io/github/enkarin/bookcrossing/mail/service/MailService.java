@@ -60,8 +60,7 @@ public class MailService {
 
             emailSender.send(message);
             return true;
-        }
-        else {
+        } else {
             return false;
         }
     }

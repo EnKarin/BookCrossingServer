@@ -60,17 +60,14 @@ public class CorrespondenceController {
                     principal.getName());
             if(usersCorrKeyDto.isPresent()){
                 return new ResponseEntity<>(usersCorrKeyDto.get(), HttpStatus.OK);
-            }
-            else {
+            } else {
                 response.getErrors().add("user: Пользователь заблокирован");
                 return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
             }
-        }
-        catch (ChatAlreadyCreatedException e){
+        } catch (ChatAlreadyCreatedException e){
             response.getErrors().add("correspondence: Чат уже существует");
             return new ResponseEntity<>(response, HttpStatus.CONFLICT);
-        }
-        catch (UserNotFoundException e){
+        } catch (UserNotFoundException e){
             response.getErrors().add("user: Пользователь не найден");
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
@@ -93,8 +90,7 @@ public class CorrespondenceController {
                                                   final Principal principal){
         if(correspondenceService.deleteChat(userId, principal.getName())){
             return new ResponseEntity<>(HttpStatus.OK);
-        }
-        else {
+        } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
@@ -118,8 +114,7 @@ public class CorrespondenceController {
         final Optional<List<MessageResponse>> messageResponse = correspondenceService.getChat(dto, principal.getName());
         if(messageResponse.isPresent()){
             return ResponseEntity.ok(messageResponse.get());
-        }
-        else {
+        } else {
             final ErrorListResponse response = new ErrorListResponse();
             response.getErrors().add("correspondence: Чата не существует");
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);

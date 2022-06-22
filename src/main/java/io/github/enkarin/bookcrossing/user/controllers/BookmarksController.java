@@ -39,8 +39,7 @@ public class BookmarksController {
                                            final Principal principal){
         if(bookmarksService.saveBookmarks(bookId, principal.getName())){
             return new ResponseEntity<>(HttpStatus.OK);
-        }
-        else {
+        } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
@@ -60,8 +59,7 @@ public class BookmarksController {
                                            final Principal principal){
         if(bookmarksService.deleteBookmarks(bookId, principal.getName())){
             return new ResponseEntity<>(HttpStatus.OK);
-        }
-        else {
+        } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }

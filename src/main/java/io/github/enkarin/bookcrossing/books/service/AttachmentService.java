@@ -33,8 +33,7 @@ public class AttachmentService {
             final String fileName = attachmentDto.getFile().getOriginalFilename();
             if(fileName == null) {
                 response.getErrors().add("attachment: Имя не должно быть пустым");
-            }
-            else {
+            } else {
                 final String expansion = fileName.substring(fileName.indexOf('.')).toLowerCase(Locale.ROOT);
                 if(expansion.contains("jpeg") || expansion.contains("jpg")
                         || expansion.contains("png") || expansion.contains("bmp")) {
@@ -42,8 +41,7 @@ public class AttachmentService {
                     attachment = attachRepository.save(attachment);
                     book.get().setAttachment(attachment);
                     bookRepository.save(book.get());
-                }
-                else {
+                } else {
                     response.getErrors().add("attachment: Недопустимый формат файла");
                 }
             }
@@ -62,8 +60,7 @@ public class AttachmentService {
             if(attachment.isPresent()) {
                 attachRepository.delete(book.get().getAttachment());
             }
-        }
-        else{
+        } else{
             response.getErrors().add("attachment: Нет доступа к данной книге");
         }
         return response;

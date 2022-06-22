@@ -31,9 +31,8 @@
         </module>
         <module name="ConstantName"/>
         <module name="EmptyBlock"/>
-<!--        <module name="EmptyCatchBlock"/>-->
         <module name="LeftCurly"/>
-<!--        <module name="RightCurly"/>-->
+        <module name="RightCurly"/>
         <module name="MethodLength"/>
         <module name="MissingOverride"/>
         <module name="NeedBraces"/>
@@ -152,38 +151,34 @@
         <module name="NonEmptyAtclauseDescription"/>
         <module name="InvalidJavadocPosition"/>
         <module name="JavadocTagContinuationIndentation"/>
-<!--        <module name="SummaryJavadoc">-->
-<!--            <property name="forbiddenSummaryFragments"-->
-<!--                      value="^@return the *|^This method returns |^A [{]@code [a-zA-Z0-9]+[}]( is a )"/>-->
-<!--        </module>-->
-<!--        <module name="JavadocMethod">-->
-<!--            <property name="allowMissingParamTags" value="true"/>-->
-<!--            <property name="allowMissingReturnTag" value="true"/>-->
-<!--            <property name="allowedAnnotations" value="Override, Test"/>-->
-<!--            </module>-->
-<!--        <module name="MissingJavadocMethod">-->
-<!--            <property name="scope" value="nothing"/>-->
-<!--            <property name="minLineCount" value="2"/>-->
-<!--            <property name="allowedAnnotations" value="Override, Test"/>-->
-<!--            </module>-->
-<!--        <module name="MissingJavadocType">-->
-<!--            <property name="scope" value="nothing"/>-->
-<!--            <property name="excludeScope" value="nothing"/>-->
-<!--        </module>-->
-<!--        <module name="MethodName">-->
-<!--            <property name="format" value="^[a-z][a-z0-9][a-zA-Z0-9_]*$"/>-->
-<!--        </module>-->
-<!--        <module name="SingleLineJavadoc"/>-->
-<!--        <module name="EmptyCatchBlock">-->
-<!--            <property name="exceptionVariableName" value="expected"/>-->
-<!--        </module>-->
-<!--        <module name="CommentsIndentation">-->
-<!--            <property name="tokens" value="SINGLE_LINE_COMMENT, BLOCK_COMMENT_BEGIN"/>-->
-<!--        </module>-->
-<!--        <module name="SuppressionXpathFilter">-->
-<!--            <property name="file" value="${org.checkstyle.google.suppressionxpathfilter.config}"-->
-<!--                      default="checkstyle-xpath-suppressions.xml"/>-->
-<!--            <property name="optional" value="true"/>-->
-<!--        </module>-->
+        <module name="SummaryJavadoc">
+            <property name="forbiddenSummaryFragments"
+                      value="^@return the *|^This method returns |^A [{]@code [a-zA-Z0-9]+[}]( is a )"/>
+        </module>
+        <module name="JavadocMethod">
+            <property name="allowMissingParamTags" value="true"/>
+            <property name="allowMissingReturnTag" value="true"/>
+            <property name="allowedAnnotations" value="Override, Test"/>
+            </module>
+        <module name="MissingJavadocMethod">
+            <property name="scope" value="nothing"/>
+            <property name="minLineCount" value="2"/>
+            <property name="allowedAnnotations" value="Override, Test"/>
+            </module>
+        <module name="MissingJavadocType">
+            <property name="scope" value="nothing"/>
+            <property name="excludeScope" value="nothing"/>
+        </module>
+        <module name="MethodName"/>
+        <module name="SingleLineJavadoc"/>
+<!--        <module name="EmptyCatchBlock"/>-->
+        <module name="CommentsIndentation">
+            <property name="tokens" value="SINGLE_LINE_COMMENT, BLOCK_COMMENT_BEGIN"/>
+        </module>
+        <module name="SuppressionXpathFilter">
+            <property name="file" value="${org.checkstyle.google.suppressionxpathfilter.config}"
+                      default="checkstyle-xpath-suppressions.xml"/>
+            <property name="optional" value="true"/>
+        </module>
     </module>
 </module>

@@ -77,8 +77,7 @@ public class RegistrationController {
             final User result = userService.saveUser(userForm);
             mailService.sendApproveMail(result);
             return new ResponseEntity<>(HttpStatus.OK);
-        }
-        catch (LoginFailedException | EmailFailedException failedException){
+        } catch (LoginFailedException | EmailFailedException failedException){
             errorListResponse.getErrors().add(failedException.getMessage());
             return new ResponseEntity<>(errorListResponse, HttpStatus.NOT_ACCEPTABLE);
         }
@@ -111,13 +110,11 @@ public class RegistrationController {
                 authResponse.setAccessToken(jwtProvider.generateToken(request.getLogin()));
                 authResponse.setRefreshToken(refreshService.createToken(request.getLogin()));
                 return ResponseEntity.ok(authResponse);
-            }
-            else {
+            } else {
                 response.getErrors().add("account: Аккаунт заблокирован");
                 return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
             }
-        }
-        else {
+        } else {
             response.getErrors().add("account: Аккаунт не подтвержден");
             return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
         }
@@ -140,8 +137,7 @@ public class RegistrationController {
             authResponse.setAccessToken(jwtProvider.generateToken(login.get()));
             authResponse.setRefreshToken(refreshService.createToken(login.get()));
             return ResponseEntity.ok(authResponse);
-        }
-        else {
+        } else {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }

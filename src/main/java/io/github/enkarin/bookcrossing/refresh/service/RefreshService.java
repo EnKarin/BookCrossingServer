@@ -44,13 +44,11 @@ public class RefreshService {
         if(refresh.isPresent()){
             if(LocalDate.ofEpochDay(refresh.get().getDate()).isAfter(LocalDate.now())){
                 return Optional.of(refresh.get().getUser());
-            }
-            else {
+            } else {
                 refreshRepository.delete(refresh.get());
                 return Optional.empty();
             }
-        }
-        else {
+        } else {
             return Optional.empty();
         }
     }

@@ -23,8 +23,7 @@ public class BookmarksService {
             user.getBookmarks().add(book.get());
             userRepository.save(user);
             return true;
-        }
-        else {
+        } else {
             return false;
         }
     }
@@ -39,8 +38,7 @@ public class BookmarksService {
                 userRepository.save(user);
             }
             return true;
-        }
-        else {
+        } else {
             return false;
         }
     }

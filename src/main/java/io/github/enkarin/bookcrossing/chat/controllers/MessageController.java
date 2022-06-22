@@ -63,8 +63,7 @@ public class MessageController {
         final Optional<Message> message = messageService.sendMessage(messageRequest, principal.getName());
         if(message.isPresent()){
             return new ResponseEntity<>(message.get(), HttpStatus.OK);
-        }
-        else {
+        } else {
             response.getErrors().add("correspondence: Нет доступа к чату");
             return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
         }
@@ -102,13 +101,11 @@ public class MessageController {
             final Optional<Message> message = messageService.putMessage(messageRequest, principal.getName());
             if(message.isPresent()){
                 return new ResponseEntity<>(message.get(), HttpStatus.OK);
-            }
-            else {
+            } else {
                 response.getErrors().add("correspondence: Нет доступа к чату");
                 return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
             }
-        }
-        catch (MessageNotFountException e){
+        } catch (MessageNotFountException e){
             response.getErrors().add("message: Сообщение не найдено");
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
@@ -132,8 +129,7 @@ public class MessageController {
         final ErrorListResponse response = messageService.deleteForEveryoneMessage(messageId, principal.getName());
         if(response.getErrors().isEmpty()){
             return new ResponseEntity<>(HttpStatus.OK);
-        }
-        else {
+        } else {
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
     }
@@ -156,8 +152,7 @@ public class MessageController {
         final ErrorListResponse response = messageService.deleteForMeMessage(messageId, principal.getName());
         if(response.getErrors().isEmpty()){
             return new ResponseEntity<>(HttpStatus.OK);
-        }
-        else {
+        } else {
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
     }
