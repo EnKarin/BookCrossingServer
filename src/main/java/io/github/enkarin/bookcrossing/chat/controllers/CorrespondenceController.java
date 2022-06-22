@@ -56,7 +56,8 @@ public class CorrespondenceController {
                                                   final Principal principal){
         final ErrorListResponse response = new ErrorListResponse();
         try {
-            final Optional<UsersCorrKeyDto> usersCorrKeyDto = correspondenceService.createChat(userId, principal.getName());
+            final Optional<UsersCorrKeyDto> usersCorrKeyDto = correspondenceService.createChat(userId,
+                    principal.getName());
             if(usersCorrKeyDto.isPresent()){
                 return new ResponseEntity<>(usersCorrKeyDto.get(), HttpStatus.OK);
             }
