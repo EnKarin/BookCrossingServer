@@ -19,7 +19,9 @@ import java.util.stream.Collectors;
 public class AdminService {
 
     private final UserRepository userRepository;
+
     private final RoleRepository roleRepository;
+
     private final MailService mailService;
 
     public boolean lockedUser(final LockedUserDto lockedUserDto) {

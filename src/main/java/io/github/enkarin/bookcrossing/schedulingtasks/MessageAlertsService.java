@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 public class MessageAlertsService {
 
     private final MessageRepository messageRepository;
+
     private final MailService mailService;
 
     @Scheduled(cron = "0 */30 * * * *")

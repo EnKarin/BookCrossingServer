@@ -19,7 +19,9 @@ import java.util.Optional;
 public class AttachmentService {
 
     private final UserRepository userRepository;
+
     private final AttachmentRepository attachRepository;
+
     private final BookRepository bookRepository;
 
     public ErrorListResponse saveAttachment(final AttachmentDto attachmentDto, final String login) throws IOException {

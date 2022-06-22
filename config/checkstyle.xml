@@ -40,7 +40,7 @@
         <module name="NoEnumTrailingComma"/>
         <module name="OneTopLevelClass"/>
         <module name="WhitespaceAfter"/>
-<!--        <module name="WhitespaceAround"/>-->
+        <module name="WhitespaceAround"/>
         <module name="AvoidNoArgumentSuperConstructorCall"/>
         <module name="EmptyStatement"/>
         <module name="OneStatementPerLine"/>
@@ -53,7 +53,7 @@
         <module name="ModifierOrder"/>
         <module name="NoClone"/>
         <module name="NoFinalizer"/>
-<!--        <module name="EmptyLineSeparator"/>-->
+        <module name="EmptyLineSeparator"/>
         <module name="SeparatorWrap">
             <property name="id" value="SeparatorWrapDot"/>
             <property name="tokens" value="DOT"/>

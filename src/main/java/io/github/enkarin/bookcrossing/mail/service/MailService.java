@@ -19,7 +19,9 @@ import java.util.UUID;
 public class MailService {
 
     private final JavaMailSender emailSender;
+
     private final ActionMailUserRepository confirmationMailUserRepository;
+
     private final UserRepository userRepository;
 
     @Value("${server.port}")

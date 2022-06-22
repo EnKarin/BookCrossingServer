@@ -13,7 +13,9 @@ import java.util.Set;
 @RequiredArgsConstructor
 @Service
 public class BookmarksService {
+
     private final UserRepository userRepository;
+
     private final BookRepository bookRepository;
 
     public boolean saveBookmarks(final int bookId, final String login) {

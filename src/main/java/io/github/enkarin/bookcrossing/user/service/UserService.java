@@ -29,11 +29,17 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Service
 public class UserService {
+
     private final UserRepository userRepository;
+
     private final RoleRepository roleRepository;
+
     private final ActionMailUserRepository confirmationMailUserRepository;
+
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+
     private final ModelMapper modelMapper;
+
     private TypeMap<UserDto, User> userDtoMapper;
 
     public User saveUser(final UserDto userDTO) {

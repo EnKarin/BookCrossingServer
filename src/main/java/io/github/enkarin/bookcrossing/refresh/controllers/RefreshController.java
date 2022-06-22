@@ -30,6 +30,7 @@ import java.util.Optional;
 public class RefreshController {
 
     private final JwtProvider jwtProvider;
+
     private final RefreshService refreshService;
 
     @Operation(
