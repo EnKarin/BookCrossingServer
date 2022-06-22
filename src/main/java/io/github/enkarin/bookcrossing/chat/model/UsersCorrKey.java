@@ -31,7 +31,7 @@ public class UsersCorrKey implements Serializable {
         if (this == obj) {
             return true;
         }
-        if (obj == null || Hibernate.getClass(this) != Hibernate.getClass(obj)){
+        if (obj == null || Hibernate.getClass(this) != Hibernate.getClass(obj)) {
             return false;
         }
         final UsersCorrKey usersCorrKey = (UsersCorrKey) obj;

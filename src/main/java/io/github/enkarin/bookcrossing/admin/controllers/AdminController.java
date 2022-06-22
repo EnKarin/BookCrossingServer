@@ -22,8 +22,8 @@ import javax.validation.Valid;
 import java.util.Objects;
 
 @Tag(
-        name="Управление пользователями для администратора",
-        description="Позволяет получить и удалять пользователей"
+        name = "Управление пользователями для администратора",
+        description = "Позволяет получить и удалять пользователей"
 )
 @RequiredArgsConstructor
 @RestController
@@ -72,7 +72,7 @@ public class AdminController {
                     .add(Objects.requireNonNull(f.getDefaultMessage())));
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
-        if (adminService.lockedUser(lockedUserDto)){
+        if (adminService.lockedUser(lockedUserDto)) {
             return new ResponseEntity<>(HttpStatus.OK);
         } else {
             response.getErrors().add("login: Некорректный логин пользователя");

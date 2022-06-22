@@ -22,7 +22,7 @@ public class MessageAlertsService {
     private final MailService mailService;
 
     @Scheduled(cron = "0 */30 * * * *")
-    public void sendAlerts(){
+    public void sendAlerts() {
         final Map<User, Integer> map = new HashMap<>();
         final List<Message> unread = messageRepository.findAll().stream()
                 .filter(Predicate.not(Message::isDeclaim))

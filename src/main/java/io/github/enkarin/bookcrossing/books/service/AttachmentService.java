@@ -27,7 +27,7 @@ public class AttachmentService {
         final Optional<Book> book = userRepository.findByLogin(login).orElseThrow().getBooks().stream()
                 .filter(b -> b.getBookId() == attachmentDto.getBookId())
                 .findFirst();
-        if (book.isPresent()){
+        if (book.isPresent()) {
             Attachment attachment = new Attachment();
             attachment.setData(attachmentDto.getFile().getBytes());
             final String fileName = attachmentDto.getFile().getOriginalFilename();
@@ -51,11 +51,11 @@ public class AttachmentService {
         return response;
     }
 
-    public ErrorListResponse deleteAttachment(final int bookId, final String login){
+    public ErrorListResponse deleteAttachment(final int bookId, final String login) {
         final ErrorListResponse response = new ErrorListResponse();
         final Optional<Book> book = userRepository.findByLogin(login).orElseThrow().getBooks().stream()
                 .filter(b -> b.getBookId() == bookId).findFirst();
-        if (book.isPresent()){
+        if (book.isPresent()) {
             final Optional<Attachment> attachment = Optional.ofNullable(book.get().getAttachment());
             if (attachment.isPresent()) {
                 attachRepository.delete(book.get().getAttachment());

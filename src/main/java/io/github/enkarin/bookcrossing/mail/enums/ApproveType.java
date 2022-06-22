@@ -9,7 +9,7 @@ public enum ApproveType {
 
     private final String localizedValue;
 
-    ApproveType(final String local){
+    ApproveType(final String local) {
         localizedValue = local;
     }
 }

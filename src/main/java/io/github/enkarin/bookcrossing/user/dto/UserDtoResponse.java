@@ -28,7 +28,7 @@ public class UserDtoResponse {
     @Schema(description = "Книги пользователя")
     private Set<Book> books;
 
-    public UserDtoResponse(final User user, final int zone){
+    public UserDtoResponse(final User user, final int zone) {
         userId = user.getUserId();
         name = user.getName();
         city = user.getCity();

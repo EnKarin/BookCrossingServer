@@ -77,7 +77,7 @@ public class RegistrationController {
             final User result = userService.saveUser(userForm);
             mailService.sendApproveMail(result);
             return new ResponseEntity<>(HttpStatus.OK);
-        } catch (LoginFailedException | EmailFailedException failedException){
+        } catch (LoginFailedException | EmailFailedException failedException) {
             errorListResponse.getErrors().add(failedException.getMessage());
             return new ResponseEntity<>(errorListResponse, HttpStatus.NOT_ACCEPTABLE);
         }
@@ -130,9 +130,9 @@ public class RegistrationController {
     }
     )
     @GetMapping("/registration/confirmation")
-    public ResponseEntity<?> mailConfirm(@RequestParam final String token){
+    public ResponseEntity<?> mailConfirm(@RequestParam final String token) {
         final Optional<String> login = userService.confirmMail(token);
-        if (login.isPresent()){
+        if (login.isPresent()) {
             final AuthResponse authResponse = new AuthResponse();
             authResponse.setAccessToken(jwtProvider.generateToken(login.get()));
             authResponse.setRefreshToken(refreshService.createToken(login.get()));

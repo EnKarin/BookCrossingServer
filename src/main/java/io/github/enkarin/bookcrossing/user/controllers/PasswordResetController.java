@@ -45,7 +45,7 @@ public class PasswordResetController {
     }
     )
     @PostMapping("/send")
-    public ResponseEntity<?> sendMessage(@RequestParam final String email){
+    public ResponseEntity<?> sendMessage(@RequestParam final String email) {
         final ErrorListResponse response = new ErrorListResponse();
         final boolean result = mailService.sendResetPassword(email);
         if (result) {
@@ -73,9 +73,9 @@ public class PasswordResetController {
     @PostMapping("/update")
     public ResponseEntity<?> updatePassword(@RequestParam final String token,
                                             @Valid @RequestBody final UserPasswordDto userPasswordDto,
-                                            final BindingResult bindingResult){
+                                            final BindingResult bindingResult) {
         final ErrorListResponse finalResponse = new ErrorListResponse();
-        if (!userPasswordDto.getPassword().equals(userPasswordDto.getPasswordConfirm())){
+        if (!userPasswordDto.getPassword().equals(userPasswordDto.getPasswordConfirm())) {
             finalResponse.getErrors().add("password: Пароли не совпадают");
             return new ResponseEntity<>(finalResponse, HttpStatus.BAD_REQUEST);
         }

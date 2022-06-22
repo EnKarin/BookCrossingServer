@@ -133,7 +133,7 @@ public class UserProfileController {
                 response.getErrors().add("oldPassword: Старый пароль неверен");
                 return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
             }
-        }catch (UserNotFoundException e){
+        } catch (UserNotFoundException e) {
             response.getErrors().add("user: Пользователь не найден");
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
@@ -142,7 +142,7 @@ public class UserProfileController {
     //добавить документацию
 
     @GetMapping("/users")
-    public ResponseEntity<?> getAllProfile(@RequestParam final int zone){
+    public ResponseEntity<?> getAllProfile(@RequestParam final int zone) {
         return new ResponseEntity<>(new UserListResponse(userService.findAllUsers(zone)), HttpStatus.OK);
     }
 }

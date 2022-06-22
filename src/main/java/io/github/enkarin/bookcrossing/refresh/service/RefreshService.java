@@ -41,8 +41,8 @@ public class RefreshService {
 
     public Optional<String> findByToken(final String token) {
         final Optional<Refresh> refresh = refreshRepository.findById(token);
-        if (refresh.isPresent()){
-            if (LocalDate.ofEpochDay(refresh.get().getDate()).isAfter(LocalDate.now())){
+        if (refresh.isPresent()) {
+            if (LocalDate.ofEpochDay(refresh.get().getDate()).isAfter(LocalDate.now())) {
                 return Optional.of(refresh.get().getUser());
             } else {
                 refreshRepository.delete(refresh.get());

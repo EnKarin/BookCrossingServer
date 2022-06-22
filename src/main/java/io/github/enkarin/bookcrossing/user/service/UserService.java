@@ -68,7 +68,7 @@ public class UserService {
         return userRepository.findById(userId);
     }
 
-    public UserProfileResponse getProfile(final String login){
+    public UserProfileResponse getProfile(final String login) {
         final User user = userRepository.findByLogin(login).orElseThrow();
         return modelMapper.map(user, UserProfileResponse.class);
     }
@@ -80,7 +80,7 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
-    public Optional<User> findByLoginAndPassword(final LoginRequest login){
+    public Optional<User> findByLoginAndPassword(final LoginRequest login) {
         final Optional<User> user = userRepository.findByLogin(login.getLogin());
         if (user.isPresent() && bCryptPasswordEncoder.matches(login.getPassword(), user.get().getPassword())) {
             return user;

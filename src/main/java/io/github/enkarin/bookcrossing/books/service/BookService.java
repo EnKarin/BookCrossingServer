@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
-public class BookService{
+public class BookService {
 
     private final UserRepository userRepository;
     private final BookRepository bookRepository;
@@ -28,7 +28,7 @@ public class BookService{
 
     public Optional<BookResponse> saveBook(final BookDto bookDTO, final String login) {
         Optional<Book> book = convertToBook(bookDTO, login);
-        if (book.isEmpty()){
+        if (book.isEmpty()) {
             return Optional.empty();
         }
         book = Optional.of(bookRepository.save(book.get()));
@@ -98,9 +98,9 @@ public class BookService{
                .collect(Collectors.toList());
     }
 
-    private Optional<Book> convertToBook(final BookDto bookDTO, final String login){
+    private Optional<Book> convertToBook(final BookDto bookDTO, final String login) {
         final Optional<User> user = userRepository.findByLogin(login);
-        if (bookDtoMapper == null){
+        if (bookDtoMapper == null) {
             modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.LOOSE);
             bookDtoMapper = modelMapper.createTypeMap(BookDto.class, Book.class);
             bookDtoMapper.addMappings(ms -> ms.skip(Book::setOwner));

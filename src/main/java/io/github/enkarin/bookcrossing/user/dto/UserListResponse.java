@@ -11,7 +11,7 @@ public class UserListResponse {
     @Schema(description = "Список пользователей")
     private List<UserDtoResponse> userList;
 
-    public UserListResponse(final List<UserDtoResponse> list){
+    public UserListResponse(final List<UserDtoResponse> list) {
         userList = list;
     }
 }

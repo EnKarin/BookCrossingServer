@@ -62,7 +62,7 @@ public class AttachmentController {
     })
     @DeleteMapping("/attachment")
     public ResponseEntity<?> deleteAttachment(@RequestParam final int bookId,
-                                            final Principal principal){
+                                            final Principal principal) {
         final ErrorListResponse response = attachmentService.deleteAttachment(bookId, principal.getName());
         if (response.getErrors().isEmpty()) {
             return new ResponseEntity<>(HttpStatus.OK);

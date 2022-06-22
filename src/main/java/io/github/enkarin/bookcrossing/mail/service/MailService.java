@@ -25,7 +25,7 @@ public class MailService {
     @Value("${server.port}")
     private String port;
 
-    public void sendApproveMail(final User user){
+    public void sendApproveMail(final User user) {
         final String token = UUID.randomUUID().toString();
         final ActionMailUser confirmationMailUser = new ActionMailUser();
         confirmationMailUser.setUser(user);
@@ -42,7 +42,7 @@ public class MailService {
         emailSender.send(message);
     }
 
-    public boolean sendResetPassword(final String email){
+    public boolean sendResetPassword(final String email) {
         final Optional<User> user = userRepository.findByEmail(email);
         if (user.isPresent()) {
             final String token = UUID.randomUUID().toString();
@@ -65,7 +65,7 @@ public class MailService {
         }
     }
 
-    public void sendBlockingMessage(final User user, final String comment){
+    public void sendBlockingMessage(final User user, final String comment) {
         final SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(user.getEmail());
         message.setSubject("Ваш аккаунт заблокирован");
@@ -73,7 +73,7 @@ public class MailService {
         emailSender.send(message);
     }
 
-    public void sendUnlockMessage(final User user){
+    public void sendUnlockMessage(final User user) {
         final SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(user.getEmail());
         message.setSubject("Ваш аккаунт разблокирован");
@@ -81,7 +81,7 @@ public class MailService {
         emailSender.send(message);
     }
 
-    public void sendAlertsMessage(final User user, final int count){
+    public void sendAlertsMessage(final User user, final int count) {
         final SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(user.getEmail());
         message.setSubject("Непрочитанные сообщения");

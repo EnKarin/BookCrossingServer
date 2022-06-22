@@ -12,7 +12,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     private final UserService userService;
 
     @Override
-    public User loadUserByUsername(final String username){
+    public User loadUserByUsername(final String username) {
         return userService.findByLogin(username).orElseThrow();
     }
 }

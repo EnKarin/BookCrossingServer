@@ -36,8 +36,8 @@ public class BookmarksController {
     @PostMapping
     public ResponseEntity<?> saveBookmarks(@RequestParam @Parameter(description = "Идентификатор книги")
                                                final int bookId,
-                                           final Principal principal){
-        if (bookmarksService.saveBookmarks(bookId, principal.getName())){
+                                           final Principal principal) {
+        if (bookmarksService.saveBookmarks(bookId, principal.getName())) {
             return new ResponseEntity<>(HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -56,8 +56,8 @@ public class BookmarksController {
     @DeleteMapping
     public ResponseEntity<?> deleteBookmarks(@RequestParam @Parameter(description = "Идентификатор книги")
                                                  final int bookId,
-                                           final Principal principal){
-        if (bookmarksService.deleteBookmarks(bookId, principal.getName())){
+                                           final Principal principal) {
+        if (bookmarksService.deleteBookmarks(bookId, principal.getName())) {
             return new ResponseEntity<>(HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -73,7 +73,7 @@ public class BookmarksController {
     }
     )
     @GetMapping
-    public ResponseEntity<?> getAll(final Principal principal){
+    public ResponseEntity<?> getAll(final Principal principal) {
         return new ResponseEntity<>(bookmarksService.getAll(principal.getName()), HttpStatus.OK);
     }
 }

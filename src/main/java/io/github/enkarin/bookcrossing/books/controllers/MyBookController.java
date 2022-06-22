@@ -58,7 +58,7 @@ public class MyBookController {
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
         final Optional<BookResponse> book = bookService.saveBook(bookDTO, principal.getName());
-        if (book.isEmpty()){
+        if (book.isEmpty()) {
             response.getErrors().add("user: Пользователь не найден");
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
@@ -89,7 +89,7 @@ public class MyBookController {
             @ApiResponse(responseCode = "200", description = "Удаляет книгу из бд")}
     )
     @DeleteMapping
-    public ResponseEntity<?> deleteBook(@RequestParam final int bookId){
+    public ResponseEntity<?> deleteBook(@RequestParam final int bookId) {
         bookService.deleteBook(bookId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
