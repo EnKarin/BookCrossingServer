@@ -58,8 +58,8 @@ public class MessageService {
         final Optional<Message> message = messageRepository.findById(messagePutRequest.getMessageId());
         if (message.isPresent() && user.equals(message.get().getSender())) {
             final Correspondence correspondence = message.get().getCorrespondence();
-            if (user.equals(correspondence.getUsersCorrKey().getFirstUser())
-                    || user.equals(correspondence.getUsersCorrKey().getSecondUser())) {
+            if (user.equals(correspondence.getUsersCorrKey().getFirstUser()) ||
+                    user.equals(correspondence.getUsersCorrKey().getSecondUser())) {
                 message.get().setDepartureDate(LocalDateTime.now()
                         .toEpochSecond(ZoneOffset.systemDefault().getRules().getOffset(Instant.now())));
                 message.get().setText(messagePutRequest.getText());
@@ -78,8 +78,8 @@ public class MessageService {
         final Optional<Message> message = messageRepository.findById(messageId);
         if (message.isPresent()) {
             final Correspondence correspondence = message.get().getCorrespondence();
-            if (correspondence.getUsersCorrKey().getFirstUser().equals(user)
-                    || correspondence.getUsersCorrKey().getSecondUser().equals(user)) {
+            if (correspondence.getUsersCorrKey().getFirstUser().equals(user) ||
+                    correspondence.getUsersCorrKey().getSecondUser().equals(user)) {
                 if (user.equals(message.get().getSender())) {
                     messageRepository.delete(message.get());
                 } else {

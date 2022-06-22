@@ -36,8 +36,8 @@ public class MailService {
         final SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(user.getEmail());
         message.setSubject("Подтверждение регистрации BookCrossing");
-        message.setText("Перейдите по ссылке, чтобы подтвердить создание аккаунта: "
-                + String.format("https://localhost:%s/registration/confirmation?token=%s", port, token));
+        message.setText("Перейдите по ссылке, чтобы подтвердить создание аккаунта: " +
+                String.format("https://localhost:%s/registration/confirmation?token=%s", port, token));
 
         emailSender.send(message);
     }
@@ -55,8 +55,8 @@ public class MailService {
             final SimpleMailMessage message = new SimpleMailMessage();
             message.setTo(email);
             message.setSubject("Сброс пароля BookCrossing");
-            message.setText("Перейдите по ссылке, чтобы сменить пароль: "
-                    + String.format("https://localhost:%s/reset/update?token=%s", port, token));
+            message.setText("Перейдите по ссылке, чтобы сменить пароль: " +
+                    String.format("https://localhost:%s/reset/update?token=%s", port, token));
 
             emailSender.send(message);
             return true;
@@ -69,8 +69,7 @@ public class MailService {
         final SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(user.getEmail());
         message.setSubject("Ваш аккаунт заблокирован");
-        message.setText("Аккаунт на сервисе BookCrossing был заблокирован администратором. Причина:"
-                + comment);
+        message.setText("Аккаунт на сервисе BookCrossing был заблокирован администратором. Причина:" + comment);
         emailSender.send(message);
     }
 

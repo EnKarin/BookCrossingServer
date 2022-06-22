@@ -83,9 +83,7 @@
             <property name="format" value="^[a-z]+(\.[a-z][a-z0-9]*)*$"/>
         </module>
         <module name="TypeName"/>
-<!--        <module name="MemberName">-->
-<!--            <property name="format" value="^[a-z][a-z0-9][a-zA-Z0-9]*$"/>-->
-<!--        </module>-->
+        <module name="MemberName"/>
         <module name="ParameterName">
             <property name="format" value="^[a-z]([a-z0-9][a-zA-Z0-9]*)?$"/>
         </module>
@@ -140,11 +138,11 @@
             <property name="allowLineBreaks" value="true"/>
         </module>
         <module name="ParenPad"/>
-<!--        <module name="OperatorWrap">-->
-<!--            <property name="option" value="EOL"/>-->
-<!--            <property name="tokens"-->
-<!--                      value="BAND, BOR, BSR, BXOR, DIV, EQUAL, GE, GT, LAND, LE, LITERAL_INSTANCEOF, LOR, LT, MINUS, MOD, NOT_EQUAL, PLUS, QUESTION, SL, SR, STAR, METHOD_REF, TYPE_EXTENSION_AND "/>-->
-<!--        </module>-->
+        <module name="OperatorWrap">
+            <property name="option" value="EOL"/>
+            <property name="tokens"
+                      value="BAND, BOR, BSR, BXOR, DIV, EQUAL, GE, GT, LAND, LE, LITERAL_INSTANCEOF, LOR, LT, MINUS, MOD, NOT_EQUAL, PLUS, QUESTION, SL, SR, STAR, METHOD_REF, TYPE_EXTENSION_AND "/>
+        </module>
         <module name="AnnotationLocation"/>
         <module name="NonEmptyAtclauseDescription"/>
         <module name="InvalidJavadocPosition"/>

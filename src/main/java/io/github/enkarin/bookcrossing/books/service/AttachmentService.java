@@ -35,8 +35,8 @@ public class AttachmentService {
                 response.getErrors().add("attachment: Имя не должно быть пустым");
             } else {
                 final String expansion = fileName.substring(fileName.indexOf('.')).toLowerCase(Locale.ROOT);
-                if(expansion.contains("jpeg") || expansion.contains("jpg")
-                        || expansion.contains("png") || expansion.contains("bmp")) {
+                if(expansion.contains("jpeg") || expansion.contains("jpg") ||
+                        expansion.contains("png") || expansion.contains("bmp")) {
                     attachment.setExpansion(expansion);
                     attachment = attachRepository.save(attachment);
                     book.get().setAttachment(attachment);

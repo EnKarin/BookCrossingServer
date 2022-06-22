@@ -35,8 +35,7 @@ public class UsersCorrKey implements Serializable {
             return false;
         }
         final UsersCorrKey usersCorrKey = (UsersCorrKey) obj;
-        return Objects.equals(firstUser, usersCorrKey.firstUser)
-                && Objects.equals(secondUser, usersCorrKey.secondUser);
+        return Objects.equals(firstUser, usersCorrKey.firstUser) && Objects.equals(secondUser, usersCorrKey.secondUser);
     }
 
     @Override
