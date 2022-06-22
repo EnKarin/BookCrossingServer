@@ -8,9 +8,9 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableScheduling
 public class BookCrossingServerApplication {
 
-	public static void main(final String[] args) {
-		SpringApplication.run(BookCrossingServerApplication.class, args);
-	}
+    public static void main(final String[] args) {
+        SpringApplication.run(BookCrossingServerApplication.class, args);
+    }
 }
 
 

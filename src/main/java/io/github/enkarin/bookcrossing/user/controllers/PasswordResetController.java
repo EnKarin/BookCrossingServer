@@ -50,8 +50,7 @@ public class PasswordResetController {
         final boolean result = mailService.sendResetPassword(email);
         if(result) {
             return new ResponseEntity<>(HttpStatus.OK);
-        }
-        else {
+        } else {
             response.getErrors().add("user: Пользователь с таким email не найден");
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
@@ -88,8 +87,7 @@ public class PasswordResetController {
         final Optional<ErrorListResponse> response = resetPasswordService.updatePassword(token, userPasswordDto);
         if(response.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.OK);
-        }
-        else {
+        } else {
             return new ResponseEntity<>(response.get(), HttpStatus.FORBIDDEN);
         }
     }

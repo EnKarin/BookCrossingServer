@@ -34,8 +34,7 @@ public class ResetPasswordService {
             userRepository.save(user);
             actionMailUserRepository.delete(actionMailUser.get());
             return Optional.empty();
-        }
-        else{
+        } else{
             response.getErrors().add("token: Токен некорректен");
             return Optional.of(response);
         }
