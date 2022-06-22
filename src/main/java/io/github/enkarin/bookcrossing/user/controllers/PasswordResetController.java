@@ -43,7 +43,7 @@ public class PasswordResetController {
                     content = {@Content(mediaType = Constant.MEDIA_TYPE,
                             schema = @Schema(implementation = ErrorListResponse.class))}),
             @ApiResponse(responseCode = "200", description = "Отправляет ссылку на сброс пароля на почту")
-    }
+        }
     )
     @PostMapping("/send")
     public ResponseEntity<?> sendMessage(@RequestParam final String email) {
@@ -69,7 +69,7 @@ public class PasswordResetController {
                     content = {@Content(mediaType = Constant.MEDIA_TYPE,
                             schema = @Schema(implementation = ErrorListResponse.class))}),
             @ApiResponse(responseCode = "200", description = "Пароль успешно изменен")
-    }
+        }
     )
     @PostMapping("/update")
     public ResponseEntity<?> updatePassword(@RequestParam final String token,

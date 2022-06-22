@@ -31,7 +31,7 @@ public class BookmarksController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "404", description = "Книга с заданным Id не найдена"),
             @ApiResponse(responseCode = "200", description = "Книга добавлена")
-    }
+        }
     )
     @PostMapping
     public ResponseEntity<?> saveBookmarks(@RequestParam @Parameter(description = "Идентификатор книги")
@@ -51,7 +51,7 @@ public class BookmarksController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "404", description = "Книга с заданным Id не найдена"),
             @ApiResponse(responseCode = "200", description = "Книга удалена")
-    }
+        }
     )
     @DeleteMapping
     public ResponseEntity<?> deleteBookmarks(@RequestParam @Parameter(description = "Идентификатор книги")
@@ -70,7 +70,7 @@ public class BookmarksController {
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Возвращает список закладок")
-    }
+        }
     )
     @GetMapping
     public ResponseEntity<?> getAll(final Principal principal) {

@@ -40,7 +40,7 @@ public class AdminController {
             @ApiResponse(responseCode = "200", description = "Возвращает список пользователей",
                     content = {@Content(mediaType = Constant.MEDIA_TYPE,
                             schema = @Schema(implementation = AdmUserListResponse.class))})
-    }
+        }
     )
     @GetMapping("/all")
     public ResponseEntity<?> userList(@RequestParam @Parameter(description = "Часовой пояс") final int zone) {
@@ -61,7 +61,7 @@ public class AdminController {
             @ApiResponse(responseCode = "404", description = "Пользователя с таким логином не существует",
                     content = {@Content(mediaType = Constant.MEDIA_TYPE,
                             schema = @Schema(implementation = ErrorListResponse.class))})
-    }
+        }
     )
     @PostMapping("/locked")
     public ResponseEntity<?> lockedUser(@RequestBody @Valid final LockedUserDto lockedUserDto,

@@ -82,7 +82,7 @@ public class CorrespondenceController {
                     content = {@Content(mediaType = Constant.MEDIA_TYPE,
                             schema = @Schema(implementation = ErrorListResponse.class))}),
             @ApiResponse(responseCode = "200", description = "Чат удален")
-    }
+        }
     )
     @DeleteMapping
     public ResponseEntity<?> deleteCorrespondence(@RequestParam @Parameter(description = "Идентификатор пользователя")
@@ -106,7 +106,7 @@ public class CorrespondenceController {
             @ApiResponse(responseCode = "200", description = "Возвращает список сообщений",
                     content = {@Content(mediaType = Constant.MEDIA_TYPE,
                             schema = @Schema(implementation = MessageResponse.class))})
-    }
+        }
     )
     @GetMapping
     public ResponseEntity<?> getCorrespondence(@RequestBody final ZonedUserCorrKeyDto dto,

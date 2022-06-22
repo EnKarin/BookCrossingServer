@@ -61,7 +61,7 @@ public class RegistrationController {
             @ApiResponse(responseCode = "200", description = "Возвращает токены",
                     content = {@Content(mediaType = Constant.MEDIA_TYPE,
                             schema = @Schema(implementation = AuthResponse.class))})
-    }
+        }
     )
     @PostMapping("/registration")
     public ResponseEntity<?> registerUser(@Valid @RequestBody final UserDto userForm,
@@ -130,7 +130,7 @@ public class RegistrationController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "400", description = "Токена не существует"),
             @ApiResponse(responseCode = "200", description = "Подтверждает почту для аккаунта")
-    }
+        }
     )
     @GetMapping("/registration/confirmation")
     public ResponseEntity<?> mailConfirm(@RequestParam final String token) {

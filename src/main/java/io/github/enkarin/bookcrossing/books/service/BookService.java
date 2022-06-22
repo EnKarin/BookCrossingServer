@@ -96,7 +96,7 @@ public class BookService {
     }
 
     public List<Book> findByTitle(final String title) {
-       return bookRepository.findBooksByTitleIgnoreCase(title).stream()
+        return bookRepository.findBooksByTitleIgnoreCase(title).stream()
                .filter(b -> b.getOwner().isAccountNonLocked())
                .collect(Collectors.toList());
     }
@@ -107,7 +107,7 @@ public class BookService {
             modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.LOOSE);
             bookDtoMapper = modelMapper.createTypeMap(BookDto.class, Book.class);
             bookDtoMapper.addMappings(ms -> ms.skip(Book::setOwner));
-            }
+        }
         if (user.isPresent()) {
             final Book book = modelMapper.map(bookDTO, Book.class);
             book.setOwner(user.get());

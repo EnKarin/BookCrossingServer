@@ -48,7 +48,7 @@ public class UserProfileController {
             @ApiResponse(responseCode = "200", description = "Возвращает профиль пользователя",
                     content = {@Content(mediaType = Constant.MEDIA_TYPE,
                             schema = @Schema(implementation = UserDtoResponse.class))})
-    }
+        }
     )
     @GetMapping("/profile")
     public ResponseEntity<?> getProfile(@RequestParam @Parameter(description = "Идентификатор пользователя")
@@ -82,7 +82,7 @@ public class UserProfileController {
             @ApiResponse(responseCode = "200", description = "Возвращает данные пользователя",
                     content = {@Content(mediaType = Constant.MEDIA_TYPE,
                             schema = @Schema(implementation = UserDtoResponse.class))})
-    }
+        }
     )
     @GetMapping("/myProfile")
     public ResponseEntity<?> getMyProfile(final Principal principal) {
@@ -109,7 +109,7 @@ public class UserProfileController {
             @ApiResponse(responseCode = "200", description = "Возвращает обновленный профиль пользователя",
                     content = {@Content(mediaType = Constant.MEDIA_TYPE,
                             schema = @Schema(implementation = UserDtoResponse.class))})
-    }
+        }
     )
     @PutMapping("/profile")
     public ResponseEntity<?> putProfile(@Valid @RequestBody final UserPutRequest userPutRequest,
