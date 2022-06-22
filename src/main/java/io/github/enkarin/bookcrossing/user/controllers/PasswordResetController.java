@@ -31,7 +31,6 @@ import java.util.Optional;
 public class PasswordResetController {
 
     private final MailService mailService;
-
     private final ResetPasswordService resetPasswordService;
 
     @Operation(

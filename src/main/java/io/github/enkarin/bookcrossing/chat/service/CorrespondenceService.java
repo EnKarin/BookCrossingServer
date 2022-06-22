@@ -26,9 +26,7 @@ import java.util.stream.Collectors;
 public class CorrespondenceService {
 
     private final CorrespondenceRepository correspondenceRepository;
-
     private final MessageRepository messageRepository;
-
     private final UserRepository userRepository;
 
     public Optional<UsersCorrKeyDto> createChat(final int userId, final String login) {

@@ -37,11 +37,8 @@ import java.util.Optional;
 public class RegistrationController {
 
     private final UserService userService;
-
     private final JwtProvider jwtProvider;
-
     private final RefreshService refreshService;
-
     private final MailService mailService;
 
     @Operation(

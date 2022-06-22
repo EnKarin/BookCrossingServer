@@ -22,11 +22,8 @@ import java.util.stream.Collectors;
 public class BookService {
 
     private final UserRepository userRepository;
-
     private final BookRepository bookRepository;
-
     private final ModelMapper modelMapper;
-
     private TypeMap<BookDto, Book> bookDtoMapper;
 
     public Optional<BookResponse> saveBook(final BookDto bookDTO, final String login) {

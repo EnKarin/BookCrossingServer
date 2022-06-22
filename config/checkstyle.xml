@@ -53,7 +53,6 @@
         <module name="ModifierOrder"/>
         <module name="NoClone"/>
         <module name="NoFinalizer"/>
-        <module name="EmptyLineSeparator"/>
         <module name="SeparatorWrap">
             <property name="id" value="SeparatorWrapDot"/>
             <property name="tokens" value="DOT"/>

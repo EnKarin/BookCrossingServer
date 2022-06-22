@@ -24,9 +24,7 @@ import java.util.Optional;
 public class MessageService {
 
     private final MessageRepository messageRepository;
-
     private final CorrespondenceRepository correspondenceRepository;
-
     private final UserRepository userRepository;
 
     public Optional<Message> sendMessage(final MessageRequest dto, final String login) {

@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.Objects;
 
-
 @Tag(
         name = "Управление пользователями для администратора",
         description = "Позволяет получить и удалять пользователей"

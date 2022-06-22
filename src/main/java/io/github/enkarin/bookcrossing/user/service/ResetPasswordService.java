@@ -17,9 +17,7 @@ import java.util.Optional;
 public class ResetPasswordService {
 
     private final ActionMailUserRepository actionMailUserRepository;
-
     private final UserRepository userRepository;
-
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     public Optional<ErrorListResponse> updatePassword(final String token, final UserPasswordDto passwordDto) {

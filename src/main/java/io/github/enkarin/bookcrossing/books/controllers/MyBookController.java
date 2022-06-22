@@ -23,7 +23,6 @@ import java.security.Principal;
 import java.util.Objects;
 import java.util.Optional;
 
-
 @Tag(
         name = "Раздел работы с книгами",
         description = "Позволяет пользователю управлять своими книгами"

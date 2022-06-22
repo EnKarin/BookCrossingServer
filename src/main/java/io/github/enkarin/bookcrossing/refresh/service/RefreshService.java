@@ -19,7 +19,6 @@ import java.util.UUID;
 public class RefreshService {
 
     private final RefreshRepository refreshRepository;
-
     private final UserRepository userRepository;
 
     public String createToken(final String login) {
