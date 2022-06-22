@@ -43,6 +43,7 @@ public class JwtFilter extends GenericFilterBean {
                         null, user.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(auth);
             }catch (NoSuchElementException ignored){
+                // no handling
             }
         }
         filterChain.doFilter(servletRequest, servletResponse);
