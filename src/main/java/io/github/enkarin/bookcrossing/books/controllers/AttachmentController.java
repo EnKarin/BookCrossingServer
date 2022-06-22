@@ -43,7 +43,7 @@ public class AttachmentController {
     public ResponseEntity<?> saveAttachment(@ModelAttribute final AttachmentDto attachmentDto,
                                             final Principal principal) throws IOException {
         final ErrorListResponse response = attachmentService.saveAttachment(attachmentDto, principal.getName());
-        if(response.getErrors().isEmpty()) {
+        if (response.getErrors().isEmpty()) {
             return new ResponseEntity<>(HttpStatus.OK);
         } else {
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
@@ -64,7 +64,7 @@ public class AttachmentController {
     public ResponseEntity<?> deleteAttachment(@RequestParam final int bookId,
                                             final Principal principal){
         final ErrorListResponse response = attachmentService.deleteAttachment(bookId, principal.getName());
-        if(response.getErrors().isEmpty()) {
+        if (response.getErrors().isEmpty()) {
             return new ResponseEntity<>(HttpStatus.OK);
         } else {
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);

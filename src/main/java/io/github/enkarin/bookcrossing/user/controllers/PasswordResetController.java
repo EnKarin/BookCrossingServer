@@ -48,7 +48,7 @@ public class PasswordResetController {
     public ResponseEntity<?> sendMessage(@RequestParam final String email){
         final ErrorListResponse response = new ErrorListResponse();
         final boolean result = mailService.sendResetPassword(email);
-        if(result) {
+        if (result) {
             return new ResponseEntity<>(HttpStatus.OK);
         } else {
             response.getErrors().add("user: Пользователь с таким email не найден");
@@ -75,7 +75,7 @@ public class PasswordResetController {
                                             @Valid @RequestBody final UserPasswordDto userPasswordDto,
                                             final BindingResult bindingResult){
         final ErrorListResponse finalResponse = new ErrorListResponse();
-        if(!userPasswordDto.getPassword().equals(userPasswordDto.getPasswordConfirm())){
+        if (!userPasswordDto.getPassword().equals(userPasswordDto.getPasswordConfirm())){
             finalResponse.getErrors().add("password: Пароли не совпадают");
             return new ResponseEntity<>(finalResponse, HttpStatus.BAD_REQUEST);
         }
@@ -85,7 +85,7 @@ public class PasswordResetController {
             return new ResponseEntity<>(finalResponse, HttpStatus.BAD_REQUEST);
         }
         final Optional<ErrorListResponse> response = resetPasswordService.updatePassword(token, userPasswordDto);
-        if(response.isEmpty()) {
+        if (response.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.OK);
         } else {
             return new ResponseEntity<>(response.get(), HttpStatus.FORBIDDEN);

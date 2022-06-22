@@ -37,7 +37,7 @@ public class BookmarksController {
     public ResponseEntity<?> saveBookmarks(@RequestParam @Parameter(description = "Идентификатор книги")
                                                final int bookId,
                                            final Principal principal){
-        if(bookmarksService.saveBookmarks(bookId, principal.getName())){
+        if (bookmarksService.saveBookmarks(bookId, principal.getName())){
             return new ResponseEntity<>(HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -57,7 +57,7 @@ public class BookmarksController {
     public ResponseEntity<?> deleteBookmarks(@RequestParam @Parameter(description = "Идентификатор книги")
                                                  final int bookId,
                                            final Principal principal){
-        if(bookmarksService.deleteBookmarks(bookId, principal.getName())){
+        if (bookmarksService.deleteBookmarks(bookId, principal.getName())){
             return new ResponseEntity<>(HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

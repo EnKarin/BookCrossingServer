@@ -44,7 +44,7 @@ public class MailService {
 
     public boolean sendResetPassword(final String email){
         final Optional<User> user = userRepository.findByEmail(email);
-        if(user.isPresent()) {
+        if (user.isPresent()) {
             final String token = UUID.randomUUID().toString();
             final ActionMailUser confirmationMailUser = new ActionMailUser();
             confirmationMailUser.setUser(user.get());

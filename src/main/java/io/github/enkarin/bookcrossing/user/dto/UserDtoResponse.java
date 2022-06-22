@@ -32,7 +32,7 @@ public class UserDtoResponse {
         userId = user.getUserId();
         name = user.getName();
         city = user.getCity();
-        if(user.getLoginDate() != 0) {
+        if (user.getLoginDate() != 0) {
             loginDate = LocalDateTime.ofEpochSecond(user.getLoginDate(), 0, ZoneOffset.ofHours(zone)).toString();
         }
         books = user.getBooks();

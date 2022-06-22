@@ -58,7 +58,7 @@ public class CorrespondenceController {
         try {
             final Optional<UsersCorrKeyDto> usersCorrKeyDto = correspondenceService.createChat(userId,
                     principal.getName());
-            if(usersCorrKeyDto.isPresent()){
+            if (usersCorrKeyDto.isPresent()){
                 return new ResponseEntity<>(usersCorrKeyDto.get(), HttpStatus.OK);
             } else {
                 response.getErrors().add("user: Пользователь заблокирован");
@@ -88,7 +88,7 @@ public class CorrespondenceController {
     public ResponseEntity<?> deleteCorrespondence(@RequestParam @Parameter(description = "Идентификатор пользователя")
                                                       final int userId,
                                                   final Principal principal){
-        if(correspondenceService.deleteChat(userId, principal.getName())){
+        if (correspondenceService.deleteChat(userId, principal.getName())){
             return new ResponseEntity<>(HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -112,7 +112,7 @@ public class CorrespondenceController {
     public ResponseEntity<?> getCorrespondence(@RequestBody final ZonedUserCorrKeyDto dto,
                                                final Principal principal){
         final Optional<List<MessageResponse>> messageResponse = correspondenceService.getChat(dto, principal.getName());
-        if(messageResponse.isPresent()){
+        if (messageResponse.isPresent()){
             return ResponseEntity.ok(messageResponse.get());
         } else {
             final ErrorListResponse response = new ErrorListResponse();

@@ -28,7 +28,7 @@ public class BookService{
 
     public Optional<BookResponse> saveBook(final BookDto bookDTO, final String login) {
         Optional<Book> book = convertToBook(bookDTO, login);
-        if(book.isEmpty()){
+        if (book.isEmpty()){
             return Optional.empty();
         }
         book = Optional.of(bookRepository.save(book.get()));
@@ -53,27 +53,27 @@ public class BookService{
 
     public List<Book> filter(final BookFiltersRequest request) {
         List<Book> books = bookRepository.findAll();
-        if(request.getGenre() != null) {
+        if (request.getGenre() != null) {
             books = books.stream().filter(book -> book.getGenre().equals(request.getGenre()))
                     .collect(Collectors.toList());
         }
-        if(request.getAuthor() != null) {
+        if (request.getAuthor() != null) {
             books = books.stream().filter(book -> book.getAuthor().equals(request.getAuthor()))
                     .collect(Collectors.toList());
         }
-        if(request.getPublishingHouse() != null) {
+        if (request.getPublishingHouse() != null) {
             books = books.stream().filter(book -> book.getPublishingHouse().equals(request.getPublishingHouse()))
                     .collect(Collectors.toList());
         }
-        if(request.getYear() != 0) {
+        if (request.getYear() != 0) {
             books = books.stream().filter(book -> book.getYear() == request.getYear())
                     .collect(Collectors.toList());
         }
-        if(request.getTitle() != null) {
+        if (request.getTitle() != null) {
             books = books.stream().filter(book -> book.getTitle().equals(request.getTitle()))
                     .collect(Collectors.toList());
         }
-        if(request.getCity() != null) {
+        if (request.getCity() != null) {
             books = books.stream().filter(book -> book.getOwner().getCity().equals(request.getCity()))
                     .collect(Collectors.toList());
         }
@@ -87,7 +87,7 @@ public class BookService{
     }
 
     public void deleteBook(final int bookId) {
-        if(bookRepository.findById(bookId).isPresent()) {
+        if (bookRepository.findById(bookId).isPresent()) {
             bookRepository.deleteById(bookId);
         }
     }
@@ -100,12 +100,12 @@ public class BookService{
 
     private Optional<Book> convertToBook(final BookDto bookDTO, final String login){
         final Optional<User> user = userRepository.findByLogin(login);
-        if(bookDtoMapper == null){
+        if (bookDtoMapper == null){
             modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.LOOSE);
             bookDtoMapper = modelMapper.createTypeMap(BookDto.class, Book.class);
             bookDtoMapper.addMappings(ms -> ms.skip(Book::setOwner));
             }
-        if(user.isPresent()) {
+        if (user.isPresent()) {
             final Book book = modelMapper.map(bookDTO, Book.class);
             book.setOwner(user.get());
             return Optional.of(book);

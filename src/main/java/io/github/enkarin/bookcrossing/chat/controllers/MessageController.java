@@ -61,7 +61,7 @@ public class MessageController {
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
         final Optional<Message> message = messageService.sendMessage(messageRequest, principal.getName());
-        if(message.isPresent()){
+        if (message.isPresent()){
             return new ResponseEntity<>(message.get(), HttpStatus.OK);
         } else {
             response.getErrors().add("correspondence: Нет доступа к чату");
@@ -99,7 +99,7 @@ public class MessageController {
         }
         try {
             final Optional<Message> message = messageService.putMessage(messageRequest, principal.getName());
-            if(message.isPresent()){
+            if (message.isPresent()){
                 return new ResponseEntity<>(message.get(), HttpStatus.OK);
             } else {
                 response.getErrors().add("correspondence: Нет доступа к чату");
@@ -127,7 +127,7 @@ public class MessageController {
     public ResponseEntity<?> deleteForEveryoneMessage(@RequestParam final long messageId,
                                            final Principal principal){
         final ErrorListResponse response = messageService.deleteForEveryoneMessage(messageId, principal.getName());
-        if(response.getErrors().isEmpty()){
+        if (response.getErrors().isEmpty()){
             return new ResponseEntity<>(HttpStatus.OK);
         } else {
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
@@ -150,7 +150,7 @@ public class MessageController {
     public ResponseEntity<?> deleteForMeMessage(@RequestParam final long messageId,
                                            final Principal principal){
         final ErrorListResponse response = messageService.deleteForMeMessage(messageId, principal.getName());
-        if(response.getErrors().isEmpty()){
+        if (response.getErrors().isEmpty()){
             return new ResponseEntity<>(HttpStatus.OK);
         } else {
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);

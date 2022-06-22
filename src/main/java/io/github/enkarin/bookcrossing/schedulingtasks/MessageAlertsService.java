@@ -32,7 +32,7 @@ public class MessageAlertsService {
                 .filter(m -> m.getCorrespondence().getUsersCorrKey().getFirstUser().isEnabled())
                 .filter(m -> m.getCorrespondence().getUsersCorrKey().getSecondUser().isEnabled())
                 .collect(Collectors.toList());
-        if(!unread.isEmpty()) {
+        if (!unread.isEmpty()) {
             User user;
             for (final Message message : unread) {
                 user = message.getCorrespondence().getUsersCorrKey().getFirstUser();

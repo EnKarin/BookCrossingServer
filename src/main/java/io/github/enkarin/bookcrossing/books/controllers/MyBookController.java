@@ -58,7 +58,7 @@ public class MyBookController {
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
         final Optional<BookResponse> book = bookService.saveBook(bookDTO, principal.getName());
-        if(book.isEmpty()){
+        if (book.isEmpty()){
             response.getErrors().add("user: Пользователь не найден");
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }

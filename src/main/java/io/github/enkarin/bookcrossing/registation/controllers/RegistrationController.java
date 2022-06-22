@@ -104,7 +104,7 @@ public class RegistrationController {
             response.getErrors().add("account: Некорректный логин или пароль");
             return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
         }
-        if(userEntity.get().isEnabled()) {
+        if (userEntity.get().isEnabled()) {
             if (userEntity.get().isAccountNonLocked()) {
                 final AuthResponse authResponse = new AuthResponse();
                 authResponse.setAccessToken(jwtProvider.generateToken(request.getLogin()));
@@ -132,7 +132,7 @@ public class RegistrationController {
     @GetMapping("/registration/confirmation")
     public ResponseEntity<?> mailConfirm(@RequestParam final String token){
         final Optional<String> login = userService.confirmMail(token);
-        if(login.isPresent()){
+        if (login.isPresent()){
             final AuthResponse authResponse = new AuthResponse();
             authResponse.setAccessToken(jwtProvider.generateToken(login.get()));
             authResponse.setRefreshToken(refreshService.createToken(login.get()));

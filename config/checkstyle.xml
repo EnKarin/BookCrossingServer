@@ -39,7 +39,7 @@
         <module name="NoArrayTrailingComma"/>
         <module name="NoEnumTrailingComma"/>
         <module name="OneTopLevelClass"/>
-<!--        <module name="WhitespaceAfter"/>-->
+        <module name="WhitespaceAfter"/>
 <!--        <module name="WhitespaceAround"/>-->
         <module name="AvoidNoArgumentSuperConstructorCall"/>
         <module name="EmptyStatement"/>

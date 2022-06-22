@@ -19,7 +19,7 @@ public class BookmarksService {
     public boolean saveBookmarks(final int bookId, final String login){
         final User user = userRepository.findByLogin(login).orElseThrow();
         final Optional<Book> book = bookRepository.findById(bookId);
-        if(book.isPresent()){
+        if (book.isPresent()){
             user.getBookmarks().add(book.get());
             userRepository.save(user);
             return true;
@@ -31,9 +31,9 @@ public class BookmarksService {
     public boolean deleteBookmarks(final int bookId, final String login){
         final User user = userRepository.findByLogin(login).orElseThrow();
         final Optional<Book> book = bookRepository.findById(bookId);
-        if(book.isPresent()) {
+        if (book.isPresent()) {
             final Set<Book> bookMarks = user.getBookmarks();
-            if(bookMarks.contains(book.get())){
+            if (bookMarks.contains(book.get())){
                 user.getBookmarks().remove(book.get());
                 userRepository.save(user);
             }

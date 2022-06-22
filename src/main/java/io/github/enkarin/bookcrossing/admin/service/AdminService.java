@@ -29,7 +29,7 @@ public class AdminService {
             userRepository.save(user.get());
             mailService.sendBlockingMessage(user.get(), lockedUserDto.getComment());
             return true;
-        } else{
+        } else {
             return false;
         }
     }

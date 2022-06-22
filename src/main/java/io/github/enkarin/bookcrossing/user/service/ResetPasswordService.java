@@ -23,18 +23,18 @@ public class ResetPasswordService {
     public Optional<ErrorListResponse> updatePassword(final String token, final UserPasswordDto passwordDto){
         final ErrorListResponse response = new ErrorListResponse();
         User user;
-        if(!passwordDto.getPassword().equals(passwordDto.getPasswordConfirm())){
+        if (!passwordDto.getPassword().equals(passwordDto.getPasswordConfirm())){
             response.getErrors().add("password: Пароли не совпадают");
             return Optional.of(response);
         }
         final Optional<ActionMailUser> actionMailUser = actionMailUserRepository.findById(token);
-        if(actionMailUser.isPresent()){
+        if (actionMailUser.isPresent()){
             user = actionMailUser.get().getUser();
             user.setPassword(bCryptPasswordEncoder.encode(passwordDto.getPassword()));
             userRepository.save(user);
             actionMailUserRepository.delete(actionMailUser.get());
             return Optional.empty();
-        } else{
+        } else {
             response.getErrors().add("token: Токен некорректен");
             return Optional.of(response);
         }

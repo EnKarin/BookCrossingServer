@@ -90,7 +90,7 @@ public class UserService {
 
     public Optional<User> putUserInfo(final UserPutRequest userPutRequest, final String login) {
         Optional<User> user = findByLogin(login);
-        if(user.isPresent()) {
+        if (user.isPresent()) {
             if (bCryptPasswordEncoder.matches(userPutRequest.getOldPassword(), user.get().getPassword())) {
                 user.get().setName(userPutRequest.getName());
                 user.get().setCity(userPutRequest.getCity());
