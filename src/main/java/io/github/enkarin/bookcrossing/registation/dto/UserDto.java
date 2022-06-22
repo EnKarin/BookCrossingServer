@@ -14,6 +14,7 @@ import javax.validation.constraints.Size;
 @Schema(description = "Сущность пользователя")
 @NoArgsConstructor
 public class UserDto {
+
     @Schema(description = "Имя", example = "Alex")
     @NotBlank(message = "name: Имя должно содержать хотя бы один видимый символ")
     private String name;

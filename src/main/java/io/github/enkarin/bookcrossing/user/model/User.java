@@ -19,6 +19,7 @@ import java.util.Set;
 @Setter
 @Table(name = "t_user")
 public class User implements UserDetails {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int userId;

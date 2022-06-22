@@ -10,6 +10,7 @@ import javax.validation.constraints.Size;
 @Data
 @Validated
 public class UserPasswordDto {
+
     @Schema(description = "Пароль", example = "123456")
     @NotBlank(message = "password: Пароль должен содержать хотя бы один видимый символ")
     @Size(min = 6, message = "Пароль должен содержать больше 6 символов")

@@ -11,6 +11,7 @@ import javax.validation.constraints.Size;
 @Data
 @Schema(description = "Сущность для изменения данных пользователя")
 public class UserPutRequest {
+
     @Schema(description = "Имя", example = "Alex")
     @NotBlank(message = "Имя должно содержать хотя бы один видимый символ")
     private String name;
