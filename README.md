@@ -26,6 +26,6 @@
   mvn install 
   ~~~
 ### Documentation
-Swagger UI interactive documentation
+[Swagger UI interactive documentation for localhost](https://localhost:8443/swagger-ui.html)
 ## Issue Tracking
 Found a bug? Have an idea for an improvement? Feel free to [add an issue](../../issues).
