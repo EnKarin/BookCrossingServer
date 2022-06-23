@@ -4,7 +4,7 @@
         "https://checkstyle.org/dtds/configuration_1_3.dtd">
 
 <module name="Checker">
-    <property name="severity" value="warning"/>
+    <property name="severity" value="error"/>
 
     <module name="FileTabCharacter">
         <property name="eachLine" value="true"/>
@@ -39,8 +39,8 @@
         <module name="NoArrayTrailingComma"/>
         <module name="NoEnumTrailingComma"/>
         <module name="OneTopLevelClass"/>
-<!--        <module name="WhitespaceAfter"/>-->
-<!--        <module name="WhitespaceAround"/>-->
+        <module name="WhitespaceAfter"/>
+        <module name="WhitespaceAround"/>
         <module name="AvoidNoArgumentSuperConstructorCall"/>
         <module name="EmptyStatement"/>
         <module name="OneStatementPerLine"/>
@@ -53,7 +53,6 @@
         <module name="ModifierOrder"/>
         <module name="NoClone"/>
         <module name="NoFinalizer"/>
-<!--        <module name="EmptyLineSeparator"/>-->
         <module name="SeparatorWrap">
             <property name="id" value="SeparatorWrapDot"/>
             <property name="tokens" value="DOT"/>
@@ -106,22 +105,16 @@
             <property name="format" value="^[A-Z][A-Z0-9]*$"/>
         </module>
         <module name="GenericWhitespace"/>
-<!--        <module name="Indentation">-->
-<!--            <property name="basicOffset" value="4"/>-->
-<!--            <property name="braceAdjustment" value="4"/>-->
-<!--            <property name="caseIndent" value="4"/>-->
-<!--            <property name="throwsIndent" value="4"/>-->
-<!--            <property name="lineWrappingIndentation" value="4"/>-->
-<!--            <property name="arrayInitIndent" value="4"/>-->
-<!--        </module>-->
+        <module name="Indentation">
+            <property name="basicOffset" value="4"/>
+            <property name="braceAdjustment" value="0"/>
+            <property name="caseIndent" value="4"/>
+            <property name="throwsIndent" value="4"/>
+            <property name="lineWrappingIndentation" value="4"/>
+            <property name="arrayInitIndent" value="4"/>
+        </module>
         <module name="AbbreviationAsWordInName"/>
         <module name="VariableDeclarationUsageDistance"/>
-<!--        <module name="CustomImportOrder">-->
-<!--            <property name="sortImportsInGroupAlphabetically" value="true"/>-->
-<!--            <property name="separateLineBetweenGroups" value="true"/>-->
-<!--            <property name="customImportOrderRules" value="THIRD_PARTY_PACKAGE###STANDARD_JAVA_PACKAGE###STATIC"/>-->
-<!--            <property name="tokens" value="IMPORT, STATIC_IMPORT, PACKAGE_DEF"/>-->
-<!--        </module>-->
         <module name="UnusedImports"/>
         <module name="RedundantImport"/>
         <module name="IllegalImport">

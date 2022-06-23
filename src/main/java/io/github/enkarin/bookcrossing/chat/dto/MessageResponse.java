@@ -19,7 +19,7 @@ public class MessageResponse {
 
     private boolean declaim;
 
-    public MessageResponse(final Message message, final int zone){
+    public MessageResponse(final Message message, final int zone) {
         messageId = message.getMessageId();
         userId = message.getSender().getUserId();
         text = message.getText();

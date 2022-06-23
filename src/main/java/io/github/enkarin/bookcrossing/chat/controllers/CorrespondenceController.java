@@ -41,33 +41,33 @@ public class CorrespondenceController {
             description = "Позволяет создать чат с выбранным пользователем"
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "409", description = "Чат уже существует",
-                    content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                            schema = @Schema(implementation = ErrorListResponse.class))}),
-            @ApiResponse(responseCode = "406", description = "Нельзя создать чат с данным пользователем",
-                    content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                            schema = @Schema(implementation = ErrorListResponse.class))}),
-            @ApiResponse(responseCode = "200", description = "Чат создан",
-                    content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                            schema = @Schema(implementation = Correspondence.class))})
+        @ApiResponse(responseCode = "409", description = "Чат уже существует",
+            content = {@Content(mediaType = Constant.MEDIA_TYPE,
+                    schema = @Schema(implementation = ErrorListResponse.class))}),
+        @ApiResponse(responseCode = "406", description = "Нельзя создать чат с данным пользователем",
+            content = {@Content(mediaType = Constant.MEDIA_TYPE,
+                    schema = @Schema(implementation = ErrorListResponse.class))}),
+        @ApiResponse(responseCode = "200", description = "Чат создан",
+            content = {@Content(mediaType = Constant.MEDIA_TYPE,
+                    schema = @Schema(implementation = Correspondence.class))})
     })
     @PostMapping
     public ResponseEntity<?> createCorrespondence(@RequestParam final int userId,
-                                                  final Principal principal){
+                                                  final Principal principal) {
         final ErrorListResponse response = new ErrorListResponse();
         try {
             final Optional<UsersCorrKeyDto> usersCorrKeyDto = correspondenceService.createChat(userId,
                     principal.getName());
-            if(usersCorrKeyDto.isPresent()){
+            if (usersCorrKeyDto.isPresent()) {
                 return new ResponseEntity<>(usersCorrKeyDto.get(), HttpStatus.OK);
             } else {
                 response.getErrors().add("user: Пользователь заблокирован");
                 return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
             }
-        } catch (ChatAlreadyCreatedException e){
+        } catch (ChatAlreadyCreatedException e) {
             response.getErrors().add("correspondence: Чат уже существует");
             return new ResponseEntity<>(response, HttpStatus.CONFLICT);
-        } catch (UserNotFoundException e){
+        } catch (UserNotFoundException e) {
             response.getErrors().add("user: Пользователь не найден");
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
@@ -78,17 +78,17 @@ public class CorrespondenceController {
             description = "Позволяет удалить чат с выбранным пользователем"
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "404", description = "Чата не существует",
-                    content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                            schema = @Schema(implementation = ErrorListResponse.class))}),
-            @ApiResponse(responseCode = "200", description = "Чат удален")
-    }
+        @ApiResponse(responseCode = "404", description = "Чата не существует",
+            content = {@Content(mediaType = Constant.MEDIA_TYPE,
+                    schema = @Schema(implementation = ErrorListResponse.class))}),
+        @ApiResponse(responseCode = "200", description = "Чат удален")
+        }
     )
     @DeleteMapping
     public ResponseEntity<?> deleteCorrespondence(@RequestParam @Parameter(description = "Идентификатор пользователя")
                                                       final int userId,
-                                                  final Principal principal){
-        if(correspondenceService.deleteChat(userId, principal.getName())){
+                                                  final Principal principal) {
+        if (correspondenceService.deleteChat(userId, principal.getName())) {
             return new ResponseEntity<>(HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -100,19 +100,19 @@ public class CorrespondenceController {
             description = "Позволяет получить чат с выбранным пользователем"
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "404", description = "Чата не существует",
-                    content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                            schema = @Schema(implementation = ErrorListResponse.class))}),
-            @ApiResponse(responseCode = "200", description = "Возвращает список сообщений",
-                    content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                            schema = @Schema(implementation = MessageResponse.class))})
-    }
+        @ApiResponse(responseCode = "404", description = "Чата не существует",
+            content = {@Content(mediaType = Constant.MEDIA_TYPE,
+                    schema = @Schema(implementation = ErrorListResponse.class))}),
+        @ApiResponse(responseCode = "200", description = "Возвращает список сообщений",
+            content = {@Content(mediaType = Constant.MEDIA_TYPE,
+                    schema = @Schema(implementation = MessageResponse.class))})
+        }
     )
     @GetMapping
     public ResponseEntity<?> getCorrespondence(@RequestBody final ZonedUserCorrKeyDto dto,
-                                               final Principal principal){
+                                               final Principal principal) {
         final Optional<List<MessageResponse>> messageResponse = correspondenceService.getChat(dto, principal.getName());
-        if(messageResponse.isPresent()){
+        if (messageResponse.isPresent()) {
             return ResponseEntity.ok(messageResponse.get());
         } else {
             final ErrorListResponse response = new ErrorListResponse();

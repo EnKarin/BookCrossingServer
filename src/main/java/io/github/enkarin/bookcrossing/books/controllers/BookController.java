@@ -36,9 +36,9 @@ public class BookController {
             description = "Позволяет получить книги всех пользователей"
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Возвращает все книги",
-                    content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                            schema = @Schema(implementation = BookListResponse.class))})
+        @ApiResponse(responseCode = "200", description = "Возвращает все книги",
+            content = {@Content(mediaType = Constant.MEDIA_TYPE,
+                    schema = @Schema(implementation = BookListResponse.class))})
     })
     @GetMapping("/all")
     public ResponseEntity<?> books() {
@@ -52,12 +52,12 @@ public class BookController {
             description = "Позволяет получить данные выбранной книги"
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "400", description = "Книга не найдена",
-                    content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                            schema = @Schema(implementation = ErrorListResponse.class))}),
-            @ApiResponse(responseCode = "200", description = "Возвращает данные книги",
-                    content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                            schema = @Schema(implementation = BookResponse.class))})
+        @ApiResponse(responseCode = "400", description = "Книга не найдена",
+            content = {@Content(mediaType = Constant.MEDIA_TYPE,
+                    schema = @Schema(implementation = ErrorListResponse.class))}),
+        @ApiResponse(responseCode = "200", description = "Возвращает данные книги",
+            content = {@Content(mediaType = Constant.MEDIA_TYPE,
+                    schema = @Schema(implementation = BookResponse.class))})
     })
     @GetMapping("/info")
     public ResponseEntity<?> bookInfo(@RequestParam final int bookId) {
@@ -78,9 +78,9 @@ public class BookController {
             description = "Позволяет найти книги по названию"
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Возвращает найденные книги",
-                    content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                            schema = @Schema(implementation = BookListResponse.class))})
+        @ApiResponse(responseCode = "200", description = "Возвращает найденные книги",
+            content = {@Content(mediaType = Constant.MEDIA_TYPE,
+                    schema = @Schema(implementation = BookListResponse.class))})
     })
     @GetMapping("/searchByTitle")
     public ResponseEntity<?> searchByTitle(@RequestParam final String title) {
@@ -94,9 +94,9 @@ public class BookController {
             description = "Позволяет найти книги с помощью фильтров"
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Возвращает найденные книги",
-                    content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                            schema = @Schema(implementation = BookListResponse.class))})
+        @ApiResponse(responseCode = "200", description = "Возвращает найденные книги",
+            content = {@Content(mediaType = Constant.MEDIA_TYPE,
+                    schema = @Schema(implementation = BookListResponse.class))})
     })
     @GetMapping("/searchWithFilters")
     public ResponseEntity<?> searchWithFilters(@RequestBody final BookFiltersRequest filters) {

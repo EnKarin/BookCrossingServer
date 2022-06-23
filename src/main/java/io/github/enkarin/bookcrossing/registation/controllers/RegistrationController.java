@@ -46,19 +46,19 @@ public class RegistrationController {
             description = "Возвращает токены, если пользователь успешно зарегистрирован"
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "409", description = "Пароли не совпадают",
-                    content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                            schema = @Schema(implementation = ErrorListResponse.class))}),
-            @ApiResponse(responseCode = "406", description = "Пользователь с таким логином уже существует",
-                    content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                            schema = @Schema(implementation = ErrorListResponse.class))}),
-            @ApiResponse(responseCode = "400", description = "Введены некорректные данные",
-                    content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                            schema = @Schema(implementation = ErrorListResponse.class))}),
-            @ApiResponse(responseCode = "200", description = "Возвращает токены",
-                    content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                            schema = @Schema(implementation = AuthResponse.class))})
-    }
+        @ApiResponse(responseCode = "409", description = "Пароли не совпадают",
+            content = {@Content(mediaType = Constant.MEDIA_TYPE,
+                    schema = @Schema(implementation = ErrorListResponse.class))}),
+        @ApiResponse(responseCode = "406", description = "Пользователь с таким логином уже существует",
+            content = {@Content(mediaType = Constant.MEDIA_TYPE,
+                    schema = @Schema(implementation = ErrorListResponse.class))}),
+        @ApiResponse(responseCode = "400", description = "Введены некорректные данные",
+            content = {@Content(mediaType = Constant.MEDIA_TYPE,
+                    schema = @Schema(implementation = ErrorListResponse.class))}),
+        @ApiResponse(responseCode = "200", description = "Возвращает токены",
+            content = {@Content(mediaType = Constant.MEDIA_TYPE,
+                    schema = @Schema(implementation = AuthResponse.class))})
+        }
     )
     @PostMapping("/registration")
     public ResponseEntity<?> registerUser(@Valid @RequestBody final UserDto userForm,
@@ -77,7 +77,7 @@ public class RegistrationController {
             final User result = userService.saveUser(userForm);
             mailService.sendApproveMail(result);
             return new ResponseEntity<>(HttpStatus.OK);
-        } catch (LoginFailedException | EmailFailedException failedException){
+        } catch (LoginFailedException | EmailFailedException failedException) {
             errorListResponse.getErrors().add(failedException.getMessage());
             return new ResponseEntity<>(errorListResponse, HttpStatus.NOT_ACCEPTABLE);
         }
@@ -88,12 +88,12 @@ public class RegistrationController {
             description = "Выдает токены, если пользователь с таким логином существует и пароль корректен"
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "401", description = "Некорректные данные",
-                    content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                            schema = @Schema(implementation = ErrorListResponse.class))}),
-            @ApiResponse(responseCode = "200", description = "Возвращает токены",
-                    content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                            schema = @Schema(implementation = AuthResponse.class))}
+        @ApiResponse(responseCode = "401", description = "Некорректные данные",
+            content = {@Content(mediaType = Constant.MEDIA_TYPE,
+                    schema = @Schema(implementation = ErrorListResponse.class))}),
+        @ApiResponse(responseCode = "200", description = "Возвращает токены",
+            content = {@Content(mediaType = Constant.MEDIA_TYPE,
+                    schema = @Schema(implementation = AuthResponse.class))}
             )}
     )
     @PostMapping("/auth")
@@ -104,7 +104,7 @@ public class RegistrationController {
             response.getErrors().add("account: Некорректный логин или пароль");
             return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
         }
-        if(userEntity.get().isEnabled()) {
+        if (userEntity.get().isEnabled()) {
             if (userEntity.get().isAccountNonLocked()) {
                 final AuthResponse authResponse = new AuthResponse();
                 authResponse.setAccessToken(jwtProvider.generateToken(request.getLogin()));
@@ -125,14 +125,14 @@ public class RegistrationController {
             description = "Изменяет стату аккаунта на подтвержденный"
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "400", description = "Токена не существует"),
-            @ApiResponse(responseCode = "200", description = "Подтверждает почту для аккаунта")
-    }
+        @ApiResponse(responseCode = "400", description = "Токена не существует"),
+        @ApiResponse(responseCode = "200", description = "Подтверждает почту для аккаунта")
+        }
     )
     @GetMapping("/registration/confirmation")
-    public ResponseEntity<?> mailConfirm(@RequestParam final String token){
+    public ResponseEntity<?> mailConfirm(@RequestParam final String token) {
         final Optional<String> login = userService.confirmMail(token);
-        if(login.isPresent()){
+        if (login.isPresent()) {
             final AuthResponse authResponse = new AuthResponse();
             authResponse.setAccessToken(jwtProvider.generateToken(login.get()));
             authResponse.setRefreshToken(refreshService.createToken(login.get()));

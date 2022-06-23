@@ -40,8 +40,8 @@ public class Message {
 
     @ManyToOne
     @JoinColumns({
-            @JoinColumn(name = "correspondence_first_user_id", referencedColumnName = "first_user_id"),
-            @JoinColumn(name = "correspondence_second_user_id", referencedColumnName = "second_user_id")
+        @JoinColumn(name = "correspondence_first_user_id", referencedColumnName = "first_user_id"),
+        @JoinColumn(name = "correspondence_second_user_id", referencedColumnName = "second_user_id")
     })
     @JsonIgnore
     private Correspondence correspondence;

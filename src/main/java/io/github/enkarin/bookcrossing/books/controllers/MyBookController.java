@@ -40,12 +40,12 @@ public class MyBookController {
             description = "Позволяет сохранить книгу для обмена"
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "400", description = "Введены некорректные данные",
-                    content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                            schema = @Schema(implementation = ErrorListResponse.class))}),
-            @ApiResponse(responseCode = "200", description = "Возвращает сохраненную книгу",
-                    content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                            schema = @Schema(implementation = BookResponse.class))})}
+        @ApiResponse(responseCode = "400", description = "Введены некорректные данные",
+            content = {@Content(mediaType = Constant.MEDIA_TYPE,
+                    schema = @Schema(implementation = ErrorListResponse.class))}),
+        @ApiResponse(responseCode = "200", description = "Возвращает сохраненную книгу",
+            content = {@Content(mediaType = Constant.MEDIA_TYPE,
+                    schema = @Schema(implementation = BookResponse.class))})}
     )
     @PostMapping
     public ResponseEntity<?> saveBook(@Valid @RequestBody final BookDto bookDTO,
@@ -58,7 +58,7 @@ public class MyBookController {
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
         final Optional<BookResponse> book = bookService.saveBook(bookDTO, principal.getName());
-        if(book.isEmpty()){
+        if (book.isEmpty()) {
             response.getErrors().add("user: Пользователь не найден");
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
@@ -70,9 +70,9 @@ public class MyBookController {
             description = "Позволяет получить список всех книг пользователя"
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Возвращает список книг",
-                    content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                            schema = @Schema(implementation = BookListResponse.class))})}
+        @ApiResponse(responseCode = "200", description = "Возвращает список книг",
+            content = {@Content(mediaType = Constant.MEDIA_TYPE,
+                    schema = @Schema(implementation = BookListResponse.class))})}
     )
     @GetMapping("/all")
     public ResponseEntity<?> bookList(final Principal principal) {
@@ -86,10 +86,10 @@ public class MyBookController {
             description = "Позволяет удалить книгу по ее id"
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Удаляет книгу из бд")}
+        @ApiResponse(responseCode = "200", description = "Удаляет книгу из бд")}
     )
     @DeleteMapping
-    public ResponseEntity<?> deleteBook(@RequestParam final int bookId){
+    public ResponseEntity<?> deleteBook(@RequestParam final int bookId) {
         bookService.deleteBook(bookId);
         return new ResponseEntity<>(HttpStatus.OK);
     }

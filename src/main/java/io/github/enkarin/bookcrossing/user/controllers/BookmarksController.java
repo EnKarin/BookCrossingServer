@@ -29,15 +29,15 @@ public class BookmarksController {
             description = "Позволяет сохранить книгу в закладки"
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "404", description = "Книга с заданным Id не найдена"),
-            @ApiResponse(responseCode = "200", description = "Книга добавлена")
-    }
+        @ApiResponse(responseCode = "404", description = "Книга с заданным Id не найдена"),
+        @ApiResponse(responseCode = "200", description = "Книга добавлена")
+        }
     )
     @PostMapping
     public ResponseEntity<?> saveBookmarks(@RequestParam @Parameter(description = "Идентификатор книги")
                                                final int bookId,
-                                           final Principal principal){
-        if(bookmarksService.saveBookmarks(bookId, principal.getName())){
+                                           final Principal principal) {
+        if (bookmarksService.saveBookmarks(bookId, principal.getName())) {
             return new ResponseEntity<>(HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -49,15 +49,15 @@ public class BookmarksController {
             description = "Позволяет удалить книгу из закладок"
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "404", description = "Книга с заданным Id не найдена"),
-            @ApiResponse(responseCode = "200", description = "Книга удалена")
-    }
+        @ApiResponse(responseCode = "404", description = "Книга с заданным Id не найдена"),
+        @ApiResponse(responseCode = "200", description = "Книга удалена")
+        }
     )
     @DeleteMapping
     public ResponseEntity<?> deleteBookmarks(@RequestParam @Parameter(description = "Идентификатор книги")
                                                  final int bookId,
-                                           final Principal principal){
-        if(bookmarksService.deleteBookmarks(bookId, principal.getName())){
+                                           final Principal principal) {
+        if (bookmarksService.deleteBookmarks(bookId, principal.getName())) {
             return new ResponseEntity<>(HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -69,11 +69,11 @@ public class BookmarksController {
             description = "Позволяет получить все закладки пользователя"
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Возвращает список закладок")
-    }
+        @ApiResponse(responseCode = "200", description = "Возвращает список закладок")
+        }
     )
     @GetMapping
-    public ResponseEntity<?> getAll(final Principal principal){
+    public ResponseEntity<?> getAll(final Principal principal) {
         return new ResponseEntity<>(bookmarksService.getAll(principal.getName()), HttpStatus.OK);
     }
 }

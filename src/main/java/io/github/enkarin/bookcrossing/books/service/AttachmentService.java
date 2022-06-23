@@ -27,15 +27,15 @@ public class AttachmentService {
         final Optional<Book> book = userRepository.findByLogin(login).orElseThrow().getBooks().stream()
                 .filter(b -> b.getBookId() == attachmentDto.getBookId())
                 .findFirst();
-        if(book.isPresent()){
+        if (book.isPresent()) {
             Attachment attachment = new Attachment();
             attachment.setData(attachmentDto.getFile().getBytes());
             final String fileName = attachmentDto.getFile().getOriginalFilename();
-            if(fileName == null) {
+            if (fileName == null) {
                 response.getErrors().add("attachment: Имя не должно быть пустым");
             } else {
                 final String expansion = fileName.substring(fileName.indexOf('.')).toLowerCase(Locale.ROOT);
-                if(expansion.contains("jpeg") || expansion.contains("jpg") ||
+                if (expansion.contains("jpeg") || expansion.contains("jpg") ||
                         expansion.contains("png") || expansion.contains("bmp")) {
                     attachment.setExpansion(expansion);
                     attachment = attachRepository.save(attachment);
@@ -51,16 +51,16 @@ public class AttachmentService {
         return response;
     }
 
-    public ErrorListResponse deleteAttachment(final int bookId, final String login){
+    public ErrorListResponse deleteAttachment(final int bookId, final String login) {
         final ErrorListResponse response = new ErrorListResponse();
         final Optional<Book> book = userRepository.findByLogin(login).orElseThrow().getBooks().stream()
                 .filter(b -> b.getBookId() == bookId).findFirst();
-        if(book.isPresent()){
+        if (book.isPresent()) {
             final Optional<Attachment> attachment = Optional.ofNullable(book.get().getAttachment());
-            if(attachment.isPresent()) {
+            if (attachment.isPresent()) {
                 attachRepository.delete(book.get().getAttachment());
             }
-        } else{
+        } else {
             response.getErrors().add("attachment: Нет доступа к данной книге");
         }
         return response;

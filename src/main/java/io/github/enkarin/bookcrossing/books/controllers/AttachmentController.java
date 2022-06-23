@@ -34,16 +34,16 @@ public class AttachmentController {
             description = "Позволяет сохранить фотографию книги"
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "400", description = "Некорректный запрос",
-                    content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                            schema = @Schema(implementation = ErrorListResponse.class))}),
-            @ApiResponse(responseCode = "200", description = "Вложение сохранено")
+        @ApiResponse(responseCode = "400", description = "Некорректный запрос",
+            content = {@Content(mediaType = Constant.MEDIA_TYPE,
+                    schema = @Schema(implementation = ErrorListResponse.class))}),
+        @ApiResponse(responseCode = "200", description = "Вложение сохранено")
     })
     @PostMapping("/attachment")
     public ResponseEntity<?> saveAttachment(@ModelAttribute final AttachmentDto attachmentDto,
                                             final Principal principal) throws IOException {
         final ErrorListResponse response = attachmentService.saveAttachment(attachmentDto, principal.getName());
-        if(response.getErrors().isEmpty()) {
+        if (response.getErrors().isEmpty()) {
             return new ResponseEntity<>(HttpStatus.OK);
         } else {
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
@@ -55,16 +55,16 @@ public class AttachmentController {
             description = "Позволяет удалить фотографию книги"
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "400", description = "Некорректный запрос",
-                    content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                            schema = @Schema(implementation = ErrorListResponse.class))}),
-            @ApiResponse(responseCode = "200", description = "Вложение удалено")
+        @ApiResponse(responseCode = "400", description = "Некорректный запрос",
+            content = {@Content(mediaType = Constant.MEDIA_TYPE,
+                    schema = @Schema(implementation = ErrorListResponse.class))}),
+        @ApiResponse(responseCode = "200", description = "Вложение удалено")
     })
     @DeleteMapping("/attachment")
     public ResponseEntity<?> deleteAttachment(@RequestParam final int bookId,
-                                            final Principal principal){
+                                            final Principal principal) {
         final ErrorListResponse response = attachmentService.deleteAttachment(bookId, principal.getName());
-        if(response.getErrors().isEmpty()) {
+        if (response.getErrors().isEmpty()) {
             return new ResponseEntity<>(HttpStatus.OK);
         } else {
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);

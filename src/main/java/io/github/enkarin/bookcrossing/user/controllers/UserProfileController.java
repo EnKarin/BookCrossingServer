@@ -42,13 +42,13 @@ public class UserProfileController {
             description = "Возвращает данные профиля по id"
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "400", description = "Пользователь не найден",
-                    content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                            schema = @Schema(implementation = ErrorListResponse.class))}),
-            @ApiResponse(responseCode = "200", description = "Возвращает профиль пользователя",
-                    content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                            schema = @Schema(implementation = UserDtoResponse.class))})
-    }
+        @ApiResponse(responseCode = "400", description = "Пользователь не найден",
+            content = {@Content(mediaType = Constant.MEDIA_TYPE,
+                    schema = @Schema(implementation = ErrorListResponse.class))}),
+        @ApiResponse(responseCode = "200", description = "Возвращает профиль пользователя",
+            content = {@Content(mediaType = Constant.MEDIA_TYPE,
+                    schema = @Schema(implementation = UserDtoResponse.class))})
+        }
     )
     @GetMapping("/profile")
     public ResponseEntity<?> getProfile(@RequestParam @Parameter(description = "Идентификатор пользователя")
@@ -79,10 +79,10 @@ public class UserProfileController {
             description = "Возвращает данные профиля пользователя"
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Возвращает данные пользователя",
-                    content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                            schema = @Schema(implementation = UserDtoResponse.class))})
-    }
+        @ApiResponse(responseCode = "200", description = "Возвращает данные пользователя",
+            content = {@Content(mediaType = Constant.MEDIA_TYPE,
+                    schema = @Schema(implementation = UserDtoResponse.class))})
+        }
     )
     @GetMapping("/myProfile")
     public ResponseEntity<?> getMyProfile(final Principal principal) {
@@ -94,22 +94,22 @@ public class UserProfileController {
             description = "Возвращает обновленный профиль"
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "409", description = "Пароли не совпадают",
+        @ApiResponse(responseCode = "409", description = "Пароли не совпадают",
                     content = {@Content(mediaType = Constant.MEDIA_TYPE,
                             schema = @Schema(implementation = ErrorListResponse.class))}),
-            @ApiResponse(responseCode = "404", description = "Пользователь не найден",
+        @ApiResponse(responseCode = "404", description = "Пользователь не найден",
                     content = {@Content(mediaType = Constant.MEDIA_TYPE,
                             schema = @Schema(implementation = ErrorListResponse.class))}),
-            @ApiResponse(responseCode = "403", description = "Введен неверный старый пароль",
+        @ApiResponse(responseCode = "403", description = "Введен неверный старый пароль",
                     content = {@Content(mediaType = Constant.MEDIA_TYPE,
                             schema = @Schema(implementation = ErrorListResponse.class))}),
-            @ApiResponse(responseCode = "400", description = "Некорректный пароль",
+        @ApiResponse(responseCode = "400", description = "Некорректный пароль",
                     content = {@Content(mediaType = Constant.MEDIA_TYPE,
                             schema = @Schema(implementation = ErrorListResponse.class))}),
-            @ApiResponse(responseCode = "200", description = "Возвращает обновленный профиль пользователя",
+        @ApiResponse(responseCode = "200", description = "Возвращает обновленный профиль пользователя",
                     content = {@Content(mediaType = Constant.MEDIA_TYPE,
                             schema = @Schema(implementation = UserDtoResponse.class))})
-    }
+        }
     )
     @PutMapping("/profile")
     public ResponseEntity<?> putProfile(@Valid @RequestBody final UserPutRequest userPutRequest,
@@ -133,7 +133,7 @@ public class UserProfileController {
                 response.getErrors().add("oldPassword: Старый пароль неверен");
                 return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
             }
-        }catch (UserNotFoundException e){
+        } catch (UserNotFoundException e) {
             response.getErrors().add("user: Пользователь не найден");
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
@@ -142,7 +142,7 @@ public class UserProfileController {
     //добавить документацию
 
     @GetMapping("/users")
-    public ResponseEntity<?> getAllProfile(@RequestParam final int zone){
+    public ResponseEntity<?> getAllProfile(@RequestParam final int zone) {
         return new ResponseEntity<>(new UserListResponse(userService.findAllUsers(zone)), HttpStatus.OK);
     }
 }

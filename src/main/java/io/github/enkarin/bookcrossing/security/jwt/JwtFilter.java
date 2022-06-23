@@ -25,9 +25,7 @@ import static org.springframework.util.StringUtils.hasText;
 public class JwtFilter extends GenericFilterBean {
 
     public static final String AUTHORIZATION = "Authorization";
-
     private final JwtProvider jwtProvider;
-
     private final CustomUserDetailsService customUserDetailsService;
 
     @Override
@@ -42,7 +40,7 @@ public class JwtFilter extends GenericFilterBean {
                 final UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(user,
                         null, user.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(auth);
-            }catch (NoSuchElementException ignored){
+            } catch (NoSuchElementException ignored) {
                 // no handling
             }
         }

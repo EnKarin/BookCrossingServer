@@ -38,17 +38,17 @@ public class PasswordResetController {
             description = "Отправляет на почту ссылку для сброса пароля"
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "400", description = "Пользователь с таким email не найден",
-                    content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                            schema = @Schema(implementation = ErrorListResponse.class))}),
-            @ApiResponse(responseCode = "200", description = "Отправляет ссылку на сброс пароля на почту")
-    }
+        @ApiResponse(responseCode = "400", description = "Пользователь с таким email не найден",
+            content = {@Content(mediaType = Constant.MEDIA_TYPE,
+                    schema = @Schema(implementation = ErrorListResponse.class))}),
+        @ApiResponse(responseCode = "200", description = "Отправляет ссылку на сброс пароля на почту")
+        }
     )
     @PostMapping("/send")
-    public ResponseEntity<?> sendMessage(@RequestParam final String email){
+    public ResponseEntity<?> sendMessage(@RequestParam final String email) {
         final ErrorListResponse response = new ErrorListResponse();
         final boolean result = mailService.sendResetPassword(email);
-        if(result) {
+        if (result) {
             return new ResponseEntity<>(HttpStatus.OK);
         } else {
             response.getErrors().add("user: Пользователь с таким email не найден");
@@ -61,21 +61,21 @@ public class PasswordResetController {
             description = "Смена пароля по ссылке"
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "400", description = "Введенный пароль некорректен",
-                    content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                            schema = @Schema(implementation = ErrorListResponse.class))}),
-            @ApiResponse(responseCode = "403", description = "Ссылка недействительна",
-                    content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                            schema = @Schema(implementation = ErrorListResponse.class))}),
-            @ApiResponse(responseCode = "200", description = "Пароль успешно изменен")
-    }
+        @ApiResponse(responseCode = "400", description = "Введенный пароль некорректен",
+            content = {@Content(mediaType = Constant.MEDIA_TYPE,
+                    schema = @Schema(implementation = ErrorListResponse.class))}),
+        @ApiResponse(responseCode = "403", description = "Ссылка недействительна",
+            content = {@Content(mediaType = Constant.MEDIA_TYPE,
+                    schema = @Schema(implementation = ErrorListResponse.class))}),
+        @ApiResponse(responseCode = "200", description = "Пароль успешно изменен")
+        }
     )
     @PostMapping("/update")
     public ResponseEntity<?> updatePassword(@RequestParam final String token,
                                             @Valid @RequestBody final UserPasswordDto userPasswordDto,
-                                            final BindingResult bindingResult){
+                                            final BindingResult bindingResult) {
         final ErrorListResponse finalResponse = new ErrorListResponse();
-        if(!userPasswordDto.getPassword().equals(userPasswordDto.getPasswordConfirm())){
+        if (!userPasswordDto.getPassword().equals(userPasswordDto.getPasswordConfirm())) {
             finalResponse.getErrors().add("password: Пароли не совпадают");
             return new ResponseEntity<>(finalResponse, HttpStatus.BAD_REQUEST);
         }
@@ -85,7 +85,7 @@ public class PasswordResetController {
             return new ResponseEntity<>(finalResponse, HttpStatus.BAD_REQUEST);
         }
         final Optional<ErrorListResponse> response = resetPasswordService.updatePassword(token, userPasswordDto);
-        if(response.isEmpty()) {
+        if (response.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.OK);
         } else {
             return new ResponseEntity<>(response.get(), HttpStatus.FORBIDDEN);

@@ -19,7 +19,9 @@ import java.util.stream.Collectors;
 public class AdminService {
 
     private final UserRepository userRepository;
+
     private final RoleRepository roleRepository;
+
     private final MailService mailService;
 
     public boolean lockedUser(final LockedUserDto lockedUserDto) {
@@ -29,7 +31,7 @@ public class AdminService {
             userRepository.save(user.get());
             mailService.sendBlockingMessage(user.get(), lockedUserDto.getComment());
             return true;
-        } else{
+        } else {
             return false;
         }
     }

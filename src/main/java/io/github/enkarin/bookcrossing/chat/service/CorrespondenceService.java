@@ -86,7 +86,7 @@ public class CorrespondenceService {
                     return Optional.of(getMessages(Message::isShownFirstUser, correspondence.get(), zonedUserCorrKeyDto,
                             user));
                 }
-                if(user.equals(sUser.get())) {
+                if (user.equals(sUser.get())) {
                     return Optional.of(getMessages(Message::isShownSecondUser, correspondence.get(),
                             zonedUserCorrKeyDto, user));
                 }

@@ -30,7 +30,7 @@ public class BookResponse {
     @Schema(description = "Вложение")
     private Attachment attachment;
 
-    public BookResponse(final Book book){
+    public BookResponse(final Book book) {
         bookId = book.getBookId();
         title = book.getTitle();
         author = book.getAuthor();

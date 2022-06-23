@@ -29,6 +29,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Service
 public class UserService {
+
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final ActionMailUserRepository confirmationMailUserRepository;
@@ -68,7 +69,7 @@ public class UserService {
         return userRepository.findById(userId);
     }
 
-    public UserProfileResponse getProfile(final String login){
+    public UserProfileResponse getProfile(final String login) {
         final User user = userRepository.findByLogin(login).orElseThrow();
         return modelMapper.map(user, UserProfileResponse.class);
     }
@@ -80,7 +81,7 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
-    public Optional<User> findByLoginAndPassword(final LoginRequest login){
+    public Optional<User> findByLoginAndPassword(final LoginRequest login) {
         final Optional<User> user = userRepository.findByLogin(login.getLogin());
         if (user.isPresent() && bCryptPasswordEncoder.matches(login.getPassword(), user.get().getPassword())) {
             return user;
@@ -90,7 +91,7 @@ public class UserService {
 
     public Optional<User> putUserInfo(final UserPutRequest userPutRequest, final String login) {
         Optional<User> user = findByLogin(login);
-        if(user.isPresent()) {
+        if (user.isPresent()) {
             if (bCryptPasswordEncoder.matches(userPutRequest.getOldPassword(), user.get().getPassword())) {
                 user.get().setName(userPutRequest.getName());
                 user.get().setCity(userPutRequest.getCity());

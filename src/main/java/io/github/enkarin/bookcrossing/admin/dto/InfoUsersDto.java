@@ -35,7 +35,7 @@ public class InfoUsersDto {
     @Schema(description = "Время последнего входа", example = "2022-11-03T23:15:09.61")
     private String loginDate;
 
-    public InfoUsersDto(final User user, final int zone){
+    public InfoUsersDto(final User user, final int zone) {
         userId = user.getUserId();
         name = user.getName();
         login = user.getLogin();
@@ -43,7 +43,7 @@ public class InfoUsersDto {
         city = user.getCity();
         accountNonLocked = user.isAccountNonLocked();
         enabled = user.isEnabled();
-        if(user.getLoginDate() != 0) {
+        if (user.getLoginDate() != 0) {
             loginDate = LocalDateTime.ofEpochSecond(user.getLoginDate(), 0, ZoneOffset.ofHours(zone)).toString();
         }
     }

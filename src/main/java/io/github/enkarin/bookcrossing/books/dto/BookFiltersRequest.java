@@ -6,6 +6,7 @@ import lombok.Data;
 @Schema(description = "Фильтры для книг")
 @Data
 public class BookFiltersRequest {
+
     @Schema(description = "Город", example = "Новосибирск")
     private String city;
 
