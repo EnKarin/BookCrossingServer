@@ -46,18 +46,18 @@ public class RegistrationController {
             description = "Возвращает токены, если пользователь успешно зарегистрирован"
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "409", description = "Пароли не совпадают",
-                    content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                            schema = @Schema(implementation = ErrorListResponse.class))}),
-            @ApiResponse(responseCode = "406", description = "Пользователь с таким логином уже существует",
-                    content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                            schema = @Schema(implementation = ErrorListResponse.class))}),
-            @ApiResponse(responseCode = "400", description = "Введены некорректные данные",
-                    content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                            schema = @Schema(implementation = ErrorListResponse.class))}),
-            @ApiResponse(responseCode = "200", description = "Возвращает токены",
-                    content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                            schema = @Schema(implementation = AuthResponse.class))})
+        @ApiResponse(responseCode = "409", description = "Пароли не совпадают",
+            content = {@Content(mediaType = Constant.MEDIA_TYPE,
+                    schema = @Schema(implementation = ErrorListResponse.class))}),
+        @ApiResponse(responseCode = "406", description = "Пользователь с таким логином уже существует",
+            content = {@Content(mediaType = Constant.MEDIA_TYPE,
+                    schema = @Schema(implementation = ErrorListResponse.class))}),
+        @ApiResponse(responseCode = "400", description = "Введены некорректные данные",
+            content = {@Content(mediaType = Constant.MEDIA_TYPE,
+                    schema = @Schema(implementation = ErrorListResponse.class))}),
+        @ApiResponse(responseCode = "200", description = "Возвращает токены",
+            content = {@Content(mediaType = Constant.MEDIA_TYPE,
+                    schema = @Schema(implementation = AuthResponse.class))})
         }
     )
     @PostMapping("/registration")
@@ -88,12 +88,12 @@ public class RegistrationController {
             description = "Выдает токены, если пользователь с таким логином существует и пароль корректен"
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "401", description = "Некорректные данные",
-                    content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                            schema = @Schema(implementation = ErrorListResponse.class))}),
-            @ApiResponse(responseCode = "200", description = "Возвращает токены",
-                    content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                            schema = @Schema(implementation = AuthResponse.class))}
+        @ApiResponse(responseCode = "401", description = "Некорректные данные",
+            content = {@Content(mediaType = Constant.MEDIA_TYPE,
+                    schema = @Schema(implementation = ErrorListResponse.class))}),
+        @ApiResponse(responseCode = "200", description = "Возвращает токены",
+            content = {@Content(mediaType = Constant.MEDIA_TYPE,
+                    schema = @Schema(implementation = AuthResponse.class))}
             )}
     )
     @PostMapping("/auth")
@@ -125,8 +125,8 @@ public class RegistrationController {
             description = "Изменяет стату аккаунта на подтвержденный"
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "400", description = "Токена не существует"),
-            @ApiResponse(responseCode = "200", description = "Подтверждает почту для аккаунта")
+        @ApiResponse(responseCode = "400", description = "Токена не существует"),
+        @ApiResponse(responseCode = "200", description = "Подтверждает почту для аккаунта")
         }
     )
     @GetMapping("/registration/confirmation")

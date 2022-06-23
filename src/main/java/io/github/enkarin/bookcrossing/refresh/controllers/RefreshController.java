@@ -37,12 +37,12 @@ public class RefreshController {
             description = "Выдает токены, если refresh корректен"
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "403", description = "Токена не существует или истек срок его действия",
-                    content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                            schema = @Schema(implementation = ErrorListResponse.class))}),
-            @ApiResponse(responseCode = "200", description = "Возвращает токены",
-                    content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                            schema = @Schema(implementation = AuthResponse.class))}
+        @ApiResponse(responseCode = "403", description = "Токена не существует или истек срок его действия",
+            content = {@Content(mediaType = Constant.MEDIA_TYPE,
+                    schema = @Schema(implementation = ErrorListResponse.class))}),
+        @ApiResponse(responseCode = "200", description = "Возвращает токены",
+            content = {@Content(mediaType = Constant.MEDIA_TYPE,
+                    schema = @Schema(implementation = AuthResponse.class))}
             )}
     )
     @PostMapping("/refresh")

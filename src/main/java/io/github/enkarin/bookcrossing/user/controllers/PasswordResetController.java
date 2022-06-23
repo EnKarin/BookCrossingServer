@@ -38,10 +38,10 @@ public class PasswordResetController {
             description = "Отправляет на почту ссылку для сброса пароля"
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "400", description = "Пользователь с таким email не найден",
-                    content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                            schema = @Schema(implementation = ErrorListResponse.class))}),
-            @ApiResponse(responseCode = "200", description = "Отправляет ссылку на сброс пароля на почту")
+        @ApiResponse(responseCode = "400", description = "Пользователь с таким email не найден",
+            content = {@Content(mediaType = Constant.MEDIA_TYPE,
+                    schema = @Schema(implementation = ErrorListResponse.class))}),
+        @ApiResponse(responseCode = "200", description = "Отправляет ссылку на сброс пароля на почту")
         }
     )
     @PostMapping("/send")
@@ -61,13 +61,13 @@ public class PasswordResetController {
             description = "Смена пароля по ссылке"
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "400", description = "Введенный пароль некорректен",
-                    content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                            schema = @Schema(implementation = ErrorListResponse.class))}),
-            @ApiResponse(responseCode = "403", description = "Ссылка недействительна",
-                    content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                            schema = @Schema(implementation = ErrorListResponse.class))}),
-            @ApiResponse(responseCode = "200", description = "Пароль успешно изменен")
+        @ApiResponse(responseCode = "400", description = "Введенный пароль некорректен",
+            content = {@Content(mediaType = Constant.MEDIA_TYPE,
+                    schema = @Schema(implementation = ErrorListResponse.class))}),
+        @ApiResponse(responseCode = "403", description = "Ссылка недействительна",
+            content = {@Content(mediaType = Constant.MEDIA_TYPE,
+                    schema = @Schema(implementation = ErrorListResponse.class))}),
+        @ApiResponse(responseCode = "200", description = "Пароль успешно изменен")
         }
     )
     @PostMapping("/update")

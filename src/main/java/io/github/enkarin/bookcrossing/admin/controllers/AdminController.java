@@ -37,9 +37,9 @@ public class AdminController {
             description = "Позволяет получить список пользователей"
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Возвращает список пользователей",
-                    content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                            schema = @Schema(implementation = AdmUserListResponse.class))})
+        @ApiResponse(responseCode = "200", description = "Возвращает список пользователей",
+            content = {@Content(mediaType = Constant.MEDIA_TYPE,
+                    schema = @Schema(implementation = AdmUserListResponse.class))})
         }
     )
     @GetMapping("/all")
@@ -54,14 +54,14 @@ public class AdminController {
             description = "Позволяет заблокировать пользователя по его логину с комментарием"
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Отправляет на почту сообщение о блокировке"),
-            @ApiResponse(responseCode = "403", description = "Пустой логин или комментарий",
+        @ApiResponse(responseCode = "200", description = "Отправляет на почту сообщение о блокировке"),
+        @ApiResponse(responseCode = "403", description = "Пустой логин или комментарий",
                     content = {@Content(mediaType = Constant.MEDIA_TYPE,
                             schema = @Schema(implementation = ErrorListResponse.class))}),
-            @ApiResponse(responseCode = "404", description = "Пользователя с таким логином не существует",
+        @ApiResponse(responseCode = "404", description = "Пользователя с таким логином не существует",
                     content = {@Content(mediaType = Constant.MEDIA_TYPE,
                             schema = @Schema(implementation = ErrorListResponse.class))})
-        }
+    }
     )
     @PostMapping("/locked")
     public ResponseEntity<?> lockedUser(@RequestBody @Valid final LockedUserDto lockedUserDto,
@@ -85,10 +85,10 @@ public class AdminController {
             description = "Позволяет разблокировать пользователя по его логину"
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Возвращает на стартовую страницу"),
-            @ApiResponse(responseCode = "403", description = "Пользователя с таким логином не существует",
-                    content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                            schema = @Schema(implementation = ErrorListResponse.class))})
+        @ApiResponse(responseCode = "200", description = "Возвращает на стартовую страницу"),
+        @ApiResponse(responseCode = "403", description = "Пользователя с таким логином не существует",
+            content = {@Content(mediaType = Constant.MEDIA_TYPE,
+                    schema = @Schema(implementation = ErrorListResponse.class))})
     })
     @PostMapping("/nonLocked")
     public ResponseEntity<?> nonLockedUser(@RequestParam final String login) {

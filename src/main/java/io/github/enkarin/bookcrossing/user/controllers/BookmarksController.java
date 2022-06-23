@@ -29,8 +29,8 @@ public class BookmarksController {
             description = "Позволяет сохранить книгу в закладки"
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "404", description = "Книга с заданным Id не найдена"),
-            @ApiResponse(responseCode = "200", description = "Книга добавлена")
+        @ApiResponse(responseCode = "404", description = "Книга с заданным Id не найдена"),
+        @ApiResponse(responseCode = "200", description = "Книга добавлена")
         }
     )
     @PostMapping
@@ -49,8 +49,8 @@ public class BookmarksController {
             description = "Позволяет удалить книгу из закладок"
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "404", description = "Книга с заданным Id не найдена"),
-            @ApiResponse(responseCode = "200", description = "Книга удалена")
+        @ApiResponse(responseCode = "404", description = "Книга с заданным Id не найдена"),
+        @ApiResponse(responseCode = "200", description = "Книга удалена")
         }
     )
     @DeleteMapping
@@ -69,7 +69,7 @@ public class BookmarksController {
             description = "Позволяет получить все закладки пользователя"
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Возвращает список закладок")
+        @ApiResponse(responseCode = "200", description = "Возвращает список закладок")
         }
     )
     @GetMapping

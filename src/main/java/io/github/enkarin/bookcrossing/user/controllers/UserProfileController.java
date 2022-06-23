@@ -42,12 +42,12 @@ public class UserProfileController {
             description = "Возвращает данные профиля по id"
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "400", description = "Пользователь не найден",
-                    content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                            schema = @Schema(implementation = ErrorListResponse.class))}),
-            @ApiResponse(responseCode = "200", description = "Возвращает профиль пользователя",
-                    content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                            schema = @Schema(implementation = UserDtoResponse.class))})
+        @ApiResponse(responseCode = "400", description = "Пользователь не найден",
+            content = {@Content(mediaType = Constant.MEDIA_TYPE,
+                    schema = @Schema(implementation = ErrorListResponse.class))}),
+        @ApiResponse(responseCode = "200", description = "Возвращает профиль пользователя",
+            content = {@Content(mediaType = Constant.MEDIA_TYPE,
+                    schema = @Schema(implementation = UserDtoResponse.class))})
         }
     )
     @GetMapping("/profile")
@@ -79,9 +79,9 @@ public class UserProfileController {
             description = "Возвращает данные профиля пользователя"
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Возвращает данные пользователя",
-                    content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                            schema = @Schema(implementation = UserDtoResponse.class))})
+        @ApiResponse(responseCode = "200", description = "Возвращает данные пользователя",
+            content = {@Content(mediaType = Constant.MEDIA_TYPE,
+                    schema = @Schema(implementation = UserDtoResponse.class))})
         }
     )
     @GetMapping("/myProfile")
@@ -94,19 +94,19 @@ public class UserProfileController {
             description = "Возвращает обновленный профиль"
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "409", description = "Пароли не совпадают",
+        @ApiResponse(responseCode = "409", description = "Пароли не совпадают",
                     content = {@Content(mediaType = Constant.MEDIA_TYPE,
                             schema = @Schema(implementation = ErrorListResponse.class))}),
-            @ApiResponse(responseCode = "404", description = "Пользователь не найден",
+        @ApiResponse(responseCode = "404", description = "Пользователь не найден",
                     content = {@Content(mediaType = Constant.MEDIA_TYPE,
                             schema = @Schema(implementation = ErrorListResponse.class))}),
-            @ApiResponse(responseCode = "403", description = "Введен неверный старый пароль",
+        @ApiResponse(responseCode = "403", description = "Введен неверный старый пароль",
                     content = {@Content(mediaType = Constant.MEDIA_TYPE,
                             schema = @Schema(implementation = ErrorListResponse.class))}),
-            @ApiResponse(responseCode = "400", description = "Некорректный пароль",
+        @ApiResponse(responseCode = "400", description = "Некорректный пароль",
                     content = {@Content(mediaType = Constant.MEDIA_TYPE,
                             schema = @Schema(implementation = ErrorListResponse.class))}),
-            @ApiResponse(responseCode = "200", description = "Возвращает обновленный профиль пользователя",
+        @ApiResponse(responseCode = "200", description = "Возвращает обновленный профиль пользователя",
                     content = {@Content(mediaType = Constant.MEDIA_TYPE,
                             schema = @Schema(implementation = UserDtoResponse.class))})
         }

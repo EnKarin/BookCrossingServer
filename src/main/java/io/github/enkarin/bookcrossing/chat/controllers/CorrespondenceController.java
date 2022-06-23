@@ -41,15 +41,15 @@ public class CorrespondenceController {
             description = "Позволяет создать чат с выбранным пользователем"
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "409", description = "Чат уже существует",
-                    content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                            schema = @Schema(implementation = ErrorListResponse.class))}),
-            @ApiResponse(responseCode = "406", description = "Нельзя создать чат с данным пользователем",
-                    content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                            schema = @Schema(implementation = ErrorListResponse.class))}),
-            @ApiResponse(responseCode = "200", description = "Чат создан",
-                    content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                            schema = @Schema(implementation = Correspondence.class))})
+        @ApiResponse(responseCode = "409", description = "Чат уже существует",
+            content = {@Content(mediaType = Constant.MEDIA_TYPE,
+                    schema = @Schema(implementation = ErrorListResponse.class))}),
+        @ApiResponse(responseCode = "406", description = "Нельзя создать чат с данным пользователем",
+            content = {@Content(mediaType = Constant.MEDIA_TYPE,
+                    schema = @Schema(implementation = ErrorListResponse.class))}),
+        @ApiResponse(responseCode = "200", description = "Чат создан",
+            content = {@Content(mediaType = Constant.MEDIA_TYPE,
+                    schema = @Schema(implementation = Correspondence.class))})
     })
     @PostMapping
     public ResponseEntity<?> createCorrespondence(@RequestParam final int userId,
@@ -78,10 +78,10 @@ public class CorrespondenceController {
             description = "Позволяет удалить чат с выбранным пользователем"
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "404", description = "Чата не существует",
-                    content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                            schema = @Schema(implementation = ErrorListResponse.class))}),
-            @ApiResponse(responseCode = "200", description = "Чат удален")
+        @ApiResponse(responseCode = "404", description = "Чата не существует",
+            content = {@Content(mediaType = Constant.MEDIA_TYPE,
+                    schema = @Schema(implementation = ErrorListResponse.class))}),
+        @ApiResponse(responseCode = "200", description = "Чат удален")
         }
     )
     @DeleteMapping
@@ -100,12 +100,12 @@ public class CorrespondenceController {
             description = "Позволяет получить чат с выбранным пользователем"
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "404", description = "Чата не существует",
-                    content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                            schema = @Schema(implementation = ErrorListResponse.class))}),
-            @ApiResponse(responseCode = "200", description = "Возвращает список сообщений",
-                    content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                            schema = @Schema(implementation = MessageResponse.class))})
+        @ApiResponse(responseCode = "404", description = "Чата не существует",
+            content = {@Content(mediaType = Constant.MEDIA_TYPE,
+                    schema = @Schema(implementation = ErrorListResponse.class))}),
+        @ApiResponse(responseCode = "200", description = "Возвращает список сообщений",
+            content = {@Content(mediaType = Constant.MEDIA_TYPE,
+                    schema = @Schema(implementation = MessageResponse.class))})
         }
     )
     @GetMapping
