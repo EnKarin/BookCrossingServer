@@ -3,7 +3,7 @@
 
 
 [![Java CI](https://github.com/EnKarin/BookCrossingServer/actions/workflows/build.yml/badge.svg)](https://github.com/EnKarin/BookCrossingServer/actions/workflows/build.yml)
-![GitHub](https://img.shields.io/github/license/EnKarin/BookCrossingServer)
+[![GitHub](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/EnKarin/BookCrossingServer/blob/master/LICENSE "MIT")
 ![Lines of code](https://img.shields.io/tokei/lines/github/EnKarin/BookCrossingServer)
 
 ### Requirements
