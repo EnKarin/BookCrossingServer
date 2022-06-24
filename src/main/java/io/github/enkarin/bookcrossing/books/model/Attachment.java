@@ -13,6 +13,8 @@ import java.io.Serializable;
 @Table(name = "t_attach")
 public class Attachment implements Serializable {
 
+    private static final long serialVersionUID = 4600249981575739954L;
+
     @Id
     @GeneratedValue(generator = "uuid")
     @GenericGenerator(name = "uuid", strategy = "uuid2")

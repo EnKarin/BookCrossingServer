@@ -15,6 +15,8 @@ import java.util.Set;
 @Table(name = "t_book")
 public class Book implements Serializable {
 
+    private static final long serialVersionUID = -2338626292552177485L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int bookId;
