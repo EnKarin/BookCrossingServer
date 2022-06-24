@@ -3,13 +3,9 @@ package io.github.enkarin.bookcrossing.user.model;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.hibernate.Hibernate;
 import org.springframework.security.core.GrantedAuthority;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Objects;
 import java.util.Set;
 
@@ -39,7 +35,7 @@ public class Role implements GrantedAuthority {
         if (this == obj) {
             return true;
         }
-        if (obj == null || Hibernate.getClass(this) != Hibernate.getClass(obj)) {
+        if (!(obj instanceof Role)) {
             return false;
         }
         final Role role = (Role) obj;

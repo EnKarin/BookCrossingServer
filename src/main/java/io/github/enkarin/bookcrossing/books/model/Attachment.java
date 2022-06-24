@@ -5,12 +5,13 @@ import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Getter
 @Setter
 @Entity
 @Table(name = "t_attach")
-public class Attachment {
+public class Attachment implements Serializable {
 
     @Id
     @GeneratedValue(generator = "uuid")

@@ -3,11 +3,8 @@ package io.github.enkarin.bookcrossing.chat.model;
 import io.github.enkarin.bookcrossing.user.model.User;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.Hibernate;
 
-import javax.persistence.Embeddable;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -31,7 +28,7 @@ public class UsersCorrKey implements Serializable {
         if (this == obj) {
             return true;
         }
-        if (obj == null || Hibernate.getClass(this) != Hibernate.getClass(obj)) {
+        if (!(obj instanceof UsersCorrKey)) {
             return false;
         }
         final UsersCorrKey usersCorrKey = (UsersCorrKey) obj;

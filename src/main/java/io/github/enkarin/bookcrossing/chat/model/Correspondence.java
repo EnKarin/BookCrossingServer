@@ -2,12 +2,8 @@ package io.github.enkarin.bookcrossing.chat.model;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.Hibernate;
 
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.List;
 import java.util.Objects;
 
@@ -28,7 +24,7 @@ public class Correspondence {
         if (this == obj) {
             return true;
         }
-        if (obj == null || Hibernate.getClass(this) != Hibernate.getClass(obj)) {
+        if (!(obj instanceof Correspondence)) {
             return false;
         }
         final Correspondence correspondence = (Correspondence) obj;
