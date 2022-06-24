@@ -1,6 +1,5 @@
 package io.github.enkarin.bookcrossing.chat.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.github.enkarin.bookcrossing.user.model.User;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,23 +18,18 @@ public class Message {
 
     @ManyToOne
     @JoinColumn(name = "sender_user_id")
-    @JsonIgnore
     private User sender;
 
     private String text;
 
-    @JsonIgnore
     private long departureDate;
 
-    @JsonIgnore
     private boolean shownFirstUser;
 
-    @JsonIgnore
     private boolean shownSecondUser;
 
     private boolean declaim;
 
-    @JsonIgnore
     private boolean alertSent;
 
     @ManyToOne
@@ -43,6 +37,5 @@ public class Message {
         @JoinColumn(name = "correspondence_first_user_id", referencedColumnName = "first_user_id"),
         @JoinColumn(name = "correspondence_second_user_id", referencedColumnName = "second_user_id")
     })
-    @JsonIgnore
     private Correspondence correspondence;
 }

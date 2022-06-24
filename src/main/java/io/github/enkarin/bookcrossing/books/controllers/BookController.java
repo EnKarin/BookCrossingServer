@@ -2,8 +2,8 @@ package io.github.enkarin.bookcrossing.books.controllers;
 
 import io.github.enkarin.bookcrossing.books.dto.BookFiltersRequest;
 import io.github.enkarin.bookcrossing.books.dto.BookListResponse;
+import io.github.enkarin.bookcrossing.books.dto.BookModelDto;
 import io.github.enkarin.bookcrossing.books.dto.BookResponse;
-import io.github.enkarin.bookcrossing.books.model.Book;
 import io.github.enkarin.bookcrossing.books.service.BookService;
 import io.github.enkarin.bookcrossing.constant.Constant;
 import io.github.enkarin.bookcrossing.errors.ErrorListResponse;
@@ -42,9 +42,7 @@ public class BookController {
     })
     @GetMapping("/all")
     public ResponseEntity<?> books() {
-        final BookListResponse bookResponse = new BookListResponse();
-        bookResponse.setBookList(bookService.findAll());
-        return ResponseEntity.ok(bookResponse);
+        return ResponseEntity.ok(bookService.findAll());
     }
 
     @Operation(
@@ -62,7 +60,7 @@ public class BookController {
     @GetMapping("/info")
     public ResponseEntity<?> bookInfo(@RequestParam final int bookId) {
         BookResponse bookResponse;
-        final Optional<Book> book = bookService.findById(bookId);
+        final Optional<BookModelDto> book = bookService.findById(bookId);
         if (book.isPresent()) {
             bookResponse = new BookResponse(book.get());
         } else {
@@ -84,9 +82,7 @@ public class BookController {
     })
     @GetMapping("/searchByTitle")
     public ResponseEntity<?> searchByTitle(@RequestParam final String title) {
-        final BookListResponse response = new BookListResponse();
-        response.setBookList(bookService.findByTitle(title));
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(bookService.findByTitle(title));
     }
 
     @Operation(
@@ -100,8 +96,6 @@ public class BookController {
     })
     @GetMapping("/searchWithFilters")
     public ResponseEntity<?> searchWithFilters(@RequestBody final BookFiltersRequest filters) {
-        final BookListResponse response = new BookListResponse();
-        response.setBookList(bookService.filter(filters));
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(bookService.filter(filters));
     }
 }

@@ -1,8 +1,6 @@
 package io.github.enkarin.bookcrossing.books.service;
 
-import io.github.enkarin.bookcrossing.books.dto.BookDto;
-import io.github.enkarin.bookcrossing.books.dto.BookFiltersRequest;
-import io.github.enkarin.bookcrossing.books.dto.BookResponse;
+import io.github.enkarin.bookcrossing.books.dto.*;
 import io.github.enkarin.bookcrossing.books.model.Book;
 import io.github.enkarin.bookcrossing.books.repository.BookRepository;
 import io.github.enkarin.bookcrossing.user.model.User;
@@ -31,27 +29,26 @@ public class BookService {
         if (book.isEmpty()) {
             return Optional.empty();
         }
-        book = Optional.of(bookRepository.save(book.get()));
-        final BookResponse response = new BookResponse(book.get());
+        final BookResponse response = new BookResponse(modelMapper.map(
+                bookRepository.save(book.get()), BookModelDto.class));
         return Optional.of(response);
     }
 
-    public List<Book> findBookForOwner(final String login) {
+    public Optional<BookListResponse> findBookForOwner(final String login) {
         final Optional<User> user = userRepository.findByLogin(login);
-        List<Book> books;
-        if (user.isPresent()) {
-            books = bookRepository.findBooksByOwner(user.get());
-            return books.stream().filter(b -> b.getOwner().isAccountNonLocked()).collect(Collectors.toList());
-        } else {
-            return null;
-        }
+        return user.map(value -> bookRepository.findBooksByOwner(value).stream()
+                .filter(b -> b.getOwner().isAccountNonLocked())
+                .map(b -> modelMapper.map(b, BookModelDto.class))
+                .collect(Collectors.toList()))
+                .map(BookListResponse::new);
     }
 
-    public Optional<Book> findById(final int bookId) {
-        return bookRepository.findById(bookId);
+    public Optional<BookModelDto> findById(final int bookId) {
+        Optional<Book> book = bookRepository.findById(bookId);
+        return book.map(value -> modelMapper.map(value, BookModelDto.class));
     }
 
-    public List<Book> filter(final BookFiltersRequest request) {
+    public BookListResponse filter(final BookFiltersRequest request) {
         List<Book> books = bookRepository.findAll();
         if (request.getGenre() != null) {
             books = books.stream().filter(book -> book.getGenre().equals(request.getGenre()))
@@ -77,13 +74,17 @@ public class BookService {
             books = books.stream().filter(book -> book.getOwner().getCity().equals(request.getCity()))
                     .collect(Collectors.toList());
         }
-        return books.stream().filter(b -> b.getOwner().isAccountNonLocked()).collect(Collectors.toList());
+        return new BookListResponse(books.stream()
+                .filter(b -> b.getOwner().isAccountNonLocked())
+                .map(b -> modelMapper.map(b, BookModelDto.class))
+                .collect(Collectors.toList()));
     }
 
-    public List<Book> findAll() {
-        return bookRepository.findAll().stream()
+    public BookListResponse findAll() {
+        return new BookListResponse(bookRepository.findAll().stream()
                 .filter(b -> b.getOwner().isAccountNonLocked())
-                .collect(Collectors.toList());
+                .map(b -> modelMapper.map(b, BookModelDto.class))
+                .collect(Collectors.toList()));
     }
 
     public void deleteBook(final int bookId) {
@@ -92,10 +93,11 @@ public class BookService {
         }
     }
 
-    public List<Book> findByTitle(final String title) {
-        return bookRepository.findBooksByTitleIgnoreCase(title).stream()
+    public BookListResponse findByTitle(final String title) {
+        return new BookListResponse(bookRepository.findBooksByTitleIgnoreCase(title).stream()
                .filter(b -> b.getOwner().isAccountNonLocked())
-               .collect(Collectors.toList());
+                .map(b -> modelMapper.map(b, BookModelDto.class))
+               .collect(Collectors.toList()));
     }
 
     private Optional<Book> convertToBook(final BookDto bookDTO, final String login) {

@@ -100,7 +100,7 @@ public class CorrespondenceService {
         final List<MessageResponse> responses = correspondence.getMessage().stream()
                 .filter(rules)
                 .map(m -> new MessageResponse(m, zonedUserCorrKeyDto.getZone()))
-                .sorted(Comparator.comparing(MessageResponse::getDate))
+                .sorted(Comparator.comparing(MessageResponse::getDepartureDate))
                 .collect(Collectors.toList());
         correspondence.setMessage(correspondence.getMessage().stream()
                 .filter(m -> !user.equals(m.getSender()))

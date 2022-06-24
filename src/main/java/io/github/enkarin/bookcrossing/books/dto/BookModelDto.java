@@ -4,17 +4,20 @@ import io.github.enkarin.bookcrossing.books.model.Attachment;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
-@Schema(description = "Данные книги для общего доступа")
-@Data
-public class BookResponse {
+import javax.validation.constraints.NotBlank;
 
+@Schema(description = "Полные данные книги")
+@Data
+public class BookModelDto {
     @Schema(description = "Идентификатор", example = "15")
     private int bookId;
 
     @Schema(description = "Название", example = "Портрет Дориана Грея")
+    @NotBlank(message = "title: Название должно содержать хотя бы один видимый символ")
     private String title;
 
     @Schema(description = "Автор", example = "Оскар Уайльд")
+    @NotBlank(message = "author: Поле \"автор\" должно содержать хотя бы один видимый символ")
     private String author;
 
     @Schema(description = "Жанр", example = "Классическая проза")
@@ -28,14 +31,4 @@ public class BookResponse {
 
     @Schema(description = "Вложение")
     private Attachment attachment;
-
-    public BookResponse(final BookModelDto book) {
-        bookId = book.getBookId();
-        title = book.getTitle();
-        author = book.getAuthor();
-        genre = book.getGenre();
-        publishingHouse = book.getPublishingHouse();
-        year = book.getYear();
-        attachment = book.getAttachment();
-    }
 }

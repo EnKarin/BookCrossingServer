@@ -76,9 +76,11 @@ public class MyBookController {
     )
     @GetMapping("/all")
     public ResponseEntity<?> bookList(final Principal principal) {
-        final BookListResponse response = new BookListResponse();
-        response.setBookList(bookService.findBookForOwner(principal.getName()));
-        return ResponseEntity.ok(response);
+        final Optional<BookListResponse> bookModelDtos = bookService.findBookForOwner(principal.getName());
+        if (bookModelDtos.isPresent()) {
+            return ResponseEntity.ok(bookModelDtos.get());
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @Operation(

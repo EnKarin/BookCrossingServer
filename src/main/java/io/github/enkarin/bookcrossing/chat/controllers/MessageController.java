@@ -2,7 +2,7 @@ package io.github.enkarin.bookcrossing.chat.controllers;
 
 import io.github.enkarin.bookcrossing.chat.dto.MessagePutRequest;
 import io.github.enkarin.bookcrossing.chat.dto.MessageRequest;
-import io.github.enkarin.bookcrossing.chat.model.Message;
+import io.github.enkarin.bookcrossing.chat.dto.MessageResponse;
 import io.github.enkarin.bookcrossing.chat.service.MessageService;
 import io.github.enkarin.bookcrossing.constant.Constant;
 import io.github.enkarin.bookcrossing.errors.ErrorListResponse;
@@ -48,7 +48,7 @@ public class MessageController {
                     schema = @Schema(implementation = ErrorListResponse.class))}),
         @ApiResponse(responseCode = "200", description = "Сообщение отправлено",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(implementation = Message.class))})
+                    schema = @Schema(implementation = MessageResponse.class))})
     })
     @PostMapping
     public ResponseEntity<?> sendMessage(@Valid @RequestBody final MessageRequest messageRequest,
@@ -60,7 +60,7 @@ public class MessageController {
                     .add(Objects.requireNonNull(f.getDefaultMessage())));
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
-        final Optional<Message> message = messageService.sendMessage(messageRequest, principal.getName());
+        final Optional<MessageResponse> message = messageService.sendMessage(messageRequest, principal.getName());
         if (message.isPresent()) {
             return new ResponseEntity<>(message.get(), HttpStatus.OK);
         } else {
@@ -85,7 +85,7 @@ public class MessageController {
                     schema = @Schema(implementation = ErrorListResponse.class))}),
         @ApiResponse(responseCode = "200", description = "Сообщение изменено",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(implementation = Message.class))})
+                    schema = @Schema(implementation = MessageResponse.class))})
     })
     @PutMapping
     public ResponseEntity<?> putMessage(@Valid @RequestBody final MessagePutRequest messageRequest,
@@ -98,7 +98,7 @@ public class MessageController {
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
         try {
-            final Optional<Message> message = messageService.putMessage(messageRequest, principal.getName());
+            final Optional<MessageResponse> message = messageService.putMessage(messageRequest, principal.getName());
             if (message.isPresent()) {
                 return new ResponseEntity<>(message.get(), HttpStatus.OK);
             } else {
@@ -119,9 +119,7 @@ public class MessageController {
         @ApiResponse(responseCode = "400", description = "Нет доступа",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
                     schema = @Schema(implementation = ErrorListResponse.class))}),
-        @ApiResponse(responseCode = "200", description = "Сообщение удалено",
-            content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(implementation = Message.class))})
+        @ApiResponse(responseCode = "200", description = "Сообщение удалено")
     })
     @DeleteMapping
     public ResponseEntity<?> deleteForEveryoneMessage(@RequestParam final long messageId,
@@ -142,9 +140,7 @@ public class MessageController {
         @ApiResponse(responseCode = "400", description = "Нет доступа",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
                     schema = @Schema(implementation = ErrorListResponse.class))}),
-        @ApiResponse(responseCode = "200", description = "Сообщение удалено",
-            content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(implementation = Message.class))})
+        @ApiResponse(responseCode = "200", description = "Сообщение удалено")
     })
     @DeleteMapping("/deleteForMe")
     public ResponseEntity<?> deleteForMeMessage(@RequestParam final long messageId,
