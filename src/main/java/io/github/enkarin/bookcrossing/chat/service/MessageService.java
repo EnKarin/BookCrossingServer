@@ -2,6 +2,7 @@ package io.github.enkarin.bookcrossing.chat.service;
 
 import io.github.enkarin.bookcrossing.chat.dto.MessagePutRequest;
 import io.github.enkarin.bookcrossing.chat.dto.MessageRequest;
+import io.github.enkarin.bookcrossing.chat.dto.MessageResponse;
 import io.github.enkarin.bookcrossing.chat.model.Correspondence;
 import io.github.enkarin.bookcrossing.chat.model.Message;
 import io.github.enkarin.bookcrossing.chat.model.UsersCorrKey;
@@ -12,6 +13,9 @@ import io.github.enkarin.bookcrossing.exception.MessageNotFountException;
 import io.github.enkarin.bookcrossing.user.model.User;
 import io.github.enkarin.bookcrossing.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeMap;
+import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -26,8 +30,10 @@ public class MessageService {
     private final MessageRepository messageRepository;
     private final CorrespondenceRepository correspondenceRepository;
     private final UserRepository userRepository;
+    private final ModelMapper modelMapper;
+    private TypeMap<Message, MessageResponse> messageMapper;
 
-    public Optional<Message> sendMessage(final MessageRequest dto, final String login) {
+    public Optional<MessageResponse> sendMessage(final MessageRequest dto, final String login) {
         final User user = userRepository.findByLogin(login).orElseThrow();
         final Optional<User> firstUser = userRepository.findById(dto.getUsersCorrKeyDto().getFirstUserId());
         final Optional<User> secondUser = userRepository.findById(dto.getUsersCorrKeyDto().getSecondUserId());
@@ -38,7 +44,7 @@ public class MessageService {
             if (usersCorrKey.getFirstUser().equals(user) || usersCorrKey.getSecondUser().equals(user)) {
                 final Optional<Correspondence> correspondence = correspondenceRepository.findById(usersCorrKey);
                 if (correspondence.isPresent()) {
-                    final Message message = new Message();
+                    Message message = new Message();
                     message.setText(dto.getText());
                     message.setDepartureDate(LocalDateTime.now()
                             .toEpochSecond(ZoneOffset.systemDefault().getRules().getOffset(Instant.now())));
@@ -46,14 +52,15 @@ public class MessageService {
                     message.setSender(user);
                     message.setShownFirstUser(true);
                     message.setShownSecondUser(true);
-                    return Optional.of(messageRepository.save(message));
+                    message = messageRepository.save(message);
+                    return Optional.of(convertToMessageResponse(message));
                 }
             }
         }
         return Optional.empty();
     }
 
-    public Optional<Message> putMessage(final MessagePutRequest messagePutRequest, final String login) {
+    public Optional<MessageResponse> putMessage(final MessagePutRequest messagePutRequest, final String login) {
         final User user = userRepository.findByLogin(login).orElseThrow();
         final Optional<Message> message = messageRepository.findById(messagePutRequest.getMessageId());
         if (message.isPresent() && user.equals(message.get().getSender())) {
@@ -63,7 +70,7 @@ public class MessageService {
                 message.get().setDepartureDate(LocalDateTime.now()
                         .toEpochSecond(ZoneOffset.systemDefault().getRules().getOffset(Instant.now())));
                 message.get().setText(messagePutRequest.getText());
-                return Optional.of(messageRepository.save(message.get()));
+                return Optional.of(convertToMessageResponse(messageRepository.save(message.get())));
             } else {
                 return Optional.empty();
             }
@@ -116,5 +123,17 @@ public class MessageService {
             response.getErrors().add("message: Сообщения не существует");
         }
         return response;
+    }
+
+    private MessageResponse convertToMessageResponse(final Message message) {
+        if (messageMapper == null) {
+            modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.LOOSE);
+            messageMapper = modelMapper.createTypeMap(Message.class, MessageResponse.class);
+            messageMapper.addMappings(ms -> ms.skip(MessageResponse::setSender));
+            messageMapper.addMappings(ms -> ms.skip(MessageResponse::setDepartureDate));
+        }
+        final MessageResponse messageResponse = modelMapper.map(message, MessageResponse.class);
+        messageResponse.setSender(message.getSender().getUserId());
+        return messageResponse;
     }
 }

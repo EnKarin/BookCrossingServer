@@ -1,6 +1,5 @@
 package io.github.enkarin.bookcrossing.books.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.github.enkarin.bookcrossing.user.model.User;
 import lombok.Getter;
 import lombok.Setter;
@@ -30,7 +29,6 @@ public class Book {
 
     @ManyToOne
     @JoinColumn(name = "ownerBook")
-    @JsonIgnore
     private User owner;
 
     @OneToOne
@@ -38,6 +36,5 @@ public class Book {
     private Attachment attachment;
 
     @ManyToMany(mappedBy = "bookmarks")
-    @JsonIgnore
     private Set<User> usersBookmarks;
 }
