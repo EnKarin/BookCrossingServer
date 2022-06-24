@@ -143,6 +143,7 @@
                     <rulesets>
                         <ruleset>/config/pmd.xml</ruleset>
                     </rulesets>
+                    <linkXRef>false</linkXRef>
                 </configuration>
                 <executions>
                     <execution>
