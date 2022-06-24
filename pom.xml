@@ -144,6 +144,8 @@
                         <ruleset>/config/pmd.xml</ruleset>
                     </rulesets>
                     <linkXRef>false</linkXRef>
+                    <failOnViolation>true</failOnViolation>
+                    <printFailingErrors>true</printFailingErrors>
                 </configuration>
                 <executions>
                     <execution>
