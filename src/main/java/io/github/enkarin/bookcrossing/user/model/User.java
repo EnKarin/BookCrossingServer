@@ -5,7 +5,6 @@ import io.github.enkarin.bookcrossing.books.model.Book;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.hibernate.Hibernate;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -104,7 +103,7 @@ public class User implements UserDetails {
         if (this == obj) {
             return true;
         }
-        if (obj == null || Hibernate.getClass(this) != Hibernate.getClass(obj)) {
+        if (!(obj instanceof User)) {
             return false;
         }
         final User user = (User) obj;

@@ -2,11 +2,8 @@ package io.github.enkarin.bookcrossing.refresh.model;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.Hibernate;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
@@ -27,7 +24,7 @@ public class Refresh {
         if (this == obj) {
             return true;
         }
-        if (obj == null || Hibernate.getClass(this) != Hibernate.getClass(obj)) {
+        if (!(obj instanceof Refresh)) {
             return false;
         }
         final Refresh refreshObj = (Refresh) obj;

@@ -118,6 +118,18 @@
                 <groupId>com.github.spotbugs</groupId>
                 <artifactId>spotbugs-maven-plugin</artifactId>
                 <version>4.2.2</version>
+                <configuration>
+                    <excludeFilterFile>/config/spotbugs.xml</excludeFilterFile>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>spotbugs-check</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <artifactId>maven-project-info-reports-plugin</artifactId>
@@ -131,7 +143,19 @@
                     <rulesets>
                         <ruleset>/config/pmd.xml</ruleset>
                     </rulesets>
+                    <linkXRef>false</linkXRef>
+                    <failOnViolation>true</failOnViolation>
+                    <printFailingErrors>true</printFailingErrors>
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>pmd-check</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
