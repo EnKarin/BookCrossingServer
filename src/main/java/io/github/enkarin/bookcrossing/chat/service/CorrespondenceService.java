@@ -43,9 +43,7 @@ public class CorrespondenceService {
                     Correspondence correspondence = new Correspondence();
                     correspondence.setUsersCorrKey(usersCorrKey);
                     correspondence = correspondenceRepository.save(correspondence);
-                    final UsersCorrKeyDto result = new UsersCorrKeyDto();
-                    result.setFirstUserId(correspondence.getUsersCorrKey().getFirstUser().getUserId());
-                    result.setSecondUserId(correspondence.getUsersCorrKey().getSecondUser().getUserId());
+                    final UsersCorrKeyDto result = UsersCorrKeyDto.fromCorrespondence(correspondence);
                     return Optional.of(result);
                 }
             } else {
@@ -99,7 +97,7 @@ public class CorrespondenceService {
                                          final ZonedUserCorrKeyDto zonedUserCorrKeyDto, final User user) {
         final List<MessageDto> responses = correspondence.getMessage().stream()
                 .filter(rules)
-                .map(m -> new MessageDto(m, zonedUserCorrKeyDto.getZone()))
+                .map(m -> MessageDto.fromMessageAndZone(m, zonedUserCorrKeyDto.getZone()))
                 .sorted(Comparator.comparing(MessageDto::getDepartureDate))
                 .collect(Collectors.toList());
         correspondence.setMessage(correspondence.getMessage().stream()

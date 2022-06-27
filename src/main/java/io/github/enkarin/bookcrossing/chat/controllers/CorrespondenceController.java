@@ -59,7 +59,7 @@ public class CorrespondenceController {
             final Optional<UsersCorrKeyDto> usersCorrKeyDto = correspondenceService.createChat(userId,
                     principal.getName());
             if (usersCorrKeyDto.isPresent()) {
-                return new ResponseEntity<>(usersCorrKeyDto.get(), HttpStatus.CREATED);
+                return ResponseEntity.status(HttpStatus.CREATED).body(usersCorrKeyDto.get());
             } else {
                 response.getErrors().add("user: Пользователь заблокирован");
                 return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
@@ -89,7 +89,7 @@ public class CorrespondenceController {
                                                       final int userId,
                                                   final Principal principal) {
         if (correspondenceService.deleteChat(userId, principal.getName())) {
-            return new ResponseEntity<>(HttpStatus.OK);
+            return ResponseEntity.ok().build();
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -113,7 +113,7 @@ public class CorrespondenceController {
                                                final Principal principal) {
         final Optional<List<MessageDto>> messageResponse = correspondenceService.getChat(dto, principal.getName());
         if (messageResponse.isPresent()) {
-            return new ResponseEntity<>(messageResponse.get(), HttpStatus.OK);
+            return ResponseEntity.ok(messageResponse.get());
         } else {
             final ErrorListResponse response = new ErrorListResponse();
             response.getErrors().add("correspondence: Чата не существует");

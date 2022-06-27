@@ -48,7 +48,7 @@ public class User implements UserDetails {
     private Set<Role> userRoles;
 
     @OneToMany(mappedBy = "owner", fetch = FetchType.EAGER)
-    private transient Set<Book> books;
+    private Set<Book> books;
 
     @ManyToMany
     @JoinTable(
@@ -56,7 +56,7 @@ public class User implements UserDetails {
             joinColumns = {@JoinColumn(name = "user_id")},
             inverseJoinColumns = {@JoinColumn(name = "book_id")}
     )
-    private transient Set<Book> bookmarks;
+    private Set<Book> bookmarks;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

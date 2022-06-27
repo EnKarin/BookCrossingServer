@@ -95,7 +95,7 @@ public class MessageController {
         try {
             final Optional<MessageDto> message = messageService.putMessage(messageRequest, principal.getName());
             if (message.isPresent()) {
-                return new ResponseEntity<>(message.get(), HttpStatus.OK);
+                return ResponseEntity.ok(message.get());
             } else {
                 response.getErrors().add("correspondence: Нет доступа к чату");
                 return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
@@ -121,7 +121,7 @@ public class MessageController {
                                            final Principal principal) {
         final ErrorListResponse response = messageService.deleteForEveryoneMessage(messageId, principal.getName());
         if (response.getErrors().isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.OK);
+            return ResponseEntity.ok().build();
         } else {
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
@@ -142,7 +142,7 @@ public class MessageController {
                                            final Principal principal) {
         final ErrorListResponse response = messageService.deleteForMeMessage(messageId, principal.getName());
         if (response.getErrors().isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.OK);
+            return ResponseEntity.ok().build();
         } else {
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }

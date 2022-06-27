@@ -44,7 +44,7 @@ public class AttachmentController {
                                             final Principal principal) throws IOException {
         final ErrorListResponse response = attachmentService.saveAttachment(attachmentDto, principal.getName());
         if (response.getErrors().isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.CREATED);
+            return ResponseEntity.status(HttpStatus.CREATED).build();
         } else {
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
@@ -65,7 +65,7 @@ public class AttachmentController {
                                             final Principal principal) {
         final ErrorListResponse response = attachmentService.deleteAttachment(bookId, principal.getName());
         if (response.getErrors().isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.OK);
+            return ResponseEntity.ok().build();
         } else {
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }

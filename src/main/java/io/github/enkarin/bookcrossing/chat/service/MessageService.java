@@ -13,9 +13,6 @@ import io.github.enkarin.bookcrossing.exception.MessageNotFountException;
 import io.github.enkarin.bookcrossing.user.model.User;
 import io.github.enkarin.bookcrossing.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeMap;
-import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -30,8 +27,6 @@ public class MessageService {
     private final MessageRepository messageRepository;
     private final CorrespondenceRepository correspondenceRepository;
     private final UserRepository userRepository;
-    private final ModelMapper modelMapper;
-    private TypeMap<Message, MessageDto> messageMapper;
 
     public Optional<MessageDto> sendMessage(final MessageRequest dto, final String login) {
         final User user = userRepository.findByLogin(login).orElseThrow();
@@ -53,7 +48,7 @@ public class MessageService {
                     message.setShownFirstUser(true);
                     message.setShownSecondUser(true);
                     message = messageRepository.save(message);
-                    return Optional.of(convertToMessageResponse(message));
+                    return Optional.of(MessageDto.fromMessage(message));
                 }
             }
         }
@@ -70,7 +65,7 @@ public class MessageService {
                 message.get().setDepartureDate(LocalDateTime.now()
                         .toEpochSecond(ZoneOffset.systemDefault().getRules().getOffset(Instant.now())));
                 message.get().setText(messagePutRequest.getText());
-                return Optional.of(convertToMessageResponse(messageRepository.save(message.get())));
+                return Optional.of(MessageDto.fromMessage(messageRepository.save(message.get())));
             } else {
                 return Optional.empty();
             }
@@ -123,17 +118,5 @@ public class MessageService {
             response.getErrors().add("message: Сообщения не существует");
         }
         return response;
-    }
-
-    private MessageDto convertToMessageResponse(final Message message) {
-        if (messageMapper == null) {
-            modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.LOOSE);
-            messageMapper = modelMapper.createTypeMap(Message.class, MessageDto.class);
-            messageMapper.addMappings(ms -> ms.skip(MessageDto::setSender));
-            messageMapper.addMappings(ms -> ms.skip(MessageDto::setDepartureDate));
-        }
-        final MessageDto messageDto = modelMapper.map(message, MessageDto.class);
-        messageDto.setSender(message.getSender().getUserId());
-        return messageDto;
     }
 }

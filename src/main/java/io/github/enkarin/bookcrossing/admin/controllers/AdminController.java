@@ -71,7 +71,7 @@ public class AdminController {
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
         if (adminService.lockedUser(lockedUserDto)) {
-            return new ResponseEntity<>(HttpStatus.OK);
+            return ResponseEntity.ok().build();
         } else {
             response.getErrors().add("login: Некорректный логин пользователя");
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
@@ -91,7 +91,7 @@ public class AdminController {
     @PostMapping("/nonLocked")
     public ResponseEntity<?> nonLockedUser(@RequestParam final String login) {
         if (adminService.nonLockedUser(login)) {
-            return new ResponseEntity<>(HttpStatus.OK);
+            return ResponseEntity.ok().build();
         } else {
             final ErrorListResponse response = new ErrorListResponse();
             response.getErrors().add("login: Некорректный логин пользователя");

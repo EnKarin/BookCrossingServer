@@ -51,7 +51,7 @@ public class AdminService {
     public List<InfoUsersDto> findAllUsers(final int zone) {
         final Role role = roleRepository.getById(1);
         return userRepository.findByUserRoles(role).stream()
-                .map(u -> new InfoUsersDto(u, zone))
+                .map(u -> InfoUsersDto.fromUser(u, zone))
                 .collect(Collectors.toList());
     }
 }

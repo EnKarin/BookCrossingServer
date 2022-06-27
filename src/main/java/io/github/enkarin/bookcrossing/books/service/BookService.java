@@ -31,8 +31,7 @@ public class BookService {
         if (book == null) {
             return Optional.empty();
         }
-        return Optional.of(modelMapper.map(
-                bookRepository.save(book), BookModelDto.class));
+        return Optional.of(modelMapper.map(bookRepository.save(book), BookModelDto.class));
     }
 
     public Optional<List<BookModelDto>> findBookForOwner(final String login) {
