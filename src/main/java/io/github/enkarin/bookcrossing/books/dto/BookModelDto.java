@@ -38,8 +38,8 @@ public class BookModelDto {
     @Schema(description = "Вложение")
     private final Attachment attachment;
 
-    private BookModelDto(int bookId, String title, String author, String genre, String publishingHouse, int year,
-                        Attachment attachment) {
+    public BookModelDto(final int bookId, final String title, final String author, final String genre,
+                         final String publishingHouse, final int year, final Attachment attachment) {
         this.bookId = bookId;
         this.title = title;
         this.author = author;
@@ -49,7 +49,7 @@ public class BookModelDto {
         this.attachment = attachment;
     }
 
-    public Attachment getAttachment(){
+    public Attachment getAttachment() {
         return new Attachment(attachment.getName(), attachment.getData(), attachment.getExpansion());
     }
 }

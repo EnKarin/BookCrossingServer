@@ -14,7 +14,7 @@ public class AttachmentDto {
     @Schema(description = "Вложение")
     private final MultipartFile file;
 
-    public AttachmentDto(int bookId, MultipartFile file){
+    public AttachmentDto(final int bookId, final MultipartFile file) {
         this.bookId = bookId;
         this.file = file;
     }

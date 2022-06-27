@@ -25,8 +25,8 @@ public class BookFiltersRequest {
     @Schema(description = "Год издания", example = "2004")
     private final int year;
 
-    public BookFiltersRequest(String city, String title, String genre, String author, String publishingHouse,
-                              int year) {
+    public BookFiltersRequest(final String city, final String title, final String genre, final String author,
+                              final String publishingHouse, final int year) {
         this.city = city;
         this.title = title;
         this.genre = genre;

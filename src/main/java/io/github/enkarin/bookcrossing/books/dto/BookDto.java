@@ -31,7 +31,8 @@ public class BookDto {
     @Schema(description = "Год издания", example = "2004")
     private final int year;
 
-    public BookDto(int bookId, String title, String author, String genre, String publishingHouse, int year) {
+    public BookDto(final int bookId, final String title, final String author, final String genre,
+                   final String publishingHouse, final int year) {
         this.bookId = bookId;
         this.title = title;
         this.author = author;
