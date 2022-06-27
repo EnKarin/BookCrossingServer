@@ -1,8 +1,8 @@
 package io.github.enkarin.bookcrossing.chat.controllers;
 
+import io.github.enkarin.bookcrossing.chat.dto.MessageDto;
 import io.github.enkarin.bookcrossing.chat.dto.MessagePutRequest;
 import io.github.enkarin.bookcrossing.chat.dto.MessageRequest;
-import io.github.enkarin.bookcrossing.chat.dto.MessageResponse;
 import io.github.enkarin.bookcrossing.chat.service.MessageService;
 import io.github.enkarin.bookcrossing.constant.Constant;
 import io.github.enkarin.bookcrossing.errors.ErrorListResponse;
@@ -46,9 +46,9 @@ public class MessageController {
         @ApiResponse(responseCode = "400", description = "Сообщение должно содержать хотя бы 1 видимый символ",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
                     schema = @Schema(implementation = ErrorListResponse.class))}),
-        @ApiResponse(responseCode = "200", description = "Сообщение отправлено",
+        @ApiResponse(responseCode = "201", description = "Сообщение отправлено",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(implementation = MessageResponse.class))})
+                    schema = @Schema(implementation = MessageDto.class))})
     })
     @PostMapping
     public ResponseEntity<?> sendMessage(@Valid @RequestBody final MessageRequest messageRequest,
@@ -60,13 +60,8 @@ public class MessageController {
                     .add(Objects.requireNonNull(f.getDefaultMessage())));
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
-        final Optional<MessageResponse> message = messageService.sendMessage(messageRequest, principal.getName());
-        if (message.isPresent()) {
-            return new ResponseEntity<>(message.get(), HttpStatus.OK);
-        } else {
-            response.getErrors().add("correspondence: Нет доступа к чату");
-            return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
-        }
+        final Optional<MessageDto> message = messageService.sendMessage(messageRequest, principal.getName());
+        return ResponseEntity.ok(message.orElseThrow(RuntimeException::new));
     }
 
     @Operation(
@@ -85,7 +80,7 @@ public class MessageController {
                     schema = @Schema(implementation = ErrorListResponse.class))}),
         @ApiResponse(responseCode = "200", description = "Сообщение изменено",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(implementation = MessageResponse.class))})
+                    schema = @Schema(implementation = MessageDto.class))})
     })
     @PutMapping
     public ResponseEntity<?> putMessage(@Valid @RequestBody final MessagePutRequest messageRequest,
@@ -98,7 +93,7 @@ public class MessageController {
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
         try {
-            final Optional<MessageResponse> message = messageService.putMessage(messageRequest, principal.getName());
+            final Optional<MessageDto> message = messageService.putMessage(messageRequest, principal.getName());
             if (message.isPresent()) {
                 return new ResponseEntity<>(message.get(), HttpStatus.OK);
             } else {

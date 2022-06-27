@@ -1,6 +1,6 @@
 package io.github.enkarin.bookcrossing.chat.service;
 
-import io.github.enkarin.bookcrossing.chat.dto.MessageResponse;
+import io.github.enkarin.bookcrossing.chat.dto.MessageDto;
 import io.github.enkarin.bookcrossing.chat.dto.UsersCorrKeyDto;
 import io.github.enkarin.bookcrossing.chat.dto.ZonedUserCorrKeyDto;
 import io.github.enkarin.bookcrossing.chat.model.Correspondence;
@@ -71,8 +71,8 @@ public class CorrespondenceService {
         return false;
     }
 
-    public Optional<List<MessageResponse>> getChat(final ZonedUserCorrKeyDto zonedUserCorrKeyDto,
-                                                   final String login) {
+    public Optional<List<MessageDto>> getChat(final ZonedUserCorrKeyDto zonedUserCorrKeyDto,
+                                              final String login) {
         final User user = userRepository.findByLogin(login).orElseThrow();
         final Optional<User> fUser = userRepository.findById(zonedUserCorrKeyDto.getFirstUserId());
         final Optional<User> sUser = userRepository.findById(zonedUserCorrKeyDto.getSecondUserId());
@@ -95,12 +95,12 @@ public class CorrespondenceService {
         return Optional.empty();
     }
 
-    private List<MessageResponse> getMessages(final Predicate<Message> rules, final Correspondence correspondence,
-                                              final ZonedUserCorrKeyDto zonedUserCorrKeyDto, final User user) {
-        final List<MessageResponse> responses = correspondence.getMessage().stream()
+    private List<MessageDto> getMessages(final Predicate<Message> rules, final Correspondence correspondence,
+                                         final ZonedUserCorrKeyDto zonedUserCorrKeyDto, final User user) {
+        final List<MessageDto> responses = correspondence.getMessage().stream()
                 .filter(rules)
-                .map(m -> new MessageResponse(m, zonedUserCorrKeyDto.getZone()))
-                .sorted(Comparator.comparing(MessageResponse::getDepartureDate))
+                .map(m -> new MessageDto(m, zonedUserCorrKeyDto.getZone()))
+                .sorted(Comparator.comparing(MessageDto::getDepartureDate))
                 .collect(Collectors.toList());
         correspondence.setMessage(correspondence.getMessage().stream()
                 .filter(m -> !user.equals(m.getSender()))

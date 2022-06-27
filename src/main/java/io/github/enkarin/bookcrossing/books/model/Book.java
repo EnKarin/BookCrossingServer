@@ -5,14 +5,13 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.util.Set;
 
 @Entity
 @Getter
 @Setter
 @Table(name = "t_book")
-public class Book implements Serializable {
+public class Book {
 
     private static final long serialVersionUID = -2338626292552177485L;
 
@@ -36,7 +35,7 @@ public class Book implements Serializable {
 
     @OneToOne
     @JoinColumn(name = "attachId")
-    private Attachment attachment;
+    private transient Attachment attachment;
 
     @ManyToMany(mappedBy = "bookmarks")
     private Set<User> usersBookmarks;

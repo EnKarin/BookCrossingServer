@@ -2,33 +2,54 @@ package io.github.enkarin.bookcrossing.books.dto;
 
 import io.github.enkarin.bookcrossing.books.model.Attachment;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Data;
+import lombok.Getter;
 
 import javax.validation.constraints.NotBlank;
 
 @Schema(description = "Полные данные книги")
-@Data
 public class BookModelDto {
-    @Schema(description = "Идентификатор", example = "15")
-    private int bookId;
 
+    @Getter
+    @Schema(description = "Идентификатор", example = "15")
+    private final int bookId;
+
+    @Getter
     @Schema(description = "Название", example = "Портрет Дориана Грея")
     @NotBlank(message = "title: Название должно содержать хотя бы один видимый символ")
-    private String title;
+    private final String title;
 
+    @Getter
     @Schema(description = "Автор", example = "Оскар Уайльд")
     @NotBlank(message = "author: Поле \"автор\" должно содержать хотя бы один видимый символ")
-    private String author;
+    private final String author;
 
+    @Getter
     @Schema(description = "Жанр", example = "Классическая проза")
-    private String genre;
+    private final String genre;
 
+    @Getter
     @Schema(description = "Издательство", example = "АСТ")
-    private String publishingHouse;
+    private final String publishingHouse;
 
+    @Getter
     @Schema(description = "Год издания", example = "2004")
-    private int year;
+    private final int year;
 
     @Schema(description = "Вложение")
-    private Attachment attachment;
+    private final Attachment attachment;
+
+    private BookModelDto(int bookId, String title, String author, String genre, String publishingHouse, int year,
+                        Attachment attachment) {
+        this.bookId = bookId;
+        this.title = title;
+        this.author = author;
+        this.genre = genre;
+        this.publishingHouse = publishingHouse;
+        this.year = year;
+        this.attachment = attachment;
+    }
+
+    public Attachment getAttachment(){
+        return new Attachment(attachment.getName(), attachment.getData(), attachment.getExpansion());
+    }
 }

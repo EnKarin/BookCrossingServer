@@ -1,6 +1,6 @@
 package io.github.enkarin.bookcrossing.admin.controllers;
 
-import io.github.enkarin.bookcrossing.admin.dto.AdmUserListResponse;
+import io.github.enkarin.bookcrossing.admin.dto.InfoUsersDto;
 import io.github.enkarin.bookcrossing.admin.dto.LockedUserDto;
 import io.github.enkarin.bookcrossing.admin.service.AdminService;
 import io.github.enkarin.bookcrossing.constant.Constant;
@@ -39,14 +39,12 @@ public class AdminController {
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Возвращает список пользователей",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(implementation = AdmUserListResponse.class))})
+                    schema = @Schema(implementation = InfoUsersDto[].class))})
         }
     )
     @GetMapping("/all")
     public ResponseEntity<?> userList(@RequestParam @Parameter(description = "Часовой пояс") final int zone) {
-        final AdmUserListResponse response = new AdmUserListResponse();
-        response.setUserList(adminService.findAllUsers(zone));
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(adminService.findAllUsers(zone).toArray());
     }
 
     @Operation(

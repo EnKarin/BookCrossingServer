@@ -1,16 +1,21 @@
 package io.github.enkarin.bookcrossing.books.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Data;
+import lombok.Getter;
 import org.springframework.web.multipart.MultipartFile;
 
-@Data
+@Getter
 @Schema(description = "Сущность вложения книги")
 public class AttachmentDto {
 
     @Schema(description = "Идентификатор книги", example = "5")
-    private int bookId;
+    private final int bookId;
 
     @Schema(description = "Вложение")
-    private MultipartFile file;
+    private final MultipartFile file;
+
+    public AttachmentDto(int bookId, MultipartFile file){
+        this.bookId = bookId;
+        this.file = file;
+    }
 }

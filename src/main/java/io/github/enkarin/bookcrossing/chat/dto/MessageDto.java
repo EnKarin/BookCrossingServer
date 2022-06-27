@@ -9,7 +9,7 @@ import java.time.ZoneOffset;
 
 @Data
 @NoArgsConstructor
-public class MessageResponse {
+public class MessageDto {
 
     private long messageId;
 
@@ -21,7 +21,7 @@ public class MessageResponse {
 
     private boolean declaim;
 
-    public MessageResponse(final Message message, final int zone) {
+    public MessageDto(final Message message, final int zone) {
         messageId = message.getMessageId();
         sender = message.getSender().getUserId();
         text = message.getText();

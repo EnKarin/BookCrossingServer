@@ -1,6 +1,8 @@
 package io.github.enkarin.bookcrossing.books.service;
 
-import io.github.enkarin.bookcrossing.books.dto.*;
+import io.github.enkarin.bookcrossing.books.dto.BookDto;
+import io.github.enkarin.bookcrossing.books.dto.BookFiltersRequest;
+import io.github.enkarin.bookcrossing.books.dto.BookModelDto;
 import io.github.enkarin.bookcrossing.books.model.Book;
 import io.github.enkarin.bookcrossing.books.repository.BookRepository;
 import io.github.enkarin.bookcrossing.user.model.User;
@@ -24,31 +26,29 @@ public class BookService {
     private final ModelMapper modelMapper;
     private TypeMap<BookDto, Book> bookDtoMapper;
 
-    public Optional<BookResponse> saveBook(final BookDto bookDTO, final String login) {
-        Optional<Book> book = convertToBook(bookDTO, login);
-        if (book.isEmpty()) {
+    public Optional<BookModelDto> saveBook(final BookDto bookDTO, final String login) {
+        final Book book = convertToBook(bookDTO, login);
+        if (book == null) {
             return Optional.empty();
         }
-        final BookResponse response = new BookResponse(modelMapper.map(
-                bookRepository.save(book.get()), BookModelDto.class));
-        return Optional.of(response);
+        return Optional.of(modelMapper.map(
+                bookRepository.save(book), BookModelDto.class));
     }
 
-    public Optional<BookListResponse> findBookForOwner(final String login) {
+    public Optional<List<BookModelDto>> findBookForOwner(final String login) {
         final Optional<User> user = userRepository.findByLogin(login);
         return user.map(value -> bookRepository.findBooksByOwner(value).stream()
                 .filter(b -> b.getOwner().isAccountNonLocked())
                 .map(b -> modelMapper.map(b, BookModelDto.class))
-                .collect(Collectors.toList()))
-                .map(BookListResponse::new);
+                .collect(Collectors.toList()));
     }
 
     public Optional<BookModelDto> findById(final int bookId) {
-        Optional<Book> book = bookRepository.findById(bookId);
+        final Optional<Book> book = bookRepository.findById(bookId);
         return book.map(value -> modelMapper.map(value, BookModelDto.class));
     }
 
-    public BookListResponse filter(final BookFiltersRequest request) {
+    public List<BookModelDto> filter(final BookFiltersRequest request) {
         List<Book> books = bookRepository.findAll();
         if (request.getGenre() != null) {
             books = books.stream().filter(book -> book.getGenre().equals(request.getGenre()))
@@ -74,17 +74,17 @@ public class BookService {
             books = books.stream().filter(book -> book.getOwner().getCity().equals(request.getCity()))
                     .collect(Collectors.toList());
         }
-        return new BookListResponse(books.stream()
+        return books.stream()
                 .filter(b -> b.getOwner().isAccountNonLocked())
                 .map(b -> modelMapper.map(b, BookModelDto.class))
-                .collect(Collectors.toList()));
+                .collect(Collectors.toList());
     }
 
-    public BookListResponse findAll() {
-        return new BookListResponse(bookRepository.findAll().stream()
+    public List<BookModelDto> findAll() {
+        return bookRepository.findAll().stream()
                 .filter(b -> b.getOwner().isAccountNonLocked())
                 .map(b -> modelMapper.map(b, BookModelDto.class))
-                .collect(Collectors.toList()));
+                .collect(Collectors.toList());
     }
 
     public void deleteBook(final int bookId) {
@@ -93,14 +93,14 @@ public class BookService {
         }
     }
 
-    public BookListResponse findByTitle(final String title) {
-        return new BookListResponse(bookRepository.findBooksByTitleIgnoreCase(title).stream()
-               .filter(b -> b.getOwner().isAccountNonLocked())
+    public List<BookModelDto> findByTitle(final String title) {
+        return bookRepository.findBooksByTitleIgnoreCase(title).stream()
+                .filter(b -> b.getOwner().isAccountNonLocked())
                 .map(b -> modelMapper.map(b, BookModelDto.class))
-               .collect(Collectors.toList()));
+                .collect(Collectors.toList());
     }
 
-    private Optional<Book> convertToBook(final BookDto bookDTO, final String login) {
+    private Book convertToBook(final BookDto bookDTO, final String login) {
         final Optional<User> user = userRepository.findByLogin(login);
         if (bookDtoMapper == null) {
             modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.LOOSE);
@@ -110,8 +110,8 @@ public class BookService {
         if (user.isPresent()) {
             final Book book = modelMapper.map(bookDTO, Book.class);
             book.setOwner(user.get());
-            return Optional.of(book);
+            return book;
         }
-        return Optional.empty();
+        return null;
     }
 }

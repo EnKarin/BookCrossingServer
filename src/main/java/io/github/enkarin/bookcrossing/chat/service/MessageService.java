@@ -1,8 +1,8 @@
 package io.github.enkarin.bookcrossing.chat.service;
 
+import io.github.enkarin.bookcrossing.chat.dto.MessageDto;
 import io.github.enkarin.bookcrossing.chat.dto.MessagePutRequest;
 import io.github.enkarin.bookcrossing.chat.dto.MessageRequest;
-import io.github.enkarin.bookcrossing.chat.dto.MessageResponse;
 import io.github.enkarin.bookcrossing.chat.model.Correspondence;
 import io.github.enkarin.bookcrossing.chat.model.Message;
 import io.github.enkarin.bookcrossing.chat.model.UsersCorrKey;
@@ -31,9 +31,9 @@ public class MessageService {
     private final CorrespondenceRepository correspondenceRepository;
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
-    private TypeMap<Message, MessageResponse> messageMapper;
+    private TypeMap<Message, MessageDto> messageMapper;
 
-    public Optional<MessageResponse> sendMessage(final MessageRequest dto, final String login) {
+    public Optional<MessageDto> sendMessage(final MessageRequest dto, final String login) {
         final User user = userRepository.findByLogin(login).orElseThrow();
         final Optional<User> firstUser = userRepository.findById(dto.getUsersCorrKeyDto().getFirstUserId());
         final Optional<User> secondUser = userRepository.findById(dto.getUsersCorrKeyDto().getSecondUserId());
@@ -60,7 +60,7 @@ public class MessageService {
         return Optional.empty();
     }
 
-    public Optional<MessageResponse> putMessage(final MessagePutRequest messagePutRequest, final String login) {
+    public Optional<MessageDto> putMessage(final MessagePutRequest messagePutRequest, final String login) {
         final User user = userRepository.findByLogin(login).orElseThrow();
         final Optional<Message> message = messageRepository.findById(messagePutRequest.getMessageId());
         if (message.isPresent() && user.equals(message.get().getSender())) {
@@ -125,15 +125,15 @@ public class MessageService {
         return response;
     }
 
-    private MessageResponse convertToMessageResponse(final Message message) {
+    private MessageDto convertToMessageResponse(final Message message) {
         if (messageMapper == null) {
             modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.LOOSE);
-            messageMapper = modelMapper.createTypeMap(Message.class, MessageResponse.class);
-            messageMapper.addMappings(ms -> ms.skip(MessageResponse::setSender));
-            messageMapper.addMappings(ms -> ms.skip(MessageResponse::setDepartureDate));
+            messageMapper = modelMapper.createTypeMap(Message.class, MessageDto.class);
+            messageMapper.addMappings(ms -> ms.skip(MessageDto::setSender));
+            messageMapper.addMappings(ms -> ms.skip(MessageDto::setDepartureDate));
         }
-        final MessageResponse messageResponse = modelMapper.map(message, MessageResponse.class);
-        messageResponse.setSender(message.getSender().getUserId());
-        return messageResponse;
+        final MessageDto messageDto = modelMapper.map(message, MessageDto.class);
+        messageDto.setSender(message.getSender().getUserId());
+        return messageDto;
     }
 }

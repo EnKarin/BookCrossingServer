@@ -37,14 +37,14 @@ public class AttachmentController {
         @ApiResponse(responseCode = "400", description = "Некорректный запрос",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
                     schema = @Schema(implementation = ErrorListResponse.class))}),
-        @ApiResponse(responseCode = "200", description = "Вложение сохранено")
+        @ApiResponse(responseCode = "201", description = "Вложение сохранено")
     })
     @PostMapping("/attachment")
     public ResponseEntity<?> saveAttachment(@ModelAttribute final AttachmentDto attachmentDto,
                                             final Principal principal) throws IOException {
         final ErrorListResponse response = attachmentService.saveAttachment(attachmentDto, principal.getName());
         if (response.getErrors().isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.OK);
+            return new ResponseEntity<>(HttpStatus.CREATED);
         } else {
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }

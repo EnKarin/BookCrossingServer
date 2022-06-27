@@ -1,6 +1,6 @@
 package io.github.enkarin.bookcrossing.chat.controllers;
 
-import io.github.enkarin.bookcrossing.chat.dto.MessageResponse;
+import io.github.enkarin.bookcrossing.chat.dto.MessageDto;
 import io.github.enkarin.bookcrossing.chat.dto.UsersCorrKeyDto;
 import io.github.enkarin.bookcrossing.chat.dto.ZonedUserCorrKeyDto;
 import io.github.enkarin.bookcrossing.chat.model.Correspondence;
@@ -47,7 +47,7 @@ public class CorrespondenceController {
         @ApiResponse(responseCode = "406", description = "Нельзя создать чат с данным пользователем",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
                     schema = @Schema(implementation = ErrorListResponse.class))}),
-        @ApiResponse(responseCode = "200", description = "Чат создан",
+        @ApiResponse(responseCode = "201", description = "Чат создан",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
                     schema = @Schema(implementation = Correspondence.class))})
     })
@@ -59,7 +59,7 @@ public class CorrespondenceController {
             final Optional<UsersCorrKeyDto> usersCorrKeyDto = correspondenceService.createChat(userId,
                     principal.getName());
             if (usersCorrKeyDto.isPresent()) {
-                return new ResponseEntity<>(usersCorrKeyDto.get(), HttpStatus.OK);
+                return new ResponseEntity<>(usersCorrKeyDto.get(), HttpStatus.CREATED);
             } else {
                 response.getErrors().add("user: Пользователь заблокирован");
                 return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
@@ -105,15 +105,15 @@ public class CorrespondenceController {
                     schema = @Schema(implementation = ErrorListResponse.class))}),
         @ApiResponse(responseCode = "200", description = "Возвращает список сообщений",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(implementation = MessageResponse.class))})
+                    schema = @Schema(implementation = MessageDto.class))})
         }
     )
     @GetMapping
     public ResponseEntity<?> getCorrespondence(@RequestBody final ZonedUserCorrKeyDto dto,
                                                final Principal principal) {
-        final Optional<List<MessageResponse>> messageResponse = correspondenceService.getChat(dto, principal.getName());
+        final Optional<List<MessageDto>> messageResponse = correspondenceService.getChat(dto, principal.getName());
         if (messageResponse.isPresent()) {
-            return ResponseEntity.ok(messageResponse.get());
+            return new ResponseEntity<>(messageResponse.get(), HttpStatus.OK);
         } else {
             final ErrorListResponse response = new ErrorListResponse();
             response.getErrors().add("correspondence: Чата не существует");

@@ -1,8 +1,7 @@
 package io.github.enkarin.bookcrossing.books.controllers;
 
 import io.github.enkarin.bookcrossing.books.dto.BookDto;
-import io.github.enkarin.bookcrossing.books.dto.BookListResponse;
-import io.github.enkarin.bookcrossing.books.dto.BookResponse;
+import io.github.enkarin.bookcrossing.books.dto.BookModelDto;
 import io.github.enkarin.bookcrossing.books.service.BookService;
 import io.github.enkarin.bookcrossing.constant.Constant;
 import io.github.enkarin.bookcrossing.errors.ErrorListResponse;
@@ -20,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.security.Principal;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -43,9 +43,9 @@ public class MyBookController {
         @ApiResponse(responseCode = "400", description = "Введены некорректные данные",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
                     schema = @Schema(implementation = ErrorListResponse.class))}),
-        @ApiResponse(responseCode = "200", description = "Возвращает сохраненную книгу",
+        @ApiResponse(responseCode = "201", description = "Возвращает сохраненную книгу",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(implementation = BookResponse.class))})}
+                    schema = @Schema(implementation = BookModelDto[].class))})}
     )
     @PostMapping
     public ResponseEntity<?> saveBook(@Valid @RequestBody final BookDto bookDTO,
@@ -57,12 +57,10 @@ public class MyBookController {
                     .add(Objects.requireNonNull(f.getDefaultMessage())));
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
-        final Optional<BookResponse> book = bookService.saveBook(bookDTO, principal.getName());
-        if (book.isEmpty()) {
-            response.getErrors().add("user: Пользователь не найден");
-            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-        }
-        return ResponseEntity.ok(book);
+        final Optional<BookModelDto> book = bookService.saveBook(bookDTO, principal.getName());
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(book.orElseThrow(RuntimeException::new));
     }
 
     @Operation(
@@ -72,15 +70,12 @@ public class MyBookController {
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Возвращает список книг",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(implementation = BookListResponse.class))})}
+                    schema = @Schema(implementation = BookModelDto[].class))})}
     )
     @GetMapping("/all")
     public ResponseEntity<?> bookList(final Principal principal) {
-        final Optional<BookListResponse> bookModelDtos = bookService.findBookForOwner(principal.getName());
-        if (bookModelDtos.isPresent()) {
-            return ResponseEntity.ok(bookModelDtos.get());
-        }
-        return new ResponseEntity<>(HttpStatus.OK);
+        final Optional<List<BookModelDto>> bookModelDtos = bookService.findBookForOwner(principal.getName());
+        return ResponseEntity.ok(bookModelDtos.orElseThrow(RuntimeException::new).toArray());
     }
 
     @Operation(
@@ -93,6 +88,8 @@ public class MyBookController {
     @DeleteMapping
     public ResponseEntity<?> deleteBook(@RequestParam final int bookId) {
         bookService.deleteBook(bookId);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .build();
     }
 }
