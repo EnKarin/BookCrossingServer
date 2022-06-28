@@ -37,7 +37,9 @@ public class BookService {
 
     @Transactional
     public BookModelDto saveBook(final BookDto bookDTO, final String login) {
-        final Book book = convertToBook(bookDTO, login);
+        final User user = userRepository.findByLogin(login).orElseThrow(UserNotFoundException::new);
+        final Book book = modelMapper.map(bookDTO, Book.class);
+        book.setOwner(user);
         return BookModelDto.fromBook(bookRepository.save(book));
     }
 
@@ -104,12 +106,5 @@ public class BookService {
                 .filter(b -> b.getOwner().isAccountNonLocked())
                 .map(BookModelDto::fromBook)
                 .collect(Collectors.toList());
-    }
-
-    private Book convertToBook(final BookDto bookDTO, final String login) {
-        final User user = userRepository.findByLogin(login).orElseThrow(UserNotFoundException::new);
-        final Book book = modelMapper.map(bookDTO, Book.class);
-        book.setOwner(user);
-        return book;
     }
 }
