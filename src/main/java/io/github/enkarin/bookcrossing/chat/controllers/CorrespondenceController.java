@@ -9,7 +9,6 @@ import io.github.enkarin.bookcrossing.constant.Constant;
 import io.github.enkarin.bookcrossing.exception.CannotBeCreatedCorrespondenceException;
 import io.github.enkarin.bookcrossing.exception.ChatAlreadyCreatedException;
 import io.github.enkarin.bookcrossing.exception.ChatNotFoundException;
-import io.github.enkarin.bookcrossing.exception.UserNotFoundException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -100,26 +99,20 @@ public class CorrespondenceController {
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ExceptionHandler(UserNotFoundException.class)
-    public Map<String, String> userNotFound(final UserNotFoundException exc) {
-        return Collections.singletonMap("user:", exc.getMessage());
-    }
-
-    @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(ChatNotFoundException.class)
     public Map<String, String> chatNotFound(final ChatNotFoundException exc) {
-        return Collections.singletonMap("correspondence:", exc.getMessage());
+        return Collections.singletonMap("correspondence", exc.getMessage());
     }
 
     @ResponseStatus(HttpStatus.CONFLICT)
     @ExceptionHandler(ChatAlreadyCreatedException.class)
     public Map<String, String> chatAlreadyCreated(final ChatAlreadyCreatedException exc) {
-        return Collections.singletonMap("correspondence:", exc.getMessage());
+        return Collections.singletonMap("correspondence", exc.getMessage());
     }
 
     @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
     @ExceptionHandler(CannotBeCreatedCorrespondenceException.class)
     public Map<String, String> userIsLocked(final CannotBeCreatedCorrespondenceException exc) {
-        return Collections.singletonMap("user:", exc.getMessage());
+        return Collections.singletonMap("user", exc.getMessage());
     }
 }

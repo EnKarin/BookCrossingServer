@@ -5,7 +5,6 @@ import io.github.enkarin.bookcrossing.books.service.AttachmentService;
 import io.github.enkarin.bookcrossing.constant.Constant;
 import io.github.enkarin.bookcrossing.exception.AttachmentNotFoundException;
 import io.github.enkarin.bookcrossing.exception.BadRequestException;
-import io.github.enkarin.bookcrossing.exception.BookNotFoundException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -73,18 +72,12 @@ public class AttachmentController {
     @ResponseStatus(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
     @ExceptionHandler(BadRequestException.class)
     public Map<String, String> badRequest(final BadRequestException exc) {
-        return Collections.singletonMap("attachment:", exc.getMessage());
-    }
-
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ExceptionHandler(BookNotFoundException.class)
-    public Map<String, String> bookNotFound(final BookNotFoundException exc) {
-        return Collections.singletonMap("book:", exc.getMessage());
+        return Collections.singletonMap("attachment", exc.getMessage());
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(AttachmentNotFoundException.class)
     public Map<String, String> attachNotFound(final AttachmentNotFoundException exc) {
-        return Collections.singletonMap("attachment:", exc.getMessage());
+        return Collections.singletonMap("attachment", exc.getMessage());
     }
 }

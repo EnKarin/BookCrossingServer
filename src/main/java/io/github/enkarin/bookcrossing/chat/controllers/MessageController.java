@@ -133,36 +133,30 @@ public class MessageController {
     @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
     @ExceptionHandler(MessageContentException.class)
     public Map<String, String> content(final MessageContentException exc) {
-        return Collections.singletonMap("message:", exc.getMessage());
-    }
-
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ExceptionHandler(UserNotFoundException.class)
-    public Map<String, String> userNotFound(final UserNotFoundException exc) {
-        return Collections.singletonMap("user:", exc.getMessage());
+        return Collections.singletonMap("message", exc.getMessage());
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(ChatNotFoundException.class)
     public Map<String, String> chatNotFound(final ChatNotFoundException exc) {
-        return Collections.singletonMap("correspondence:", exc.getMessage());
+        return Collections.singletonMap("correspondence", exc.getMessage());
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(MessageNotFountException.class)
     public Map<String, String> messageNotFound(final MessageNotFountException exc) {
-        return Collections.singletonMap("message:", exc.getMessage());
+        return Collections.singletonMap("message", exc.getMessage());
     }
 
     @ResponseStatus(HttpStatus.FORBIDDEN)
     @ExceptionHandler(NoAccessToChatException.class)
     public Map<String, String> noAccess(final NoAccessToChatException exc) {
-        return Collections.singletonMap("correspondence:", exc.getMessage());
+        return Collections.singletonMap("correspondence", exc.getMessage());
     }
 
     @ResponseStatus(HttpStatus.FORBIDDEN)
     @ExceptionHandler(UserIsNotSenderException.class)
     public Map<String, String> noSender(final UserIsNotSenderException exc) {
-        return Collections.singletonMap("correspondence:", exc.getMessage());
+        return Collections.singletonMap("correspondence", exc.getMessage());
     }
 }

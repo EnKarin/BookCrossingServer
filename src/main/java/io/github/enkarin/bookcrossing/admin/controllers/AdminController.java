@@ -5,7 +5,6 @@ import io.github.enkarin.bookcrossing.admin.dto.LockedUserDto;
 import io.github.enkarin.bookcrossing.admin.service.AdminService;
 import io.github.enkarin.bookcrossing.constant.Constant;
 import io.github.enkarin.bookcrossing.errors.ErrorListResponse;
-import io.github.enkarin.bookcrossing.exception.UserNotFoundException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -20,8 +19,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Collections;
-import java.util.Map;
 import java.util.Objects;
 
 @Tag(
@@ -93,11 +90,5 @@ public class AdminController {
     public ResponseEntity<?> nonLockedUser(@RequestParam final String login) {
         adminService.nonLockedUser(login);
         return ResponseEntity.ok().build();
-    }
-
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ExceptionHandler(UserNotFoundException.class)
-    public Map<String, String> userNotFound(final UserNotFoundException exc) {
-        return Collections.singletonMap("user:", exc.getMessage());
     }
 }
