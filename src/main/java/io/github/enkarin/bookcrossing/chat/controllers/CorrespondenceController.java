@@ -3,7 +3,6 @@ package io.github.enkarin.bookcrossing.chat.controllers;
 import io.github.enkarin.bookcrossing.chat.dto.MessageDto;
 import io.github.enkarin.bookcrossing.chat.dto.UsersCorrKeyDto;
 import io.github.enkarin.bookcrossing.chat.dto.ZonedUserCorrKeyDto;
-import io.github.enkarin.bookcrossing.chat.model.Correspondence;
 import io.github.enkarin.bookcrossing.chat.service.CorrespondenceService;
 import io.github.enkarin.bookcrossing.constant.Constant;
 import io.github.enkarin.bookcrossing.exception.CannotBeCreatedCorrespondenceException;
@@ -50,10 +49,10 @@ public class CorrespondenceController {
                     schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
         @ApiResponse(responseCode = "201", description = "Чат создан",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(implementation = Correspondence.class))})
+                    schema = @Schema(implementation = UsersCorrKeyDto.class))})
     })
     @PostMapping
-    public ResponseEntity<?> createCorrespondence(@RequestParam final int userId,
+    public ResponseEntity<UsersCorrKeyDto> createCorrespondence(@RequestParam final int userId,
                                                   final Principal principal) {
         final UsersCorrKeyDto usersCorrKeyDto = correspondenceService.createChat(userId, principal.getName());
         return ResponseEntity.status(HttpStatus.CREATED).body(usersCorrKeyDto);
@@ -88,14 +87,14 @@ public class CorrespondenceController {
                     schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
         @ApiResponse(responseCode = "200", description = "Возвращает список сообщений",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(implementation = MessageDto.class))})
+                    schema = @Schema(implementation = MessageDto[].class))})
         }
     )
     @GetMapping
-    public ResponseEntity<?> getCorrespondence(@RequestBody final ZonedUserCorrKeyDto dto,
+    public ResponseEntity<Object[]> getCorrespondence(@RequestBody final ZonedUserCorrKeyDto dto,
                                                final Principal principal) {
         final List<MessageDto> messageResponse = correspondenceService.getChat(dto, principal.getName());
-        return ResponseEntity.ok(messageResponse);
+        return ResponseEntity.ok(messageResponse.toArray());
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)

@@ -13,11 +13,13 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeMap;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional(readOnly = true)
 public class BookService {
 
     private final UserRepository userRepository;
@@ -33,6 +35,7 @@ public class BookService {
         bookDtoMapper.addMappings(ms -> ms.skip(Book::setOwner));
     }
 
+    @Transactional
     public BookModelDto saveBook(final BookDto bookDTO, final String login) {
         final Book book = convertToBook(bookDTO, login);
         return BookModelDto.fromBook(bookRepository.save(book));
@@ -90,6 +93,7 @@ public class BookService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public void deleteBook(final int bookId) {
         bookRepository.findById(bookId).orElseThrow(BookNotFoundException::new);
         bookRepository.deleteById(bookId);

@@ -13,6 +13,7 @@ import io.github.enkarin.bookcrossing.user.model.User;
 import io.github.enkarin.bookcrossing.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -20,6 +21,7 @@ import java.time.ZoneOffset;
 
 @RequiredArgsConstructor
 @Service
+@Transactional
 public class MessageService {
 
     private final MessageRepository messageRepository;

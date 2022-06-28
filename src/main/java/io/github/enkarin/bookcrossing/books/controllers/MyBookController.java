@@ -73,7 +73,7 @@ public class MyBookController {
                     schema = @Schema(implementation = BookModelDto[].class))})}
     )
     @GetMapping("/all")
-    public ResponseEntity<?> bookList(final Principal principal) {
+    public ResponseEntity<Object[]> bookList(final Principal principal) {
         final List<BookModelDto> bookModelDtos = bookService.findBookForOwner(principal.getName());
         return ResponseEntity.ok(bookModelDtos.toArray());
     }

@@ -35,7 +35,7 @@ public class BookController {
                     schema = @Schema(implementation = BookModelDto[].class))})
     })
     @GetMapping("/all")
-    public ResponseEntity<?> books() {
+    public ResponseEntity<Object[]> books() {
         return ResponseEntity.ok(bookService.findAll().toArray());
     }
 
@@ -52,7 +52,7 @@ public class BookController {
                     schema = @Schema(implementation = BookModelDto.class))})
     })
     @GetMapping("/info")
-    public ResponseEntity<?> bookInfo(@RequestParam final int bookId) {
+    public ResponseEntity<BookModelDto> bookInfo(@RequestParam final int bookId) {
         final BookModelDto book = bookService.findById(bookId);
         return ResponseEntity.ok(book);
     }
@@ -67,7 +67,7 @@ public class BookController {
                     schema = @Schema(implementation = BookModelDto[].class))})
     })
     @GetMapping("/searchByTitle")
-    public ResponseEntity<?> searchByTitle(@RequestParam final String title) {
+    public ResponseEntity<Object[]> searchByTitle(@RequestParam final String title) {
         return ResponseEntity.ok(bookService.findByTitle(title).toArray());
     }
 
@@ -81,7 +81,7 @@ public class BookController {
                     schema = @Schema(implementation = BookModelDto[].class))})
     })
     @GetMapping("/searchWithFilters")
-    public ResponseEntity<?> searchWithFilters(@RequestBody final BookFiltersRequest filters) {
+    public ResponseEntity<Object[]> searchWithFilters(@RequestBody final BookFiltersRequest filters) {
         return ResponseEntity.ok(bookService.filter(filters).toArray());
     }
 }

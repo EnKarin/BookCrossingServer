@@ -10,27 +10,30 @@ import io.github.enkarin.bookcrossing.user.repository.RoleRepository;
 import io.github.enkarin.bookcrossing.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
+@Transactional(readOnly = true)
 public class AdminService {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final MailService mailService;
 
+    @Transactional
     public void lockedUser(final LockedUserDto lockedUserDto) {
         final User user = userRepository.findByLogin(lockedUserDto.getLogin())
                 .orElseThrow(UserNotFoundException::new);
         user.setAccountNonLocked(false);
         userRepository.save(user);
         mailService.sendBlockingMessage(user, lockedUserDto.getComment());
-
     }
 
+    @Transactional
     public void nonLockedUser(final String login) {
         final User user = userRepository.findByLogin(login).orElseThrow(UserNotFoundException::new);
         user.setAccountNonLocked(true);

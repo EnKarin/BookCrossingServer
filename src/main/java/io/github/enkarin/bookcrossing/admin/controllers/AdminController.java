@@ -43,7 +43,7 @@ public class AdminController {
         }
     )
     @GetMapping("/all")
-    public ResponseEntity<?> userList(@RequestParam @Parameter(description = "Часовой пояс") final int zone) {
+    public ResponseEntity<Object[]> userList(@RequestParam @Parameter(description = "Часовой пояс") final int zone) {
         return ResponseEntity.ok(adminService.findAllUsers(zone).toArray());
     }
 
@@ -81,7 +81,7 @@ public class AdminController {
             description = "Позволяет разблокировать пользователя по его логину"
     )
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Возвращает на стартовую страницу"),
+        @ApiResponse(responseCode = "200"),
         @ApiResponse(responseCode = "404", description = "Пользователя с таким логином не существует",
                     content = {@Content(mediaType = Constant.MEDIA_TYPE,
                             schema = @Schema(ref = "#/components/schemas/NewErrorBody"))})

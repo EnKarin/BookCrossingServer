@@ -16,6 +16,7 @@ import io.github.enkarin.bookcrossing.user.model.User;
 import io.github.enkarin.bookcrossing.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -25,12 +26,14 @@ import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
+@Transactional(readOnly = true)
 public class CorrespondenceService {
 
     private final CorrespondenceRepository correspondenceRepository;
     private final MessageRepository messageRepository;
     private final UserRepository userRepository;
 
+    @Transactional
     public UsersCorrKeyDto createChat(final int userId, final String login) {
         final User fUser = userRepository.findByLogin(login).orElseThrow();
         final User sUser = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
@@ -51,6 +54,7 @@ public class CorrespondenceService {
         }
     }
 
+    @Transactional
     public void deleteChat(final int userId, final String login) {
         final UsersCorrKey usersCorrKey = new UsersCorrKey();
         usersCorrKey.setFirstUser(userRepository.findByLogin(login).orElseThrow());

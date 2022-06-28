@@ -53,7 +53,7 @@ public class MessageController {
                     schema = @Schema(implementation = MessageDto.class))})
     })
     @PostMapping
-    public ResponseEntity<?> sendMessage(@Valid @RequestBody final MessageRequest messageRequest,
+    public ResponseEntity<MessageDto> sendMessage(@Valid @RequestBody final MessageRequest messageRequest,
                                                   final BindingResult bindingResult,
                                                   final Principal principal) {
         if (bindingResult.hasErrors()) {
@@ -81,7 +81,7 @@ public class MessageController {
                     schema = @Schema(implementation = MessageDto.class))})
     })
     @PutMapping
-    public ResponseEntity<?> putMessage(@Valid @RequestBody final MessagePutRequest messageRequest,
+    public ResponseEntity<MessageDto> putMessage(@Valid @RequestBody final MessagePutRequest messageRequest,
                                         final BindingResult bindingResult,
                                         final Principal principal) {
         if (bindingResult.hasErrors()) {
