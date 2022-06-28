@@ -9,7 +9,6 @@ import io.github.enkarin.bookcrossing.exception.BookNotFoundException;
 import io.github.enkarin.bookcrossing.exception.UserNotFoundException;
 import io.github.enkarin.bookcrossing.user.model.User;
 import io.github.enkarin.bookcrossing.user.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeMap;
 import org.modelmapper.convention.MatchingStrategies;
@@ -18,14 +17,21 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@RequiredArgsConstructor
 @Service
 public class BookService {
 
     private final UserRepository userRepository;
     private final BookRepository bookRepository;
     private final ModelMapper modelMapper;
-    private TypeMap<BookDto, Book> bookDtoMapper;
+
+    public BookService(final UserRepository usr, final BookRepository bkr, final ModelMapper mdm) {
+        userRepository = usr;
+        bookRepository = bkr;
+        modelMapper = mdm;
+        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.LOOSE);
+        final TypeMap<BookDto, Book> bookDtoMapper = modelMapper.createTypeMap(BookDto.class, Book.class);
+        bookDtoMapper.addMappings(ms -> ms.skip(Book::setOwner));
+    }
 
     public BookModelDto saveBook(final BookDto bookDTO, final String login) {
         final Book book = convertToBook(bookDTO, login);
@@ -98,11 +104,6 @@ public class BookService {
 
     private Book convertToBook(final BookDto bookDTO, final String login) {
         final User user = userRepository.findByLogin(login).orElseThrow(UserNotFoundException::new);
-        if (bookDtoMapper == null) {
-            modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.LOOSE);
-            bookDtoMapper = modelMapper.createTypeMap(BookDto.class, Book.class);
-            bookDtoMapper.addMappings(ms -> ms.skip(Book::setOwner));
-        }
         final Book book = modelMapper.map(bookDTO, Book.class);
         book.setOwner(user);
         return book;
