@@ -1,5 +1,6 @@
 package io.github.enkarin.bookcrossing.chat.dto;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import org.springframework.validation.annotation.Validated;
@@ -15,10 +16,10 @@ public class MessageRequest {
 
     @Getter
     @Schema(description = "Текст сообщения")
-    @NotBlank(message = "message: Сообщение должно состоять хотя бы из одного видимого символа")
+    @NotBlank(message = "Сообщение должно состоять хотя бы из одного видимого символа")
     private final String text;
 
-    public MessageRequest(final UsersCorrKeyDto usersCorrKeyDto, final String text) {
+    private MessageRequest(final UsersCorrKeyDto usersCorrKeyDto, final String text) {
         this.usersCorrKeyDto = usersCorrKeyDto;
         this.text = text;
     }
@@ -26,5 +27,10 @@ public class MessageRequest {
     public UsersCorrKeyDto getUsersCorrKeyDto() {
         return UsersCorrKeyDto.fromFirstAndSecondId(usersCorrKeyDto.getFirstUserId(),
                 usersCorrKeyDto.getSecondUserId());
+    }
+
+    @JsonCreator
+    public static MessageRequest create(final UsersCorrKeyDto usersCorrKeyDto, final String text) {
+        return new MessageRequest(usersCorrKeyDto, text);
     }
 }

@@ -1,5 +1,6 @@
 package io.github.enkarin.bookcrossing.chat.dto;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 
@@ -15,8 +16,13 @@ public class MessagePutRequest {
     @NotBlank(message = "message: Сообщение должно состоять хотя бы из одного видимого символа")
     private final String text;
 
-    public MessagePutRequest(final long messageId, final String text) {
+    private MessagePutRequest(final long messageId, final String text) {
         this.messageId = messageId;
         this.text = text;
+    }
+
+    @JsonCreator
+    public static MessagePutRequest create(final long messageId, final String text) {
+        return new MessagePutRequest(messageId, text);
     }
 }

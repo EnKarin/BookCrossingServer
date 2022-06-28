@@ -1,5 +1,6 @@
 package io.github.enkarin.bookcrossing.chat.dto;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import io.github.enkarin.bookcrossing.chat.model.Correspondence;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
@@ -24,6 +25,7 @@ public class UsersCorrKeyDto {
                 correspondence.getUsersCorrKey().getSecondUser().getUserId());
     }
 
+    @JsonCreator
     public static UsersCorrKeyDto fromFirstAndSecondId(final int firstUserId, final int secondUserId) {
         return new UsersCorrKeyDto(firstUserId, secondUserId);
     }

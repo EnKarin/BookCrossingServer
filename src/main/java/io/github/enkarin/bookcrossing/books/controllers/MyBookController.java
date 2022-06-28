@@ -5,6 +5,8 @@ import io.github.enkarin.bookcrossing.books.dto.BookModelDto;
 import io.github.enkarin.bookcrossing.books.service.BookService;
 import io.github.enkarin.bookcrossing.constant.Constant;
 import io.github.enkarin.bookcrossing.errors.ErrorListResponse;
+import io.github.enkarin.bookcrossing.exception.BookNotFoundException;
+import io.github.enkarin.bookcrossing.exception.UserNotFoundException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -19,9 +21,10 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.security.Principal;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 
 @Tag(
         name = "Раздел работы с книгами",
@@ -55,12 +58,13 @@ public class MyBookController {
         if (bindingResult.hasErrors()) {
             bindingResult.getAllErrors().forEach(f -> response.getErrors()
                     .add(Objects.requireNonNull(f.getDefaultMessage())));
-            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(response);
         }
-        final Optional<BookModelDto> book = bookService.saveBook(bookDTO, principal.getName());
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(book.orElseThrow(RuntimeException::new));
+                .body(bookService.saveBook(bookDTO, principal.getName()));
     }
 
     @Operation(
@@ -74,8 +78,8 @@ public class MyBookController {
     )
     @GetMapping("/all")
     public ResponseEntity<?> bookList(final Principal principal) {
-        final Optional<List<BookModelDto>> bookModelDtos = bookService.findBookForOwner(principal.getName());
-        return ResponseEntity.ok(bookModelDtos.orElseThrow(RuntimeException::new).toArray());
+        final List<BookModelDto> bookModelDtos = bookService.findBookForOwner(principal.getName());
+        return ResponseEntity.ok(bookModelDtos.toArray());
     }
 
     @Operation(
@@ -83,6 +87,9 @@ public class MyBookController {
             description = "Позволяет удалить книгу по ее id"
     )
     @ApiResponses(value = {
+        @ApiResponse(responseCode = "404", description = "Книга не найдена",
+            content = {@Content(mediaType = Constant.MEDIA_TYPE,
+                            schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
         @ApiResponse(responseCode = "200", description = "Удаляет книгу из бд")}
     )
     @DeleteMapping
@@ -91,5 +98,17 @@ public class MyBookController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .build();
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(BookNotFoundException.class)
+    public Map<String, String> bookNotFound(final BookNotFoundException exc) {
+        return Collections.singletonMap("book:", exc.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(UserNotFoundException.class)
+    public Map<String, String> userNotFound(final UserNotFoundException exc) {
+        return Collections.singletonMap("user:", exc.getMessage());
     }
 }

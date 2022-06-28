@@ -2,6 +2,7 @@ package io.github.enkarin.bookcrossing.admin.service;
 
 import io.github.enkarin.bookcrossing.admin.dto.InfoUsersDto;
 import io.github.enkarin.bookcrossing.admin.dto.LockedUserDto;
+import io.github.enkarin.bookcrossing.exception.UserNotFoundException;
 import io.github.enkarin.bookcrossing.mail.service.MailService;
 import io.github.enkarin.bookcrossing.user.model.Role;
 import io.github.enkarin.bookcrossing.user.model.User;
@@ -11,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -24,28 +24,20 @@ public class AdminService {
 
     private final MailService mailService;
 
-    public boolean lockedUser(final LockedUserDto lockedUserDto) {
-        final Optional<User> user = userRepository.findByLogin(lockedUserDto.getLogin());
-        if (user.isPresent()) {
-            user.get().setAccountNonLocked(false);
-            userRepository.save(user.get());
-            mailService.sendBlockingMessage(user.get(), lockedUserDto.getComment());
-            return true;
-        } else {
-            return false;
-        }
+    public void lockedUser(final LockedUserDto lockedUserDto) {
+        final User user = userRepository.findByLogin(lockedUserDto.getLogin())
+                .orElseThrow(UserNotFoundException::new);
+        user.setAccountNonLocked(false);
+        userRepository.save(user);
+        mailService.sendBlockingMessage(user, lockedUserDto.getComment());
+
     }
 
-    public boolean nonLockedUser(final String login) {
-        final Optional<User> user = userRepository.findByLogin(login);
-        if (user.isPresent()) {
-            user.get().setAccountNonLocked(true);
-            userRepository.save(user.get());
-            mailService.sendUnlockMessage(user.get());
-            return true;
-        } else {
-            return false;
-        }
+    public void nonLockedUser(final String login) {
+        final User user = userRepository.findByLogin(login).orElseThrow(UserNotFoundException::new);
+        user.setAccountNonLocked(true);
+        userRepository.save(user);
+        mailService.sendUnlockMessage(user);
     }
 
     public List<InfoUsersDto> findAllUsers(final int zone) {

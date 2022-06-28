@@ -4,7 +4,8 @@ import io.github.enkarin.bookcrossing.books.dto.BookFiltersRequest;
 import io.github.enkarin.bookcrossing.books.dto.BookModelDto;
 import io.github.enkarin.bookcrossing.books.service.BookService;
 import io.github.enkarin.bookcrossing.constant.Constant;
-import io.github.enkarin.bookcrossing.errors.ErrorListResponse;
+import io.github.enkarin.bookcrossing.exception.BookNotFoundException;
+import io.github.enkarin.bookcrossing.exception.UserNotFoundException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -12,10 +13,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
+import java.util.Collections;
+import java.util.Map;
 
 @Tag(
         name = "Раздел со всеми книгами в системе",
@@ -49,15 +52,15 @@ public class BookController {
     @ApiResponses(value = {
         @ApiResponse(responseCode = "404", description = "Книга не найдена",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(implementation = ErrorListResponse.class))}),
+                    schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
         @ApiResponse(responseCode = "200", description = "Возвращает данные книги",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
                     schema = @Schema(implementation = BookModelDto.class))})
     })
     @GetMapping("/info")
     public ResponseEntity<?> bookInfo(@RequestParam final int bookId) {
-        final Optional<BookModelDto> book = bookService.findById(bookId);
-        return ResponseEntity.ok(book.orElseThrow(RuntimeException::new));
+        final BookModelDto book = bookService.findById(bookId);
+        return ResponseEntity.ok(book);
     }
 
     @Operation(
@@ -86,5 +89,17 @@ public class BookController {
     @GetMapping("/searchWithFilters")
     public ResponseEntity<?> searchWithFilters(@RequestBody final BookFiltersRequest filters) {
         return ResponseEntity.ok(bookService.filter(filters).toArray());
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(UserNotFoundException.class)
+    public Map<String, String> userNotFound(final UserNotFoundException exc) {
+        return Collections.singletonMap("user:", exc.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(BookNotFoundException.class)
+    public Map<String, String> bookNotFound(final BookNotFoundException exc) {
+        return Collections.singletonMap("book:", exc.getMessage());
     }
 }

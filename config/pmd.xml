@@ -48,6 +48,7 @@
         <exclude name="LoosePackageCoupling"/>
         <exclude name="AvoidDeeplyNestedIfStmts"/>
         <exclude name="AvoidCatchingGenericException"/>
+        <exclude name="UseObjectForClearerAPI"/>
         <exclude name="UseUtilityClass"/>
         <exclude name="ClassWithOnlyPrivateConstructorsShouldBeFinal"/>
         <exclude name="DataClass"/>
@@ -76,7 +77,6 @@
 
     <rule ref="category/java/errorprone.xml">
         <exclude name="BeanMembersShouldSerialize"/>
-        <exclude name="MissingSerialVersionUID"/>
         <exclude name="DataflowAnomalyAnalysis"/>
         <exclude name="AvoidLiteralsInIfCondition"/>
         <exclude name="AvoidFieldNameMatchingTypeName"/>

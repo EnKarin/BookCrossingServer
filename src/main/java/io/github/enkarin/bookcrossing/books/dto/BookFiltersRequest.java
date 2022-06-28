@@ -1,5 +1,6 @@
 package io.github.enkarin.bookcrossing.books.dto;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 
@@ -25,7 +26,7 @@ public class BookFiltersRequest {
     @Schema(description = "Год издания", example = "2004")
     private final int year;
 
-    public BookFiltersRequest(final String city, final String title, final String genre, final String author,
+    private BookFiltersRequest(final String city, final String title, final String genre, final String author,
                               final String publishingHouse, final int year) {
         this.city = city;
         this.title = title;
@@ -33,5 +34,11 @@ public class BookFiltersRequest {
         this.author = author;
         this.publishingHouse = publishingHouse;
         this.year = year;
+    }
+
+    @JsonCreator
+    public static BookFiltersRequest create(final String city, final String title, final String genre,
+                                            final String author, final String publishingHouse, final int year) {
+        return new BookFiltersRequest(city, title, genre, author, publishingHouse, year);
     }
 }

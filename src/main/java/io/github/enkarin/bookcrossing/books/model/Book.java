@@ -36,7 +36,7 @@ public class Book implements Serializable {
 
     @OneToOne
     @JoinColumn(name = "attachId")
-    private transient Attachment attachment;
+    private Attachment attachment;
 
     @ManyToMany(mappedBy = "bookmarks")
     private Set<User> usersBookmarks;

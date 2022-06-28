@@ -5,7 +5,9 @@ import io.github.enkarin.bookcrossing.books.model.Attachment;
 import io.github.enkarin.bookcrossing.books.model.Book;
 import io.github.enkarin.bookcrossing.books.repository.AttachmentRepository;
 import io.github.enkarin.bookcrossing.books.repository.BookRepository;
-import io.github.enkarin.bookcrossing.errors.ErrorListResponse;
+import io.github.enkarin.bookcrossing.exception.AttachmentNotFoundException;
+import io.github.enkarin.bookcrossing.exception.BadRequestException;
+import io.github.enkarin.bookcrossing.exception.BookNotFoundException;
 import io.github.enkarin.bookcrossing.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,47 +24,37 @@ public class AttachmentService {
     private final AttachmentRepository attachRepository;
     private final BookRepository bookRepository;
 
-    public ErrorListResponse saveAttachment(final AttachmentDto attachmentDto, final String login) throws IOException {
-        final ErrorListResponse response = new ErrorListResponse();
-        final Optional<Book> book = userRepository.findByLogin(login).orElseThrow().getBooks().stream()
+    public void saveAttachment(final AttachmentDto attachmentDto, final String login) throws IOException {
+        final Book book = userRepository.findByLogin(login).orElseThrow().getBooks().stream()
                 .filter(b -> b.getBookId() == attachmentDto.getBookId())
-                .findFirst();
-        if (book.isPresent()) {
-            Attachment attachment = new Attachment();
-            attachment.setData(attachmentDto.getFile().getBytes());
-            final String fileName = attachmentDto.getFile().getOriginalFilename();
-            if (fileName == null) {
-                response.getErrors().add("attachment: Имя не должно быть пустым");
-            } else {
-                final String expansion = fileName.substring(fileName.indexOf('.')).toLowerCase(Locale.ROOT);
-                if (expansion.contains("jpeg") || expansion.contains("jpg") ||
-                        expansion.contains("png") || expansion.contains("bmp")) {
-                    attachment.setExpansion(expansion);
-                    attachment = attachRepository.save(attachment);
-                    book.get().setAttachment(attachment);
-                    bookRepository.save(book.get());
-                } else {
-                    response.getErrors().add("attachment: Недопустимый формат файла");
-                }
-            }
+                .findFirst()
+                .orElseThrow(BookNotFoundException::new);
+        Attachment attachment = new Attachment();
+        attachment.setData(attachmentDto.getFile().getBytes());
+        final String fileName = attachmentDto.getFile().getOriginalFilename();
+        if (fileName == null) {
+            throw new BadRequestException("Имя не должно быть пустым");
         } else {
-            response.getErrors().add("attachment: Нет доступа к данной книге");
+            final String expansion = fileName.substring(fileName.indexOf('.')).toLowerCase(Locale.ROOT);
+            if (expansion.contains("jpeg") || expansion.contains("jpg") ||
+                    expansion.contains("png") || expansion.contains("bmp")) {
+                attachment.setExpansion(expansion);
+                attachment = attachRepository.save(attachment);
+                book.setAttachment(attachment);
+                bookRepository.save(book);
+            } else {
+                throw new BadRequestException("Недопустимый формат файла");
+            }
         }
-        return response;
     }
 
-    public ErrorListResponse deleteAttachment(final int bookId, final String login) {
-        final ErrorListResponse response = new ErrorListResponse();
-        final Optional<Book> book = userRepository.findByLogin(login).orElseThrow().getBooks().stream()
-                .filter(b -> b.getBookId() == bookId).findFirst();
-        if (book.isPresent()) {
-            final Optional<Attachment> attachment = Optional.ofNullable(book.get().getAttachment());
-            if (attachment.isPresent()) {
-                attachRepository.delete(book.get().getAttachment());
-            }
-        } else {
-            response.getErrors().add("attachment: Нет доступа к данной книге");
-        }
-        return response;
+    public void deleteAttachment(final int bookId, final String login) {
+        final Book book = userRepository.findByLogin(login).orElseThrow().getBooks().stream()
+                .filter(b -> b.getBookId() == bookId)
+                .findFirst()
+                .orElseThrow(BookNotFoundException::new);
+        Optional.ofNullable(book.getAttachment())
+                .orElseThrow(AttachmentNotFoundException::new);
+        attachRepository.delete(book.getAttachment());
     }
 }

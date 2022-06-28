@@ -5,6 +5,7 @@ import io.github.enkarin.bookcrossing.admin.dto.LockedUserDto;
 import io.github.enkarin.bookcrossing.admin.service.AdminService;
 import io.github.enkarin.bookcrossing.constant.Constant;
 import io.github.enkarin.bookcrossing.errors.ErrorListResponse;
+import io.github.enkarin.bookcrossing.exception.UserNotFoundException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -19,6 +20,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Collections;
+import java.util.Map;
 import java.util.Objects;
 
 @Tag(
@@ -53,12 +56,12 @@ public class AdminController {
     )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Отправляет на почту сообщение о блокировке"),
-        @ApiResponse(responseCode = "403", description = "Пустой логин или комментарий",
+        @ApiResponse(responseCode = "406", description = "Пустой логин или комментарий",
                     content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                            schema = @Schema(implementation = ErrorListResponse.class))}),
+                            schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
         @ApiResponse(responseCode = "404", description = "Пользователя с таким логином не существует",
                     content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                            schema = @Schema(implementation = ErrorListResponse.class))})
+                            schema = @Schema(ref = "#/components/schemas/NewErrorBody"))})
     }
     )
     @PostMapping("/locked")
@@ -68,14 +71,12 @@ public class AdminController {
         if (bindingResult.hasErrors()) {
             bindingResult.getAllErrors().forEach(f -> response.getErrors()
                     .add(Objects.requireNonNull(f.getDefaultMessage())));
-            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+            return ResponseEntity
+                    .status(HttpStatus.NOT_ACCEPTABLE)
+                    .body(response);
         }
-        if (adminService.lockedUser(lockedUserDto)) {
-            return ResponseEntity.ok().build();
-        } else {
-            response.getErrors().add("login: Некорректный логин пользователя");
-            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
-        }
+        adminService.lockedUser(lockedUserDto);
+        return ResponseEntity.ok().build();
     }
 
     @Operation(
@@ -84,18 +85,19 @@ public class AdminController {
     )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Возвращает на стартовую страницу"),
-        @ApiResponse(responseCode = "403", description = "Пользователя с таким логином не существует",
-            content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(implementation = ErrorListResponse.class))})
+        @ApiResponse(responseCode = "404", description = "Пользователя с таким логином не существует",
+                    content = {@Content(mediaType = Constant.MEDIA_TYPE,
+                            schema = @Schema(ref = "#/components/schemas/NewErrorBody"))})
     })
     @PostMapping("/nonLocked")
     public ResponseEntity<?> nonLockedUser(@RequestParam final String login) {
-        if (adminService.nonLockedUser(login)) {
-            return ResponseEntity.ok().build();
-        } else {
-            final ErrorListResponse response = new ErrorListResponse();
-            response.getErrors().add("login: Некорректный логин пользователя");
-            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-        }
+        adminService.nonLockedUser(login);
+        return ResponseEntity.ok().build();
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(UserNotFoundException.class)
+    public Map<String, String> userNotFound(final UserNotFoundException exc) {
+        return Collections.singletonMap("user:", exc.getMessage());
     }
 }

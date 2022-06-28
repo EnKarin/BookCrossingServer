@@ -1,6 +1,7 @@
 package io.github.enkarin.bookcrossing.books.dto;
 
 import io.github.enkarin.bookcrossing.books.model.Attachment;
+import io.github.enkarin.bookcrossing.books.model.Book;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 
@@ -50,6 +51,14 @@ public class BookModelDto {
     }
 
     public Attachment getAttachment() {
-        return new Attachment(attachment.getName(), attachment.getData(), attachment.getExpansion());
+        if (attachment != null) {
+            return new Attachment(attachment.getName(), attachment.getData(), attachment.getExpansion());
+        }
+        return null;
+    }
+
+    public static BookModelDto fromBook(final Book book) {
+        return new BookModelDto(book.getBookId(), book.getTitle(), book.getAuthor(), book.getGenre(),
+                book.getPublishingHouse(), book.getYear(), book.getAttachment());
     }
 }
