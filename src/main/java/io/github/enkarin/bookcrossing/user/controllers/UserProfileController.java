@@ -4,7 +4,6 @@ import io.github.enkarin.bookcrossing.constant.Constant;
 import io.github.enkarin.bookcrossing.errors.ErrorListResponse;
 import io.github.enkarin.bookcrossing.exception.UserNotFoundException;
 import io.github.enkarin.bookcrossing.user.dto.UserDtoResponse;
-import io.github.enkarin.bookcrossing.user.dto.UserListResponse;
 import io.github.enkarin.bookcrossing.user.dto.UserPutRequest;
 import io.github.enkarin.bookcrossing.user.model.User;
 import io.github.enkarin.bookcrossing.user.service.UserService;
@@ -143,7 +142,7 @@ public class UserProfileController {
 
     @GetMapping("/users")
     public ResponseEntity<?> getAllProfile(@RequestParam final int zone) {
-        return new ResponseEntity<>(new UserListResponse(userService.findAllUsers(zone)), HttpStatus.OK);
+        return new ResponseEntity<>(userService.findAllUsers(zone), HttpStatus.OK);
     }
 }
 

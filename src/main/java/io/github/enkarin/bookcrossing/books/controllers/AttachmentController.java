@@ -3,7 +3,8 @@ package io.github.enkarin.bookcrossing.books.controllers;
 import io.github.enkarin.bookcrossing.books.dto.AttachmentDto;
 import io.github.enkarin.bookcrossing.books.service.AttachmentService;
 import io.github.enkarin.bookcrossing.constant.Constant;
-import io.github.enkarin.bookcrossing.errors.ErrorListResponse;
+import io.github.enkarin.bookcrossing.exception.AttachmentNotFoundException;
+import io.github.enkarin.bookcrossing.exception.BadRequestException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -17,6 +18,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.util.Collections;
+import java.util.Map;
 
 @Tag(
         name = "Вложения к книгам",
@@ -34,20 +37,19 @@ public class AttachmentController {
             description = "Позволяет сохранить фотографию книги"
     )
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "400", description = "Некорректный запрос",
+        @ApiResponse(responseCode = "415", description = "Некорректное вложение",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(implementation = ErrorListResponse.class))}),
-        @ApiResponse(responseCode = "200", description = "Вложение сохранено")
+                    schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+        @ApiResponse(responseCode = "404", description = "Книги не существует",
+            content = {@Content(mediaType = Constant.MEDIA_TYPE,
+                    schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+        @ApiResponse(responseCode = "201", description = "Вложение сохранено")
     })
     @PostMapping("/attachment")
     public ResponseEntity<?> saveAttachment(@ModelAttribute final AttachmentDto attachmentDto,
                                             final Principal principal) throws IOException {
-        final ErrorListResponse response = attachmentService.saveAttachment(attachmentDto, principal.getName());
-        if (response.getErrors().isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-        }
+        attachmentService.saveAttachment(attachmentDto, principal.getName());
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @Operation(
@@ -55,19 +57,27 @@ public class AttachmentController {
             description = "Позволяет удалить фотографию книги"
     )
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "400", description = "Некорректный запрос",
+        @ApiResponse(responseCode = "404", description = "Вложения или книги не существует",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(implementation = ErrorListResponse.class))}),
+                    schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
         @ApiResponse(responseCode = "200", description = "Вложение удалено")
     })
     @DeleteMapping("/attachment")
     public ResponseEntity<?> deleteAttachment(@RequestParam final int bookId,
                                             final Principal principal) {
-        final ErrorListResponse response = attachmentService.deleteAttachment(bookId, principal.getName());
-        if (response.getErrors().isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-        }
+        attachmentService.deleteAttachment(bookId, principal.getName());
+        return ResponseEntity.ok().build();
+    }
+
+    @ResponseStatus(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
+    @ExceptionHandler(BadRequestException.class)
+    public Map<String, String> badRequest(final BadRequestException exc) {
+        return Collections.singletonMap("attachment", exc.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(AttachmentNotFoundException.class)
+    public Map<String, String> attachNotFound(final AttachmentNotFoundException exc) {
+        return Collections.singletonMap("attachment", exc.getMessage());
     }
 }

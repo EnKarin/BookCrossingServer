@@ -1,8 +1,7 @@
 package io.github.enkarin.bookcrossing.books.controllers;
 
 import io.github.enkarin.bookcrossing.books.dto.BookDto;
-import io.github.enkarin.bookcrossing.books.dto.BookListResponse;
-import io.github.enkarin.bookcrossing.books.dto.BookResponse;
+import io.github.enkarin.bookcrossing.books.dto.BookModelDto;
 import io.github.enkarin.bookcrossing.books.service.BookService;
 import io.github.enkarin.bookcrossing.constant.Constant;
 import io.github.enkarin.bookcrossing.errors.ErrorListResponse;
@@ -20,8 +19,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.security.Principal;
+import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 @Tag(
         name = "Раздел работы с книгами",
@@ -43,9 +42,9 @@ public class MyBookController {
         @ApiResponse(responseCode = "400", description = "Введены некорректные данные",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
                     schema = @Schema(implementation = ErrorListResponse.class))}),
-        @ApiResponse(responseCode = "200", description = "Возвращает сохраненную книгу",
+        @ApiResponse(responseCode = "201", description = "Возвращает сохраненную книгу",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(implementation = BookResponse.class))})}
+                    schema = @Schema(implementation = BookModelDto[].class))})}
     )
     @PostMapping
     public ResponseEntity<?> saveBook(@Valid @RequestBody final BookDto bookDTO,
@@ -55,14 +54,13 @@ public class MyBookController {
         if (bindingResult.hasErrors()) {
             bindingResult.getAllErrors().forEach(f -> response.getErrors()
                     .add(Objects.requireNonNull(f.getDefaultMessage())));
-            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(response);
         }
-        final Optional<BookResponse> book = bookService.saveBook(bookDTO, principal.getName());
-        if (book.isEmpty()) {
-            response.getErrors().add("user: Пользователь не найден");
-            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-        }
-        return ResponseEntity.ok(book);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(bookService.saveBook(bookDTO, principal.getName()));
     }
 
     @Operation(
@@ -72,13 +70,12 @@ public class MyBookController {
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Возвращает список книг",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(implementation = BookListResponse.class))})}
+                    schema = @Schema(implementation = BookModelDto[].class))})}
     )
     @GetMapping("/all")
-    public ResponseEntity<?> bookList(final Principal principal) {
-        final BookListResponse response = new BookListResponse();
-        response.setBookList(bookService.findBookForOwner(principal.getName()));
-        return ResponseEntity.ok(response);
+    public ResponseEntity<Object[]> bookList(final Principal principal) {
+        final List<BookModelDto> bookModelDtos = bookService.findBookForOwner(principal.getName());
+        return ResponseEntity.ok(bookModelDtos.toArray());
     }
 
     @Operation(
@@ -86,11 +83,16 @@ public class MyBookController {
             description = "Позволяет удалить книгу по ее id"
     )
     @ApiResponses(value = {
+        @ApiResponse(responseCode = "404", description = "Книга не найдена",
+            content = {@Content(mediaType = Constant.MEDIA_TYPE,
+                            schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
         @ApiResponse(responseCode = "200", description = "Удаляет книгу из бд")}
     )
     @DeleteMapping
     public ResponseEntity<?> deleteBook(@RequestParam final int bookId) {
         bookService.deleteBook(bookId);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .build();
     }
 }

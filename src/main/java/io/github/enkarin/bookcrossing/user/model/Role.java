@@ -5,7 +5,10 @@ import lombok.Setter;
 import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
 import java.util.Objects;
 import java.util.Set;
 
@@ -15,6 +18,8 @@ import java.util.Set;
 @ToString
 @Table(name = "t_role")
 public class Role implements GrantedAuthority {
+
+    private static final long serialVersionUID = -6364597624261857651L;
 
     @Id
     private int roleId;

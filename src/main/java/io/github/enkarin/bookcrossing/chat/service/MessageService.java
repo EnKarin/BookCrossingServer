@@ -1,5 +1,6 @@
 package io.github.enkarin.bookcrossing.chat.service;
 
+import io.github.enkarin.bookcrossing.chat.dto.MessageDto;
 import io.github.enkarin.bookcrossing.chat.dto.MessagePutRequest;
 import io.github.enkarin.bookcrossing.chat.dto.MessageRequest;
 import io.github.enkarin.bookcrossing.chat.model.Correspondence;
@@ -7,114 +8,100 @@ import io.github.enkarin.bookcrossing.chat.model.Message;
 import io.github.enkarin.bookcrossing.chat.model.UsersCorrKey;
 import io.github.enkarin.bookcrossing.chat.repository.CorrespondenceRepository;
 import io.github.enkarin.bookcrossing.chat.repository.MessageRepository;
-import io.github.enkarin.bookcrossing.errors.ErrorListResponse;
-import io.github.enkarin.bookcrossing.exception.MessageNotFountException;
+import io.github.enkarin.bookcrossing.exception.*;
 import io.github.enkarin.bookcrossing.user.model.User;
 import io.github.enkarin.bookcrossing.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
+@Transactional
 public class MessageService {
 
     private final MessageRepository messageRepository;
     private final CorrespondenceRepository correspondenceRepository;
     private final UserRepository userRepository;
 
-    public Optional<Message> sendMessage(final MessageRequest dto, final String login) {
+    public MessageDto sendMessage(final MessageRequest dto, final String login) {
         final User user = userRepository.findByLogin(login).orElseThrow();
-        final Optional<User> firstUser = userRepository.findById(dto.getUsersCorrKeyDto().getFirstUserId());
-        final Optional<User> secondUser = userRepository.findById(dto.getUsersCorrKeyDto().getSecondUserId());
-        if (firstUser.isPresent() && secondUser.isPresent()) {
-            final UsersCorrKey usersCorrKey = new UsersCorrKey();
-            usersCorrKey.setFirstUser(firstUser.get());
-            usersCorrKey.setSecondUser(secondUser.get());
-            if (usersCorrKey.getFirstUser().equals(user) || usersCorrKey.getSecondUser().equals(user)) {
-                final Optional<Correspondence> correspondence = correspondenceRepository.findById(usersCorrKey);
-                if (correspondence.isPresent()) {
-                    final Message message = new Message();
-                    message.setText(dto.getText());
-                    message.setDepartureDate(LocalDateTime.now()
-                            .toEpochSecond(ZoneOffset.systemDefault().getRules().getOffset(Instant.now())));
-                    message.setCorrespondence(correspondence.get());
-                    message.setSender(user);
-                    message.setShownFirstUser(true);
-                    message.setShownSecondUser(true);
-                    return Optional.of(messageRepository.save(message));
-                }
-            }
+        final User firstUser = userRepository.findById(dto.getUsersCorrKeyDto().getFirstUserId())
+                .orElseThrow(UserNotFoundException::new);
+        final User secondUser = userRepository.findById(dto.getUsersCorrKeyDto().getSecondUserId())
+                .orElseThrow(UserNotFoundException::new);
+        final UsersCorrKey usersCorrKey = new UsersCorrKey();
+        usersCorrKey.setFirstUser(firstUser);
+        usersCorrKey.setSecondUser(secondUser);
+        if (usersCorrKey.getFirstUser().equals(user) || usersCorrKey.getSecondUser().equals(user)) {
+            final Correspondence correspondence = correspondenceRepository.findById(usersCorrKey)
+                    .orElseThrow(ChatNotFoundException::new);
+            final Message message = new Message();
+            message.setText(dto.getText());
+            message.setDepartureDate(LocalDateTime.now()
+                    .toEpochSecond(ZoneOffset.systemDefault().getRules().getOffset(Instant.now())));
+            message.setCorrespondence(correspondence);
+            message.setSender(user);
+            message.setShownFirstUser(true);
+            message.setShownSecondUser(true);
+            return MessageDto.fromMessage(messageRepository.save(message));
         }
-        return Optional.empty();
+        throw new NoAccessToChatException();
     }
 
-    public Optional<Message> putMessage(final MessagePutRequest messagePutRequest, final String login) {
+    public MessageDto putMessage(final MessagePutRequest messagePutRequest, final String login) {
         final User user = userRepository.findByLogin(login).orElseThrow();
-        final Optional<Message> message = messageRepository.findById(messagePutRequest.getMessageId());
-        if (message.isPresent() && user.equals(message.get().getSender())) {
-            final Correspondence correspondence = message.get().getCorrespondence();
+        final Message message = messageRepository.findById(messagePutRequest.getMessageId())
+                .orElseThrow(MessageNotFountException::new);
+        if (user.equals(message.getSender())) {
+            final Correspondence correspondence = message.getCorrespondence();
             if (user.equals(correspondence.getUsersCorrKey().getFirstUser()) ||
                     user.equals(correspondence.getUsersCorrKey().getSecondUser())) {
-                message.get().setDepartureDate(LocalDateTime.now()
+                message.setDepartureDate(LocalDateTime.now()
                         .toEpochSecond(ZoneOffset.systemDefault().getRules().getOffset(Instant.now())));
-                message.get().setText(messagePutRequest.getText());
-                return Optional.of(messageRepository.save(message.get()));
+                message.setText(messagePutRequest.getText());
+                return MessageDto.fromMessage(messageRepository.save(message));
             } else {
-                return Optional.empty();
+                throw new NoAccessToChatException();
             }
         } else {
-            throw new MessageNotFountException();
+            throw new UserIsNotSenderException();
         }
     }
 
-    public ErrorListResponse deleteForEveryoneMessage(final long messageId, final String login) {
-        final ErrorListResponse response = new ErrorListResponse();
+    public void deleteForEveryoneMessage(final long messageId, final String login) {
         final User user = userRepository.findByLogin(login).orElseThrow();
-        final Optional<Message> message = messageRepository.findById(messageId);
-        if (message.isPresent()) {
-            final Correspondence correspondence = message.get().getCorrespondence();
-            if (correspondence.getUsersCorrKey().getFirstUser().equals(user) ||
-                    correspondence.getUsersCorrKey().getSecondUser().equals(user)) {
-                if (user.equals(message.get().getSender())) {
-                    messageRepository.delete(message.get());
-                } else {
-                    response.getErrors().add("message: Пользователь не является отправителем");
-                }
+        final Message message = messageRepository.findById(messageId)
+                .orElseThrow(MessageNotFountException::new);
+        final Correspondence correspondence = message.getCorrespondence();
+        if (correspondence.getUsersCorrKey().getFirstUser().equals(user) ||
+                correspondence.getUsersCorrKey().getSecondUser().equals(user)) {
+            if (user.equals(message.getSender())) {
+                messageRepository.delete(message);
             } else {
-                response.getErrors().add("correspondence: Нет доступа к чату");
+                throw new UserIsNotSenderException();
             }
         } else {
-            response.getErrors().add("message: Сообщения не существует");
+            throw new NoAccessToChatException();
         }
-        return response;
     }
 
-    public ErrorListResponse deleteForMeMessage(final long messageId, final String login) {
-        final ErrorListResponse response = new ErrorListResponse();
+    public void deleteForMeMessage(final long messageId, final String login) {
         final User user = userRepository.findByLogin(login).orElseThrow();
-        final Optional<Message> message = messageRepository.findById(messageId);
-        if (message.isPresent()) {
-            final Correspondence correspondence = message.get().getCorrespondence();
-            if (user.equals(message.get().getSender())) {
-                if (correspondence.getUsersCorrKey().getFirstUser().equals(user)) {
-                    message.get().setShownFirstUser(false);
-                    messageRepository.save(message.get());
-                }
-                if (correspondence.getUsersCorrKey().getSecondUser().equals(user)) {
-                    message.get().setShownSecondUser(false);
-                    messageRepository.save(message.get());
-                }
-            } else {
-                response.getErrors().add("message: Пользователь не является отправителем");
-            }
+        final Message message = messageRepository.findById(messageId)
+                .orElseThrow(MessageNotFountException::new);
+        final Correspondence correspondence = message.getCorrespondence();
+        if (correspondence.getUsersCorrKey().getFirstUser().equals(user)) {
+            message.setShownFirstUser(false);
+        } else if (correspondence.getUsersCorrKey().getSecondUser().equals(user)) {
+            message.setShownSecondUser(false);
         } else {
-            response.getErrors().add("message: Сообщения не существует");
+            throw new NoAccessToChatException();
         }
-        return response;
+        messageRepository.save(message);
     }
 }

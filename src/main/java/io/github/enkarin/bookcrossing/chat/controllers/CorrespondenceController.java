@@ -1,14 +1,13 @@
 package io.github.enkarin.bookcrossing.chat.controllers;
 
-import io.github.enkarin.bookcrossing.chat.dto.MessageResponse;
+import io.github.enkarin.bookcrossing.chat.dto.MessageDto;
 import io.github.enkarin.bookcrossing.chat.dto.UsersCorrKeyDto;
 import io.github.enkarin.bookcrossing.chat.dto.ZonedUserCorrKeyDto;
-import io.github.enkarin.bookcrossing.chat.model.Correspondence;
 import io.github.enkarin.bookcrossing.chat.service.CorrespondenceService;
 import io.github.enkarin.bookcrossing.constant.Constant;
-import io.github.enkarin.bookcrossing.errors.ErrorListResponse;
+import io.github.enkarin.bookcrossing.exception.CannotBeCreatedCorrespondenceException;
 import io.github.enkarin.bookcrossing.exception.ChatAlreadyCreatedException;
-import io.github.enkarin.bookcrossing.exception.UserNotFoundException;
+import io.github.enkarin.bookcrossing.exception.ChatNotFoundException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -22,8 +21,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 
 @Tag(
         name = "Чаты",
@@ -43,34 +43,19 @@ public class CorrespondenceController {
     @ApiResponses(value = {
         @ApiResponse(responseCode = "409", description = "Чат уже существует",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(implementation = ErrorListResponse.class))}),
+                    schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
         @ApiResponse(responseCode = "406", description = "Нельзя создать чат с данным пользователем",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(implementation = ErrorListResponse.class))}),
-        @ApiResponse(responseCode = "200", description = "Чат создан",
+                    schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+        @ApiResponse(responseCode = "201", description = "Чат создан",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(implementation = Correspondence.class))})
+                    schema = @Schema(implementation = UsersCorrKeyDto.class))})
     })
     @PostMapping
-    public ResponseEntity<?> createCorrespondence(@RequestParam final int userId,
+    public ResponseEntity<UsersCorrKeyDto> createCorrespondence(@RequestParam final int userId,
                                                   final Principal principal) {
-        final ErrorListResponse response = new ErrorListResponse();
-        try {
-            final Optional<UsersCorrKeyDto> usersCorrKeyDto = correspondenceService.createChat(userId,
-                    principal.getName());
-            if (usersCorrKeyDto.isPresent()) {
-                return new ResponseEntity<>(usersCorrKeyDto.get(), HttpStatus.OK);
-            } else {
-                response.getErrors().add("user: Пользователь заблокирован");
-                return new ResponseEntity<>(response, HttpStatus.NOT_ACCEPTABLE);
-            }
-        } catch (ChatAlreadyCreatedException e) {
-            response.getErrors().add("correspondence: Чат уже существует");
-            return new ResponseEntity<>(response, HttpStatus.CONFLICT);
-        } catch (UserNotFoundException e) {
-            response.getErrors().add("user: Пользователь не найден");
-            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
-        }
+        final UsersCorrKeyDto usersCorrKeyDto = correspondenceService.createChat(userId, principal.getName());
+        return ResponseEntity.status(HttpStatus.CREATED).body(usersCorrKeyDto);
     }
 
     @Operation(
@@ -80,7 +65,7 @@ public class CorrespondenceController {
     @ApiResponses(value = {
         @ApiResponse(responseCode = "404", description = "Чата не существует",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(implementation = ErrorListResponse.class))}),
+                    schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
         @ApiResponse(responseCode = "200", description = "Чат удален")
         }
     )
@@ -88,11 +73,8 @@ public class CorrespondenceController {
     public ResponseEntity<?> deleteCorrespondence(@RequestParam @Parameter(description = "Идентификатор пользователя")
                                                       final int userId,
                                                   final Principal principal) {
-        if (correspondenceService.deleteChat(userId, principal.getName())) {
-            return new ResponseEntity<>(HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        correspondenceService.deleteChat(userId, principal.getName());
+        return ResponseEntity.ok().build();
     }
 
     @Operation(
@@ -102,22 +84,34 @@ public class CorrespondenceController {
     @ApiResponses(value = {
         @ApiResponse(responseCode = "404", description = "Чата не существует",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(implementation = ErrorListResponse.class))}),
+                    schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
         @ApiResponse(responseCode = "200", description = "Возвращает список сообщений",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(implementation = MessageResponse.class))})
+                    schema = @Schema(implementation = MessageDto[].class))})
         }
     )
     @GetMapping
-    public ResponseEntity<?> getCorrespondence(@RequestBody final ZonedUserCorrKeyDto dto,
+    public ResponseEntity<Object[]> getCorrespondence(@RequestBody final ZonedUserCorrKeyDto dto,
                                                final Principal principal) {
-        final Optional<List<MessageResponse>> messageResponse = correspondenceService.getChat(dto, principal.getName());
-        if (messageResponse.isPresent()) {
-            return ResponseEntity.ok(messageResponse.get());
-        } else {
-            final ErrorListResponse response = new ErrorListResponse();
-            response.getErrors().add("correspondence: Чата не существует");
-            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
-        }
+        final List<MessageDto> messageResponse = correspondenceService.getChat(dto, principal.getName());
+        return ResponseEntity.ok(messageResponse.toArray());
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(ChatNotFoundException.class)
+    public Map<String, String> chatNotFound(final ChatNotFoundException exc) {
+        return Collections.singletonMap("correspondence", exc.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.CONFLICT)
+    @ExceptionHandler(ChatAlreadyCreatedException.class)
+    public Map<String, String> chatAlreadyCreated(final ChatAlreadyCreatedException exc) {
+        return Collections.singletonMap("correspondence", exc.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
+    @ExceptionHandler(CannotBeCreatedCorrespondenceException.class)
+    public Map<String, String> userIsLocked(final CannotBeCreatedCorrespondenceException exc) {
+        return Collections.singletonMap("user", exc.getMessage());
     }
 }

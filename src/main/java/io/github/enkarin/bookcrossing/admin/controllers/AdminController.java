@@ -1,6 +1,6 @@
 package io.github.enkarin.bookcrossing.admin.controllers;
 
-import io.github.enkarin.bookcrossing.admin.dto.AdmUserListResponse;
+import io.github.enkarin.bookcrossing.admin.dto.InfoUsersDto;
 import io.github.enkarin.bookcrossing.admin.dto.LockedUserDto;
 import io.github.enkarin.bookcrossing.admin.service.AdminService;
 import io.github.enkarin.bookcrossing.constant.Constant;
@@ -39,14 +39,12 @@ public class AdminController {
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Возвращает список пользователей",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(implementation = AdmUserListResponse.class))})
+                    schema = @Schema(implementation = InfoUsersDto[].class))})
         }
     )
     @GetMapping("/all")
-    public ResponseEntity<?> userList(@RequestParam @Parameter(description = "Часовой пояс") final int zone) {
-        final AdmUserListResponse response = new AdmUserListResponse();
-        response.setUserList(adminService.findAllUsers(zone));
-        return ResponseEntity.ok(response);
+    public ResponseEntity<Object[]> userList(@RequestParam @Parameter(description = "Часовой пояс") final int zone) {
+        return ResponseEntity.ok(adminService.findAllUsers(zone).toArray());
     }
 
     @Operation(
@@ -55,12 +53,12 @@ public class AdminController {
     )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Отправляет на почту сообщение о блокировке"),
-        @ApiResponse(responseCode = "403", description = "Пустой логин или комментарий",
+        @ApiResponse(responseCode = "406", description = "Пустой логин или комментарий",
                     content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                            schema = @Schema(implementation = ErrorListResponse.class))}),
+                            schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
         @ApiResponse(responseCode = "404", description = "Пользователя с таким логином не существует",
                     content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                            schema = @Schema(implementation = ErrorListResponse.class))})
+                            schema = @Schema(ref = "#/components/schemas/NewErrorBody"))})
     }
     )
     @PostMapping("/locked")
@@ -70,14 +68,12 @@ public class AdminController {
         if (bindingResult.hasErrors()) {
             bindingResult.getAllErrors().forEach(f -> response.getErrors()
                     .add(Objects.requireNonNull(f.getDefaultMessage())));
-            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+            return ResponseEntity
+                    .status(HttpStatus.NOT_ACCEPTABLE)
+                    .body(response);
         }
-        if (adminService.lockedUser(lockedUserDto)) {
-            return new ResponseEntity<>(HttpStatus.OK);
-        } else {
-            response.getErrors().add("login: Некорректный логин пользователя");
-            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
-        }
+        adminService.lockedUser(lockedUserDto);
+        return ResponseEntity.ok().build();
     }
 
     @Operation(
@@ -85,19 +81,14 @@ public class AdminController {
             description = "Позволяет разблокировать пользователя по его логину"
     )
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Возвращает на стартовую страницу"),
-        @ApiResponse(responseCode = "403", description = "Пользователя с таким логином не существует",
-            content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(implementation = ErrorListResponse.class))})
+        @ApiResponse(responseCode = "200"),
+        @ApiResponse(responseCode = "404", description = "Пользователя с таким логином не существует",
+                    content = {@Content(mediaType = Constant.MEDIA_TYPE,
+                            schema = @Schema(ref = "#/components/schemas/NewErrorBody"))})
     })
     @PostMapping("/nonLocked")
     public ResponseEntity<?> nonLockedUser(@RequestParam final String login) {
-        if (adminService.nonLockedUser(login)) {
-            return new ResponseEntity<>(HttpStatus.OK);
-        } else {
-            final ErrorListResponse response = new ErrorListResponse();
-            response.getErrors().add("login: Некорректный логин пользователя");
-            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-        }
+        adminService.nonLockedUser(login);
+        return ResponseEntity.ok().build();
     }
 }

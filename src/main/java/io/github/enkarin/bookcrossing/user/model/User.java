@@ -1,10 +1,8 @@
 package io.github.enkarin.bookcrossing.user.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.github.enkarin.bookcrossing.books.model.Book;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -19,6 +17,8 @@ import java.util.Set;
 @Table(name = "t_user")
 public class User implements UserDetails {
 
+    private static final long serialVersionUID = -6289855612211696141L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int userId;
@@ -27,8 +27,6 @@ public class User implements UserDetails {
 
     private String login;
 
-    @ToString.Exclude
-    @JsonIgnore
     private String password;
 
     private String email;
@@ -47,12 +45,9 @@ public class User implements UserDetails {
             joinColumns = { @JoinColumn(name = "user_id")},
             inverseJoinColumns = { @JoinColumn(name = "role_id")}
     )
-    @ToString.Exclude
-    @JsonIgnore
     private Set<Role> userRoles;
 
     @OneToMany(mappedBy = "owner", fetch = FetchType.EAGER)
-    @ToString.Exclude
     private Set<Book> books;
 
     @ManyToMany
@@ -61,23 +56,19 @@ public class User implements UserDetails {
             joinColumns = {@JoinColumn(name = "user_id")},
             inverseJoinColumns = {@JoinColumn(name = "book_id")}
     )
-    @JsonIgnore
     private Set<Book> bookmarks;
 
     @Override
-    @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return userRoles;
     }
 
     @Override
-    @JsonIgnore
     public String getUsername() {
         return login;
     }
 
     @Override
-    @JsonIgnore
     public boolean isAccountNonExpired() {
         return true;
     }
@@ -88,7 +79,6 @@ public class User implements UserDetails {
     }
 
     @Override
-    @JsonIgnore
     public boolean isCredentialsNonExpired() {
         return true;
     }
