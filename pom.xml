@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.5.6</version>
+        <version>2.6.7</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>ru.bookcrossing</groupId>
@@ -15,6 +15,7 @@
     <description>Graduate work</description>
     <properties>
         <java.version>12</java.version>
+        <testcontainer.version>1.17.2</testcontainer.version>
     </properties>
     <dependencies>
         <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-data-jpa -->
@@ -27,14 +28,12 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
-            <version>5.3.20</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>8.0.29</version>
         </dependency>
 
         <dependency>
@@ -46,7 +45,6 @@
         <dependency>
             <groupId>org.awaitility</groupId>
             <artifactId>awaitility</artifactId>
-            <version>3.1.2</version>
             <scope>test</scope>
         </dependency>
 
@@ -94,7 +92,27 @@
             <artifactId>springdoc-openapi-ui</artifactId>
             <version>1.6.0</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>testcontainers</artifactId>
+            <version>${testcontainer.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>${testcontainer.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>mysql</artifactId>
+            <version>${testcontainer.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
@@ -106,8 +124,8 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -119,7 +137,7 @@
                 <artifactId>spotbugs-maven-plugin</artifactId>
                 <version>4.2.2</version>
                 <configuration>
-                    <excludeFilterFile>/config/spotbugs.xml</excludeFilterFile>
+                    <excludeFilterFile>/config/spotbugs/spotbugs.xml</excludeFilterFile>
                 </configuration>
                 <executions>
                     <execution>
@@ -140,8 +158,9 @@
                 <artifactId>maven-pmd-plugin</artifactId>
                 <version>3.13.0</version>
                 <configuration>
+                    <includeTests>true</includeTests>
                     <rulesets>
-                        <ruleset>/config/pmd.xml</ruleset>
+                        <ruleset>/config/pmd/pmd.xml</ruleset>
                     </rulesets>
                     <linkXRef>false</linkXRef>
                     <failOnViolation>true</failOnViolation>
@@ -169,7 +188,8 @@
                             <goal>check</goal>
                         </goals>
                         <configuration>
-                            <configLocation>config/checkstyle.xml</configLocation>
+                            <includeTestSourceDirectory>true</includeTestSourceDirectory>
+                            <configLocation>config/checkstyle/checkstyle.xml</configLocation>
                             <encoding>UTF-8</encoding>
                             <consoleOutput>true</consoleOutput>
                             <failsOnError>false</failsOnError>

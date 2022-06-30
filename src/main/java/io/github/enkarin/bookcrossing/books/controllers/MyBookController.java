@@ -72,7 +72,7 @@ public class MyBookController {
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
                     schema = @Schema(implementation = BookModelDto[].class))})}
     )
-    @GetMapping("/all")
+    @GetMapping
     public ResponseEntity<Object[]> bookList(final Principal principal) {
         final List<BookModelDto> bookModelDtos = bookService.findBookForOwner(principal.getName());
         return ResponseEntity.ok(bookModelDtos.toArray());

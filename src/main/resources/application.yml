@@ -1,0 +1,46 @@
+server:
+    port: ${port:8443}
+    servlet:
+        session:
+            cookie:
+                http-only: true
+                secure: true
+            tracking-modes: cookie
+    ssl:
+        enabled: true
+        key-store: D:/IdeaProgects/BookcrossingServer/src/main/resources/keystore.p12
+        keyStoreType: PKCS12
+        key-alias: tomcat
+        key-store-password: Sw1982
+
+spring:
+    jpa:
+        show-sql: true
+        hibernate:
+            ddl-auto: create
+        database-platform: org.hibernate.dialect.MySQL8Dialect
+        properties:
+            hibernate:
+                connection:
+                    characterEncoding: utf-8
+                    CharSet: utf-8
+                    useUnicode: true
+                enable_lazy_load_no_trans: true
+        open-in-view: false
+    datasource:
+        url: jdbc:mysql://localhost:3306/bookcrossing
+        username: root
+        password: root
+        driver-class-name: com.mysql.cj.jdbc.Driver
+    servlet:
+        multipart:
+            max-file-size: 5MB
+            max-request-size: 6MB
+    flyway:
+        enabled: false
+
+jwt:
+    secret: scjwtmaster
+mail:
+    password: dtwj tqum vhex ruow
+    username: bookscrossingdiploma@gmail.com
