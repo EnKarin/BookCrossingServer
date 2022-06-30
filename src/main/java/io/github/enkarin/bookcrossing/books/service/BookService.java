@@ -10,8 +10,6 @@ import io.github.enkarin.bookcrossing.exception.UserNotFoundException;
 import io.github.enkarin.bookcrossing.user.model.User;
 import io.github.enkarin.bookcrossing.user.repository.UserRepository;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeMap;
-import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,9 +28,7 @@ public class BookService {
         userRepository = usr;
         bookRepository = bkr;
         modelMapper = mdm;
-        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.LOOSE);
-        final TypeMap<BookDto, Book> bookDtoMapper = modelMapper.createTypeMap(BookDto.class, Book.class);
-        bookDtoMapper.addMappings(ms -> ms.skip(Book::setOwner));
+        modelMapper.createTypeMap(BookDto.class, Book.class).addMappings(ms -> ms.skip(Book::setOwner));
     }
 
     @Transactional
@@ -44,9 +40,7 @@ public class BookService {
     }
 
     public List<BookModelDto> findBookForOwner(final String login) {
-        final User user = userRepository.findByLogin(login).orElseThrow();
-        return bookRepository.findBooksByOwner(user).stream()
-                .filter(b -> b.getOwner().isAccountNonLocked())
+        return bookRepository.findBooksByOwner(userRepository.findByLogin(login).orElseThrow()).stream()
                 .map(BookModelDto::fromBook)
                 .collect(Collectors.toList());
     }
