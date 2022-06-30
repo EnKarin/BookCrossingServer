@@ -1,4 +1,4 @@
-package io.github.enkarin.bookcrossing.mail.config;
+package io.github.enkarin.bookcrossing.configuration;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
