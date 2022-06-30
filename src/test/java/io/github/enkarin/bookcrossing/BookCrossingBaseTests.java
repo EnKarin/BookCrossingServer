@@ -1,5 +1,6 @@
 package io.github.enkarin.bookcrossing;
 
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -24,5 +25,10 @@ public class BookCrossingBaseTests {
         registry.add("spring.datasource.url", MY_SQL_CONTAINER::getJdbcUrl);
         registry.add("flyway.user", MY_SQL_CONTAINER::getUsername);
         registry.add("flyway.password", MY_SQL_CONTAINER::getPassword);
+    }
+
+    @Test
+    public void contextLoads() {
+        // should not throw any exception
     }
 }
