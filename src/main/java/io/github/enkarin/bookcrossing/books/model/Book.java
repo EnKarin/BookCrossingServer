@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Set;
 
@@ -20,6 +21,7 @@ public class Book implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int bookId;
 
+    @NotNull
     private String title;
 
     private String author;
