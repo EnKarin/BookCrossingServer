@@ -61,4 +61,9 @@ public class BookModelDto {
         return new BookModelDto(book.getBookId(), book.getTitle(), book.getAuthor(), book.getGenre(),
                 book.getPublishingHouse(), book.getYear(), book.getAttachment());
     }
+
+    public static BookModelDto create(final int bookId, final String title, final String author, final String genre,
+                                      final String publishingHouse, final int year, final Attachment attachment) {
+        return new BookModelDto(bookId, title, author, genre, publishingHouse, year, attachment);
+    }
 }
