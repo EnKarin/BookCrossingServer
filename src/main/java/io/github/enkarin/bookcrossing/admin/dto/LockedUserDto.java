@@ -8,7 +8,7 @@ import org.springframework.validation.annotation.Validated;
 import javax.validation.constraints.NotBlank;
 
 @Getter
-@Schema(description = "Сущностьдля блокировки пользователя")
+@Schema(description = "Сущность для блокировки пользователя")
 @Validated
 public class LockedUserDto {
 

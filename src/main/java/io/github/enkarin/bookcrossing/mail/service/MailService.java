@@ -1,5 +1,6 @@
 package io.github.enkarin.bookcrossing.mail.service;
 
+import io.github.enkarin.bookcrossing.exception.UserNotFoundException;
 import io.github.enkarin.bookcrossing.mail.enums.ApproveType;
 import io.github.enkarin.bookcrossing.mail.model.ActionMailUser;
 import io.github.enkarin.bookcrossing.mail.repository.ActionMailUserRepository;
@@ -10,12 +11,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class MailService {
 
     private final JavaMailSender emailSender;
@@ -25,6 +27,7 @@ public class MailService {
     @Value("${server.port}")
     private String port;
 
+    @Transactional
     public void sendApproveMail(final User user) {
         final String token = UUID.randomUUID().toString();
         final ActionMailUser confirmationMailUser = new ActionMailUser();
@@ -42,27 +45,22 @@ public class MailService {
         emailSender.send(message);
     }
 
-    public boolean sendResetPassword(final String email) {
-        final Optional<User> user = userRepository.findByEmail(email);
-        if (user.isPresent()) {
-            final String token = UUID.randomUUID().toString();
-            final ActionMailUser confirmationMailUser = new ActionMailUser();
-            confirmationMailUser.setUser(user.get());
-            confirmationMailUser.setConfirmationMail(token);
-            confirmationMailUser.setType(ApproveType.RESET);
-            confirmationMailUserRepository.save(confirmationMailUser);
+    @Transactional
+    public void sendResetPassword(final String email) {
+        final User user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
+        final String token = UUID.randomUUID().toString();
+        final ActionMailUser confirmationMailUser = new ActionMailUser();
+        confirmationMailUser.setUser(user);
+        confirmationMailUser.setConfirmationMail(token);
+        confirmationMailUser.setType(ApproveType.RESET);
+        confirmationMailUserRepository.save(confirmationMailUser);
 
-            final SimpleMailMessage message = new SimpleMailMessage();
-            message.setTo(email);
-            message.setSubject("Сброс пароля BookCrossing");
-            message.setText("Перейдите по ссылке, чтобы сменить пароль: " +
-                    String.format("https://localhost:%s/reset/update?token=%s", port, token));
-
-            emailSender.send(message);
-            return true;
-        } else {
-            return false;
-        }
+        final SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(email);
+        message.setSubject("Сброс пароля BookCrossing");
+        message.setText("Перейдите по ссылке, чтобы сменить пароль: " +
+                String.format("https://localhost:%s/reset/update?token=%s", port, token));
+        emailSender.send(message);
     }
 
     public void sendBlockingMessage(final User user, final String comment) {
