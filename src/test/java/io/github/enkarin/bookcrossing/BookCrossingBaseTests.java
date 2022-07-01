@@ -1,6 +1,8 @@
 package io.github.enkarin.bookcrossing;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -12,6 +14,9 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @Testcontainers
 @ActiveProfiles("test")
 public abstract class BookCrossingBaseTests {
+
+    @Autowired
+    protected JdbcTemplate jdbcTemplate;
 
     @Container
     private static final MySQLContainer MY_SQL_CONTAINER = new MySQLContainer("mysql:8.0.28")
