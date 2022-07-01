@@ -127,6 +127,8 @@ class BookServiceTest extends BookCrossingBaseTests {
                 .size().isEqualTo(0);
     }
 
+    //JDBCTemplate
+
     @SqlGroup({
         @Sql("classpath:db/scripts/insert_user.sql"),
         @Sql("classpath:db/scripts/insert_books.sql")

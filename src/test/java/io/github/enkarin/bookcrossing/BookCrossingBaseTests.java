@@ -1,6 +1,5 @@
 package io.github.enkarin.bookcrossing;
 
-import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -12,7 +11,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @SpringBootTest
 @Testcontainers
 @ActiveProfiles("test")
-public class BookCrossingBaseTests {
+public abstract class BookCrossingBaseTests {
 
     @Container
     private static final MySQLContainer MY_SQL_CONTAINER = new MySQLContainer("mysql:8.0.28")
@@ -25,10 +24,5 @@ public class BookCrossingBaseTests {
         registry.add("spring.datasource.url", MY_SQL_CONTAINER::getJdbcUrl);
         registry.add("flyway.user", MY_SQL_CONTAINER::getUsername);
         registry.add("flyway.password", MY_SQL_CONTAINER::getPassword);
-    }
-
-    @Test
-    public void contextLoads() {
-        // should not throw any exception
     }
 }
