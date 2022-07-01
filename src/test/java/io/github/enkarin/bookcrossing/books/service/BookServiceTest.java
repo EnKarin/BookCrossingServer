@@ -6,22 +6,28 @@ import io.github.enkarin.bookcrossing.books.dto.BookFiltersRequest;
 import io.github.enkarin.bookcrossing.books.dto.BookModelDto;
 import io.github.enkarin.bookcrossing.exception.BookNotFoundException;
 import io.github.enkarin.bookcrossing.exception.UserNotFoundException;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlGroup;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 import static org.assertj.core.api.Java6Assertions.assertThat;
 import static org.assertj.core.api.Java6Assertions.assertThatThrownBy;
 
-@Transactional
 class BookServiceTest extends BookCrossingBaseTests {
 
     @Autowired
     private BookService bookService;
+
+    @AfterEach
+    void delete() {
+        jdbcTemplate.update("delete from t_book where book_id in (1, 2, 3, 4)");
+        jdbcTemplate.update("delete from t_user_role where user_id in (50, 66)");
+        jdbcTemplate.update("delete from t_user where user_id in (50, 66)");
+    }
 
     @Test
     void saveBook() {
@@ -127,8 +133,6 @@ class BookServiceTest extends BookCrossingBaseTests {
                 .size().isEqualTo(0);
     }
 
-    //JDBCTemplate
-
     @SqlGroup({
         @Sql("classpath:db/scripts/insert_user.sql"),
         @Sql("classpath:db/scripts/insert_books.sql")
@@ -136,7 +140,9 @@ class BookServiceTest extends BookCrossingBaseTests {
     @Test
     void deleteBookTest() {
         bookService.deleteBook(2);
-        assertThatThrownBy(() -> bookService.findById(2)).isInstanceOf(BookNotFoundException.class);
+        assertThat(jdbcTemplate
+                .queryForObject("SELECT EXISTS(SELECT 1 FROM t_book WHERE book_id = 2);", Long.class))
+                .isEqualTo(0);
     }
 
     @Test
