@@ -12,10 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlGroup;
 
-import java.util.List;
-
-import static org.assertj.core.api.Java6Assertions.assertThat;
-import static org.assertj.core.api.Java6Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class BookServiceTest extends BookCrossingBaseTests {
 
@@ -31,10 +29,8 @@ class BookServiceTest extends BookCrossingBaseTests {
 
     @Test
     void saveBook() {
-        final BookModelDto returned = bookService.saveBook(BookDto.create("title", "author", null,
-                null, 2000), "admin");
-        assertThat(returned)
-                .usingRecursiveComparison()
+        assertThat(bookService.saveBook(BookDto.create("title", "author", null,
+                null, 2000), "admin"))
                 .isEqualTo(BookModelDto.create(1, "title", "author", null,
                         null, 2000, null));
     }
@@ -42,7 +38,9 @@ class BookServiceTest extends BookCrossingBaseTests {
     @Test
     void saveExceptionTest() {
         assertThatThrownBy(() -> bookService.saveBook(BookDto.create("title", "author", null,
-                null, 2000), "users")).isInstanceOf(UserNotFoundException.class);
+                null, 2000), "users"))
+                .isInstanceOf(UserNotFoundException.class)
+                .hasMessage("Пользователь не найден");
     }
 
     @SqlGroup({
@@ -51,15 +49,11 @@ class BookServiceTest extends BookCrossingBaseTests {
     })
     @Test
     void findBookForOwnerTest() {
-        final List<BookModelDto> returned = bookService.findBookForOwner("user");
-        assertThat(returned).size().isEqualTo(2);
-        assertThat(returned.get(0))
-                .usingRecursiveComparison()
-                .isEqualTo(BookModelDto.create(3, "title2", "author",
-                        "genre", "publishing_house", 2020, null));
-        assertThat(returned.get(1))
-                .usingRecursiveComparison()
-                .isEqualTo(BookModelDto.create(4, "title3", "author",
+        assertThat(bookService.findBookForOwner("user"))
+                .hasSize(2)
+                .containsExactlyInAnyOrder(BookModelDto.create(3, "title2", "author",
+                        "genre", "publishing_house", 2020, null),
+                        BookModelDto.create(4, "title3", "author",
                         "genre2", "publishing_house", 2000, null));
     }
 
@@ -69,8 +63,7 @@ class BookServiceTest extends BookCrossingBaseTests {
     })
     @Test
     void findEmptyBookForOwnerTest() {
-        final List<BookModelDto> returned = bookService.findBookForOwner("alex");
-        assertThat(returned).size().isEqualTo(0);
+        assertThat(bookService.findBookForOwner("alex")).isEmpty();
     }
 
     @SqlGroup({
@@ -87,7 +80,9 @@ class BookServiceTest extends BookCrossingBaseTests {
 
     @Test
     void findByIdExceptionTest() {
-        assertThatThrownBy(() -> bookService.findById(3)).isInstanceOf(BookNotFoundException.class);
+        assertThatThrownBy(() -> bookService.findById(Integer.MAX_VALUE))
+                .isInstanceOf(BookNotFoundException.class)
+                .hasMessage("Книга не найдена");
     }
 
     @SqlGroup({
@@ -96,16 +91,12 @@ class BookServiceTest extends BookCrossingBaseTests {
     })
     @Test
     void oneFilterTest() {
-        final List<BookModelDto> returned = bookService.filter(BookFiltersRequest
-                .create(null, null, null, "author", null, 0));
-        assertThat(returned).size().isEqualTo(2);
-        assertThat(returned.get(0))
-                .usingRecursiveComparison()
-                .isEqualTo(BookModelDto.create(3, "title2", "author",
-                        "genre", "publishing_house", 2020, null));
-        assertThat(returned.get(1))
-                .usingRecursiveComparison()
-                .isEqualTo(BookModelDto.create(4, "title3", "author",
+        assertThat(bookService.filter(BookFiltersRequest.create(null, null, null, "author",
+                null, 0)))
+                .hasSize(2)
+                .containsExactlyInAnyOrder(BookModelDto.create(3, "title2", "author",
+                        "genre", "publishing_house", 2020, null),
+                        BookModelDto.create(4, "title3", "author",
                         "genre2", "publishing_house", 2000, null));
     }
 
@@ -115,22 +106,19 @@ class BookServiceTest extends BookCrossingBaseTests {
     })
     @Test
     void allFilterTest() {
-        final List<BookModelDto> returned = bookService.filter(BookFiltersRequest
-                .create("Novosibirsk", "title2", "genre", "author",
-                        "publishing_house", 2020));
-        assertThat(returned).size().isEqualTo(1);
-        assertThat(returned.get(0))
-                .usingRecursiveComparison()
-                .isEqualTo(BookModelDto.create(3, "title2", "author",
+        assertThat( bookService.filter(BookFiltersRequest.create("Novosibirsk", "title2", "genre",
+                "author","publishing_house", 2020)))
+                .hasSize(1)
+                .containsOnly(BookModelDto.create(3, "title2", "author",
                         "genre", "publishing_house", 2020, null));
     }
 
     @Sql("classpath:db/scripts/insert_locked_user_and_book.sql")
     @Test
     void filterLockedUserTest() {
-        assertThat(bookService.filter(BookFiltersRequest
-                .create(null, null, null, null, "publishing_house", 0)))
-                .size().isEqualTo(0);
+        assertThat(bookService.filter(BookFiltersRequest.create(null, null, null, null,
+                "publishing_house", 0)))
+                .isEmpty();
     }
 
     @SqlGroup({
@@ -140,19 +128,21 @@ class BookServiceTest extends BookCrossingBaseTests {
     @Test
     void deleteBookTest() {
         bookService.deleteBook(2);
-        assertThat(jdbcTemplate
-                .queryForObject("SELECT EXISTS(SELECT 1 FROM t_book WHERE book_id = 2);", Long.class))
-                .isEqualTo(0);
+        assertThat(jdbcTemplate.queryForObject("select exists(select * from t_book where book_id = 2)",
+                Boolean.class))
+                .isFalse();
     }
 
     @Test
     void deleteBookExceptionTest() {
-        assertThatThrownBy(() -> bookService.deleteBook(2)).isInstanceOf(BookNotFoundException.class);
+        assertThatThrownBy(() -> bookService.deleteBook(2))
+                .isInstanceOf(BookNotFoundException.class)
+                .hasMessage("Книга не найдена");
     }
 
     @Test
     void findAllEmptyList() {
-        assertThat(bookService.findAll()).size().isEqualTo(0);
+        assertThat(bookService.findAll()).isEmpty();
     }
 
     @SqlGroup({
@@ -161,19 +151,13 @@ class BookServiceTest extends BookCrossingBaseTests {
     })
     @Test
     void findAll() {
-        final List<BookModelDto> returned = bookService.findAll();
-        assertThat(returned).size().isEqualTo(3);
-        assertThat(returned.get(0))
-                .usingRecursiveComparison()
-                .isEqualTo(BookModelDto.create(2, "title", null, null,
-                null, 2022, null));
-        assertThat(returned.get(1))
-                .usingRecursiveComparison()
-                .isEqualTo(BookModelDto.create(3, "title2", "author",
-                        "genre", "publishing_house", 2020, null));
-        assertThat(returned.get(2))
-                .usingRecursiveComparison()
-                .isEqualTo(BookModelDto.create(4, "title3", "author",
+        assertThat(bookService.findAll())
+                .hasSize(3)
+                .containsExactlyInAnyOrder(BookModelDto.create(2, "title", null, null,
+                null, 2022, null),
+                        BookModelDto.create(3, "title2", "author",
+                        "genre", "publishing_house", 2020, null),
+                        BookModelDto.create(4, "title3", "author",
                         "genre2", "publishing_house", 2000, null));
     }
 
@@ -183,11 +167,9 @@ class BookServiceTest extends BookCrossingBaseTests {
     })
     @Test
     void findByTitleTest() {
-        final List<BookModelDto> returned = bookService.findByTitle("title");
-        assertThat(returned).size().isEqualTo(1);
-        assertThat(returned.get(0))
-                .usingRecursiveComparison()
-                .isEqualTo(BookModelDto.create(2, "title", null, null,
+        assertThat(bookService.findByTitle("title"))
+                .hasSize(1)
+                .containsOnly(BookModelDto.create(2, "title", null, null,
                         null, 2022, null));
     }
 
@@ -197,6 +179,6 @@ class BookServiceTest extends BookCrossingBaseTests {
     })
     @Test
     void findByTitleEmptyTest() {
-        assertThat(bookService.findByTitle("tit")).size().isEqualTo(0);
+        assertThat(bookService.findByTitle("tit")).isEmpty();
     }
 }
