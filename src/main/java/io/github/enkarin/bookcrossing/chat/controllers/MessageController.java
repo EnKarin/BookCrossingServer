@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.security.Principal;
-import java.util.Collections;
 import java.util.Map;
 
 @Tag(
@@ -133,30 +132,30 @@ public class MessageController {
     @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
     @ExceptionHandler(MessageContentException.class)
     public Map<String, String> content(final MessageContentException exc) {
-        return Collections.singletonMap("message", exc.getMessage());
+        return Map.of("message", exc.getMessage());
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(ChatNotFoundException.class)
     public Map<String, String> chatNotFound(final ChatNotFoundException exc) {
-        return Collections.singletonMap("correspondence", exc.getMessage());
+        return Map.of("correspondence", exc.getMessage());
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(MessageNotFountException.class)
     public Map<String, String> messageNotFound(final MessageNotFountException exc) {
-        return Collections.singletonMap("message", exc.getMessage());
+        return Map.of("message", exc.getMessage());
     }
 
     @ResponseStatus(HttpStatus.FORBIDDEN)
     @ExceptionHandler(NoAccessToChatException.class)
     public Map<String, String> noAccess(final NoAccessToChatException exc) {
-        return Collections.singletonMap("correspondence", exc.getMessage());
+        return Map.of("correspondence", exc.getMessage());
     }
 
     @ResponseStatus(HttpStatus.FORBIDDEN)
     @ExceptionHandler(UserIsNotSenderException.class)
     public Map<String, String> noSender(final UserIsNotSenderException exc) {
-        return Collections.singletonMap("correspondence", exc.getMessage());
+        return Map.of("correspondence", exc.getMessage());
     }
 }

@@ -19,7 +19,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Collections;
 import java.util.Map;
 
 @Tag(
@@ -48,7 +47,7 @@ public class PasswordResetController {
     @PostMapping("/send")
     public ResponseEntity<?> sendMessage(@RequestParam final String email) {
         mailService.sendResetPassword(email);
-        return ResponseEntity.status(HttpStatus.OK).build();
+        return ResponseEntity.ok().build();
     }
 
     @Operation(
@@ -79,12 +78,12 @@ public class PasswordResetController {
     @ResponseStatus(HttpStatus.CONFLICT)
     @ExceptionHandler(PasswordsDontMatchException.class)
     public Map<String, String> passwordConflict(final PasswordsDontMatchException exc) {
-        return Collections.singletonMap("password", exc.getMessage());
+        return Map.of("password", exc.getMessage());
     }
 
     @ResponseStatus(HttpStatus.FORBIDDEN)
     @ExceptionHandler(TokenInvalidException.class)
     public Map<String, String> tokenInvalid(final TokenInvalidException exc) {
-        return Collections.singletonMap("token", exc.getMessage());
+        return Map.of("token", exc.getMessage());
     }
 }

@@ -21,7 +21,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -100,18 +99,18 @@ public class CorrespondenceController {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(ChatNotFoundException.class)
     public Map<String, String> chatNotFound(final ChatNotFoundException exc) {
-        return Collections.singletonMap("correspondence", exc.getMessage());
+        return Map.of("correspondence", exc.getMessage());
     }
 
     @ResponseStatus(HttpStatus.CONFLICT)
     @ExceptionHandler(ChatAlreadyCreatedException.class)
     public Map<String, String> chatAlreadyCreated(final ChatAlreadyCreatedException exc) {
-        return Collections.singletonMap("correspondence", exc.getMessage());
+        return Map.of("correspondence", exc.getMessage());
     }
 
     @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
     @ExceptionHandler(CannotBeCreatedCorrespondenceException.class)
     public Map<String, String> userIsLocked(final CannotBeCreatedCorrespondenceException exc) {
-        return Collections.singletonMap("user", exc.getMessage());
+        return Map.of("user", exc.getMessage());
     }
 }
