@@ -106,10 +106,7 @@ public class RegistrationController {
         }
         if (userEntity.get().isEnabled()) {
             if (userEntity.get().isAccountNonLocked()) {
-                final AuthResponse authResponse = new AuthResponse();
-                authResponse.setAccessToken(jwtProvider.generateToken(request.getLogin()));
-                authResponse.setRefreshToken(refreshService.createToken(request.getLogin()));
-                return ResponseEntity.ok(authResponse);
+                return ResponseEntity.ok(refreshService.createTokens(request.getLogin()));
             } else {
                 response.getErrors().add("account: Аккаунт заблокирован");
                 return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
@@ -133,10 +130,7 @@ public class RegistrationController {
     public ResponseEntity<?> mailConfirm(@RequestParam final String token) {
         final Optional<String> login = userService.confirmMail(token);
         if (login.isPresent()) {
-            final AuthResponse authResponse = new AuthResponse();
-            authResponse.setAccessToken(jwtProvider.generateToken(login.get()));
-            authResponse.setRefreshToken(refreshService.createToken(login.get()));
-            return ResponseEntity.ok(authResponse);
+            return ResponseEntity.ok(refreshService.createTokens(login.get()));
         } else {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }

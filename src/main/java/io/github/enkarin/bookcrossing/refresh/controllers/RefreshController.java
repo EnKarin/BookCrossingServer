@@ -1,11 +1,11 @@
 package io.github.enkarin.bookcrossing.refresh.controllers;
 
 import io.github.enkarin.bookcrossing.constant.Constant;
-import io.github.enkarin.bookcrossing.errors.ErrorListResponse;
+import io.github.enkarin.bookcrossing.exception.RefreshTokenInvalidException;
+import io.github.enkarin.bookcrossing.exception.TokenNotFoundException;
 import io.github.enkarin.bookcrossing.refresh.dto.RefreshRequest;
 import io.github.enkarin.bookcrossing.refresh.service.RefreshService;
 import io.github.enkarin.bookcrossing.registation.dto.AuthResponse;
-import io.github.enkarin.bookcrossing.security.jwt.JwtProvider;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -15,11 +15,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
+import java.util.Collections;
+import java.util.Map;
 
 @Tag(
         name = "Обновление токенов пользователя",
@@ -29,7 +28,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class RefreshController {
 
-    private final JwtProvider jwtProvider;
     private final RefreshService refreshService;
 
     @Operation(
@@ -37,9 +35,12 @@ public class RefreshController {
             description = "Выдает токены, если refresh корректен"
     )
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "403", description = "Токена не существует или истек срок его действия",
+        @ApiResponse(responseCode = "410", description = "Токен истек",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(implementation = ErrorListResponse.class))}),
+                    schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+        @ApiResponse(responseCode = "404", description = "Токена не существует",
+            content = {@Content(mediaType = Constant.MEDIA_TYPE,
+                    schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
         @ApiResponse(responseCode = "200", description = "Возвращает токены",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
                     schema = @Schema(implementation = AuthResponse.class))}
@@ -47,15 +48,18 @@ public class RefreshController {
     )
     @PostMapping("/refresh")
     public ResponseEntity<?> refresh(@RequestBody final RefreshRequest request) {
-        final Optional<String> login = refreshService.findByToken(request.getRefresh());
-        if (login.isPresent()) {
-            final AuthResponse authResponse = new AuthResponse();
-            authResponse.setAccessToken(jwtProvider.generateToken(login.get()));
-            authResponse.setRefreshToken(refreshService.createToken(login.get()));
-            return ResponseEntity.ok(authResponse);
-        }
-        final ErrorListResponse response = new ErrorListResponse();
-        response.getErrors().add("refresh: Неверный или истекший токен");
-        return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
+        return ResponseEntity.ok(refreshService.createTokens(request.getRefresh()));
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(TokenNotFoundException.class)
+    public Map<String, String> tokenNotFound(final TokenNotFoundException exc) {
+        return Collections.singletonMap("refresh", exc.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.GONE)
+    @ExceptionHandler(RefreshTokenInvalidException.class)
+    public Map<String, String> tokenInvalid(final RefreshTokenInvalidException exc) {
+        return Collections.singletonMap("refresh", exc.getMessage());
     }
 }
