@@ -17,6 +17,7 @@
 
     <rule ref="category/java/codestyle.xml">
         <exclude name="OnlyOneReturn"/>
+        <exclude name="DefaultPackage"/>
         <exclude name="AtLeastOneConstructor"/>
         <exclude name="CommentDefaultAccessModifier"/>
         <exclude name="LongVariable"/>
