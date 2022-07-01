@@ -10,7 +10,7 @@ public class RefreshRequest {
     @Schema(description = "Токен обновления", example = "cac2ce3e-9ff0-49a7-8afc-3dcae34eafea", required = true)
     private final String refresh;
 
-    private RefreshRequest(String refresh) {
+    private RefreshRequest(final String refresh) {
         this.refresh = refresh;
     }
 
