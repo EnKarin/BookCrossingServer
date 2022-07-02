@@ -106,8 +106,8 @@ class BookServiceTest extends BookCrossingBaseTests {
     })
     @Test
     void allFilterTest() {
-        assertThat( bookService.filter(BookFiltersRequest.create("Novosibirsk", "title2", "genre",
-                "author","publishing_house", 2020)))
+        assertThat(bookService.filter(BookFiltersRequest.create("Novosibirsk", "title2", "genre",
+                "author", "publishing_house", 2020)))
                 .hasSize(1)
                 .containsOnly(BookModelDto.create(3, "title2", "author",
                         "genre", "publishing_house", 2020, null));
