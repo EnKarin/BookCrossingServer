@@ -18,7 +18,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.Predicate;
@@ -83,7 +82,7 @@ public class CorrespondenceService {
         if (user.equals(sUser)) {
             return getMessages(Message::isShownSecondUser, correspondence, zonedUserCorrKeyDto, user);
         }
-        return Collections.emptyList();
+        return List.of();
     }
 
     private List<MessageDto> getMessages(final Predicate<Message> rules, final Correspondence correspondence,
