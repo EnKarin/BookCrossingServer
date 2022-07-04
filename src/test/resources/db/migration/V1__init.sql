@@ -23,7 +23,7 @@ create table t_book (
     author varchar(255),
     genre varchar(255),
     publishing_house varchar(255),
-    title varchar(255),
+    title varchar(255) not null,
     year integer not null,
     attach_id varchar(255),
     owner_book integer,
