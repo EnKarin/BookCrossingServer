@@ -4,6 +4,8 @@ import io.github.enkarin.bookcrossing.exception.*;
 import io.github.enkarin.bookcrossing.mail.model.ActionMailUser;
 import io.github.enkarin.bookcrossing.mail.repository.ActionMailUserRepository;
 import io.github.enkarin.bookcrossing.mail.service.MailService;
+import io.github.enkarin.bookcrossing.refresh.service.RefreshService;
+import io.github.enkarin.bookcrossing.registation.dto.AuthResponse;
 import io.github.enkarin.bookcrossing.registation.dto.LoginRequest;
 import io.github.enkarin.bookcrossing.registation.dto.UserDto;
 import io.github.enkarin.bookcrossing.user.dto.UserDtoResponse;
@@ -33,6 +35,7 @@ public class UserService {
     private final RoleRepository roleRepository;
     private final ActionMailUserRepository confirmationMailUserRepository;
     private final MailService mailService;
+    private final RefreshService refreshService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final ModelMapper modelMapper;
     private TypeMap<UserDto, User> userDtoMapper;
@@ -52,17 +55,14 @@ public class UserService {
         return user;
     }
 
-    public Optional<String> confirmMail(final String token) {
-        final Optional<ActionMailUser> confirmationMailUser = confirmationMailUserRepository.findById(token);
-        if (confirmationMailUser.isPresent()) {
-            final User user = confirmationMailUser.get().getUser();
-            user.setEnabled(true);
-            confirmationMailUserRepository.delete(confirmationMailUser.get());
-            userRepository.save(user);
-            return Optional.of(user.getLogin());
-        } else {
-            return Optional.empty();
-        }
+    public AuthResponse confirmMail(final String token) {
+        final ActionMailUser confirmationMailUser = confirmationMailUserRepository.findById(token)
+                .orElseThrow(TokenNotFoundException::new);
+        final User user = confirmationMailUser.getUser();
+        user.setEnabled(true);
+        confirmationMailUserRepository.delete(confirmationMailUser);
+        userRepository.save(user);
+        return refreshService.createTokens(user.getLogin());
     }
 
     public Optional<User> findByLogin(final String login) {
@@ -85,11 +85,17 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
-    public User findByLoginAndPassword(final LoginRequest login) {
+    public AuthResponse findByLoginAndPassword(final LoginRequest login) {
         final User user = userRepository.findByLogin(login.getLogin())
                 .orElseThrow(UserNotFoundException::new);
         if (bCryptPasswordEncoder.matches(login.getPassword(), user.getPassword())) {
-            return user;
+            if (user.isEnabled()) {
+                if (user.isAccountNonLocked()) {
+                    return refreshService.createTokens(login.getLogin());
+                }
+                throw new LockedAccountException();
+            }
+            throw new AccountNotConfirmedException();
         }
         throw new InvalidPasswordException();
     }

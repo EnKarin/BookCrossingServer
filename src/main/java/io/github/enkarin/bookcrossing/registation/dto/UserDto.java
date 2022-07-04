@@ -37,7 +37,8 @@ public class UserDto {
     @Schema(description = "Город", example = "Новосибирск")
     private final String city;
 
-    private UserDto(String name, String login, String password, String passwordConfirm, String email, String city) {
+    private UserDto(final String name, final String login, final String password, final String passwordConfirm,
+                    final String email, final String city) {
         this.name = name;
         this.login = login;
         this.password = password;
@@ -47,8 +48,8 @@ public class UserDto {
     }
 
     @JsonCreator
-    public static UserDto create(String name, String login, String password, String passwordConfirm, String email,
-                          String city) {
+    public static UserDto create(final String name, final String login, final String password,
+                                 final String passwordConfirm, final String email, final String city) {
         return new UserDto(name, login, password, passwordConfirm, email, city);
     }
 }
