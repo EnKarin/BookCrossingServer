@@ -39,7 +39,6 @@ public class RegistrationController {
     private final UserService userService;
     private final JwtProvider jwtProvider;
     private final RefreshService refreshService;
-    private final MailService mailService;
 
     @Operation(
             summary = "Регистрация пользователя",
@@ -69,18 +68,8 @@ public class RegistrationController {
                     .add(Objects.requireNonNull(f.getDefaultMessage())));
             return new ResponseEntity<>(errorListResponse, HttpStatus.BAD_REQUEST);
         }
-        if (!userForm.getPassword().equals(userForm.getPasswordConfirm())) {
-            errorListResponse.getErrors().add("passwordConfirm: Пароли не совпадают");
-            return new ResponseEntity<>(errorListResponse, HttpStatus.CONFLICT);
-        }
-        try {
-            final User result = userService.saveUser(userForm);
-            mailService.sendApproveMail(result);
-            return new ResponseEntity<>(HttpStatus.OK);
-        } catch (LoginFailedException | EmailFailedException failedException) {
-            errorListResponse.getErrors().add(failedException.getMessage());
-            return new ResponseEntity<>(errorListResponse, HttpStatus.NOT_ACCEPTABLE);
-        }
+        userService.saveUser(userForm);
+        return ResponseEntity.ok().build();
     }
 
     @Operation(
@@ -98,14 +87,11 @@ public class RegistrationController {
     )
     @PostMapping("/auth")
     public ResponseEntity<?> auth(@RequestBody final LoginRequest request) {
-        final Optional<User> userEntity = userService.findByLoginAndPassword(request);
+        final User userEntity = userService.findByLoginAndPassword(request);
         final ErrorListResponse response = new ErrorListResponse();
-        if (userEntity.isEmpty()) {
-            response.getErrors().add("account: Некорректный логин или пароль");
-            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
-        }
-        if (userEntity.get().isEnabled()) {
-            if (userEntity.get().isAccountNonLocked()) {
+        //TODO: после rebase изменить
+        if (userEntity.isEnabled()) {
+            if (userEntity.isAccountNonLocked()) {
                 return ResponseEntity.ok(refreshService.createTokens(request.getLogin()));
             } else {
                 response.getErrors().add("account: Аккаунт заблокирован");

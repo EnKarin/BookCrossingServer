@@ -1,10 +1,9 @@
 package io.github.enkarin.bookcrossing.user.service;
 
-import io.github.enkarin.bookcrossing.exception.EmailFailedException;
-import io.github.enkarin.bookcrossing.exception.LoginFailedException;
-import io.github.enkarin.bookcrossing.exception.UserNotFoundException;
+import io.github.enkarin.bookcrossing.exception.*;
 import io.github.enkarin.bookcrossing.mail.model.ActionMailUser;
 import io.github.enkarin.bookcrossing.mail.repository.ActionMailUserRepository;
+import io.github.enkarin.bookcrossing.mail.service.MailService;
 import io.github.enkarin.bookcrossing.registation.dto.LoginRequest;
 import io.github.enkarin.bookcrossing.registation.dto.UserDto;
 import io.github.enkarin.bookcrossing.user.dto.UserDtoResponse;
@@ -33,19 +32,24 @@ public class UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final ActionMailUserRepository confirmationMailUserRepository;
+    private final MailService mailService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final ModelMapper modelMapper;
     private TypeMap<UserDto, User> userDtoMapper;
 
     public User saveUser(final UserDto userDTO) {
+        if (!userDTO.getPassword().equals(userDTO.getPasswordConfirm())) {
+            throw new PasswordsDontMatchException();
+        }
         if (userRepository.findByLogin(userDTO.getLogin()).isPresent()) {
             throw new LoginFailedException();
         }
         if (userRepository.findByEmail(userDTO.getEmail()).isPresent()) {
             throw new EmailFailedException();
         }
-        final User user = convertToUser(userDTO);
-        return userRepository.save(user);
+        final User user = userRepository.save(convertToUser(userDTO));
+        mailService.sendApproveMail(user);
+        return user;
     }
 
     public Optional<String> confirmMail(final String token) {
@@ -81,12 +85,13 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
-    public Optional<User> findByLoginAndPassword(final LoginRequest login) {
-        final Optional<User> user = userRepository.findByLogin(login.getLogin());
-        if (user.isPresent() && bCryptPasswordEncoder.matches(login.getPassword(), user.get().getPassword())) {
+    public User findByLoginAndPassword(final LoginRequest login) {
+        final User user = userRepository.findByLogin(login.getLogin())
+                .orElseThrow(UserNotFoundException::new);
+        if (bCryptPasswordEncoder.matches(login.getPassword(), user.getPassword())) {
             return user;
         }
-        return Optional.empty();
+        throw new InvalidPasswordException();
     }
 
     public Optional<User> putUserInfo(final UserPutRequest userPutRequest, final String login) {
