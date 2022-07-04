@@ -3,10 +3,12 @@ package io.github.enkarin.bookcrossing.books.dto;
 import io.github.enkarin.bookcrossing.books.model.Attachment;
 import io.github.enkarin.bookcrossing.books.model.Book;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 import javax.validation.constraints.NotBlank;
 
+@EqualsAndHashCode
 @Schema(description = "Полные данные книги")
 public class BookModelDto {
 
@@ -60,5 +62,10 @@ public class BookModelDto {
     public static BookModelDto fromBook(final Book book) {
         return new BookModelDto(book.getBookId(), book.getTitle(), book.getAuthor(), book.getGenre(),
                 book.getPublishingHouse(), book.getYear(), book.getAttachment());
+    }
+
+    public static BookModelDto create(final int bookId, final String title, final String author, final String genre,
+                                      final String publishingHouse, final int year, final Attachment attachment) {
+        return new BookModelDto(bookId, title, author, genre, publishingHouse, year, attachment);
     }
 }
