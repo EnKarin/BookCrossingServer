@@ -12,9 +12,6 @@ import javax.validation.constraints.NotBlank;
 @Schema(description = "Сущность книги")
 public class BookDto {
 
-    @Schema(description = "Идентификатор", example = "15")
-    private final int bookId;
-
     @Schema(description = "Название", example = "Портрет Дориана Грея")
     @NotBlank(message = "title: Название должно содержать хотя бы один видимый символ")
     private final String title;
@@ -32,9 +29,8 @@ public class BookDto {
     @Schema(description = "Год издания", example = "2004")
     private final int year;
 
-    private BookDto(final int bookId, final String title, final String author, final String genre,
+    private BookDto(final String title, final String author, final String genre,
                    final String publishingHouse, final int year) {
-        this.bookId = bookId;
         this.title = title;
         this.author = author;
         this.genre = genre;
@@ -43,8 +39,8 @@ public class BookDto {
     }
 
     @JsonCreator
-    public static BookDto create(final int bookId, final String title, final String author, final String genre,
+    public static BookDto create(final String title, final String author, final String genre,
                                  final String publishingHouse, final int year) {
-        return new BookDto(bookId, title, author, genre, publishingHouse, year);
+        return new BookDto(title, author, genre, publishingHouse, year);
     }
 }

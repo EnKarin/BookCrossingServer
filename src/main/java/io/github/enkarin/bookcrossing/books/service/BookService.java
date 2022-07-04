@@ -53,27 +53,38 @@ public class BookService {
     public List<BookModelDto> filter(final BookFiltersRequest request) {
         List<Book> books = bookRepository.findAll();
         if (request.getGenre() != null) {
-            books = books.stream().filter(book -> book.getGenre().equals(request.getGenre()))
+            books = books.stream()
+                    .filter(book -> book.getGenre() != null)
+                    .filter(book -> book.getGenre().equalsIgnoreCase(request.getGenre()))
                     .collect(Collectors.toList());
         }
         if (request.getAuthor() != null) {
-            books = books.stream().filter(book -> book.getAuthor().equals(request.getAuthor()))
+            books = books.stream()
+                    .filter(book -> book.getAuthor() != null)
+                    .filter(book -> book.getAuthor().equalsIgnoreCase(request.getAuthor()))
                     .collect(Collectors.toList());
         }
         if (request.getPublishingHouse() != null) {
-            books = books.stream().filter(book -> book.getPublishingHouse().equals(request.getPublishingHouse()))
+            books = books.stream()
+                    .filter(book -> book.getPublishingHouse() != null)
+                    .filter(book -> book.getPublishingHouse().equalsIgnoreCase(request.getPublishingHouse()))
                     .collect(Collectors.toList());
         }
         if (request.getYear() != 0) {
-            books = books.stream().filter(book -> book.getYear() == request.getYear())
+            books = books.stream()
+                    .filter(book -> book.getYear() == request.getYear())
                     .collect(Collectors.toList());
         }
         if (request.getTitle() != null) {
-            books = books.stream().filter(book -> book.getTitle().equals(request.getTitle()))
+            books = books.stream()
+                    .filter(book -> book.getTitle() != null)
+                    .filter(book -> book.getTitle().equalsIgnoreCase(request.getTitle()))
                     .collect(Collectors.toList());
         }
         if (request.getCity() != null) {
-            books = books.stream().filter(book -> book.getOwner().getCity().equals(request.getCity()))
+            books = books.stream()
+                    .filter(book -> book.getOwner().getCity() != null)
+                    .filter(book -> book.getOwner().getCity().equalsIgnoreCase(request.getCity()))
                     .collect(Collectors.toList());
         }
         return books.stream()
