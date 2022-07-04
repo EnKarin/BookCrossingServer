@@ -17,7 +17,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
 import java.util.Map;
 
 @Tag(
@@ -54,12 +53,12 @@ public class RefreshController {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(TokenNotFoundException.class)
     public Map<String, String> tokenNotFound(final TokenNotFoundException exc) {
-        return Collections.singletonMap("refresh", exc.getMessage());
+        return Map.of("refresh", exc.getMessage());
     }
 
     @ResponseStatus(HttpStatus.GONE)
     @ExceptionHandler(RefreshTokenInvalidException.class)
     public Map<String, String> tokenInvalid(final RefreshTokenInvalidException exc) {
-        return Collections.singletonMap("refresh", exc.getMessage());
+        return Map.of("refresh", exc.getMessage());
     }
 }

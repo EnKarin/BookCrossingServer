@@ -21,7 +21,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
+@Transactional(noRollbackFor = RefreshTokenInvalidException.class)
 public class RefreshService {
 
     private final RefreshRepository refreshRepository;
