@@ -200,7 +200,12 @@
                     <dependency>
                         <groupId>com.puppycrawl.tools</groupId>
                         <artifactId>checkstyle</artifactId>
-                        <version>10.3</version>
+                        <version>10.3.1</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>com.thomasjensen.checkstyle.addons</groupId>
+                        <artifactId>checkstyle-addons</artifactId>
+                        <version>7.0.1</version>
                     </dependency>
                 </dependencies>
             </plugin>

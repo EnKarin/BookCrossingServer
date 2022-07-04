@@ -1,4 +1,4 @@
-package io.github.enkarin.bookcrossing.swagger;
+package io.github.enkarin.bookcrossing.configuration;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.models.Components;

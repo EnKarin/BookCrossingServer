@@ -21,9 +21,9 @@ import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -119,7 +119,7 @@ public class UserService {
             });
         }
         final User user = modelMapper.map(userDTO, User.class);
-        user.setUserRoles(Collections.singleton(roleRepository.getById(1)));
+        user.setUserRoles(Set.of(roleRepository.getById(1)));
         user.setAccountNonLocked(true);
         user.setEnabled(false);
         user.setPassword(bCryptPasswordEncoder.encode(userDTO.getPassword()));

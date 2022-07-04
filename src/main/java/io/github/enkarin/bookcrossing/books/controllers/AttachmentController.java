@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.security.Principal;
-import java.util.Collections;
 import java.util.Map;
 
 @Tag(
@@ -72,12 +71,12 @@ public class AttachmentController {
     @ResponseStatus(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
     @ExceptionHandler(BadRequestException.class)
     public Map<String, String> badRequest(final BadRequestException exc) {
-        return Collections.singletonMap("attachment", exc.getMessage());
+        return Map.of("attachment", exc.getMessage());
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(AttachmentNotFoundException.class)
     public Map<String, String> attachNotFound(final AttachmentNotFoundException exc) {
-        return Collections.singletonMap("attachment", exc.getMessage());
+        return Map.of("attachment", exc.getMessage());
     }
 }

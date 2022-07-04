@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import java.util.Collections;
 import java.util.Map;
 
 @ControllerAdvice
@@ -18,12 +17,12 @@ public class AdviceController extends ResponseEntityExceptionHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(UserNotFoundException.class)
     public @ResponseBody Map<String, String> userNotFound(final UserNotFoundException exc) {
-        return Collections.singletonMap("user", exc.getMessage());
+        return Map.of("user", exc.getMessage());
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(BookNotFoundException.class)
     public @ResponseBody Map<String, String> bookNotFound(final BookNotFoundException exc) {
-        return Collections.singletonMap("book", exc.getMessage());
+        return Map.of("book", exc.getMessage());
     }
 }
