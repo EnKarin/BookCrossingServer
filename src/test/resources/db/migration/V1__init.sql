@@ -140,5 +140,3 @@ values (0, "al@mail.ru", "superUser", "admin", "$2a$10$suA9HnXlQoDSH0AQ/.Y60.JX/
        true, true, 1652629914);
 
 insert into  t_user_role value (0, 0);
-
-insert into  t_user_role value (0, 1);

@@ -61,7 +61,7 @@ public class UserProfileController {
             user = userService.findByLogin(principal.getName());
             userDTOResponse = new UserDtoResponse(user.orElseThrow(), zone);
         } else {
-            user = userService.findById(userId);
+            user = Optional.of(userService.findById(userId));
             if (user.isPresent()) {
                 userDTOResponse = new UserDtoResponse(user.get(), zone);
             } else {

@@ -2,11 +2,13 @@ package io.github.enkarin.bookcrossing.admin.dto;
 
 import io.github.enkarin.bookcrossing.user.model.User;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
+@EqualsAndHashCode
 @Getter
 @Schema(description = "Данные пользователя для администатора")
 public class InfoUsersDto {

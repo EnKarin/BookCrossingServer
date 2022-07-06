@@ -25,24 +25,26 @@ public class AdminService {
     private final MailService mailService;
 
     @Transactional
-    public void lockedUser(final LockedUserDto lockedUserDto) {
-        final User user = userRepository.findByLogin(lockedUserDto.getLogin())
+    public boolean lockedUser(final LockedUserDto lockedUserDto) {
+        User user = userRepository.findByLogin(lockedUserDto.getLogin())
                 .orElseThrow(UserNotFoundException::new);
         user.setAccountNonLocked(false);
-        userRepository.save(user);
+        user = userRepository.save(user);
         mailService.sendBlockingMessage(user, lockedUserDto.getComment());
+        return user.isAccountNonLocked();
     }
 
     @Transactional
-    public void nonLockedUser(final String login) {
-        final User user = userRepository.findByLogin(login).orElseThrow(UserNotFoundException::new);
+    public boolean nonLockedUser(final String login) {
+        User user = userRepository.findByLogin(login).orElseThrow(UserNotFoundException::new);
         user.setAccountNonLocked(true);
-        userRepository.save(user);
+        user = userRepository.save(user);
         mailService.sendUnlockMessage(user);
+        return user.isAccountNonLocked();
     }
 
     public List<InfoUsersDto> findAllUsers(final int zone) {
-        final Role role = roleRepository.getById(1);
+        final Role role = roleRepository.getRoleByName("ROLE_USER");
         return userRepository.findByUserRoles(role).stream()
                 .map(u -> InfoUsersDto.fromUser(u, zone))
                 .collect(Collectors.toList());

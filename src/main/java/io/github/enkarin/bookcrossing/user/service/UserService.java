@@ -66,8 +66,8 @@ public class UserService {
         return userRepository.findByLogin(login);
     }
 
-    public Optional<User> findById(final int userId) {
-        return userRepository.findById(userId);
+    public User findById(final int userId) {
+        return userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
     }
 
     public UserProfileResponse getProfile(final String login) {
@@ -124,7 +124,7 @@ public class UserService {
             });
         }
         final User user = modelMapper.map(userDTO, User.class);
-        user.setUserRoles(Set.of(roleRepository.getById(1)));
+        user.setUserRoles(Set.of(roleRepository.getRoleByName("ROLE_USER")));
         user.setAccountNonLocked(true);
         user.setEnabled(false);
         user.setPassword(bCryptPasswordEncoder.encode(userDTO.getPassword()));
