@@ -108,7 +108,7 @@ public class UserService {
     }
 
     @Transactional
-    public void deleteUser(int userId){
+    public void deleteUser(final int userId) {
         userRepository.deleteById(userId);
     }
 

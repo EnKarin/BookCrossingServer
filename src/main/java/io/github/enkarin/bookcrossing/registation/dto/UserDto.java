@@ -48,8 +48,8 @@ public class UserDto {
     }
 
     @JsonCreator
-    public static UserDto create(final String name, final String login, final String password, final String passwordConfirm,
-    final String email, final String city) {
+    public static UserDto create(final String name, final String login, final String password,
+                                 final String passwordConfirm, final String email, final String city) {
         return new UserDto(name, login, password, passwordConfirm, email, city);
     }
 }

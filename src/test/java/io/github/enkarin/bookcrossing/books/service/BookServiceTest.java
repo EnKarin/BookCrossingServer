@@ -12,15 +12,10 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class BookServiceTest extends BookCrossingBaseTests {
-
-    private final List<Integer> usersId = new ArrayList<>(2);
 
     @Autowired
     private BookService bookService;
@@ -28,6 +23,7 @@ class BookServiceTest extends BookCrossingBaseTests {
     @AfterEach
     void delete() {
         usersId.forEach(u -> userService.deleteUser(u));
+        usersId.clear();
     }
 
     @Test
@@ -96,7 +92,7 @@ class BookServiceTest extends BookCrossingBaseTests {
         final User user = userService.saveUser(UserDto.create("Tester", "user", "123456",
                 "123456", "k.test@mail.ru", "NSK"));
         usersId.add(user.getUserId());
-        BookModelDto book = bookService.saveBook(BookDto.create("title", "author", null,
+        final BookModelDto book = bookService.saveBook(BookDto.create("title", "author", null,
                 null, 2000), user.getLogin());
         bookService.saveBook(BookDto.create("title3", "author",
                 "genre2", "publishing_house", 2000), user.getLogin());

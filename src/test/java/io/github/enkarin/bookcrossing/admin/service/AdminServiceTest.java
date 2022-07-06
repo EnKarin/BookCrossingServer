@@ -10,15 +10,10 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class AdminServiceTest extends BookCrossingBaseTests {
-
-    private final List<Integer> usersId = new ArrayList<>();
 
     @Autowired
     private AdminService adminService;
@@ -26,11 +21,12 @@ class AdminServiceTest extends BookCrossingBaseTests {
     @AfterEach
     void delete() {
         usersId.forEach(u -> userService.deleteUser(u));
+        usersId.clear();
     }
 
     @Test
     void lockedUser() {
-        User user = userService.saveUser(UserDto.create("Tester", "Test", "123456",
+        final User user = userService.saveUser(UserDto.create("Tester", "Test", "123456",
                 "123456", "k.test@mail.ru", "NSK"));
         usersId.add(user.getUserId());
         assertThat(adminService.lockedUser(LockedUserDto.create(user.getLogin(), "Заблокировано"))).isFalse();
@@ -45,7 +41,7 @@ class AdminServiceTest extends BookCrossingBaseTests {
 
     @Test
     void nonLockedUser() {
-        User user = userService.saveUser(UserDto.create("Tester", "Test", "123456",
+        final User user = userService.saveUser(UserDto.create("Tester", "Test", "123456",
                 "123456", "k.test@mail.ru", "NSK"));
         jdbcTemplate.update("update t_user set account_non_locked = 0 where user_id = " + user.getUserId());
         usersId.add(user.getUserId());
@@ -61,10 +57,12 @@ class AdminServiceTest extends BookCrossingBaseTests {
 
     @Test
     void findAllUsers() {
-        User user1 = userService.saveUser(UserDto.create("Tester", "Test", "123456",
+        final User user1 = userService.saveUser(UserDto.create("Tester", "Test", "123456",
                 "123456", "k.test@mail.ru", "NSK"));
-        User user2 = userService.saveUser(UserDto.create("Test", "Test2", "123456",
+        final User user2 = userService.saveUser(UserDto.create("Test", "Test2", "123456",
                 "123456", "t.test@mail.ru", "NSK"));
+        usersId.add(user1.getUserId());
+        usersId.add(user2.getUserId());
         assertThat(adminService.findAllUsers(0))
                 .hasSize(2)
                 .containsExactlyInAnyOrder(InfoUsersDto.fromUser(user1, 0),
