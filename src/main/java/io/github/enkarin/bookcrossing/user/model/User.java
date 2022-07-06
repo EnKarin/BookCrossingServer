@@ -47,7 +47,7 @@ public class User implements UserDetails {
     )
     private Set<Role> userRoles;
 
-    @OneToMany(mappedBy = "owner", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "owner", fetch = FetchType.EAGER, orphanRemoval = true)
     private Set<Book> books;
 
     @ManyToMany

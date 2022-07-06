@@ -20,6 +20,7 @@ import org.modelmapper.TypeMap;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -106,6 +107,10 @@ public class UserService {
         }
     }
 
+    @Transactional
+    public void deleteUser(int userId){
+        userRepository.deleteById(userId);
+    }
 
     private User convertToUser(final UserDto userDTO) {
         if (userDtoMapper == null) {
