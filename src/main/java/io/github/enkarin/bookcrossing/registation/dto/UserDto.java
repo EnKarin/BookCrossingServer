@@ -2,15 +2,20 @@ package io.github.enkarin.bookcrossing.registation.dto;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.experimental.SuperBuilder;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
+@SuperBuilder
 @Validated
 @Getter
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Schema(description = "Сущность пользователя")
 public class UserDto {
 
@@ -36,16 +41,6 @@ public class UserDto {
 
     @Schema(description = "Город", example = "Новосибирск")
     private final String city;
-
-    private UserDto(final String name, final String login, final String password, final String passwordConfirm,
-                    final String email, final String city) {
-        this.name = name;
-        this.login = login;
-        this.password = password;
-        this.passwordConfirm = passwordConfirm;
-        this.email = email;
-        this.city = city;
-    }
 
     @JsonCreator
     public static UserDto create(final String name, final String login, final String password,

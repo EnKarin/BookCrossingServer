@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.security.Principal;
-import java.util.Objects;
 import java.util.Optional;
 
 @Tag(
@@ -117,7 +116,7 @@ public class UserProfileController {
         final ErrorListResponse response = new ErrorListResponse();
         if (bindingResult.hasErrors()) {
             bindingResult.getAllErrors().forEach(f -> response.getErrors()
-                    .add(Objects.requireNonNull(f.getDefaultMessage())));
+                    .add(f.getDefaultMessage()));
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
         if (!userPutRequest.getNewPassword().equals(userPutRequest.getPasswordConfirm())) {

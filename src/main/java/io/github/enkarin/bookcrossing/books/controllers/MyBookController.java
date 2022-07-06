@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.security.Principal;
 import java.util.List;
-import java.util.Objects;
 
 @Tag(
         name = "Раздел работы с книгами",
@@ -53,7 +52,7 @@ public class MyBookController {
         final ErrorListResponse response = new ErrorListResponse();
         if (bindingResult.hasErrors()) {
             bindingResult.getAllErrors().forEach(f -> response.getErrors()
-                    .add(Objects.requireNonNull(f.getDefaultMessage())));
+                    .add(f.getDefaultMessage()));
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
                     .body(response);

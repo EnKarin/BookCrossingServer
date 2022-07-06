@@ -19,7 +19,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Objects;
 
 @Tag(
         name = "Управление пользователями для администратора",
@@ -67,7 +66,7 @@ public class AdminController {
         final ErrorListResponse response = new ErrorListResponse();
         if (bindingResult.hasErrors()) {
             bindingResult.getAllErrors().forEach(f -> response.getErrors()
-                    .add(Objects.requireNonNull(f.getDefaultMessage())));
+                    .add(f.getDefaultMessage()));
             return ResponseEntity
                     .status(HttpStatus.NOT_ACCEPTABLE)
                     .body(response);

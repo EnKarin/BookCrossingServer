@@ -9,7 +9,6 @@ import io.github.enkarin.bookcrossing.refresh.service.RefreshService;
 import io.github.enkarin.bookcrossing.registation.dto.AuthResponse;
 import io.github.enkarin.bookcrossing.registation.dto.LoginRequest;
 import io.github.enkarin.bookcrossing.registation.dto.UserDto;
-import io.github.enkarin.bookcrossing.security.jwt.JwtProvider;
 import io.github.enkarin.bookcrossing.user.model.User;
 import io.github.enkarin.bookcrossing.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -25,7 +24,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Objects;
 import java.util.Optional;
 
 @Tag(
@@ -37,7 +35,6 @@ import java.util.Optional;
 public class RegistrationController {
 
     private final UserService userService;
-    private final JwtProvider jwtProvider;
     private final RefreshService refreshService;
     private final MailService mailService;
 
@@ -66,7 +63,7 @@ public class RegistrationController {
         final ErrorListResponse errorListResponse = new ErrorListResponse();
         if (bindingResult.hasErrors()) {
             bindingResult.getAllErrors().forEach(f -> errorListResponse.getErrors()
-                    .add(Objects.requireNonNull(f.getDefaultMessage())));
+                    .add(f.getDefaultMessage()));
             return new ResponseEntity<>(errorListResponse, HttpStatus.BAD_REQUEST);
         }
         if (!userForm.getPassword().equals(userForm.getPasswordConfirm())) {

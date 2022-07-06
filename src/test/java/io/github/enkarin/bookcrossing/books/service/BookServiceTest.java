@@ -6,11 +6,14 @@ import io.github.enkarin.bookcrossing.books.dto.BookFiltersRequest;
 import io.github.enkarin.bookcrossing.books.dto.BookModelDto;
 import io.github.enkarin.bookcrossing.exception.BookNotFoundException;
 import io.github.enkarin.bookcrossing.exception.UserNotFoundException;
-import io.github.enkarin.bookcrossing.registation.dto.UserDto;
+import io.github.enkarin.bookcrossing.support.TestDataProvider;
 import io.github.enkarin.bookcrossing.user.model.User;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -28,79 +31,61 @@ class BookServiceTest extends BookCrossingBaseTests {
 
     @Test
     void saveBook() {
-        final User user = userService.saveUser(UserDto.create("Tester", "Test", "123456",
-                "123456", "k.test@mail.ru", "NSK"));
+        final User user = userService.saveUser(TestDataProvider.buildAlex());
         usersId.add(user.getUserId());
-        final BookModelDto book = bookService.saveBook(BookDto.create("title", "author", null,
-                        null, 2000), user.getLogin());
+        final BookModelDto book = bookService.saveBook(TestDataProvider.buildDorian(), user.getLogin());
         assertThat(book)
-                .isEqualTo(BookModelDto.create(book.getBookId(), "title", "author", null,
-                        null, 2000, null));
+                .isEqualTo(TestDataProvider.buildDorian(book.getBookId()));
     }
 
     @Test
     void saveExceptionTest() {
-        assertThatThrownBy(() -> bookService.saveBook(BookDto.create("title", "author", null,
-                null, 2000), "users"))
+        assertThatThrownBy(() -> bookService.saveBook(TestDataProvider.buildDorian(), "users"))
                 .isInstanceOf(UserNotFoundException.class)
                 .hasMessage("Пользователь не найден");
     }
 
     @Test
     void findBookForOwnerTest() {
-        final User user1 = userService.saveUser(UserDto.create("Tester", "user", "123456",
-                "123456", "k.test@mail.ru", "NSK"));
-        final User user2 = userService.saveUser(UserDto.create("Tester", "alex", "123456",
-                "123456", "kr.test@mail.ru", "NSK"));
-        usersId.add(user1.getUserId());
-        usersId.add(user2.getUserId());
+        final List<User> users = TestDataProvider.buildUsers().stream()
+                .map(u -> userService.saveUser(u))
+                .collect(Collectors.toList());
+        users.forEach(u -> usersId.add(u.getUserId()));
 
-        bookService.saveBook(BookDto.create("title", "author", null,
-                null, 2000), user2.getLogin());
-        final BookModelDto book1 = bookService.saveBook(BookDto.create("title2", "author",
-                "genre", "publishing_house", 2020), user1.getLogin());
-        final BookModelDto book2 = bookService.saveBook(BookDto.create("title3", "author",
-                "genre2", "publishing_house", 2000), user1.getLogin());
+        final List<BookDto> books = TestDataProvider.buildBooks();
 
-        assertThat(bookService.findBookForOwner("user"))
+        bookService.saveBook(books.get(0), users.get(0).getLogin());
+        final int book1 = bookService.saveBook(books.get(1), users.get(1).getLogin()).getBookId();
+        final int book2 = bookService.saveBook(books.get(2), users.get(1).getLogin()).getBookId();
+
+        assertThat(bookService.findBookForOwner("alex"))
                 .hasSize(2)
-                .containsExactlyInAnyOrder(BookModelDto.create(book1.getBookId(), "title2", "author",
-                        "genre", "publishing_house", 2020, null),
-                        BookModelDto.create(book2.getBookId(), "title3", "author",
-                        "genre2", "publishing_house", 2000, null));
+                .containsExactlyInAnyOrder(TestDataProvider.buildDandelion(book1),
+                        TestDataProvider.buildWolves(book2));
     }
 
     @Test
     void findEmptyBookForOwnerTest() {
-        final User user1 = userService.saveUser(UserDto.create("Tester", "user", "123456",
-                "123456", "k.test@mail.ru", "NSK"));
-        final User user2 = userService.saveUser(UserDto.create("Tester", "alex", "123456",
-                "123456", "kr.test@mail.ru", "NSK"));
-        usersId.add(user1.getUserId());
-        usersId.add(user2.getUserId());
+        final List<User> users = TestDataProvider.buildUsers().stream()
+                .map(u -> userService.saveUser(u))
+                .collect(Collectors.toList());
+        users.forEach(u -> usersId.add(u.getUserId()));
 
-        bookService.saveBook(BookDto.create("title2", "author",
-                "genre", "publishing_house", 2020), user1.getLogin());
-        bookService.saveBook(BookDto.create("title3", "author",
-                "genre2", "publishing_house", 2000), user1.getLogin());
+        TestDataProvider.buildBooks().forEach(b -> bookService.saveBook(b, users.get(0).getLogin()));
 
         assertThat(bookService.findBookForOwner("alex")).isEmpty();
     }
 
     @Test
     void findByIdTest() {
-        final User user = userService.saveUser(UserDto.create("Tester", "user", "123456",
-                "123456", "k.test@mail.ru", "NSK"));
+        final User user = userService.saveUser(TestDataProvider.buildBot());
         usersId.add(user.getUserId());
-        final BookModelDto book = bookService.saveBook(BookDto.create("title", "author", null,
-                null, 2000), user.getLogin());
-        bookService.saveBook(BookDto.create("title3", "author",
-                "genre2", "publishing_house", 2000), user.getLogin());
-
-        assertThat(bookService.findById(book.getBookId()))
+        final int book = TestDataProvider.buildBooks().stream()
+                .map(b -> bookService.saveBook(b, user.getLogin()))
+                        .collect(Collectors.toList()).get(0).getBookId();
+        assertThat(bookService.findById(book))
                 .usingRecursiveComparison()
-                .isEqualTo(BookModelDto.create(book.getBookId(), "title", "author", null,
-                        null, 2000,  null));
+                .isEqualTo(TestDataProvider.buildDorian(book));
     }
 
     @Test
@@ -112,60 +97,46 @@ class BookServiceTest extends BookCrossingBaseTests {
 
     @Test
     void oneFilterTest() {
-        final User user1 = userService.saveUser(UserDto.create("Tester", "user", "123456",
-                "123456", "k.test@mail.ru", "NSK"));
-        final User user2 = userService.saveUser(UserDto.create("Tester", "alex", "123456",
-                "123456", "kr.test@mail.ru", "NSK"));
-        usersId.add(user1.getUserId());
-        usersId.add(user2.getUserId());
+        final List<User> users = TestDataProvider.buildUsers().stream()
+                .map(u -> userService.saveUser(u))
+                .collect(Collectors.toList());
+        users.forEach(u -> usersId.add(u.getUserId()));
 
-        bookService.saveBook(BookDto.create("title", "aut", null,
-                null, 2000), user1.getLogin());
-        final BookModelDto book2 = bookService.saveBook(BookDto.create("title2", "author",
-                "genre", "publishing_house", 2020), user2.getLogin());
-        final BookModelDto book3 = bookService.saveBook(BookDto.create("title3", "author",
-                "genre2", "publishing_house", 2000), user1.getLogin());
+        bookService.saveBook(TestDataProvider.buildDandelion(), users.get(0).getLogin());
+        final int book2 = bookService.saveBook(TestDataProvider.buildWolves(), users.get(1).getLogin())
+                .getBookId();
+        final int book3 = bookService.saveBook(TestDataProvider.buildDorian(), users.get(0).getLogin())
+                .getBookId();
 
-        assertThat(bookService.filter(BookFiltersRequest.create(null, null, null, "author",
-                null, 0)))
+        assertThat(bookService.filter(BookFiltersRequest.create(null, null, "author",
+                null, null, 0)))
                 .hasSize(2)
-                .containsExactlyInAnyOrder(BookModelDto.create(book2.getBookId(), "title2", "author",
-                        "genre", "publishing_house", 2020, null),
-                        BookModelDto.create(book3.getBookId(), "title3", "author",
-                        "genre2", "publishing_house", 2000, null));
+                .containsExactlyInAnyOrder(TestDataProvider.buildWolves(book2), TestDataProvider.buildDorian(book3));
     }
 
     @Test
     void allFilterTest() {
-        final User user1 = userService.saveUser(UserDto.create("Tester", "user", "123456",
-                "123456", "k.test@mail.ru", "Novosibirsk"));
-        final User user2 = userService.saveUser(UserDto.create("Tester", "alex", "123456",
-                "123456", "kr.test@mail.ru", "Novosibirsk"));
-        usersId.add(user1.getUserId());
-        usersId.add(user2.getUserId());
+        final List<User> users = TestDataProvider.buildUsers().stream()
+                .map(u -> userService.saveUser(u))
+                .collect(Collectors.toList());
+        users.forEach(u -> usersId.add(u.getUserId()));
 
-        bookService.saveBook(BookDto.create("title", "author", null,
-                null, 2000), user1.getLogin());
-        final BookModelDto book2 = bookService.saveBook(BookDto.create("title2", "author",
-                "genre", "publishing_house", 2020), user2.getLogin());
-        bookService.saveBook(BookDto.create("title3", "author",
-                "genre2", "publishing_house", 2000), user1.getLogin());
+        bookService.saveBook(TestDataProvider.buildDandelion(), users.get(0).getLogin());
+        final int book2 =  bookService.saveBook(TestDataProvider.buildWolves(), users.get(1).getLogin()).getBookId();
+        bookService.saveBook(TestDataProvider.buildDorian(), users.get(0).getLogin());
 
-        assertThat(bookService.filter(BookFiltersRequest.create("Novosibirsk", "title2", "genre",
-                "author", "publishing_house", 2020)))
+        assertThat(bookService.filter(BookFiltersRequest.create("Novosibirsk", "Wolves",
+                "author", "story", "publishing_house", 2000)))
                 .hasSize(1)
-                .containsOnly(BookModelDto.create(book2.getBookId(), "title2", "author",
-                        "genre", "publishing_house", 2020, null));
+                .containsOnly(TestDataProvider.buildWolves(book2));
     }
 
     @Test
     void filterLockedUserTest() {
-        final User user1 = userService.saveUser(UserDto.create("Tester", "user", "123456",
-                "123456", "k.test@mail.ru", "Novosibirsk"));
+        final User user1 = userService.saveUser(TestDataProvider.buildBot());
         usersId.add(user1.getUserId());
 
-        bookService.saveBook(BookDto.create("title", "author", null,
-                null, 2000), user1.getLogin());
+        bookService.saveBook(TestDataProvider.buildDorian(), user1.getLogin());
 
         jdbcTemplate.update("update t_user set account_non_locked = 0 where user_id = " + user1.getUserId());
 
@@ -176,12 +147,10 @@ class BookServiceTest extends BookCrossingBaseTests {
 
     @Test
     void deleteBookTest() {
-        final User user1 = userService.saveUser(UserDto.create("Tester", "user", "123456",
-                "123456", "k.test@mail.ru", "Novosibirsk"));
+        final User user1 = userService.saveUser(TestDataProvider.buildBot());
         usersId.add(user1.getUserId());
 
-        final BookModelDto book = bookService.saveBook(BookDto.create("title", "author", null,
-                null, 2000), user1.getLogin());
+        final BookModelDto book = bookService.saveBook(TestDataProvider.buildWolves(), user1.getLogin());
 
         bookService.deleteBook(book.getBookId());
         assertThat(jdbcTemplate.queryForObject("select exists(select * from t_book where book_id = " +
@@ -204,67 +173,46 @@ class BookServiceTest extends BookCrossingBaseTests {
 
     @Test
     void findAll() {
-        final User user1 = userService.saveUser(UserDto.create("Tester", "user", "123456",
-                "123456", "k.test@mail.ru", "NSK"));
-        final User user2 = userService.saveUser(UserDto.create("Tester", "alex", "123456",
-                "123456", "kr.test@mail.ru", "NSK"));
-        usersId.add(user1.getUserId());
-        usersId.add(user2.getUserId());
+        final List<User> users = TestDataProvider.buildUsers().stream()
+                .map(u -> userService.saveUser(u))
+                .collect(Collectors.toList());
+        users.forEach(u -> usersId.add(u.getUserId()));
 
-        final BookModelDto book1 = bookService.saveBook(BookDto.create("title", null, null,
-                null, 2022), user1.getLogin());
-        final BookModelDto book2 = bookService.saveBook(BookDto.create("title2", "author",
-                "genre", "publishing_house", 2020), user2.getLogin());
-        final BookModelDto book3 = bookService.saveBook(BookDto.create("title3", "author",
-                "genre2", "publishing_house", 2000), user1.getLogin());
+        final int book1 = bookService.saveBook(TestDataProvider.buildDorian(), users.get(0).getLogin()).getBookId();
+        final int book2 = bookService.saveBook(TestDataProvider.buildDandelion(), users.get(1).getLogin()).getBookId();
+        final int book3 = bookService.saveBook(TestDataProvider.buildWolves(), users.get(1).getLogin()).getBookId();
 
         assertThat(bookService.findAll())
                 .hasSize(3)
-                .containsExactlyInAnyOrder(BookModelDto.create(book1.getBookId(), "title", null, null,
-                null, 2022, null),
-                        BookModelDto.create(book2.getBookId(), "title2", "author",
-                        "genre", "publishing_house", 2020, null),
-                        BookModelDto.create(book3.getBookId(), "title3", "author",
-                        "genre2", "publishing_house", 2000, null));
+                .hasSameElementsAs(TestDataProvider.buildBookModels(book1, book2, book3));
     }
 
     @Test
     void findByTitleTest() {
-        final User user1 = userService.saveUser(UserDto.create("Tester", "user", "123456",
-                "123456", "k.test@mail.ru", "NSK"));
-        final User user2 = userService.saveUser(UserDto.create("Tester", "alex", "123456",
-                "123456", "kr.test@mail.ru", "NSK"));
-        usersId.add(user1.getUserId());
-        usersId.add(user2.getUserId());
+        final List<User> users = TestDataProvider.buildUsers().stream()
+                .map(u -> userService.saveUser(u))
+                .collect(Collectors.toList());
+        users.forEach(u -> usersId.add(u.getUserId()));
 
-        final BookModelDto book1 = bookService.saveBook(BookDto.create("title", null, null,
-                null, 2022), user1.getLogin());
-        bookService.saveBook(BookDto.create("title2", "author",
-                "genre", "publishing_house", 2020), user2.getLogin());
-        bookService.saveBook(BookDto.create("title3", "author",
-                "genre2", "publishing_house", 2000), user1.getLogin());
+        bookService.saveBook(TestDataProvider.buildDandelion(), users.get(0).getLogin());
+        final int book1 =  bookService.saveBook(TestDataProvider.buildWolves(), users.get(1).getLogin()).getBookId();
+        bookService.saveBook(TestDataProvider.buildDorian(), users.get(0).getLogin());
 
-        assertThat(bookService.findByTitle("title"))
+        assertThat(bookService.findByTitle("Wolves"))
                 .hasSize(1)
-                .containsOnly(BookModelDto.create(book1.getBookId(), "title", null, null,
-                        null, 2022, null));
+                .containsOnly(TestDataProvider.buildWolves(book1));
     }
 
     @Test
     void findByTitleEmptyTest() {
-        final User user1 = userService.saveUser(UserDto.create("Tester", "user", "123456",
-                "123456", "k.test@mail.ru", "NSK"));
-        final User user2 = userService.saveUser(UserDto.create("Tester", "alex", "123456",
-                "123456", "kr.test@mail.ru", "NSK"));
-        usersId.add(user1.getUserId());
-        usersId.add(user2.getUserId());
+        final List<User> users = TestDataProvider.buildUsers().stream()
+                .map(u -> userService.saveUser(u))
+                .collect(Collectors.toList());
+        users.forEach(u -> usersId.add(u.getUserId()));
 
-        bookService.saveBook(BookDto.create("title", null, null,
-                null, 2022), user1.getLogin());
-        bookService.saveBook(BookDto.create("title2", "author",
-                "genre", "publishing_house", 2020), user2.getLogin());
-        bookService.saveBook(BookDto.create("title3", "author",
-                "genre2", "publishing_house", 2000), user1.getLogin());
+        bookService.saveBook(TestDataProvider.buildDandelion(), users.get(0).getLogin());
+        bookService.saveBook(TestDataProvider.buildWolves(), users.get(1).getLogin());
+        bookService.saveBook(TestDataProvider.buildDorian(), users.get(0).getLogin());
 
         assertThat(bookService.findByTitle("tit")).isEmpty();
     }
