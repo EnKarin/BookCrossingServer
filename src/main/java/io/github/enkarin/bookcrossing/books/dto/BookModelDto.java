@@ -3,12 +3,17 @@ package io.github.enkarin.bookcrossing.books.dto;
 import io.github.enkarin.bookcrossing.books.model.Attachment;
 import io.github.enkarin.bookcrossing.books.model.Book;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.experimental.SuperBuilder;
 
 import javax.validation.constraints.NotBlank;
 
+@SuperBuilder
 @EqualsAndHashCode
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Schema(description = "Полные данные книги")
 public class BookModelDto {
 
@@ -41,17 +46,6 @@ public class BookModelDto {
     @Schema(description = "Вложение")
     private final Attachment attachment;
 
-    public BookModelDto(final int bookId, final String title, final String author, final String genre,
-                         final String publishingHouse, final int year, final Attachment attachment) {
-        this.bookId = bookId;
-        this.title = title;
-        this.author = author;
-        this.genre = genre;
-        this.publishingHouse = publishingHouse;
-        this.year = year;
-        this.attachment = attachment;
-    }
-
     public Attachment getAttachment() {
         if (attachment != null) {
             return new Attachment(attachment.getName(), attachment.getData(), attachment.getExpansion());
@@ -62,10 +56,5 @@ public class BookModelDto {
     public static BookModelDto fromBook(final Book book) {
         return new BookModelDto(book.getBookId(), book.getTitle(), book.getAuthor(), book.getGenre(),
                 book.getPublishingHouse(), book.getYear(), book.getAttachment());
-    }
-
-    public static BookModelDto create(final int bookId, final String title, final String author, final String genre,
-                                      final String publishingHouse, final int year, final Attachment attachment) {
-        return new BookModelDto(bookId, title, author, genre, publishingHouse, year, attachment);
     }
 }

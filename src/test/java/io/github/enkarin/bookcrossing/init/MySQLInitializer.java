@@ -1,4 +1,4 @@
-package io.github.enkarin.bookcrossing;
+package io.github.enkarin.bookcrossing.init;
 
 import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.context.ApplicationContextInitializer;

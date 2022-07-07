@@ -2,13 +2,20 @@ package io.github.enkarin.bookcrossing.books.dto;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.experimental.SuperBuilder;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotBlank;
 
 @Validated
 @Getter
+@SuperBuilder
+@EqualsAndHashCode
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Schema(description = "Сущность книги")
 public class BookDto {
 
@@ -28,15 +35,6 @@ public class BookDto {
 
     @Schema(description = "Год издания", example = "2004")
     private final int year;
-
-    private BookDto(final String title, final String author, final String genre,
-                   final String publishingHouse, final int year) {
-        this.title = title;
-        this.author = author;
-        this.genre = genre;
-        this.publishingHouse = publishingHouse;
-        this.year = year;
-    }
 
     @JsonCreator
     public static BookDto create(final String title, final String author, final String genre,

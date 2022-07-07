@@ -1,40 +1,50 @@
 package io.github.enkarin.bookcrossing.registation.dto;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.experimental.SuperBuilder;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
+@SuperBuilder
 @Validated
-@Data
+@Getter
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Schema(description = "Сущность пользователя")
-@NoArgsConstructor
 public class UserDto {
 
     @Schema(description = "Имя", example = "Alex")
     @NotBlank(message = "name: Имя должно содержать хотя бы один видимый символ")
-    private String name;
+    private final String name;
 
     @Schema(description = "Логин", example = "LogAll")
     @NotBlank(message = "login: Логин должен содержать хотя бы один видимый символ")
-    private String login;
+    private final String login;
 
     @Schema(description = "Пароль", example = "123456")
     @NotBlank(message = "password: Пароль должен содержать хотя бы один видимый символ")
     @Size(min = 6, message = "Пароль должен содержать больше 6 символов")
-    private String password;
+    private final String password;
 
     @Schema(description = "Подвержение пароля", example = "123456", required = true)
-    private String passwordConfirm;
+    private final String passwordConfirm;
 
     @Schema(description = "Почта", example = "al@yandex.ru")
     @Email(message = "email: Некорректный почтовый адрес")
-    private String email;
+    private final String email;
 
     @Schema(description = "Город", example = "Новосибирск")
-    private String city;
+    private final String city;
+
+    @JsonCreator
+    public static UserDto create(final String name, final String login, final String password,
+                                 final String passwordConfirm, final String email, final String city) {
+        return new UserDto(name, login, password, passwordConfirm, email, city);
+    }
 }

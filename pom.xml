@@ -133,6 +133,11 @@
             <artifactId>assertj-core</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.github.spotbugs</groupId>
+            <artifactId>spotbugs-annotations</artifactId>
+            <version>4.6.0</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -143,6 +148,8 @@
                 <version>4.2.2</version>
                 <configuration>
                     <excludeFilterFile>/config/spotbugs/spotbugs.xml</excludeFilterFile>
+                    <includeTests>true</includeTests>
+                    <threshold>Low</threshold>
                 </configuration>
                 <executions>
                     <execution>
@@ -257,22 +264,22 @@
                                         <limit>
                                             <counter>INSTRUCTION</counter>
                                             <value>COVEREDRATIO</value>
-                                            <minimum>0.18</minimum>
+                                            <minimum>0.24</minimum>
                                         </limit>
                                         <limit>
                                             <counter>CLASS</counter>
                                             <value>MISSEDCOUNT</value>
-                                            <maximum>56</maximum>
+                                            <maximum>52</maximum>
                                         </limit>
                                         <limit>
                                             <counter>METHOD</counter>
                                             <value>MISSEDCOUNT</value>
-                                            <maximum>171</maximum>
+                                            <maximum>157</maximum>
                                         </limit>
                                         <limit>
                                             <counter>LINE</counter>
                                             <value>MISSEDCOUNT</value>
-                                            <maximum>656</maximum>
+                                            <maximum>592</maximum>
                                         </limit>
                                     </limits>
                                 </rule>
