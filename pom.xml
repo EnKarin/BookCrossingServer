@@ -264,12 +264,12 @@
                                         <limit>
                                             <counter>INSTRUCTION</counter>
                                             <value>COVEREDRATIO</value>
-                                            <minimum>0.24</minimum>
+                                            <minimum>0.3</minimum>
                                         </limit>
                                         <limit>
                                             <counter>CLASS</counter>
                                             <value>MISSEDCOUNT</value>
-                                            <maximum>52</maximum>
+                                            <maximum>50</maximum>
                                         </limit>
                                         <limit>
                                             <counter>METHOD</counter>
@@ -279,7 +279,7 @@
                                         <limit>
                                             <counter>LINE</counter>
                                             <value>MISSEDCOUNT</value>
-                                            <maximum>592</maximum>
+                                            <maximum>531</maximum>
                                         </limit>
                                     </limits>
                                 </rule>

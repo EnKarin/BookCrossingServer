@@ -47,7 +47,7 @@ public class RefreshController {
     )
     @PostMapping("/refresh")
     public ResponseEntity<?> refresh(@RequestBody final RefreshRequest request) {
-        return ResponseEntity.ok(refreshService.createTokens(request.getRefresh()));
+        return ResponseEntity.ok(refreshService.updateTokens(request.getRefresh()));
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)

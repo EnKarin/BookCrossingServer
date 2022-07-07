@@ -13,6 +13,6 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public User loadUserByUsername(final String username) {
-        return userService.findByLogin(username).orElseThrow();
+        return userService.findByLogin(username);
     }
 }

@@ -90,7 +90,7 @@ create table t_user_role (
 
 alter table t_action_mail_user
     add constraint action_foreign_user
-        foreign key (user_id) references t_user (user_id);
+        foreign key (user_id) references t_user (user_id) ON DELETE CASCADE;
 
 alter table t_book
     add constraint book_foreign_attach
