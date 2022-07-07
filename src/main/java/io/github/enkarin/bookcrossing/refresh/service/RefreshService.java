@@ -28,18 +28,23 @@ public class RefreshService {
     private final UserRepository userRepository;
     private final JwtProvider jwtProvider;
 
-    public AuthResponse createTokens(final String token) {
+    public AuthResponse updateTokens(final String token) {
         final Refresh refresh = refreshRepository.findById(token).orElseThrow(TokenNotFoundException::new);
         if (LocalDate.ofEpochDay(refresh.getDate()).isAfter(LocalDate.now())) {
-            return AuthResponse.create(jwtProvider.generateToken(refresh.getUser()),
-                    createAccess(refresh.getUser()));
+            return createTokens(refresh.getUser());
         } else {
             refreshRepository.delete(refresh);
             throw new RefreshTokenInvalidException();
         }
     }
 
-    private String createAccess(final String login) {
+    public AuthResponse createTokens(final String login) {
+        final User user = userRepository.findByLogin(login)
+                .orElseThrow(UserNotFoundException::new);
+        user.setLoginDate(LocalDateTime.now()
+                .toEpochSecond(ZoneOffset.systemDefault().getRules().getOffset(Instant.now())));
+        userRepository.save(user);
+
         refreshRepository.findByUser(login).ifPresent(refreshRepository::delete);
 
         final String token = UUID.randomUUID().toString();
@@ -50,11 +55,6 @@ public class RefreshService {
         refresh.setUser(login);
         refreshRepository.save(refresh);
 
-        final User user = userRepository.findByLogin(login)
-                .orElseThrow(UserNotFoundException::new);
-        user.setLoginDate(LocalDateTime.now()
-                .toEpochSecond(ZoneOffset.systemDefault().getRules().getOffset(Instant.now())));
-        userRepository.save(user);
-        return token;
+        return AuthResponse.create(jwtProvider.generateToken(login), token);
     }
 }

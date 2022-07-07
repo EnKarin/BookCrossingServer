@@ -55,20 +55,13 @@ public class UserProfileController {
                                         final int zone,
                                         final Principal principal) {
         UserDtoResponse userDTOResponse;
-        Optional<User> user;
+        User user;
         if (userId == -1) {
             user = userService.findByLogin(principal.getName());
-            userDTOResponse = new UserDtoResponse(user.orElseThrow(), zone);
         } else {
-            user = Optional.of(userService.findById(userId));
-            if (user.isPresent()) {
-                userDTOResponse = new UserDtoResponse(user.get(), zone);
-            } else {
-                final ErrorListResponse response = new ErrorListResponse();
-                response.getErrors().add("user: Пользователь не найден");
-                return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-            }
+            user = userService.findById(userId);
         }
+        userDTOResponse = new UserDtoResponse(user, zone);
         return ResponseEntity.ok(userDTOResponse);
     }
 

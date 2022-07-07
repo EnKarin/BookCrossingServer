@@ -2,14 +2,10 @@ package io.github.enkarin.bookcrossing.registation.controllers;
 
 import io.github.enkarin.bookcrossing.constant.Constant;
 import io.github.enkarin.bookcrossing.errors.ErrorListResponse;
-import io.github.enkarin.bookcrossing.exception.EmailFailedException;
-import io.github.enkarin.bookcrossing.exception.LoginFailedException;
-import io.github.enkarin.bookcrossing.mail.service.MailService;
-import io.github.enkarin.bookcrossing.refresh.service.RefreshService;
+import io.github.enkarin.bookcrossing.exception.*;
 import io.github.enkarin.bookcrossing.registation.dto.AuthResponse;
 import io.github.enkarin.bookcrossing.registation.dto.LoginRequest;
 import io.github.enkarin.bookcrossing.registation.dto.UserDto;
-import io.github.enkarin.bookcrossing.user.model.User;
 import io.github.enkarin.bookcrossing.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -24,7 +20,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Optional;
+import java.util.Map;
 
 @Tag(
         name = "Регистрация и авторизация пользователей",
@@ -35,8 +31,6 @@ import java.util.Optional;
 public class RegistrationController {
 
     private final UserService userService;
-    private final RefreshService refreshService;
-    private final MailService mailService;
 
     @Operation(
             summary = "Регистрация пользователя",
@@ -45,49 +39,42 @@ public class RegistrationController {
     @ApiResponses(value = {
         @ApiResponse(responseCode = "409", description = "Пароли не совпадают",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(implementation = ErrorListResponse.class))}),
-        @ApiResponse(responseCode = "406", description = "Пользователь с таким логином уже существует",
+                    schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+        @ApiResponse(responseCode = "406", description = "Пользователь с таким логином или почтой уже существует",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(implementation = ErrorListResponse.class))}),
+                    schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
         @ApiResponse(responseCode = "400", description = "Введены некорректные данные",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
                     schema = @Schema(implementation = ErrorListResponse.class))}),
         @ApiResponse(responseCode = "200", description = "Возвращает токены",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
                     schema = @Schema(implementation = AuthResponse.class))})
-        }
+    }
     )
     @PostMapping("/registration")
     public ResponseEntity<?> registerUser(@Valid @RequestBody final UserDto userForm,
                                           final BindingResult bindingResult) {
-        final ErrorListResponse errorListResponse = new ErrorListResponse();
         if (bindingResult.hasErrors()) {
+            final ErrorListResponse errorListResponse = new ErrorListResponse();
             bindingResult.getAllErrors().forEach(f -> errorListResponse.getErrors()
                     .add(f.getDefaultMessage()));
             return new ResponseEntity<>(errorListResponse, HttpStatus.BAD_REQUEST);
         }
-        if (!userForm.getPassword().equals(userForm.getPasswordConfirm())) {
-            errorListResponse.getErrors().add("passwordConfirm: Пароли не совпадают");
-            return new ResponseEntity<>(errorListResponse, HttpStatus.CONFLICT);
-        }
-        try {
-            final User result = userService.saveUser(userForm);
-            mailService.sendApproveMail(result);
-            return new ResponseEntity<>(HttpStatus.OK);
-        } catch (LoginFailedException | EmailFailedException failedException) {
-            errorListResponse.getErrors().add(failedException.getMessage());
-            return new ResponseEntity<>(errorListResponse, HttpStatus.NOT_ACCEPTABLE);
-        }
+        userService.saveUser(userForm);
+        return ResponseEntity.ok().build();
     }
 
     @Operation(
             summary = "Авторизация пользователя",
-            description = "Выдает токены, если пользователь с таким логином существует и пароль корректен"
+            description = "Возвращает токены"
     )
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "401", description = "Некорректные данные",
+        @ApiResponse(responseCode = "404", description = "Некорректный логин или пароль",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(implementation = ErrorListResponse.class))}),
+                    schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+        @ApiResponse(responseCode = "403", description = "Аккаунт не подтвержден или заблокирован",
+            content = {@Content(mediaType = Constant.MEDIA_TYPE,
+                    schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
         @ApiResponse(responseCode = "200", description = "Возвращает токены",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
                     schema = @Schema(implementation = AuthResponse.class))}
@@ -95,23 +82,7 @@ public class RegistrationController {
     )
     @PostMapping("/auth")
     public ResponseEntity<?> auth(@RequestBody final LoginRequest request) {
-        final Optional<User> userEntity = userService.findByLoginAndPassword(request);
-        final ErrorListResponse response = new ErrorListResponse();
-        if (userEntity.isEmpty()) {
-            response.getErrors().add("account: Некорректный логин или пароль");
-            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
-        }
-        if (userEntity.get().isEnabled()) {
-            if (userEntity.get().isAccountNonLocked()) {
-                return ResponseEntity.ok(refreshService.createTokens(request.getLogin()));
-            } else {
-                response.getErrors().add("account: Аккаунт заблокирован");
-                return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
-            }
-        } else {
-            response.getErrors().add("account: Аккаунт не подтвержден");
-            return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
-        }
+        return ResponseEntity.ok(userService.findByLoginAndPassword(request));
     }
 
     @Operation(
@@ -119,17 +90,56 @@ public class RegistrationController {
             description = "Изменяет стату аккаунта на подтвержденный"
     )
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "400", description = "Токена не существует"),
+        @ApiResponse(responseCode = "404", description = "Токена не существует",
+            content = {@Content(mediaType = Constant.MEDIA_TYPE,
+                    schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
         @ApiResponse(responseCode = "200", description = "Подтверждает почту для аккаунта")
-        }
+    }
     )
     @GetMapping("/registration/confirmation")
     public ResponseEntity<?> mailConfirm(@RequestParam final String token) {
-        final Optional<String> login = userService.confirmMail(token);
-        if (login.isPresent()) {
-            return ResponseEntity.ok(refreshService.createTokens(login.get()));
-        } else {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+        return ResponseEntity.ok(userService.confirmMail(token));
+    }
+
+    @ResponseStatus(HttpStatus.CONFLICT)
+    @ExceptionHandler(PasswordsDontMatchException.class)
+    public Map<String, String> passwordConflict(final PasswordsDontMatchException exc) {
+        return Map.of("password", exc.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.CONFLICT)
+    @ExceptionHandler(LoginFailedException.class)
+    public Map<String, String> loginFailed(final LoginFailedException exc) {
+        return Map.of("login", exc.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.CONFLICT)
+    @ExceptionHandler(EmailFailedException.class)
+    public Map<String, String> emailFailed(final EmailFailedException exc) {
+        return Map.of("email", exc.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(TokenNotFoundException.class)
+    public Map<String, String> tokenInvalid(final TokenNotFoundException exc) {
+        return Map.of("token", exc.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ExceptionHandler(LockedAccountException.class)
+    public Map<String, String> lockedUser(final LockedAccountException exc) {
+        return Map.of("user", exc.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ExceptionHandler(AccountNotConfirmedException.class)
+    public Map<String, String> notConfirmedUser(final AccountNotConfirmedException exc) {
+        return Map.of("user", exc.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(InvalidPasswordException.class)
+    public Map<String, String> passwordInvalid() {
+        return Map.of("user", "Пользователь не найден");
     }
 }

@@ -1,10 +1,11 @@
 package io.github.enkarin.bookcrossing.user.service;
 
-import io.github.enkarin.bookcrossing.exception.EmailFailedException;
-import io.github.enkarin.bookcrossing.exception.LoginFailedException;
-import io.github.enkarin.bookcrossing.exception.UserNotFoundException;
+import io.github.enkarin.bookcrossing.exception.*;
 import io.github.enkarin.bookcrossing.mail.model.ActionMailUser;
 import io.github.enkarin.bookcrossing.mail.repository.ActionMailUserRepository;
+import io.github.enkarin.bookcrossing.mail.service.MailService;
+import io.github.enkarin.bookcrossing.refresh.service.RefreshService;
+import io.github.enkarin.bookcrossing.registation.dto.AuthResponse;
 import io.github.enkarin.bookcrossing.registation.dto.LoginRequest;
 import io.github.enkarin.bookcrossing.registation.dto.UserDto;
 import io.github.enkarin.bookcrossing.user.dto.UserDtoResponse;
@@ -17,7 +18,6 @@ import io.github.enkarin.bookcrossing.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeMap;
-import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,35 +35,39 @@ public class UserService {
     private final RoleRepository roleRepository;
     private final ActionMailUserRepository confirmationMailUserRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final MailService mailService;
+    private final RefreshService refreshService;
     private final ModelMapper modelMapper;
     private TypeMap<UserDto, User> userDtoMapper;
 
+    @Transactional
     public User saveUser(final UserDto userDTO) {
+        if (!userDTO.getPassword().equals(userDTO.getPasswordConfirm())) {
+            throw new PasswordsDontMatchException();
+        }
         if (userRepository.findByLogin(userDTO.getLogin()).isPresent()) {
             throw new LoginFailedException();
         }
         if (userRepository.findByEmail(userDTO.getEmail()).isPresent()) {
             throw new EmailFailedException();
         }
-        final User user = convertToUser(userDTO);
-        return userRepository.save(user);
+        final User user = userRepository.save(convertToUser(userDTO));
+        mailService.sendApproveMail(user);
+        return user;
     }
 
-    public Optional<String> confirmMail(final String token) {
-        final Optional<ActionMailUser> confirmationMailUser = confirmationMailUserRepository.findById(token);
-        if (confirmationMailUser.isPresent()) {
-            final User user = confirmationMailUser.get().getUser();
-            user.setEnabled(true);
-            confirmationMailUserRepository.delete(confirmationMailUser.get());
-            userRepository.save(user);
-            return Optional.of(user.getLogin());
-        } else {
-            return Optional.empty();
-        }
+    public AuthResponse confirmMail(final String token) {
+        final ActionMailUser confirmationMailUser = confirmationMailUserRepository.findById(token)
+                .orElseThrow(TokenNotFoundException::new);
+        final User user = confirmationMailUser.getUser();
+        user.setEnabled(true);
+        confirmationMailUserRepository.delete(confirmationMailUser);
+        userRepository.save(user);
+        return refreshService.createTokens(user.getLogin());
     }
 
-    public Optional<User> findByLogin(final String login) {
-        return userRepository.findByLogin(login);
+    public User findByLogin(final String login) {
+        return userRepository.findByLogin(login).orElseThrow(UserNotFoundException::new);
     }
 
     public User findById(final int userId) {
@@ -76,32 +80,35 @@ public class UserService {
     }
 
     public List<UserDtoResponse> findAllUsers(final int zone) {
-        final Role role = roleRepository.getById(1);
+        final Role role = roleRepository.getRoleByName("ROLE_USER");
         return userRepository.findByUserRoles(role).stream()
                 .map(u -> new UserDtoResponse(u, zone))
                 .collect(Collectors.toList());
     }
 
-    public Optional<User> findByLoginAndPassword(final LoginRequest login) {
-        final Optional<User> user = userRepository.findByLogin(login.getLogin());
-        if (user.isPresent() && bCryptPasswordEncoder.matches(login.getPassword(), user.get().getPassword())) {
-            return user;
+    public AuthResponse findByLoginAndPassword(final LoginRequest login) {
+        final User user = userRepository.findByLogin(login.getLogin())
+                .orElseThrow(UserNotFoundException::new);
+        if (bCryptPasswordEncoder.matches(login.getPassword(), user.getPassword())) {
+            if (user.isEnabled()) {
+                if (user.isAccountNonLocked()) {
+                    return refreshService.createTokens(login.getLogin());
+                }
+                throw new LockedAccountException();
+            }
+            throw new AccountNotConfirmedException();
         }
-        return Optional.empty();
+        throw new InvalidPasswordException();
     }
 
     public Optional<User> putUserInfo(final UserPutRequest userPutRequest, final String login) {
-        Optional<User> user = findByLogin(login);
-        if (user.isPresent()) {
-            if (bCryptPasswordEncoder.matches(userPutRequest.getOldPassword(), user.get().getPassword())) {
-                user.get().setName(userPutRequest.getName());
-                user.get().setCity(userPutRequest.getCity());
-                user.get().setPassword(bCryptPasswordEncoder.encode(userPutRequest.getNewPassword()));
-                user = Optional.of(userRepository.save(user.get()));
-                return user;
-            } else {
-                return Optional.empty();
-            }
+        User user = findByLogin(login);
+        if (bCryptPasswordEncoder.matches(userPutRequest.getOldPassword(), user.getPassword())) {
+            user.setName(userPutRequest.getName());
+            user.setCity(userPutRequest.getCity());
+            user.setPassword(bCryptPasswordEncoder.encode(userPutRequest.getNewPassword()));
+            user = userRepository.save(user);
+            return Optional.of(user);
         } else {
             throw new UserNotFoundException();
         }
@@ -114,7 +121,6 @@ public class UserService {
 
     private User convertToUser(final UserDto userDTO) {
         if (userDtoMapper == null) {
-            modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
             userDtoMapper = modelMapper.createTypeMap(UserDto.class, User.class);
             userDtoMapper.addMappings(ms -> {
                 ms.skip(User::setUserRoles);
