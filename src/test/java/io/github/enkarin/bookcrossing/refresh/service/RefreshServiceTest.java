@@ -69,5 +69,7 @@ class RefreshServiceTest extends BookCrossingBaseTests {
         assertThatThrownBy(() -> refreshService.updateTokens(tokens.getRefreshToken()))
                 .isInstanceOf(RefreshTokenInvalidException.class)
                 .hasMessage("Токен истек");
+        assertThat(jdbcTemplate.queryForObject("select exists(select * from t_refresh where refresh = ?)",
+                Boolean.class, tokens.getRefreshToken())).isFalse();
     }
 }

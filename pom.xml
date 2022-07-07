@@ -269,17 +269,17 @@
                                         <limit>
                                             <counter>CLASS</counter>
                                             <value>MISSEDCOUNT</value>
-                                            <maximum>50</maximum>
+                                            <maximum>49</maximum>
                                         </limit>
                                         <limit>
                                             <counter>METHOD</counter>
                                             <value>MISSEDCOUNT</value>
-                                            <maximum>157</maximum>
+                                            <maximum>156</maximum>
                                         </limit>
                                         <limit>
                                             <counter>LINE</counter>
                                             <value>MISSEDCOUNT</value>
-                                            <maximum>531</maximum>
+                                            <maximum>530</maximum>
                                         </limit>
                                     </limits>
                                 </rule>
