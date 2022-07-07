@@ -8,6 +8,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -29,4 +30,24 @@ public class Attachment implements Serializable {
     private byte[] data;
 
     private String expansion;
+
+    @OneToOne(mappedBy = "attachment")
+    private Book book;
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof Attachment)) {
+            return false;
+        }
+        final Attachment that = (Attachment) obj;
+        return Objects.equals(name, that.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 }
