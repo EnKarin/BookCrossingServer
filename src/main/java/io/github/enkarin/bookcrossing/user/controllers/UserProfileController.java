@@ -2,10 +2,11 @@ package io.github.enkarin.bookcrossing.user.controllers;
 
 import io.github.enkarin.bookcrossing.constant.Constant;
 import io.github.enkarin.bookcrossing.errors.ErrorListResponse;
-import io.github.enkarin.bookcrossing.exception.UserNotFoundException;
-import io.github.enkarin.bookcrossing.user.dto.UserDtoResponse;
-import io.github.enkarin.bookcrossing.user.dto.UserPutRequest;
-import io.github.enkarin.bookcrossing.user.model.User;
+import io.github.enkarin.bookcrossing.exception.InvalidPasswordException;
+import io.github.enkarin.bookcrossing.exception.PasswordsDontMatchException;
+import io.github.enkarin.bookcrossing.user.dto.UserProfileDto;
+import io.github.enkarin.bookcrossing.user.dto.UserPublicProfileDto;
+import io.github.enkarin.bookcrossing.user.dto.UserPutProfileDto;
 import io.github.enkarin.bookcrossing.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -22,7 +23,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.security.Principal;
-import java.util.Optional;
+import java.util.Map;
 
 @Tag(
         name = "Получение профиля пользователей",
@@ -30,54 +31,32 @@ import java.util.Optional;
 )
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/user/profile")
 public class UserProfileController {
 
     private final UserService userService;
 
     @Operation(
-            summary = "Получение чужого профиля",
+            summary = "Получение профиля",
             description = "Возвращает данные профиля по id"
     )
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "400", description = "Пользователь не найден",
+        @ApiResponse(responseCode = "404", description = "Пользователь не найден",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(implementation = ErrorListResponse.class))}),
-        @ApiResponse(responseCode = "200", description = "Возвращает профиль пользователя",
-            content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(implementation = UserDtoResponse.class))})
+                    schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+        @ApiResponse(responseCode = "200", description = "Возвращает профиль пользователя")
         }
     )
-    @GetMapping("/profile")
+    @GetMapping
     public ResponseEntity<?> getProfile(@RequestParam @Parameter(description = "Идентификатор пользователя")
                                             final int userId,
                                         @RequestParam @Parameter(description = "Часовой пояс пользователя")
                                         final int zone,
                                         final Principal principal) {
-        UserDtoResponse userDTOResponse;
-        User user;
         if (userId == -1) {
-            user = userService.findByLogin(principal.getName());
-        } else {
-            user = userService.findById(userId);
+            return ResponseEntity.ok(userService.getProfile(principal.getName()));
         }
-        userDTOResponse = new UserDtoResponse(user, zone);
-        return ResponseEntity.ok(userDTOResponse);
-    }
-
-    @Operation(
-            summary = "Получение своего профиля",
-            description = "Возвращает данные профиля пользователя"
-    )
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Возвращает данные пользователя",
-            content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(implementation = UserDtoResponse.class))})
-        }
-    )
-    @GetMapping("/myProfile")
-    public ResponseEntity<?> getMyProfile(final Principal principal) {
-        return ResponseEntity.ok(userService.getProfile(principal.getName()));
+        return ResponseEntity.ok(userService.findById(userId, zone));
     }
 
     @Operation(
@@ -85,56 +64,57 @@ public class UserProfileController {
             description = "Возвращает обновленный профиль"
     )
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "409", description = "Пароли не совпадают",
-                    content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                            schema = @Schema(implementation = ErrorListResponse.class))}),
+        @ApiResponse(responseCode = "412", description = "Пароли не совпадают",
+            content = {@Content(mediaType = Constant.MEDIA_TYPE,
+                    schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+        @ApiResponse(responseCode = "409", description = "Неверный пароль",
+            content = {@Content(mediaType = Constant.MEDIA_TYPE,
+                    schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
         @ApiResponse(responseCode = "404", description = "Пользователь не найден",
-                    content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                            schema = @Schema(implementation = ErrorListResponse.class))}),
-        @ApiResponse(responseCode = "403", description = "Введен неверный старый пароль",
-                    content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                            schema = @Schema(implementation = ErrorListResponse.class))}),
-        @ApiResponse(responseCode = "400", description = "Некорректный пароль",
-                    content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                            schema = @Schema(implementation = ErrorListResponse.class))}),
+            content = {@Content(mediaType = Constant.MEDIA_TYPE,
+                    schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
         @ApiResponse(responseCode = "200", description = "Возвращает обновленный профиль пользователя",
-                    content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                            schema = @Schema(implementation = UserDtoResponse.class))})
+            content = {@Content(mediaType = Constant.MEDIA_TYPE,
+                    schema = @Schema(implementation = UserProfileDto.class))})
         }
     )
-    @PutMapping("/profile")
-    public ResponseEntity<?> putProfile(@Valid @RequestBody final UserPutRequest userPutRequest,
+    @PutMapping
+    public ResponseEntity<?> putProfile(@Valid @RequestBody final UserPutProfileDto userPutProfileDto,
                                         final BindingResult bindingResult,
                                         final Principal principal) {
-        final ErrorListResponse response = new ErrorListResponse();
         if (bindingResult.hasErrors()) {
+            final ErrorListResponse response = new ErrorListResponse();
             bindingResult.getAllErrors().forEach(f -> response.getErrors()
                     .add(f.getDefaultMessage()));
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
-        if (!userPutRequest.getNewPassword().equals(userPutRequest.getPasswordConfirm())) {
-            response.getErrors().add("passwordConfirm: Пароли не совпадают");
-            return new ResponseEntity<>(response, HttpStatus.CONFLICT);
-        }
-        try {
-            final Optional<User> user = userService.putUserInfo(userPutRequest, principal.getName());
-            if (user.isPresent()) {
-                return ResponseEntity.ok(new UserDtoResponse(user.get(), userPutRequest.getZone()));
-            } else {
-                response.getErrors().add("oldPassword: Старый пароль неверен");
-                return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
-            }
-        } catch (UserNotFoundException e) {
-            response.getErrors().add("user: Пользователь не найден");
-            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
-        }
+        return ResponseEntity.ok(userService.putUserInfo(userPutProfileDto, principal.getName()));
     }
 
-    //добавить документацию
-
+    @Operation(
+            summary = "Список пользователей",
+            description = "Позволяет найти всех пользователей сервиса"
+    )
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Возвращает найденных пользователей",
+            content = {@Content(mediaType = Constant.MEDIA_TYPE,
+                    schema = @Schema(implementation = UserPublicProfileDto[].class))})
+    })
     @GetMapping("/users")
     public ResponseEntity<?> getAllProfile(@RequestParam final int zone) {
-        return new ResponseEntity<>(userService.findAllUsers(zone), HttpStatus.OK);
+        return ResponseEntity.ok(userService.findAllUsers(zone));
+    }
+
+    @ResponseStatus(HttpStatus.PRECONDITION_FAILED)
+    @ExceptionHandler(PasswordsDontMatchException.class)
+    public Map<String, String> passwordExc(final PasswordsDontMatchException exc) {
+        return Map.of("password", exc.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.CONFLICT)
+    @ExceptionHandler(InvalidPasswordException.class)
+    public Map<String, String> passwordInvalid(final InvalidPasswordException exc) {
+        return Map.of("password", exc.getMessage());
     }
 }
 

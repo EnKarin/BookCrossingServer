@@ -6,7 +6,7 @@ import io.github.enkarin.bookcrossing.exception.TokenNotFoundException;
 import io.github.enkarin.bookcrossing.exception.UserNotFoundException;
 import io.github.enkarin.bookcrossing.registation.dto.AuthResponse;
 import io.github.enkarin.bookcrossing.support.TestDataProvider;
-import io.github.enkarin.bookcrossing.user.model.User;
+import io.github.enkarin.bookcrossing.user.dto.UserDto;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +29,7 @@ class RefreshServiceTest extends BookCrossingBaseTests {
 
     @Test
     void createTokensTest() {
-        final User user = userService.saveUser(TestDataProvider.buildAlex());
+        final UserDto user = userService.saveUser(TestDataProvider.buildAlex());
         usersId.add(user.getUserId());
         final AuthResponse tokens = refreshService.createTokens(user.getLogin());
         assertThat(jdbcTemplate.queryForObject("select exists(select * from t_refresh where refresh = ?)",
@@ -45,7 +45,7 @@ class RefreshServiceTest extends BookCrossingBaseTests {
 
     @Test
     void updateTokensTest() {
-        final User user = userService.saveUser(TestDataProvider.buildAlex());
+        final UserDto user = userService.saveUser(TestDataProvider.buildAlex());
         usersId.add(user.getUserId());
         final AuthResponse tokens = refreshService.updateTokens(refreshService.createTokens(user.getLogin())
                 .getRefreshToken());
@@ -62,7 +62,7 @@ class RefreshServiceTest extends BookCrossingBaseTests {
 
     @Test
     void updateTokenInvalidExcTest() {
-        final User user = userService.saveUser(TestDataProvider.buildAlex());
+        final UserDto user = userService.saveUser(TestDataProvider.buildAlex());
         usersId.add(user.getUserId());
         final AuthResponse tokens = refreshService.createTokens(user.getLogin());
         jdbcTemplate.update("update t_refresh set date = 0 where refresh = ?", tokens.getRefreshToken());

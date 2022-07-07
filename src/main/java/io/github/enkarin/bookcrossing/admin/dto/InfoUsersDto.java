@@ -1,5 +1,6 @@
 package io.github.enkarin.bookcrossing.admin.dto;
 
+import io.github.enkarin.bookcrossing.user.dto.UserDto;
 import io.github.enkarin.bookcrossing.user.model.User;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.EqualsAndHashCode;
@@ -52,6 +53,11 @@ public class InfoUsersDto {
     }
 
     public static InfoUsersDto fromUser(final User user, final int zone) {
+        return new InfoUsersDto(user.getUserId(), user.getName(), user.getLogin(), user.getEmail(),
+                user.getCity(), user.isAccountNonLocked(), user.isEnabled(), user.getLoginDate(), zone);
+    }
+
+    public static InfoUsersDto fromUserDto(final UserDto user, final int zone) {
         return new InfoUsersDto(user.getUserId(), user.getName(), user.getLogin(), user.getEmail(),
                 user.getCity(), user.isAccountNonLocked(), user.isEnabled(), user.getLoginDate(), zone);
     }

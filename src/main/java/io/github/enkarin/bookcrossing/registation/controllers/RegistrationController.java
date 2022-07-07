@@ -5,7 +5,7 @@ import io.github.enkarin.bookcrossing.errors.ErrorListResponse;
 import io.github.enkarin.bookcrossing.exception.*;
 import io.github.enkarin.bookcrossing.registation.dto.AuthResponse;
 import io.github.enkarin.bookcrossing.registation.dto.LoginRequest;
-import io.github.enkarin.bookcrossing.registation.dto.UserDto;
+import io.github.enkarin.bookcrossing.registation.dto.UserRegistrationDto;
 import io.github.enkarin.bookcrossing.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -52,7 +52,7 @@ public class RegistrationController {
     }
     )
     @PostMapping("/registration")
-    public ResponseEntity<?> registerUser(@Valid @RequestBody final UserDto userForm,
+    public ResponseEntity<?> registerUser(@Valid @RequestBody final UserRegistrationDto userForm,
                                           final BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             final ErrorListResponse errorListResponse = new ErrorListResponse();
