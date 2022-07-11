@@ -5,3 +5,6 @@ spring:
         show-sql: false
     flyway:
         enabled: true
+server:
+    ssl:
+        enabled: false

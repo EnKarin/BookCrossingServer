@@ -8,7 +8,7 @@ server:
             tracking-modes: cookie
     ssl:
         enabled: true
-        key-store: D:/IdeaProgects/BookcrossingServer/src/main/resources/keystore.p12
+        key-store: classpath:keystore.p12
         keyStoreType: PKCS12
         key-alias: tomcat
         key-store-password: Sw1982
@@ -42,5 +42,5 @@ spring:
 jwt:
     secret: scjwtmaster
 mail:
-    password: dtwj tqum vhex ruow
+    password: lgwr qqwh ttbh frhv
     username: bookscrossingdiploma@gmail.com
