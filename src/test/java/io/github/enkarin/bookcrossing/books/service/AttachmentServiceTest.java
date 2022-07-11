@@ -8,7 +8,6 @@ import io.github.enkarin.bookcrossing.exception.BadRequestException;
 import io.github.enkarin.bookcrossing.exception.BookNotFoundException;
 import io.github.enkarin.bookcrossing.support.TestDataProvider;
 import io.github.enkarin.bookcrossing.user.dto.UserDto;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,12 +40,6 @@ class AttachmentServiceTest extends BookCrossingBaseTests {
                 .map(u -> userService.saveUser(u))
                 .collect(Collectors.toList());
         users.forEach(u -> usersId.add(u.getUserId()));
-    }
-
-    @AfterEach
-    void delete() {
-        usersId.forEach(u -> userService.deleteUser(u));
-        usersId.clear();
     }
 
     @Test
