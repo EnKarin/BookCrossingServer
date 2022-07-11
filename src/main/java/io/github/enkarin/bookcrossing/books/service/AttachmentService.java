@@ -32,8 +32,6 @@ public class AttachmentService {
                 .filter(b -> b.getBookId() == attachmentDto.getBookId())
                 .findFirst()
                 .orElseThrow(BookNotFoundException::new);
-        Attachment attachment = new Attachment();
-        attachment.setData(attachmentDto.getFile().getBytes());
         final String fileName = attachmentDto.getFile().getOriginalFilename();
         if (fileName == null || fileName.equals("")) {
             throw new BadRequestException("Имя не должно быть пустым");
@@ -41,10 +39,13 @@ public class AttachmentService {
             final String expansion = fileName.substring(fileName.indexOf('.')).toLowerCase(Locale.ROOT);
             if (expansion.contains("jpeg") || expansion.contains("jpg") ||
                     expansion.contains("png") || expansion.contains("bmp")) {
+                final Attachment attachment = new Attachment();
+                attachment.setData(attachmentDto.getFile().getBytes());
+                attachment.setBook(book);
                 attachment.setExpansion(expansion);
-                attachment = attachRepository.save(attachment);
                 book.setAttachment(attachment);
-                return BookModelDto.fromBook(bookRepository.save(book));
+                attachRepository.save(attachment);
+                return BookModelDto.fromBook(bookRepository.getById(book.getBookId()));
             } else {
                 throw new BadRequestException("Недопустимый формат файла");
             }
@@ -58,9 +59,6 @@ public class AttachmentService {
                 .orElseThrow(BookNotFoundException::new);
         Optional.ofNullable(book.getAttachment())
                 .orElseThrow(AttachmentNotFoundException::new);
-        final String name = book.getAttachment().getName();
-        book.setAttachment(null);
-        bookRepository.save(book);
-        attachRepository.deleteById(name);
+        attachRepository.deleteById(book.getAttachment().getAttachId());
     }
 }

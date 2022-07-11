@@ -36,8 +36,7 @@ public class Book implements Serializable {
     @JoinColumn(name = "owner_book")
     private User owner;
 
-    @OneToOne(orphanRemoval = true)
-    @JoinColumn(name = "attach_id")
+    @OneToOne(mappedBy = "book", orphanRemoval = true)
     private Attachment attachment;
 
     @ManyToMany(mappedBy = "bookmarks")

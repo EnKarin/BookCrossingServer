@@ -48,8 +48,8 @@ public class BookModelDto {
 
     public Attachment getAttachment() {
         if (attachment != null) {
-            return new Attachment(attachment.getName(), attachment.getData(), attachment.getExpansion(),
-                    attachment.getBook());
+            return new Attachment(attachment.getAttachId(), attachment.getBook(), attachment.getData(),
+                    attachment.getExpansion());
         }
         return null;
     }

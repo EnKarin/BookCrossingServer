@@ -13,7 +13,6 @@ public class MySQLInitializer implements ApplicationContextInitializer<Configura
 
     @Override
     public void initialize(final ConfigurableApplicationContext applicationContext) {
-        MY_SQL_CONTAINER.withCommand("mysqld", "--max_allowed_packet=10M");
         MY_SQL_CONTAINER
                 .withUsername("root")
                 .withPassword("root")

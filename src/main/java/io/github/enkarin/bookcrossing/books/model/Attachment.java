@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -21,18 +20,18 @@ public class Attachment implements Serializable {
     private static final long serialVersionUID = 4600249981575739954L;
 
     @Id
-    @GeneratedValue(generator = "uuid")
-    @GenericGenerator(name = "uuid", strategy = "uuid2")
-    private String name;
+    private int attachId;
+
+    @MapsId
+    @OneToOne
+    @JoinColumn(name = "attach_id")
+    private Book book;
 
     @Lob
     @Column(length = 3_145_728)
     private byte[] data;
 
     private String expansion;
-
-    @OneToOne(mappedBy = "attachment")
-    private Book book;
 
     @Override
     public boolean equals(final Object obj) {
@@ -43,7 +42,7 @@ public class Attachment implements Serializable {
             return false;
         }
         final Attachment that = (Attachment) obj;
-        return Objects.equals(name, that.name);
+        return Objects.equals(attachId, that.attachId);
     }
 
     @Override

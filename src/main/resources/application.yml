@@ -34,13 +34,13 @@ spring:
         driver-class-name: com.mysql.cj.jdbc.Driver
     servlet:
         multipart:
-            max-file-size: 8MB
-            max-request-size: 10MB
+            max-file-size: 5MB
+            max-request-size: 6MB
     flyway:
         enabled: false
 
 jwt:
     secret: scjwtmaster
 mail:
-    password: dtwj tqum vhex ruow
+    password: slzx xvuw atyv tlhi
     username: bookscrossingdiploma@gmail.com
