@@ -7,7 +7,7 @@ import io.github.enkarin.bookcrossing.books.dto.BookModelDto;
 import io.github.enkarin.bookcrossing.exception.BookNotFoundException;
 import io.github.enkarin.bookcrossing.exception.UserNotFoundException;
 import io.github.enkarin.bookcrossing.support.TestDataProvider;
-import io.github.enkarin.bookcrossing.user.model.User;
+import io.github.enkarin.bookcrossing.user.dto.UserDto;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +31,7 @@ class BookServiceTest extends BookCrossingBaseTests {
 
     @Test
     void saveBook() {
-        final User user = userService.saveUser(TestDataProvider.buildAlex());
+        final UserDto user = userService.saveUser(TestDataProvider.buildAlex());
         usersId.add(user.getUserId());
         final BookModelDto book = bookService.saveBook(TestDataProvider.buildDorian(), user.getLogin());
         assertThat(book)
@@ -47,7 +47,7 @@ class BookServiceTest extends BookCrossingBaseTests {
 
     @Test
     void findBookForOwnerTest() {
-        final List<User> users = TestDataProvider.buildUsers().stream()
+        final List<UserDto> users = TestDataProvider.buildUsers().stream()
                 .map(u -> userService.saveUser(u))
                 .collect(Collectors.toList());
         users.forEach(u -> usersId.add(u.getUserId()));
@@ -66,7 +66,7 @@ class BookServiceTest extends BookCrossingBaseTests {
 
     @Test
     void findEmptyBookForOwnerTest() {
-        final List<User> users = TestDataProvider.buildUsers().stream()
+        final List<UserDto> users = TestDataProvider.buildUsers().stream()
                 .map(u -> userService.saveUser(u))
                 .collect(Collectors.toList());
         users.forEach(u -> usersId.add(u.getUserId()));
@@ -78,7 +78,7 @@ class BookServiceTest extends BookCrossingBaseTests {
 
     @Test
     void findByIdTest() {
-        final User user = userService.saveUser(TestDataProvider.buildBot());
+        final UserDto user = userService.saveUser(TestDataProvider.buildBot());
         usersId.add(user.getUserId());
         final int book = TestDataProvider.buildBooks().stream()
                 .map(b -> bookService.saveBook(b, user.getLogin()))
@@ -97,7 +97,7 @@ class BookServiceTest extends BookCrossingBaseTests {
 
     @Test
     void oneFilterTest() {
-        final List<User> users = TestDataProvider.buildUsers().stream()
+        final List<UserDto> users = TestDataProvider.buildUsers().stream()
                 .map(u -> userService.saveUser(u))
                 .collect(Collectors.toList());
         users.forEach(u -> usersId.add(u.getUserId()));
@@ -116,7 +116,7 @@ class BookServiceTest extends BookCrossingBaseTests {
 
     @Test
     void allFilterTest() {
-        final List<User> users = TestDataProvider.buildUsers().stream()
+        final List<UserDto> users = TestDataProvider.buildUsers().stream()
                 .map(u -> userService.saveUser(u))
                 .collect(Collectors.toList());
         users.forEach(u -> usersId.add(u.getUserId()));
@@ -133,7 +133,7 @@ class BookServiceTest extends BookCrossingBaseTests {
 
     @Test
     void filterLockedUserTest() {
-        final User user1 = userService.saveUser(TestDataProvider.buildBot());
+        final UserDto user1 = userService.saveUser(TestDataProvider.buildBot());
         usersId.add(user1.getUserId());
 
         bookService.saveBook(TestDataProvider.buildDorian(), user1.getLogin());
@@ -147,7 +147,7 @@ class BookServiceTest extends BookCrossingBaseTests {
 
     @Test
     void deleteBookTest() {
-        final User user1 = userService.saveUser(TestDataProvider.buildBot());
+        final UserDto user1 = userService.saveUser(TestDataProvider.buildBot());
         usersId.add(user1.getUserId());
 
         final BookModelDto book = bookService.saveBook(TestDataProvider.buildWolves(), user1.getLogin());
@@ -173,7 +173,7 @@ class BookServiceTest extends BookCrossingBaseTests {
 
     @Test
     void findAll() {
-        final List<User> users = TestDataProvider.buildUsers().stream()
+        final List<UserDto> users = TestDataProvider.buildUsers().stream()
                 .map(u -> userService.saveUser(u))
                 .collect(Collectors.toList());
         users.forEach(u -> usersId.add(u.getUserId()));
@@ -189,7 +189,7 @@ class BookServiceTest extends BookCrossingBaseTests {
 
     @Test
     void findByTitleTest() {
-        final List<User> users = TestDataProvider.buildUsers().stream()
+        final List<UserDto> users = TestDataProvider.buildUsers().stream()
                 .map(u -> userService.saveUser(u))
                 .collect(Collectors.toList());
         users.forEach(u -> usersId.add(u.getUserId()));
@@ -205,7 +205,7 @@ class BookServiceTest extends BookCrossingBaseTests {
 
     @Test
     void findByTitleEmptyTest() {
-        final List<User> users = TestDataProvider.buildUsers().stream()
+        final List<UserDto> users = TestDataProvider.buildUsers().stream()
                 .map(u -> userService.saveUser(u))
                 .collect(Collectors.toList());
         users.forEach(u -> usersId.add(u.getUserId()));

@@ -17,7 +17,7 @@ import javax.validation.constraints.Size;
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Schema(description = "Сущность пользователя")
-public class UserDto {
+public class UserRegistrationDto {
 
     @Schema(description = "Имя", example = "Alex")
     @NotBlank(message = "name: Имя должно содержать хотя бы один видимый символ")
@@ -43,8 +43,8 @@ public class UserDto {
     private final String city;
 
     @JsonCreator
-    public static UserDto create(final String name, final String login, final String password,
-                                 final String passwordConfirm, final String email, final String city) {
-        return new UserDto(name, login, password, passwordConfirm, email, city);
+    public static UserRegistrationDto create(final String name, final String login, final String password,
+                                             final String passwordConfirm, final String email, final String city) {
+        return new UserRegistrationDto(name, login, password, passwordConfirm, email, city);
     }
 }

@@ -5,7 +5,7 @@ import io.github.enkarin.bookcrossing.admin.dto.LockedUserDto;
 import io.github.enkarin.bookcrossing.base.BookCrossingBaseTests;
 import io.github.enkarin.bookcrossing.exception.UserNotFoundException;
 import io.github.enkarin.bookcrossing.support.TestDataProvider;
-import io.github.enkarin.bookcrossing.user.model.User;
+import io.github.enkarin.bookcrossing.user.dto.UserDto;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +29,7 @@ class AdminServiceTest extends BookCrossingBaseTests {
 
     @Test
     void lockedUser() {
-        final User user = userService.saveUser(TestDataProvider.buildAlex());
+        final UserDto user = userService.saveUser(TestDataProvider.buildAlex());
         usersId.add(user.getUserId());
         assertThat(adminService.lockedUser(LockedUserDto.create(user.getLogin(), "Заблокировано"))).isFalse();
     }
@@ -43,7 +43,7 @@ class AdminServiceTest extends BookCrossingBaseTests {
 
     @Test
     void nonLockedUser() {
-        final User user = userService.saveUser(TestDataProvider.buildAlex());
+        final UserDto user = userService.saveUser(TestDataProvider.buildAlex());
         jdbcTemplate.update("update t_user set account_non_locked = 0 where user_id = " + user.getUserId());
         usersId.add(user.getUserId());
         assertThat(adminService.nonLockedUser(user.getLogin())).isTrue();
@@ -58,14 +58,14 @@ class AdminServiceTest extends BookCrossingBaseTests {
 
     @Test
     void findAllUsers() {
-        final List<User> users = TestDataProvider.buildUsers().stream()
+        final List<UserDto> users = TestDataProvider.buildUsers().stream()
                 .map(u -> userService.saveUser(u))
                 .collect(Collectors.toList());
         users.forEach(u -> usersId.add(u.getUserId()));
         assertThat(adminService.findAllUsers(0))
                 .hasSize(2)
                 .hasSameElementsAs(users.stream()
-                        .map(u -> InfoUsersDto.fromUser(u, 0))
+                        .map(u -> InfoUsersDto.fromUserDto(u, 0))
                         .collect(Collectors.toList()));
     }
 

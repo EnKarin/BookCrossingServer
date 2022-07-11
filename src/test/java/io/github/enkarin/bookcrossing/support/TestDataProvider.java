@@ -3,7 +3,7 @@ package io.github.enkarin.bookcrossing.support;
 
 import io.github.enkarin.bookcrossing.books.dto.BookDto;
 import io.github.enkarin.bookcrossing.books.dto.BookModelDto;
-import io.github.enkarin.bookcrossing.registation.dto.UserDto;
+import io.github.enkarin.bookcrossing.registation.dto.UserRegistrationDto;
 import lombok.experimental.UtilityClass;
 
 import javax.annotation.Nonnull;
@@ -13,7 +13,7 @@ import java.util.List;
 public class TestDataProvider {
 
     @Nonnull
-    public static List<UserDto> buildUsers() {
+    public static List<UserRegistrationDto> buildUsers() {
         return List.of(buildBot(), buildAlex());
     }
 
@@ -28,8 +28,8 @@ public class TestDataProvider {
     }
 
     @Nonnull
-    public static UserDto.UserDtoBuilder<?, ?> prepareUser() {
-        return UserDto.builder()
+    public static UserRegistrationDto.UserRegistrationDtoBuilder<?, ?> prepareUser() {
+        return UserRegistrationDto.builder()
                 .name("Tester")
                 .password("123456")
                 .passwordConfirm("123456")
@@ -111,7 +111,7 @@ public class TestDataProvider {
     }
 
     @Nonnull
-    public static UserDto buildBot() {
+    public static UserRegistrationDto buildBot() {
         return prepareUser()
                 .login("Bot")
                 .email("k.test@mail.ru")
@@ -119,7 +119,7 @@ public class TestDataProvider {
     }
 
     @Nonnull
-    public static UserDto buildAlex() {
+    public static UserRegistrationDto buildAlex() {
         return prepareUser()
                 .login("Alex")
                 .email("t.test@mail.ru")
