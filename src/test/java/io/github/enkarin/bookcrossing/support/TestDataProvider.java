@@ -125,4 +125,24 @@ public class TestDataProvider {
                 .email("t.test@mail.ru")
                 .build();
     }
+
+    @Nonnull
+    public static UserDto buildNonConfirmedPasswordUser() {
+        return UserDto.builder()
+                .name("Tester")
+                .password("123456")
+                .passwordConfirm("654321")
+                .city("Novosibirsk")
+                .login("User")
+                .email("u.test@mail.ru")
+                .build();
+    }
+
+    @Nonnull
+    public static UserDto buildUserWithAlexEmail() {
+        return prepareUser()
+                .login("NotAlex")
+                .email("t.test@mail.ru")
+                .build();
+    }
 }
