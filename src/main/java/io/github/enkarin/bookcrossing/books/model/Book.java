@@ -33,11 +33,10 @@ public class Book implements Serializable {
     private int year;
 
     @ManyToOne
-    @JoinColumn(name = "ownerBook")
+    @JoinColumn(name = "owner_book")
     private User owner;
 
-    @OneToOne
-    @JoinColumn(name = "attachId")
+    @OneToOne(mappedBy = "book", orphanRemoval = true)
     private Attachment attachment;
 
     @ManyToMany(mappedBy = "bookmarks")

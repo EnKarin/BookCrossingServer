@@ -12,10 +12,10 @@ create table t_action_mail_user (
 );
 
 create table t_attach (
-    name varchar(255) not null,
+    attach_id integer not null,
     data longblob,
     expansion varchar(255),
-    primary key (name)
+    primary key (attach_id)
 );
 
 create table t_book (
@@ -25,7 +25,6 @@ create table t_book (
     publishing_house varchar(255),
     title varchar(255) not null,
     year integer not null,
-    attach_id varchar(255),
     owner_book integer,
     primary key (book_id)
 );
@@ -92,9 +91,9 @@ alter table t_action_mail_user
     add constraint action_foreign_user
         foreign key (user_id) references t_user (user_id) ON DELETE CASCADE;
 
-alter table t_book
-    add constraint book_foreign_attach
-        foreign key (attach_id) references t_attach (name);
+alter table t_attach
+    add constraint attach_foreign_book
+        foreign key (attach_id) references t_book (book_id);
 
 alter table t_book
     add constraint book_foreign_user

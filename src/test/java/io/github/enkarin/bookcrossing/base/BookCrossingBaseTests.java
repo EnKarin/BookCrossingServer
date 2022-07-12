@@ -2,6 +2,7 @@ package io.github.enkarin.bookcrossing.base;
 
 import io.github.enkarin.bookcrossing.init.MySQLInitializer;
 import io.github.enkarin.bookcrossing.user.service.UserService;
+import org.junit.jupiter.api.AfterEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -25,4 +26,10 @@ public abstract class BookCrossingBaseTests {
 
     @Autowired
     protected UserService userService;
+
+    @AfterEach
+    void delete() {
+        usersId.forEach(u -> userService.deleteUser(u));
+        usersId.clear();
+    }
 }
