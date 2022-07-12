@@ -3,6 +3,12 @@ spring:
         hibernate:
             ddl-auto: none
         show-sql: false
+    mail:
+        password: springboot
+        username: duke
+        properties:
+            mail:
+                debug: true
     flyway:
         enabled: true
 server:
