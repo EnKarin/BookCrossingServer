@@ -1,6 +1,7 @@
 package io.github.enkarin.bookcrossing.books.service;
 
 import io.github.enkarin.bookcrossing.books.dto.AttachmentDto;
+import io.github.enkarin.bookcrossing.books.dto.BookModelDto;
 import io.github.enkarin.bookcrossing.books.model.Attachment;
 import io.github.enkarin.bookcrossing.books.model.Book;
 import io.github.enkarin.bookcrossing.books.repository.AttachmentRepository;
@@ -26,24 +27,25 @@ public class AttachmentService {
     private final AttachmentRepository attachRepository;
     private final BookRepository bookRepository;
 
-    public void saveAttachment(final AttachmentDto attachmentDto, final String login) throws IOException {
+    public BookModelDto saveAttachment(final AttachmentDto attachmentDto, final String login) throws IOException {
         final Book book = userRepository.findByLogin(login).orElseThrow().getBooks().stream()
                 .filter(b -> b.getBookId() == attachmentDto.getBookId())
                 .findFirst()
                 .orElseThrow(BookNotFoundException::new);
-        Attachment attachment = new Attachment();
-        attachment.setData(attachmentDto.getFile().getBytes());
         final String fileName = attachmentDto.getFile().getOriginalFilename();
-        if (fileName == null) {
+        if (fileName == null || fileName.equals("")) {
             throw new BadRequestException("Имя не должно быть пустым");
         } else {
             final String expansion = fileName.substring(fileName.indexOf('.')).toLowerCase(Locale.ROOT);
             if (expansion.contains("jpeg") || expansion.contains("jpg") ||
                     expansion.contains("png") || expansion.contains("bmp")) {
+                final Attachment attachment = new Attachment();
+                attachment.setData(attachmentDto.getFile().getBytes());
+                attachment.setBook(book);
                 attachment.setExpansion(expansion);
-                attachment = attachRepository.save(attachment);
                 book.setAttachment(attachment);
-                bookRepository.save(book);
+                attachRepository.save(attachment);
+                return BookModelDto.fromBook(bookRepository.getById(book.getBookId()));
             } else {
                 throw new BadRequestException("Недопустимый формат файла");
             }
@@ -57,6 +59,6 @@ public class AttachmentService {
                 .orElseThrow(BookNotFoundException::new);
         Optional.ofNullable(book.getAttachment())
                 .orElseThrow(AttachmentNotFoundException::new);
-        attachRepository.delete(book.getAttachment());
+        attachRepository.deleteById(book.getAttachment().getAttachId());
     }
 }
