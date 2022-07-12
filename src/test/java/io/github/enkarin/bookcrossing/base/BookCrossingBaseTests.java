@@ -1,5 +1,6 @@
 package io.github.enkarin.bookcrossing.base;
 
+import io.github.enkarin.bookcrossing.init.GreenMailInitializer;
 import io.github.enkarin.bookcrossing.init.MySQLInitializer;
 import io.github.enkarin.bookcrossing.user.service.UserService;
 import org.junit.jupiter.api.AfterEach;
@@ -17,7 +18,7 @@ import java.util.List;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Testcontainers
 @ActiveProfiles("test")
-@ContextConfiguration(initializers = MySQLInitializer.class)
+@ContextConfiguration(initializers = {MySQLInitializer.class, GreenMailInitializer.class})
 public abstract class BookCrossingBaseTests {
 
     protected final List<Integer> usersId = new ArrayList<>(2);

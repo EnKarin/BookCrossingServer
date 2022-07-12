@@ -6,9 +6,6 @@ spring:
     mail:
         password: springboot
         username: duke
-        properties:
-            mail:
-                debug: true
     flyway:
         enabled: true
 server:

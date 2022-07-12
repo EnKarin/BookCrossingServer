@@ -13,7 +13,7 @@ public class GreenMailInitializer implements ApplicationContextInitializer<Confi
     private static final GenericContainer<?> GREEN_MAIL_CONTAINER = new GenericContainer<>(IMAGE);
 
     @Override
-    public void initialize(ConfigurableApplicationContext applicationContext) {
+    public void initialize(final ConfigurableApplicationContext applicationContext) {
         GREEN_MAIL_CONTAINER
                 .waitingFor(Wait.forLogMessage(".*Starting GreenMail standalone.*", 1))
                 .withEnv("GREENMAIL_OPTS", "-Dgreenmail.setup.test.smtp -Dgreenmail.hostname=0.0.0.0" +
