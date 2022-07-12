@@ -5,39 +5,41 @@ import io.github.enkarin.bookcrossing.books.model.Book;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.Value;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 
 import javax.validation.constraints.NotBlank;
 
 @SuperBuilder
-@Value
+@Getter
+@EqualsAndHashCode
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Schema(description = "Полные данные книги")
 public class BookModelDto {
 
     @Schema(description = "Идентификатор", example = "15")
-    int bookId;
+    private final int bookId;
 
     @Schema(description = "Название", example = "Портрет Дориана Грея")
     @NotBlank(message = "title: Название должно содержать хотя бы один видимый символ")
-    String title;
+    private final String title;
 
     @Schema(description = "Автор", example = "Оскар Уайльд")
     @NotBlank(message = "author: Поле \"автор\" должно содержать хотя бы один видимый символ")
-    String author;
+    private final String author;
 
     @Schema(description = "Жанр", example = "Классическая проза")
-    String genre;
+    private final String genre;
 
     @Schema(description = "Издательство", example = "АСТ")
-    String publishingHouse;
+    private final String publishingHouse;
 
     @Schema(description = "Год издания", example = "2004")
-    int year;
+    private final int year;
 
     @Schema(description = "Вложение")
-    Attachment attachment;
+    private final Attachment attachment;
 
     public static BookModelDto fromBook(final Book book) {
         return new BookModelDto(book.getBookId(), book.getTitle(), book.getAuthor(), book.getGenre(),
