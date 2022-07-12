@@ -1,36 +1,43 @@
 package io.github.enkarin.bookcrossing.user.dto;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Data;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 @Validated
-@Data
+@Getter
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Schema(description = "Сущность для изменения данных пользователя")
-public class UserPutRequest {
+public class UserPutProfileDto {
 
     @Schema(description = "Имя", example = "Alex")
     @NotBlank(message = "Имя должно содержать хотя бы один видимый символ")
-    private String name;
+    private final String name;
 
     @Schema(description = "Старый пароль", example = "123456")
     @NotBlank(message = "Пароль должен содержать хотя бы один видимый символ")
-    private String oldPassword;
+    private final String oldPassword;
 
     @Schema(description = "Новый пароль", example = "123456s", required = true)
     @NotBlank(message = "Пароль должен содержать хотя бы один видимый символ")
     @Size(min = 6, message = "Пароль должен содержать больше 6 символов")
-    private String newPassword;
+    private final String newPassword;
 
     @Schema(description = "Подвержение пароля", example = "123456s", required = true)
-    private String passwordConfirm;
+    private final String passwordConfirm;
 
     @Schema(description = "Город", example = "Новосибирск")
-    private String city;
+    private final String city;
 
-    @Schema(description = "Часовой пояс", example = "7")
-    private int zone;
+    @JsonCreator
+    public static UserPutProfileDto create(final String name, final String oldPassword, final String newPassword,
+                                              final String passwordConfirm, final String city) {
+        return new UserPutProfileDto(name, oldPassword, newPassword, passwordConfirm, city);
+    }
 }

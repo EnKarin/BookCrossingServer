@@ -1,8 +1,12 @@
 package io.github.enkarin.bookcrossing.user.controllers;
 
+import io.github.enkarin.bookcrossing.books.dto.BookModelDto;
+import io.github.enkarin.bookcrossing.constant.Constant;
 import io.github.enkarin.bookcrossing.user.service.BookmarksService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -12,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.List;
 
 @Tag(
         name = "Работа с закладками",
@@ -29,19 +34,18 @@ public class BookmarksController {
             description = "Позволяет сохранить книгу в закладки"
     )
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "404", description = "Книга с заданным Id не найдена"),
-        @ApiResponse(responseCode = "200", description = "Книга добавлена")
+        @ApiResponse(responseCode = "404", description = "Книга с заданным Id не найдена",
+            content = {@Content(mediaType = Constant.MEDIA_TYPE,
+                    schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+        @ApiResponse(responseCode = "201", description = "Книга добавлена")
         }
     )
     @PostMapping
     public ResponseEntity<?> saveBookmarks(@RequestParam @Parameter(description = "Идентификатор книги")
                                                final int bookId,
                                            final Principal principal) {
-        if (bookmarksService.saveBookmarks(bookId, principal.getName())) {
-            return new ResponseEntity<>(HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        bookmarksService.saveBookmarks(bookId, principal.getName());
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @Operation(
@@ -49,7 +53,9 @@ public class BookmarksController {
             description = "Позволяет удалить книгу из закладок"
     )
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "404", description = "Книга с заданным Id не найдена"),
+        @ApiResponse(responseCode = "404", description = "Книга с заданным Id не найдена",
+            content = {@Content(mediaType = Constant.MEDIA_TYPE,
+                    schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
         @ApiResponse(responseCode = "200", description = "Книга удалена")
         }
     )
@@ -57,11 +63,8 @@ public class BookmarksController {
     public ResponseEntity<?> deleteBookmarks(@RequestParam @Parameter(description = "Идентификатор книги")
                                                  final int bookId,
                                            final Principal principal) {
-        if (bookmarksService.deleteBookmarks(bookId, principal.getName())) {
-            return new ResponseEntity<>(HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        bookmarksService.deleteBookmarks(bookId, principal.getName());
+        return ResponseEntity.ok().build();
     }
 
     @Operation(
@@ -69,11 +72,13 @@ public class BookmarksController {
             description = "Позволяет получить все закладки пользователя"
     )
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Возвращает список закладок")
+        @ApiResponse(responseCode = "200", description = "Возвращает список закладок",
+            content = {@Content(mediaType = Constant.MEDIA_TYPE,
+                    schema = @Schema(implementation = BookModelDto[].class))})
         }
     )
     @GetMapping
-    public ResponseEntity<?> getAll(final Principal principal) {
-        return new ResponseEntity<>(bookmarksService.getAll(principal.getName()), HttpStatus.OK);
+    public ResponseEntity<List<BookModelDto>> getAll(final Principal principal) {
+        return ResponseEntity.ok(bookmarksService.getAll(principal.getName()));
     }
 }

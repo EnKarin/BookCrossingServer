@@ -2,6 +2,8 @@ package io.github.enkarin.bookcrossing.user.dto;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.validation.annotation.Validated;
 
@@ -10,6 +12,7 @@ import javax.validation.constraints.Size;
 
 @Getter
 @Validated
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Schema(description = "Сущность для смены пароля")
 public class UserPasswordDto {
 
@@ -20,11 +23,6 @@ public class UserPasswordDto {
 
     @Schema(description = "Подвержение пароля", example = "123456", required = true)
     private final String passwordConfirm;
-
-    private UserPasswordDto(final String password, final String passwordConfirm) {
-        this.password = password;
-        this.passwordConfirm = passwordConfirm;
-    }
 
     @JsonCreator
     public static UserPasswordDto create(final String password, final String passwordConfirm) {
