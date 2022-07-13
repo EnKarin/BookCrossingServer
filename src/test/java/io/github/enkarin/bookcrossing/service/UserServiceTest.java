@@ -24,7 +24,7 @@ public class UserServiceTest extends BookCrossingBaseTests {
     MailService mailService;
 
     @AfterEach
-    void delete() {
+    void deleteAddedUsers() {
         usersId.forEach(u -> userService.deleteUser(u));
         usersId.clear();
     }
