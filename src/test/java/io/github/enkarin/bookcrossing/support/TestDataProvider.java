@@ -127,8 +127,8 @@ public class TestDataProvider {
     }
 
     @Nonnull
-    public static UserDto buildNonConfirmedPasswordUser() {
-        return UserDto.builder()
+    public static UserRegistrationDto buildNonConfirmedPasswordUser() {
+        return UserRegistrationDto.builder()
                 .name("Tester")
                 .password("123456")
                 .passwordConfirm("654321")
@@ -139,7 +139,7 @@ public class TestDataProvider {
     }
 
     @Nonnull
-    public static UserDto buildUserWithAlexEmail() {
+    public static UserRegistrationDto buildUserWithAlexEmail() {
         return prepareUser()
                 .login("NotAlex")
                 .email("t.test@mail.ru")
