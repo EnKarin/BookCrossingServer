@@ -5,6 +5,6 @@ public class EmailFailedException extends RuntimeException {
     private static final long serialVersionUID = -3525532284949593144L;
 
     public EmailFailedException() {
-        super("email: Пользователь с таким почтовым адресом уже существует");
+        super("Пользователь с таким почтовым адресом уже существует");
     }
 }

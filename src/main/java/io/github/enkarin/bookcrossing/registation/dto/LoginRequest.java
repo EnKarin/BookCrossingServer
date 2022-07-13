@@ -4,7 +4,8 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.Value;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 import org.springframework.validation.annotation.Validated;
 
@@ -12,21 +13,22 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 @Validated
-@Value
+@Getter
+@EqualsAndHashCode
 @SuperBuilder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class LoginRequest {
 
     @Schema(description = "Логин", example = "LogAll")
     @NotBlank
-    String login;
+    private final String login;
 
     @Schema(description = "Пароль", example = "123456")
     @Size(min = 6, message = "Пароль слишком короткий")
-    String password;
+    private final String password;
 
     @Schema(description = "Часовой пояс пользователя", example = "7")
-    int zone;
+    private final int zone;
 
     @JsonCreator
     public static LoginRequest create(final String login, final String password, final int zone) {
