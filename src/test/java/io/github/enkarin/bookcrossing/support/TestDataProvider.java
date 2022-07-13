@@ -128,11 +128,8 @@ public class TestDataProvider {
 
     @Nonnull
     public static UserRegistrationDto buildNonConfirmedPasswordUser() {
-        return UserRegistrationDto.builder()
-                .name("Tester")
-                .password("123456")
+        return prepareUser()
                 .passwordConfirm("654321")
-                .city("Novosibirsk")
                 .login("User")
                 .email("u.test@mail.ru")
                 .build();

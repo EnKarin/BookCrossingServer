@@ -2,14 +2,11 @@ package io.github.enkarin.bookcrossing.service;
 
 import io.github.enkarin.bookcrossing.base.BookCrossingBaseTests;
 import io.github.enkarin.bookcrossing.exception.*;
-import io.github.enkarin.bookcrossing.mail.service.MailService;
 import io.github.enkarin.bookcrossing.support.TestDataProvider;
 import io.github.enkarin.bookcrossing.user.dto.UserDto;
 import io.github.enkarin.bookcrossing.user.dto.UserProfileDto;
 import io.github.enkarin.bookcrossing.user.dto.UserPublicProfileDto;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 import java.util.Set;
@@ -20,15 +17,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 
 public class UserServiceTest extends BookCrossingBaseTests {
-    @Autowired
-    MailService mailService;
-
-    @AfterEach
-    void deleteAddedUsers() {
-        usersId.forEach(u -> userService.deleteUser(u));
-        usersId.clear();
-    }
-
     @Test
     void saveUserCorrectUserTest() {
         final UserDto user = userService.saveUser(TestDataProvider.buildAlex());
