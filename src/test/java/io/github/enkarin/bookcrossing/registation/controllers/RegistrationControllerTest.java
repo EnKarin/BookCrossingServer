@@ -1,29 +1,57 @@
 package io.github.enkarin.bookcrossing.registation.controllers;
 
+import com.icegreen.greenmail.configuration.GreenMailConfiguration;
+import com.icegreen.greenmail.util.GreenMail;
+import com.icegreen.greenmail.util.GreenMailUtil;
+import com.icegreen.greenmail.util.ServerSetup;
 import io.github.enkarin.bookcrossing.base.BookCrossingBaseTests;
 import io.github.enkarin.bookcrossing.errors.ErrorListResponse;
 import io.github.enkarin.bookcrossing.registation.dto.AuthResponse;
+import io.github.enkarin.bookcrossing.registation.dto.UserRegistrationDto;
 import io.github.enkarin.bookcrossing.support.TestDataProvider;
 import io.github.enkarin.bookcrossing.user.dto.UserDto;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
+import javax.mail.Address;
+import javax.mail.MessagingException;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 import java.util.List;
 
+import static io.github.enkarin.bookcrossing.init.GreenMailInitializer.GREEN_MAIL_CONTAINER;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class RegistrationControllerTest extends BookCrossingBaseTests {
 
-    //TODO: Проверка письма и тесты подтверждения почты
+    private static GreenMail greenMail;
+
+    @BeforeAll
+    static void setUp() {
+        greenMail = new GreenMail(new ServerSetup(GREEN_MAIL_CONTAINER.getFirstMappedPort(),
+                GREEN_MAIL_CONTAINER.getHost(), "smtp"))
+                .withConfiguration(GreenMailConfiguration.aConfig().withDisabledAuthentication());
+        greenMail.start();
+    }
+
     @Test
-    void registerUserTest() {
-        final UserDto user = checkPost("/registration", TestDataProvider.buildBot(), 201)
+    void registerUserTest() throws MessagingException {
+        greenMail.reset();
+        final UserRegistrationDto registrationDto = TestDataProvider.buildBot();
+        final UserDto user = checkPost("/registration", registrationDto, 201)
                 .expectBody(UserDto.class)
                 .returnResult().getResponseBody();
         assertThat(user).isNotNull();
 
         usersId.add(user.getUserId());
+
+        assertThat(greenMail.getReceivedMessages())
+                .extracting(MimeMessage::getAllRecipients)
+                .hasSize(1)
+                .contains(new Address[]{new InternetAddress(registrationDto.getEmail())});
     }
 
     @Test
@@ -57,7 +85,7 @@ class RegistrationControllerTest extends BookCrossingBaseTests {
                 .isEqualTo("Пользователь с таким логином уже существует");
     }
 
-    //TODO: добавить сравнение токенов
+    //TODO: set up the time and compare tokens
     @Test
     void authTest() {
         final int userId = userService.saveUser(TestDataProvider.buildBot()).getUserId();
@@ -99,6 +127,17 @@ class RegistrationControllerTest extends BookCrossingBaseTests {
                 .expectBody()
                 .jsonPath("$.user")
                 .isEqualTo("Пользователь не найден");
+    }
+
+    //TODO: To deal with the received message
+    @Disabled
+    @Test
+    void mailConfirmTest() {
+        final UserDto user = userService.saveUser(TestDataProvider.buildAlex());
+        usersId.add(user.getUserId());
+        final MimeMessage message = greenMail.getReceivedMessagesForDomain(user.getEmail())[0];
+        final String token = GreenMailUtil.getWholeMessage(message);
+        assertThat(token).contains("token=");
     }
 
     private WebTestClient.ResponseSpec checkPost(final String uri, final Object body, final int status) {
