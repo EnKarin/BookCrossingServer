@@ -7,7 +7,6 @@ import io.github.enkarin.bookcrossing.exception.UserNotFoundException;
 import io.github.enkarin.bookcrossing.registation.dto.AuthResponse;
 import io.github.enkarin.bookcrossing.support.TestDataProvider;
 import io.github.enkarin.bookcrossing.user.dto.UserDto;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -20,12 +19,6 @@ class RefreshServiceTest extends BookCrossingBaseTests {
 
     @Autowired
     private RefreshService refreshService;
-
-    @AfterEach
-    void delete() {
-        usersId.forEach(u -> userService.deleteUser(u));
-        usersId.clear();
-    }
 
     @Test
     void createTokensTest() {
