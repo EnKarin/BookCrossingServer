@@ -6,6 +6,7 @@ import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.ServerSetup;
 import io.github.enkarin.bookcrossing.base.BookCrossingBaseTests;
 import io.github.enkarin.bookcrossing.errors.ErrorListResponse;
+import io.github.enkarin.bookcrossing.init.GreenMailInitializer;
 import io.github.enkarin.bookcrossing.registation.dto.AuthResponse;
 import io.github.enkarin.bookcrossing.registation.dto.UserRegistrationDto;
 import io.github.enkarin.bookcrossing.support.TestDataProvider;
@@ -23,7 +24,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.List;
 
-import static io.github.enkarin.bookcrossing.init.GreenMailInitializer.GREEN_MAIL_CONTAINER;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class RegistrationControllerTest extends BookCrossingBaseTests {
@@ -32,8 +32,8 @@ class RegistrationControllerTest extends BookCrossingBaseTests {
 
     @BeforeAll
     static void setUp() {
-        greenMail = new GreenMail(new ServerSetup(GREEN_MAIL_CONTAINER.getFirstMappedPort(),
-                GREEN_MAIL_CONTAINER.getHost(), "smtp"))
+        greenMail = new GreenMail(new ServerSetup(GreenMailInitializer.getMappedSmtpPort(),
+                GreenMailInitializer.getMailHost(), "smtp"))
                 .withConfiguration(GreenMailConfiguration.aConfig().withDisabledAuthentication());
         greenMail.start();
     }
