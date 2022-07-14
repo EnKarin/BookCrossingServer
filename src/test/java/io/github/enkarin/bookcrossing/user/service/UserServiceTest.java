@@ -1,4 +1,4 @@
-package io.github.enkarin.bookcrossing.service;
+package io.github.enkarin.bookcrossing.user.service;
 
 import io.github.enkarin.bookcrossing.base.BookCrossingBaseTests;
 import io.github.enkarin.bookcrossing.exception.*;
@@ -6,6 +6,7 @@ import io.github.enkarin.bookcrossing.support.TestDataProvider;
 import io.github.enkarin.bookcrossing.user.dto.UserDto;
 import io.github.enkarin.bookcrossing.user.dto.UserProfileDto;
 import io.github.enkarin.bookcrossing.user.dto.UserPublicProfileDto;
+import io.github.enkarin.bookcrossing.user.dto.UserPutProfileDto;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -109,6 +110,58 @@ class UserServiceTest extends BookCrossingBaseTests {
         assertThatThrownBy(() -> userService.findById(user.getUserId(), GM_TIME_ZERO))
                 .isInstanceOf(UserNotFoundException.class)
                 .hasMessage("Пользователь не найден");
+    }
+
+    @Test
+    void putUserInfoTest() {
+        final UserDto user = createAndSaveUser();
+
+        final UserPutProfileDto putProfile = UserPutProfileDto.create(
+                "Mike",
+                "123456",
+                "654321",
+                "654321",
+                "Moscow"
+        );
+
+        userService.putUserInfo(putProfile, user.getLogin());
+        final UserPublicProfileDto newProfile = userService.findById(user.getUserId(), GM_TIME_ZERO);
+        assertThat(putProfile.getName()).isEqualTo(newProfile.getName());
+        assertThat(putProfile.getCity()).isEqualTo(newProfile.getCity());
+    }
+
+    @Test
+    void putUserInfoNonConfirmedPasswordTest() {
+        final UserDto user = createAndSaveUser();
+
+        final UserPutProfileDto putProfile = UserPutProfileDto.create(
+                "Mike",
+                "123456",
+                "654321",
+                "123456",
+                "Moscow"
+        );
+
+        assertThatThrownBy(() -> userService.putUserInfo(putProfile, user.getLogin()))
+                .isInstanceOf(PasswordsDontMatchException.class)
+                .hasMessage("Пароли не совпадают");
+    }
+
+    @Test
+    void putUserInfoWrongOldPasswordTest() {
+        final UserDto user = createAndSaveUser();
+
+        final UserPutProfileDto putProfile = UserPutProfileDto.create(
+                "Mike",
+                "wrong password",
+                "654321",
+                "654321",
+                "Moscow"
+        );
+
+        assertThatThrownBy(() -> userService.putUserInfo(putProfile, user.getLogin()))
+                .isInstanceOf(InvalidPasswordException.class)
+                .hasMessage("Некорректный пароль");
     }
 
     private static void checkUserDTOAndUserPublicPublicProfileDTO(
