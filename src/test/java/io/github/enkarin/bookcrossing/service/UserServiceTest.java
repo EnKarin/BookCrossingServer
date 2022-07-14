@@ -16,13 +16,18 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 
-public class UserServiceTest extends BookCrossingBaseTests {
-    @Test
-    void saveUserCorrectUserTest() {
+class UserServiceTest extends BookCrossingBaseTests {
+    private static final int GM_TIME_ZERO = 0;
+
+    private UserDto createAndSaveUser() {
         final UserDto user = userService.saveUser(TestDataProvider.buildAlex());
         usersId.add(user.getUserId());
+        return user;
+    }
 
-        assertThat(userService.findById(user.getUserId(), 0)).isNotNull();
+    @Test
+    void saveUserCorrectUserTest() {
+        assertThat(userService.findById(createAndSaveUser().getUserId(), GM_TIME_ZERO)).isNotNull();
     }
 
     @Test
@@ -34,9 +39,7 @@ public class UserServiceTest extends BookCrossingBaseTests {
 
     @Test
     void saveUserDuplicatedUserTest() {
-        final UserDto user = userService.saveUser(TestDataProvider.buildAlex());
-        usersId.add(user.getUserId());
-
+        createAndSaveUser();
         assertThatThrownBy(() -> userService.saveUser(TestDataProvider.buildAlex()))
                 .isInstanceOf(LoginFailedException.class)
                 .hasMessage("login: Пользователь с таким логином уже существует");
@@ -44,9 +47,7 @@ public class UserServiceTest extends BookCrossingBaseTests {
 
     @Test
     void saveUserDuplicatedEmailTest() {
-        final UserDto user = userService.saveUser(TestDataProvider.buildAlex());
-        usersId.add(user.getUserId());
-
+        createAndSaveUser();
         assertThatThrownBy(() -> userService.saveUser(TestDataProvider.buildUserWithAlexEmail()))
                 .isInstanceOf(EmailFailedException.class)
                 .hasMessage("email: Пользователь с таким почтовым адресом уже существует");
@@ -61,10 +62,7 @@ public class UserServiceTest extends BookCrossingBaseTests {
 
     @Test
     void findByLoginCorrectTest() {
-        final UserDto user = userService.saveUser(TestDataProvider.buildAlex());
-        usersId.add(user.getUserId());
-
-        assertThat(userService.findByLogin(user.getLogin())).isNotNull();
+        assertThat(userService.findByLogin(createAndSaveUser().getLogin())).isNotNull();
     }
 
     @Test
@@ -76,16 +74,14 @@ public class UserServiceTest extends BookCrossingBaseTests {
 
     @Test
     void getProfileTest() {
-        final UserDto userDTO = userService.saveUser(TestDataProvider.buildAlex());
-        usersId.add(userDTO.getUserId());
-
+        final UserDto userDTO = createAndSaveUser();
         final UserProfileDto userProfileDto = userService.getProfile(userDTO.getLogin());
         checkUserDTOAndUserProfileDTO(userDTO, userProfileDto);
     }
 
     @Test
     void findAllIsEmptyListTest() {
-        assertThat(userService.findAllUsers(0)).isEmpty();
+        assertThat(userService.findAllUsers(GM_TIME_ZERO)).isEmpty();
     }
 
     @Test
@@ -95,7 +91,7 @@ public class UserServiceTest extends BookCrossingBaseTests {
                 .collect(Collectors.toList());
         users.forEach(u -> usersId.add(u.getUserId()));
 
-        final var foundUsers = userService.findAllUsers(0);
+        final var foundUsers = userService.findAllUsers(GM_TIME_ZERO);
         assertThat(foundUsers).hasSize(users.size());
 
         final var usersIterator = users.iterator();
@@ -110,7 +106,7 @@ public class UserServiceTest extends BookCrossingBaseTests {
         final UserDto user = userService.saveUser(TestDataProvider.buildAlex());
 
         userService.deleteUser(user.getUserId());
-        assertThatThrownBy(() -> userService.findById(user.getUserId(), 0))
+        assertThatThrownBy(() -> userService.findById(user.getUserId(), GM_TIME_ZERO))
                 .isInstanceOf(UserNotFoundException.class)
                 .hasMessage("Пользователь не найден");
     }
