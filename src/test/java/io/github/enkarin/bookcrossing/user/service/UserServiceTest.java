@@ -20,12 +20,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class UserServiceTest extends BookCrossingBaseTests {
     private static final int GM_TIME_ZERO = 0;
 
-    private UserDto createAndSaveUser() {
-        final UserDto user = userService.saveUser(TestDataProvider.buildAlex());
-        usersId.add(user.getUserId());
-        return user;
-    }
-
     @Test
     void saveUserCorrectUserTest() {
         assertThat(userService.findById(createAndSaveUser().getUserId(), GM_TIME_ZERO)).isNotNull();

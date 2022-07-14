@@ -1,6 +1,8 @@
 package io.github.enkarin.bookcrossing.base;
 
 import io.github.enkarin.bookcrossing.init.MySQLInitializer;
+import io.github.enkarin.bookcrossing.support.TestDataProvider;
+import io.github.enkarin.bookcrossing.user.dto.UserDto;
 import io.github.enkarin.bookcrossing.user.service.UserService;
 import org.junit.jupiter.api.AfterEach;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +28,12 @@ public abstract class BookCrossingBaseTests {
 
     @Autowired
     protected UserService userService;
+
+    protected UserDto createAndSaveUser() {
+        final UserDto user = userService.saveUser(TestDataProvider.buildAlex());
+        usersId.add(user.getUserId());
+        return user;
+    }
 
     @AfterEach
     void delete() {
