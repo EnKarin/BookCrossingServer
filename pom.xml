@@ -165,17 +165,12 @@
                         </goals>
                         <configuration>
                             <rules>
-                                <bannedPlugins>
-                                    <level>ERROR</level>
-                                    <excludes>
-                                        <exclude>org.apache.maven.plugins:maven-verifier-plugin</exclude>
-                                    </excludes>
-                                </bannedPlugins>
+                                <banDuplicatePomDependencyVersions/>
                                 <requireMavenVersion>
-                                    <version>3.8.3</version>
+                                    <version>[3.6,)</version>
                                 </requireMavenVersion>
                                 <requireJavaVersion>
-                                    <version>1.12</version>
+                                    <version>[1.11,18)</version>
                                 </requireJavaVersion>
                             </rules>
                         </configuration>

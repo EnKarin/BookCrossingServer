@@ -4,7 +4,7 @@ import com.icegreen.greenmail.configuration.GreenMailConfiguration;
 import com.icegreen.greenmail.junit5.GreenMailExtension;
 import com.icegreen.greenmail.util.ServerSetupTest;
 import io.github.enkarin.bookcrossing.init.MySQLInitializer;
-import io.github.enkarin.bookcrossing.support.TestDataProvider;
+import io.github.enkarin.bookcrossing.registation.dto.UserRegistrationDto;
 import io.github.enkarin.bookcrossing.user.dto.UserDto;
 import io.github.enkarin.bookcrossing.user.service.UserService;
 import org.junit.jupiter.api.AfterEach;
@@ -40,8 +40,8 @@ public abstract class BookCrossingBaseTests {
             .withConfiguration(GreenMailConfiguration.aConfig().withDisabledAuthentication())
             .withPerMethodLifecycle(false);
 
-    protected UserDto createAndSaveUser() {
-        final UserDto user = userService.saveUser(TestDataProvider.buildAlex());
+    protected UserDto createAndSaveUser(final UserRegistrationDto userRegistrationDto) {
+        final UserDto user = userService.saveUser(userRegistrationDto);
         usersId.add(user.getUserId());
         return user;
     }

@@ -22,7 +22,9 @@ class UserServiceTest extends BookCrossingBaseTests {
 
     @Test
     void saveUserCorrectUserTest() {
-        assertThat(userService.findById(createAndSaveUser().getUserId(), GM_TIME_ZERO)).isNotNull();
+        assertThat(userService.findById(
+                createAndSaveUser(TestDataProvider.buildAlex()).getUserId(), GM_TIME_ZERO)
+        ).isNotNull();
     }
 
     @Test
@@ -34,18 +36,18 @@ class UserServiceTest extends BookCrossingBaseTests {
 
     @Test
     void saveUserDuplicatedUserTest() {
-        createAndSaveUser();
+        createAndSaveUser(TestDataProvider.buildAlex());
         assertThatThrownBy(() -> userService.saveUser(TestDataProvider.buildAlex()))
                 .isInstanceOf(LoginFailedException.class)
-                .hasMessage("login: Пользователь с таким логином уже существует");
+                .hasMessage("Пользователь с таким логином уже существует");
     }
 
     @Test
     void saveUserDuplicatedEmailTest() {
-        createAndSaveUser();
+        createAndSaveUser(TestDataProvider.buildAlex());
         assertThatThrownBy(() -> userService.saveUser(TestDataProvider.buildUserWithAlexEmail()))
                 .isInstanceOf(EmailFailedException.class)
-                .hasMessage("email: Пользователь с таким почтовым адресом уже существует");
+                .hasMessage("Пользователь с таким почтовым адресом уже существует");
     }
 
     @Test
@@ -57,7 +59,7 @@ class UserServiceTest extends BookCrossingBaseTests {
 
     @Test
     void findByLoginCorrectTest() {
-        assertThat(userService.findByLogin(createAndSaveUser().getLogin())).isNotNull();
+        assertThat(userService.findByLogin(createAndSaveUser(TestDataProvider.buildAlex()).getLogin())).isNotNull();
     }
 
     @Test
@@ -69,7 +71,7 @@ class UserServiceTest extends BookCrossingBaseTests {
 
     @Test
     void getProfileTest() {
-        final UserDto userDTO = createAndSaveUser();
+        final UserDto userDTO = createAndSaveUser(TestDataProvider.buildAlex());
         final UserProfileDto userProfileDto = userService.getProfile(userDTO.getLogin());
         checkUserDTOAndUserProfileDTO(userDTO, userProfileDto);
     }
@@ -108,7 +110,7 @@ class UserServiceTest extends BookCrossingBaseTests {
 
     @Test
     void putUserInfoTest() {
-        final UserDto user = createAndSaveUser();
+        final UserDto user = createAndSaveUser(TestDataProvider.buildAlex());
 
         final UserPutProfileDto putProfile = UserPutProfileDto.create(
                 "Mike",
@@ -126,7 +128,7 @@ class UserServiceTest extends BookCrossingBaseTests {
 
     @Test
     void putUserInfoNonConfirmedPasswordTest() {
-        final UserDto user = createAndSaveUser();
+        final UserDto user = createAndSaveUser(TestDataProvider.buildAlex());
 
         final UserPutProfileDto putProfile = UserPutProfileDto.create(
                 "Mike",
@@ -143,7 +145,7 @@ class UserServiceTest extends BookCrossingBaseTests {
 
     @Test
     void putUserInfoWrongOldPasswordTest() {
-        final UserDto user = createAndSaveUser();
+        final UserDto user = createAndSaveUser(TestDataProvider.buildAlex());
 
         final UserPutProfileDto putProfile = UserPutProfileDto.create(
                 "Mike",
