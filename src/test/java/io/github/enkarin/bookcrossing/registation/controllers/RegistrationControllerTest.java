@@ -11,7 +11,6 @@ import io.github.enkarin.bookcrossing.registation.dto.UserRegistrationDto;
 import io.github.enkarin.bookcrossing.support.TestDataProvider;
 import io.github.enkarin.bookcrossing.user.dto.UserDto;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
@@ -20,6 +19,8 @@ import javax.mail.Address;
 import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.List;
 
 import static io.github.enkarin.bookcrossing.init.GreenMailInitializer.GREEN_MAIL_CONTAINER;
@@ -85,6 +86,18 @@ class RegistrationControllerTest extends BookCrossingBaseTests {
                 .isEqualTo("Пользователь с таким логином уже существует");
     }
 
+    @Test
+    void registerEmailExceptionTest() {
+        usersId.add(userService.saveUser(TestDataProvider.prepareUser()
+                .login("Bot2")
+                .email("k.test@mail.ru")
+                .build()).getUserId());
+        checkPost("/registration", TestDataProvider.buildBot(), 409)
+                .expectBody()
+                .jsonPath("$.email")
+                .isEqualTo("Пользователь с таким почтовым адресом уже существует");
+    }
+
     //TODO: set up the time and compare tokens
     @Test
     void authTest() {
@@ -129,15 +142,24 @@ class RegistrationControllerTest extends BookCrossingBaseTests {
                 .isEqualTo("Пользователь не найден");
     }
 
-    //TODO: To deal with the received message
-    @Disabled
+    //TODO: set up the time and compare tokens
     @Test
     void mailConfirmTest() {
         final UserDto user = userService.saveUser(TestDataProvider.buildAlex());
         usersId.add(user.getUserId());
         final MimeMessage message = greenMail.getReceivedMessagesForDomain(user.getEmail())[0];
-        final String token = GreenMailUtil.getWholeMessage(message);
-        assertThat(token).contains("token=");
+        final String token = new String(Base64.getMimeDecoder().decode(GreenMailUtil.getBody(message)),
+                StandardCharsets.UTF_8)
+                .split("token=")[1];
+        checkToken(token, 200);
+        assertThat(jdbcTemplate.queryForObject("select enabled from t_user where user_id = ?", Boolean.class,
+                        user.getUserId()))
+                .isTrue();
+    }
+
+    @Test
+    void mailConfirmTokenExceptionTest() {
+        checkToken("token", 404);
     }
 
     private WebTestClient.ResponseSpec checkPost(final String uri, final Object body, final int status) {
@@ -145,6 +167,13 @@ class RegistrationControllerTest extends BookCrossingBaseTests {
                 .uri(uri)
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(body)
+                .exchange()
+                .expectStatus().isEqualTo(status);
+    }
+
+    private WebTestClient.ResponseSpec checkToken(final String token, final int status) {
+        return webClient.get()
+                .uri("/registration/confirmation?token={token}", token)
                 .exchange()
                 .expectStatus().isEqualTo(status);
     }
