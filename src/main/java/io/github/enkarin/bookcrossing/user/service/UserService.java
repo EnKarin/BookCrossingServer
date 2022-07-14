@@ -17,7 +17,6 @@ import io.github.enkarin.bookcrossing.user.model.User;
 import io.github.enkarin.bookcrossing.user.repository.RoleRepository;
 import io.github.enkarin.bookcrossing.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,7 +36,6 @@ public class UserService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final MailService mailService;
     private final RefreshService refreshService;
-    private final ModelMapper modelMapper;
 
     @Transactional
     public UserDto saveUser(final UserRegistrationDto userRegistrationDTO) {
@@ -124,7 +122,11 @@ public class UserService {
     }
 
     private User convertToUser(final UserRegistrationDto userRegistrationDTO) {
-        final User user = modelMapper.map(userRegistrationDTO, User.class);
+        final User user = new User();
+        user.setName(userRegistrationDTO.getName());
+        user.setLogin(userRegistrationDTO.getLogin());
+        user.setCity(userRegistrationDTO.getCity());
+        user.setEmail(userRegistrationDTO.getEmail());
         user.setUserRoles(Set.of(roleRepository.getRoleByName("ROLE_USER")));
         user.setAccountNonLocked(true);
         user.setEnabled(false);

@@ -46,7 +46,7 @@ public class RegistrationController {
         @ApiResponse(responseCode = "400", description = "Введены некорректные данные",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
                     schema = @Schema(implementation = ErrorListResponse.class))}),
-        @ApiResponse(responseCode = "200", description = "Возвращает токены",
+        @ApiResponse(responseCode = "201", description = "Отправляет ссылку для подтверждения на почту",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
                     schema = @Schema(implementation = AuthResponse.class))})
     }
@@ -60,8 +60,7 @@ public class RegistrationController {
                     .add(f.getDefaultMessage()));
             return new ResponseEntity<>(errorListResponse, HttpStatus.BAD_REQUEST);
         }
-        userService.saveUser(userForm);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(HttpStatus.CREATED).body(userService.saveUser(userForm));
     }
 
     @Operation(
