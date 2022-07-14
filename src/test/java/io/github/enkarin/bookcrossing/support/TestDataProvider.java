@@ -3,6 +3,7 @@ package io.github.enkarin.bookcrossing.support;
 
 import io.github.enkarin.bookcrossing.books.dto.BookDto;
 import io.github.enkarin.bookcrossing.books.dto.BookModelDto;
+import io.github.enkarin.bookcrossing.registation.dto.LoginRequest;
 import io.github.enkarin.bookcrossing.registation.dto.UserRegistrationDto;
 import lombok.experimental.UtilityClass;
 
@@ -49,6 +50,13 @@ public class TestDataProvider {
                 .author("author")
                 .publishingHouse("publishing_house")
                 .attachment(null);
+    }
+
+    @Nonnull
+    public static LoginRequest.LoginRequestBuilder<?, ?> prepareLogin() {
+        return LoginRequest.builder()
+                .password("123456")
+                .zone(0);
     }
 
     @Nonnull
@@ -136,10 +144,25 @@ public class TestDataProvider {
     }
 
     @Nonnull
+    public static UserRegistrationDto buildMax() {
+        return prepareUser()
+                .login("Max")
+                .email("m.test@mail.ru")
+                .build();
+    }
+
+    @Nonnull
     public static UserRegistrationDto buildUserWithAlexEmail() {
         return prepareUser()
                 .login("NotAlex")
                 .email("t.test@mail.ru")
+                .build();
+    }
+
+    @Nonnull
+    public static LoginRequest buildAuthBot() {
+        return prepareLogin()
+                .login("Bot")
                 .build();
     }
 }

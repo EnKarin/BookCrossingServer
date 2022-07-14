@@ -5,3 +5,10 @@ spring:
         show-sql: false
     flyway:
         enabled: true
+    mail:
+        host: 127.0.0.1
+        port: 3025
+        protocol: smtp
+server:
+    ssl:
+        enabled: false

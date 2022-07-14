@@ -8,7 +8,7 @@ server:
             tracking-modes: cookie
     ssl:
         enabled: true
-        key-store: D:/IdeaProgects/BookcrossingServer/src/main/resources/keystore.p12
+        key-store: classpath:keystore.p12
         keyStoreType: PKCS12
         key-alias: tomcat
         key-store-password: Sw1982
@@ -36,11 +36,19 @@ spring:
         multipart:
             max-file-size: 5MB
             max-request-size: 6MB
+    mail:
+        password: lgwr qqwh ttbh frhv
+        username: bookscrossingdiploma@gmail.com
+        host: smtp.gmail.com
+        port: 587
+        protocol: smtp
+        properties:
+            mail:
+                smtp:
+                    auth: true
+                    starttls:
+                        enable: true
     flyway:
         enabled: false
-
 jwt:
     secret: scjwtmaster
-mail:
-    password: slzx xvuw atyv tlhi
-    username: bookscrossingdiploma@gmail.com

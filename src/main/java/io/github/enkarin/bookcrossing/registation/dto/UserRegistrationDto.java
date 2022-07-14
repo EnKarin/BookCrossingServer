@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 import org.springframework.validation.annotation.Validated;
@@ -12,9 +13,10 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
+@Getter
+@EqualsAndHashCode
 @SuperBuilder
 @Validated
-@Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Schema(description = "Сущность пользователя")
 public class UserRegistrationDto {
@@ -29,7 +31,7 @@ public class UserRegistrationDto {
 
     @Schema(description = "Пароль", example = "123456")
     @NotBlank(message = "password: Пароль должен содержать хотя бы один видимый символ")
-    @Size(min = 6, message = "Пароль должен содержать больше 6 символов")
+    @Size(min = 6, message = "password: Пароль должен содержать больше 6 символов")
     private final String password;
 
     @Schema(description = "Подвержение пароля", example = "123456", required = true)
