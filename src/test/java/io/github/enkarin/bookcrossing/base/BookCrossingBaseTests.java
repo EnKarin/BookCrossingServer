@@ -1,9 +1,12 @@
 package io.github.enkarin.bookcrossing.base;
 
-import io.github.enkarin.bookcrossing.init.GreenMailInitializer;
+import com.icegreen.greenmail.configuration.GreenMailConfiguration;
+import com.icegreen.greenmail.junit5.GreenMailExtension;
+import com.icegreen.greenmail.util.ServerSetupTest;
 import io.github.enkarin.bookcrossing.init.MySQLInitializer;
 import io.github.enkarin.bookcrossing.user.service.UserService;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -16,7 +19,7 @@ import java.util.List;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
-@ContextConfiguration(initializers = {MySQLInitializer.class, GreenMailInitializer.class})
+@ContextConfiguration(initializers = MySQLInitializer.class)
 public abstract class BookCrossingBaseTests {
 
     protected final List<Integer> usersId = new ArrayList<>(2);
@@ -29,6 +32,11 @@ public abstract class BookCrossingBaseTests {
 
     @Autowired
     protected UserService userService;
+
+    @RegisterExtension
+    protected static final GreenMailExtension GREEN_MAIL = new GreenMailExtension(ServerSetupTest.SMTP)
+            .withConfiguration(GreenMailConfiguration.aConfig().withDisabledAuthentication())
+            .withPerMethodLifecycle(false);
 
     @AfterEach
     void delete() {

@@ -1,17 +1,12 @@
 package io.github.enkarin.bookcrossing.registation.controllers;
 
-import com.icegreen.greenmail.configuration.GreenMailConfiguration;
-import com.icegreen.greenmail.util.GreenMail;
 import com.icegreen.greenmail.util.GreenMailUtil;
-import com.icegreen.greenmail.util.ServerSetup;
 import io.github.enkarin.bookcrossing.base.BookCrossingBaseTests;
 import io.github.enkarin.bookcrossing.errors.ErrorListResponse;
-import io.github.enkarin.bookcrossing.init.GreenMailInitializer;
 import io.github.enkarin.bookcrossing.registation.dto.AuthResponse;
 import io.github.enkarin.bookcrossing.registation.dto.UserRegistrationDto;
 import io.github.enkarin.bookcrossing.support.TestDataProvider;
 import io.github.enkarin.bookcrossing.user.dto.UserDto;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
@@ -28,16 +23,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class RegistrationControllerTest extends BookCrossingBaseTests {
 
-    private static GreenMail greenMail;
-
-    @BeforeAll
-    static void setUp() {
-        greenMail = new GreenMail(new ServerSetup(GreenMailInitializer.getMappedSmtpPort(),
-                GreenMailInitializer.getMailHost(), "smtp"))
-                .withConfiguration(GreenMailConfiguration.aConfig().withDisabledAuthentication());
-        greenMail.start();
-    }
-
     @Test
     void registerUserTest() throws MessagingException {
         final UserRegistrationDto registrationDto = TestDataProvider.buildMax();
@@ -48,7 +33,7 @@ class RegistrationControllerTest extends BookCrossingBaseTests {
 
         usersId.add(user.getUserId());
 
-        assertThat(greenMail.getReceivedMessagesForDomain(user.getEmail()))
+        assertThat(GREEN_MAIL.getReceivedMessagesForDomain(user.getEmail()))
                 .extracting(MimeMessage::getAllRecipients)
                 .hasSize(1)
                 .contains(new Address[]{new InternetAddress(registrationDto.getEmail())});
@@ -146,7 +131,7 @@ class RegistrationControllerTest extends BookCrossingBaseTests {
     void mailConfirmTest() {
         final UserDto user = userService.saveUser(TestDataProvider.buildAlex());
         usersId.add(user.getUserId());
-        final MimeMessage message = greenMail.getReceivedMessagesForDomain(user.getEmail())[0];
+        final MimeMessage message = GREEN_MAIL.getReceivedMessagesForDomain(user.getEmail())[0];
         final String token = new String(Base64.getMimeDecoder().decode(GreenMailUtil.getBody(message)),
                 StandardCharsets.UTF_8)
                 .split("token=")[1];
