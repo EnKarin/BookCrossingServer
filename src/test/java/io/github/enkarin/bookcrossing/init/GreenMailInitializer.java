@@ -15,8 +15,8 @@ public class GreenMailInitializer implements ApplicationContextInitializer<Confi
     static {
         GREEN_MAIL_CONTAINER
                 .waitingFor(Wait.forLogMessage(".*Starting GreenMail standalone.*", 1))
-                .withEnv("GREENMAIL_OPTS", "-Dgreenmail.setup.test.smtp -Dgreenmail.hostname=0.0.0.0" +
-                        " -Dgreenmail.users=duke:springboot")
+                .withEnv("GREENMAIL_OPTS", "-Dgreenmail.startup.timeout=5000 -Dgreenmail.setup.test.smtp " +
+                        "-Dgreenmail.hostname=0.0.0.0 -Dgreenmail.users=duke:springboot")
                 .withExposedPorts(3025)
                 .start();
     }
