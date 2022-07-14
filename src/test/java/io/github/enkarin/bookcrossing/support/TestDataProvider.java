@@ -135,6 +135,14 @@ public class TestDataProvider {
     }
 
     @Nonnull
+    public static UserRegistrationDto buildMax() {
+        return prepareUser()
+                .login("Max")
+                .email("m.test@mail.ru")
+                .build();
+    }
+
+    @Nonnull
     public static LoginRequest buildAuthBot() {
         return prepareLogin()
                 .login("Bot")

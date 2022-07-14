@@ -40,8 +40,7 @@ class RegistrationControllerTest extends BookCrossingBaseTests {
 
     @Test
     void registerUserTest() throws MessagingException {
-        greenMail.reset();
-        final UserRegistrationDto registrationDto = TestDataProvider.buildBot();
+        final UserRegistrationDto registrationDto = TestDataProvider.buildMax();
         final UserDto user = checkPost("/registration", registrationDto, 201)
                 .expectBody(UserDto.class)
                 .returnResult().getResponseBody();
@@ -49,7 +48,7 @@ class RegistrationControllerTest extends BookCrossingBaseTests {
 
         usersId.add(user.getUserId());
 
-        assertThat(greenMail.getReceivedMessages())
+        assertThat(greenMail.getReceivedMessagesForDomain(user.getEmail()))
                 .extracting(MimeMessage::getAllRecipients)
                 .hasSize(1)
                 .contains(new Address[]{new InternetAddress(registrationDto.getEmail())});
