@@ -24,7 +24,7 @@ class BookServiceTest extends BookCrossingBaseTests {
 
     @Test
     void saveBook() {
-        final UserDto user = super.createAndSaveUser(TestDataProvider.buildAlex());
+        final UserDto user = createAndSaveUser(TestDataProvider.buildAlex());
         final BookModelDto book = bookService.saveBook(TestDataProvider.buildDorian(), user.getLogin());
         assertThat(book)
                 .isEqualTo(TestDataProvider.buildDorian(book.getBookId()));
@@ -40,7 +40,7 @@ class BookServiceTest extends BookCrossingBaseTests {
     @Test
     void findBookForOwnerTest() {
         final List<UserDto> users = TestDataProvider.buildUsers().stream()
-                .map(super::createAndSaveUser)
+                .map(this::createAndSaveUser)
                 .collect(Collectors.toList());
 
         final List<BookDto> books = TestDataProvider.buildBooks();
@@ -58,7 +58,7 @@ class BookServiceTest extends BookCrossingBaseTests {
     @Test
     void findEmptyBookForOwnerTest() {
         final List<UserDto> users = TestDataProvider.buildUsers().stream()
-                .map(super::createAndSaveUser)
+                .map(this::createAndSaveUser)
                 .collect(Collectors.toList());
 
         TestDataProvider.buildBooks().forEach(b -> bookService.saveBook(b, users.get(0).getLogin()));
@@ -68,7 +68,7 @@ class BookServiceTest extends BookCrossingBaseTests {
 
     @Test
     void findByIdTest() {
-        final UserDto user = super.createAndSaveUser(TestDataProvider.buildBot());
+        final UserDto user = createAndSaveUser(TestDataProvider.buildBot());
         final int book = TestDataProvider.buildBooks().stream()
                 .map(b -> bookService.saveBook(b, user.getLogin()))
                         .collect(Collectors.toList()).get(0).getBookId();
@@ -87,7 +87,7 @@ class BookServiceTest extends BookCrossingBaseTests {
     @Test
     void oneFilterTest() {
         final List<UserDto> users = TestDataProvider.buildUsers().stream()
-                .map(super::createAndSaveUser)
+                .map(this::createAndSaveUser)
                 .collect(Collectors.toList());
 
         bookService.saveBook(TestDataProvider.buildDandelion(), users.get(0).getLogin());
@@ -105,7 +105,7 @@ class BookServiceTest extends BookCrossingBaseTests {
     @Test
     void allFilterTest() {
         final List<UserDto> users = TestDataProvider.buildUsers().stream()
-                .map(super::createAndSaveUser)
+                .map(this::createAndSaveUser)
                 .collect(Collectors.toList());
 
         bookService.saveBook(TestDataProvider.buildDandelion(), users.get(0).getLogin());
@@ -120,7 +120,7 @@ class BookServiceTest extends BookCrossingBaseTests {
 
     @Test
     void filterLockedUserTest() {
-        final UserDto user1 = super.createAndSaveUser(TestDataProvider.buildBot());
+        final UserDto user1 = createAndSaveUser(TestDataProvider.buildBot());
 
         bookService.saveBook(TestDataProvider.buildDorian(), user1.getLogin());
 
@@ -133,7 +133,7 @@ class BookServiceTest extends BookCrossingBaseTests {
 
     @Test
     void deleteBookTest() {
-        final UserDto user1 = super.createAndSaveUser(TestDataProvider.buildBot());
+        final UserDto user1 = createAndSaveUser(TestDataProvider.buildBot());
 
         final BookModelDto book = bookService.saveBook(TestDataProvider.buildWolves(), user1.getLogin());
 
@@ -159,7 +159,7 @@ class BookServiceTest extends BookCrossingBaseTests {
     @Test
     void findAll() {
         final List<UserDto> users = TestDataProvider.buildUsers().stream()
-                .map(super::createAndSaveUser)
+                .map(this::createAndSaveUser)
                 .collect(Collectors.toList());
 
         final int book1 = bookService.saveBook(TestDataProvider.buildDorian(), users.get(0).getLogin()).getBookId();
@@ -174,7 +174,7 @@ class BookServiceTest extends BookCrossingBaseTests {
     @Test
     void findByTitleTest() {
         final List<UserDto> users = TestDataProvider.buildUsers().stream()
-                .map(super::createAndSaveUser)
+                .map(this::createAndSaveUser)
                 .collect(Collectors.toList());
 
         bookService.saveBook(TestDataProvider.buildDandelion(), users.get(0).getLogin());
@@ -189,7 +189,7 @@ class BookServiceTest extends BookCrossingBaseTests {
     @Test
     void findByTitleEmptyTest() {
         final List<UserDto> users = TestDataProvider.buildUsers().stream()
-                .map(super::createAndSaveUser)
+                .map(this::createAndSaveUser)
                 .collect(Collectors.toList());
 
         bookService.saveBook(TestDataProvider.buildDandelion(), users.get(0).getLogin());

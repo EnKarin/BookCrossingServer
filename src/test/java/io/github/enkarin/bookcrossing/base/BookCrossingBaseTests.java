@@ -40,13 +40,13 @@ public abstract class BookCrossingBaseTests {
             .withConfiguration(GreenMailConfiguration.aConfig().withDisabledAuthentication())
             .withPerMethodLifecycle(false);
 
-    protected UserDto createAndSaveUser(final UserRegistrationDto userRegistrationDto) {
+    protected final UserDto createAndSaveUser(final UserRegistrationDto userRegistrationDto) {
         final UserDto user = userService.saveUser(userRegistrationDto);
         usersId.add(user.getUserId());
         return user;
     }
 
-    protected void trackUserId(final int userId) {
+    protected final void trackUserId(final int userId) {
         usersId.add(userId);
     }
 

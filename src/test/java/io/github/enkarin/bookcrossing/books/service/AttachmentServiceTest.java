@@ -37,7 +37,7 @@ class AttachmentServiceTest extends BookCrossingBaseTests {
     @BeforeEach
     void create() {
         users = TestDataProvider.buildUsers().stream()
-                .map(super::createAndSaveUser)
+                .map(this::createAndSaveUser)
                 .collect(Collectors.toList());
     }
 

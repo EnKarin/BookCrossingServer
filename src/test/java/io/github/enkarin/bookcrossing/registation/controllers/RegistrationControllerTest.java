@@ -31,7 +31,7 @@ class RegistrationControllerTest extends BookCrossingBaseTests {
                 .returnResult().getResponseBody();
         assertThat(user).isNotNull();
 
-        super.trackUserId(user.getUserId());
+        trackUserId(user.getUserId());
 
         assertThat(GREEN_MAIL.getReceivedMessagesForDomain(user.getEmail()))
                 .extracting(MimeMessage::getAllRecipients)
@@ -63,7 +63,7 @@ class RegistrationControllerTest extends BookCrossingBaseTests {
 
     @Test
     void registerLoginExceptionTest() {
-        super.createAndSaveUser(TestDataProvider.buildBot());
+        createAndSaveUser(TestDataProvider.buildBot());
         checkPost("/registration", TestDataProvider.buildBot(), 409)
                 .expectBody()
                 .jsonPath("$.login")
@@ -72,7 +72,7 @@ class RegistrationControllerTest extends BookCrossingBaseTests {
 
     @Test
     void registerEmailExceptionTest() {
-        super.createAndSaveUser(TestDataProvider.prepareUser()
+        createAndSaveUser(TestDataProvider.prepareUser()
                 .login("Bot2")
                 .email("k.test@mail.ru")
                 .build());
@@ -85,7 +85,7 @@ class RegistrationControllerTest extends BookCrossingBaseTests {
     //TODO: set up the time and compare tokens
     @Test
     void authTest() {
-        final int userId = super.createAndSaveUser(TestDataProvider.buildBot()).getUserId();
+        final int userId = createAndSaveUser(TestDataProvider.buildBot()).getUserId();
         jdbcTemplate.update("update t_user set enabled = 1 where user_id = " + userId);
         final var response = checkPost("/auth", TestDataProvider.buildAuthBot(), 200)
                 .expectBody(AuthResponse.class)
@@ -95,7 +95,7 @@ class RegistrationControllerTest extends BookCrossingBaseTests {
 
     @Test
     void authNonConfirmExceptionTest() {
-        super.createAndSaveUser(TestDataProvider.buildBot());
+        createAndSaveUser(TestDataProvider.buildBot());
         checkPost("/auth", TestDataProvider.buildAuthBot(), 403)
                 .expectBody()
                 .jsonPath("$.user")
@@ -104,7 +104,7 @@ class RegistrationControllerTest extends BookCrossingBaseTests {
 
     @Test
     void authLockedExceptionTest() {
-        final int userId = super.createAndSaveUser(TestDataProvider.buildBot()).getUserId();
+        final int userId = createAndSaveUser(TestDataProvider.buildBot()).getUserId();
         jdbcTemplate.update("update t_user set enabled = 1, account_non_locked = 0 where user_id = " + userId);
         checkPost("/auth", TestDataProvider.buildAuthBot(), 403)
                 .expectBody()
@@ -114,7 +114,7 @@ class RegistrationControllerTest extends BookCrossingBaseTests {
 
     @Test
     void authInvalidPasswordExceptionTest() {
-        super.createAndSaveUser(TestDataProvider.buildBot());
+        createAndSaveUser(TestDataProvider.buildBot());
         checkPost("/auth",
                 TestDataProvider.prepareLogin().login("Bot").password("654321").build(),
                 404)
@@ -126,7 +126,7 @@ class RegistrationControllerTest extends BookCrossingBaseTests {
     //TODO: set up the time and compare tokens
     @Test
     void mailConfirmTest() {
-        final UserDto user = super.createAndSaveUser(TestDataProvider.buildAlex());
+        final UserDto user = createAndSaveUser(TestDataProvider.buildAlex());
         final MimeMessage message = GREEN_MAIL.getReceivedMessagesForDomain(user.getEmail())[0];
         final String token = new String(Base64.getMimeDecoder().decode(GreenMailUtil.getBody(message)),
                 StandardCharsets.UTF_8)

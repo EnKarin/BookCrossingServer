@@ -22,7 +22,7 @@ class AdminServiceTest extends BookCrossingBaseTests {
 
     @Test
     void lockedUser() {
-        final UserDto user = super.createAndSaveUser(TestDataProvider.buildAlex());
+        final UserDto user = createAndSaveUser(TestDataProvider.buildAlex());
         assertThat(adminService.lockedUser(LockedUserDto.create(user.getLogin(), "Заблокировано"))).isFalse();
     }
 
@@ -35,7 +35,7 @@ class AdminServiceTest extends BookCrossingBaseTests {
 
     @Test
     void nonLockedUser() {
-        final UserDto user = super.createAndSaveUser(TestDataProvider.buildAlex());
+        final UserDto user = createAndSaveUser(TestDataProvider.buildAlex());
         jdbcTemplate.update("update t_user set account_non_locked = 0 where user_id = " + user.getUserId());
         assertThat(adminService.nonLockedUser(user.getLogin())).isTrue();
     }
@@ -50,7 +50,7 @@ class AdminServiceTest extends BookCrossingBaseTests {
     @Test
     void findAllUsers() {
         final List<UserDto> users = TestDataProvider.buildUsers().stream()
-                .map(super::createAndSaveUser)
+                .map(this::createAndSaveUser)
                 .collect(Collectors.toList());
         assertThat(adminService.findAllUsers(0))
                 .hasSize(2)

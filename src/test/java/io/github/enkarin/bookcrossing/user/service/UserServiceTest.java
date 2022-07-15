@@ -84,7 +84,7 @@ class UserServiceTest extends BookCrossingBaseTests {
     @Test
     void findAllTest() {
         final List<UserDto> users = TestDataProvider.buildUsers().stream()
-                .map(super::createAndSaveUser)
+                .map(this::createAndSaveUser)
                 .collect(Collectors.toList());
 
         final var foundUsers = userService.findAllUsers(GM_TIME_ZERO);
