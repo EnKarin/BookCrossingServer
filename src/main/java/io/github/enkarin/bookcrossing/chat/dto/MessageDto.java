@@ -5,9 +5,11 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import javax.annotation.concurrent.Immutable;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
+@Immutable
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class MessageDto {

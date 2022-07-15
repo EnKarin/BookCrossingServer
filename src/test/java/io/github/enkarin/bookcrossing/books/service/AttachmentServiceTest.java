@@ -1,7 +1,7 @@
 package io.github.enkarin.bookcrossing.books.service;
 
 import io.github.enkarin.bookcrossing.base.BookCrossingBaseTests;
-import io.github.enkarin.bookcrossing.books.dto.AttachmentDto;
+import io.github.enkarin.bookcrossing.books.dto.AttachmentMultipartDto;
 import io.github.enkarin.bookcrossing.books.dto.BookModelDto;
 import io.github.enkarin.bookcrossing.exception.AttachmentNotFoundException;
 import io.github.enkarin.bookcrossing.exception.BadRequestException;
@@ -50,7 +50,7 @@ class AttachmentServiceTest extends BookCrossingBaseTests {
         final File file = ResourceUtils.getFile("classpath:image.jpg");
         final MultipartFile multipartFile = new MockMultipartFile(file.getName(), file.getName(),
                 "image/jpg", Files.readAllBytes(file.toPath()));
-        assertThat(attachmentService.saveAttachment(AttachmentDto.fromFile(book1.getBookId(), multipartFile),
+        assertThat(attachmentService.saveAttachment(AttachmentMultipartDto.fromFile(book1.getBookId(), multipartFile),
                 users.get(1).getLogin()).getAttachment().getAttachId())
                 .isEqualTo(book1.getBookId());
     }
@@ -64,7 +64,7 @@ class AttachmentServiceTest extends BookCrossingBaseTests {
         final File file = ResourceUtils.getFile("classpath:text.txt");
         final MultipartFile multipartFile = new MockMultipartFile(file.getName(), file.getName(),
                 "text/plain", Files.readAllBytes(file.toPath()));
-        assertThatThrownBy(() -> attachmentService.saveAttachment(AttachmentDto.fromFile(book1, multipartFile),
+        assertThatThrownBy(() -> attachmentService.saveAttachment(AttachmentMultipartDto.fromFile(book1, multipartFile),
                 users.get(1).getLogin()))
                 .isInstanceOf(BadRequestException.class)
                 .hasMessage("Недопустимый формат файла");
@@ -75,7 +75,7 @@ class AttachmentServiceTest extends BookCrossingBaseTests {
         final File file = ResourceUtils.getFile("classpath:image.jpg");
         final MultipartFile multipartFile = new MockMultipartFile(file.getName(), file.getName(),
                 "image/jpg", Files.readAllBytes(file.toPath()));
-        assertThatThrownBy(() -> attachmentService.saveAttachment(AttachmentDto
+        assertThatThrownBy(() -> attachmentService.saveAttachment(AttachmentMultipartDto
                         .fromFile(Integer.MAX_VALUE, multipartFile),
                 users.get(1).getLogin()))
                 .isInstanceOf(BookNotFoundException.class)
@@ -90,7 +90,7 @@ class AttachmentServiceTest extends BookCrossingBaseTests {
 
         final File file = ResourceUtils.getFile("classpath:image.jpg");
         final MultipartFile multipartFile = new MockMultipartFile(file.getName(), Files.readAllBytes(file.toPath()));
-        assertThatThrownBy(() -> attachmentService.saveAttachment(AttachmentDto
+        assertThatThrownBy(() -> attachmentService.saveAttachment(AttachmentMultipartDto
                         .fromFile(book1, multipartFile),
                 users.get(1).getLogin()))
                 .isInstanceOf(BadRequestException.class)
@@ -106,7 +106,7 @@ class AttachmentServiceTest extends BookCrossingBaseTests {
         final File file = ResourceUtils.getFile("classpath:image.jpg");
         final MultipartFile multipartFile = new MockMultipartFile(file.getName(), file.getName(),
                 "image/jpg", Files.readAllBytes(file.toPath()));
-        final int name = attachmentService.saveAttachment(AttachmentDto.fromFile(book1, multipartFile),
+        final int name = attachmentService.saveAttachment(AttachmentMultipartDto.fromFile(book1, multipartFile),
                 users.get(1).getLogin()).getAttachment().getAttachId();
         attachmentService.deleteAttachment(book1, users.get(1).getLogin());
         assertThat(jdbcTemplate.queryForObject("select exists(select * from t_attach where attach_id = ?)",

@@ -6,8 +6,10 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import javax.annotation.concurrent.Immutable;
 import javax.validation.constraints.NotBlank;
 
+@Immutable
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class MessagePutRequest {

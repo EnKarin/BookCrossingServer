@@ -7,9 +7,11 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.validation.annotation.Validated;
 
+import javax.annotation.concurrent.Immutable;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
+@Immutable
 @Getter
 @Validated
 @AllArgsConstructor(access = AccessLevel.PRIVATE)

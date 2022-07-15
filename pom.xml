@@ -304,17 +304,17 @@
                                         <limit>
                                             <counter>CLASS</counter>
                                             <value>MISSEDCOUNT</value>
-                                            <maximum>38</maximum>
+                                            <maximum>39</maximum>
                                         </limit>
                                         <limit>
                                             <counter>METHOD</counter>
                                             <value>MISSEDCOUNT</value>
-                                            <maximum>123</maximum>
+                                            <maximum>132</maximum>
                                         </limit>
                                         <limit>
                                             <counter>LINE</counter>
                                             <value>MISSEDCOUNT</value>
-                                            <maximum>406</maximum>
+                                            <maximum>420</maximum>
                                         </limit>
                                     </limits>
                                 </rule>

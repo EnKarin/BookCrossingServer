@@ -1,25 +1,24 @@
 package io.github.enkarin.bookcrossing.books.dto;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import io.swagger.v3.oas.annotations.media.Schema;
+import io.github.enkarin.bookcrossing.books.model.Attachment;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import org.springframework.web.multipart.MultipartFile;
 
 @Getter
+@EqualsAndHashCode
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-@Schema(description = "Сущность вложения книги")
 public class AttachmentDto {
 
-    @Schema(description = "Идентификатор книги", example = "5")
-    private final int bookId;
+    private final int attachId;
 
-    @Schema(description = "Вложение")
-    private final MultipartFile file;
+    private final byte[] data;
 
-    @JsonCreator
-    public static AttachmentDto fromFile(final int bookId, final MultipartFile file) {
-        return new AttachmentDto(bookId, file);
+    private final String expansion;
+
+    public static AttachmentDto fromAttachment(final Attachment attachment) {
+        return attachment == null ? null : new AttachmentDto(attachment.getAttachId(), attachment.getData(),
+                attachment.getExpansion());
     }
 }
