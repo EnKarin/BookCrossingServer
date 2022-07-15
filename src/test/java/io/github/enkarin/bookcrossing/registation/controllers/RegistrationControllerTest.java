@@ -31,7 +31,7 @@ class RegistrationControllerTest extends BookCrossingBaseTests {
                 .returnResult().getResponseBody();
         assertThat(user).isNotNull();
 
-        usersId.add(user.getUserId());
+        trackUserId(user.getUserId());
 
         assertThat(GREEN_MAIL.getReceivedMessagesForDomain(user.getEmail()))
                 .extracting(MimeMessage::getAllRecipients)
@@ -63,7 +63,7 @@ class RegistrationControllerTest extends BookCrossingBaseTests {
 
     @Test
     void registerLoginExceptionTest() {
-        usersId.add(userService.saveUser(TestDataProvider.buildBot()).getUserId());
+        createAndSaveUser(TestDataProvider.buildBot());
         checkPost("/registration", TestDataProvider.buildBot(), 409)
                 .expectBody()
                 .jsonPath("$.login")
@@ -72,10 +72,10 @@ class RegistrationControllerTest extends BookCrossingBaseTests {
 
     @Test
     void registerEmailExceptionTest() {
-        usersId.add(userService.saveUser(TestDataProvider.prepareUser()
+        createAndSaveUser(TestDataProvider.prepareUser()
                 .login("Bot2")
                 .email("k.test@mail.ru")
-                .build()).getUserId());
+                .build());
         checkPost("/registration", TestDataProvider.buildBot(), 409)
                 .expectBody()
                 .jsonPath("$.email")
@@ -85,8 +85,7 @@ class RegistrationControllerTest extends BookCrossingBaseTests {
     //TODO: set up the time and compare tokens
     @Test
     void authTest() {
-        final int userId = userService.saveUser(TestDataProvider.buildBot()).getUserId();
-        usersId.add(userId);
+        final int userId = createAndSaveUser(TestDataProvider.buildBot()).getUserId();
         jdbcTemplate.update("update t_user set enabled = 1 where user_id = " + userId);
         final var response = checkPost("/auth", TestDataProvider.buildAuthBot(), 200)
                 .expectBody(AuthResponse.class)
@@ -96,7 +95,7 @@ class RegistrationControllerTest extends BookCrossingBaseTests {
 
     @Test
     void authNonConfirmExceptionTest() {
-        usersId.add(userService.saveUser(TestDataProvider.buildBot()).getUserId());
+        createAndSaveUser(TestDataProvider.buildBot());
         checkPost("/auth", TestDataProvider.buildAuthBot(), 403)
                 .expectBody()
                 .jsonPath("$.user")
@@ -105,9 +104,8 @@ class RegistrationControllerTest extends BookCrossingBaseTests {
 
     @Test
     void authLockedExceptionTest() {
-        final int user = userService.saveUser(TestDataProvider.buildBot()).getUserId();
-        usersId.add(user);
-        jdbcTemplate.update("update t_user set enabled = 1, account_non_locked = 0 where user_id = " + user);
+        final int userId = createAndSaveUser(TestDataProvider.buildBot()).getUserId();
+        jdbcTemplate.update("update t_user set enabled = 1, account_non_locked = 0 where user_id = " + userId);
         checkPost("/auth", TestDataProvider.buildAuthBot(), 403)
                 .expectBody()
                 .jsonPath("$.user")
@@ -116,8 +114,7 @@ class RegistrationControllerTest extends BookCrossingBaseTests {
 
     @Test
     void authInvalidPasswordExceptionTest() {
-        final int user = userService.saveUser(TestDataProvider.buildBot()).getUserId();
-        usersId.add(user);
+        createAndSaveUser(TestDataProvider.buildBot());
         checkPost("/auth",
                 TestDataProvider.prepareLogin().login("Bot").password("654321").build(),
                 404)
@@ -129,15 +126,14 @@ class RegistrationControllerTest extends BookCrossingBaseTests {
     //TODO: set up the time and compare tokens
     @Test
     void mailConfirmTest() {
-        final UserDto user = userService.saveUser(TestDataProvider.buildAlex());
-        usersId.add(user.getUserId());
+        final UserDto user = createAndSaveUser(TestDataProvider.buildAlex());
         final MimeMessage message = GREEN_MAIL.getReceivedMessagesForDomain(user.getEmail())[0];
         final String token = new String(Base64.getMimeDecoder().decode(GreenMailUtil.getBody(message)),
                 StandardCharsets.UTF_8)
                 .split("token=")[1];
         checkToken(token, 200);
         assertThat(jdbcTemplate.queryForObject("select enabled from t_user where user_id = ?", Boolean.class,
-                        user.getUserId()))
+                user.getUserId()))
                 .isTrue();
     }
 
