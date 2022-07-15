@@ -1,6 +1,5 @@
 package io.github.enkarin.bookcrossing.books.dto;
 
-import io.github.enkarin.bookcrossing.books.model.Attachment;
 import io.github.enkarin.bookcrossing.books.model.Book;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
@@ -9,8 +8,10 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 
+import javax.annotation.concurrent.Immutable;
 import javax.validation.constraints.NotBlank;
 
+@Immutable
 @SuperBuilder
 @Getter
 @EqualsAndHashCode
@@ -39,10 +40,10 @@ public class BookModelDto {
     private final int year;
 
     @Schema(description = "Вложение")
-    private final Attachment attachment;
+    private final AttachmentDto attachment;
 
     public static BookModelDto fromBook(final Book book) {
         return new BookModelDto(book.getBookId(), book.getTitle(), book.getAuthor(), book.getGenre(),
-                book.getPublishingHouse(), book.getYear(), book.getAttachment());
+                book.getPublishingHouse(), book.getYear(), AttachmentDto.fromAttachment(book.getAttachment()));
     }
 }

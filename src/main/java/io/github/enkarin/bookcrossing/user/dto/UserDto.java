@@ -7,6 +7,9 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
+import javax.annotation.concurrent.Immutable;
+
+@Immutable
 @EqualsAndHashCode
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)

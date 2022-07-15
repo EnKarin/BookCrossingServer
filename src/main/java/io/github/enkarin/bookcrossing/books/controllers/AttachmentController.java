@@ -1,6 +1,6 @@
 package io.github.enkarin.bookcrossing.books.controllers;
 
-import io.github.enkarin.bookcrossing.books.dto.AttachmentDto;
+import io.github.enkarin.bookcrossing.books.dto.AttachmentMultipartDto;
 import io.github.enkarin.bookcrossing.books.service.AttachmentService;
 import io.github.enkarin.bookcrossing.constant.Constant;
 import io.github.enkarin.bookcrossing.exception.AttachmentNotFoundException;
@@ -45,9 +45,9 @@ public class AttachmentController {
         @ApiResponse(responseCode = "201", description = "Вложение сохранено")
     })
     @PostMapping("/attachment")
-    public ResponseEntity<?> saveAttachment(@ModelAttribute final AttachmentDto attachmentDto,
+    public ResponseEntity<?> saveAttachment(@ModelAttribute final AttachmentMultipartDto attachmentMultipartDto,
                                             final Principal principal) throws IOException {
-        attachmentService.saveAttachment(attachmentDto, principal.getName());
+        attachmentService.saveAttachment(attachmentMultipartDto, principal.getName());
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 

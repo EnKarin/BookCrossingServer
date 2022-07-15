@@ -105,7 +105,7 @@ public class UserService {
         if (!userPutProfileDto.getNewPassword().equals(userPutProfileDto.getPasswordConfirm())) {
             throw new PasswordsDontMatchException();
         }
-        User user = findByLogin(login);
+        User user = userRepository.findByLogin(login).orElseThrow(UserNotFoundException::new);
         if (bCryptPasswordEncoder.matches(userPutProfileDto.getOldPassword(), user.getPassword())) {
             user.setName(userPutProfileDto.getName());
             user.setCity(userPutProfileDto.getCity());

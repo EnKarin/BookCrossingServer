@@ -15,7 +15,6 @@ server:
 
 spring:
     jpa:
-        show-sql: true
         hibernate:
             ddl-auto: create
         database-platform: org.hibernate.dialect.MySQL8Dialect
@@ -25,7 +24,6 @@ spring:
                     characterEncoding: utf-8
                     CharSet: utf-8
                     useUnicode: true
-                enable_lazy_load_no_trans: true
         open-in-view: false
     datasource:
         url: jdbc:mysql://localhost:3306/bookcrossing

@@ -8,9 +8,11 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
+import javax.annotation.concurrent.Immutable;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
+@Immutable
 @EqualsAndHashCode
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -39,7 +41,7 @@ public class InfoUsersDto {
     private final boolean enabled;
 
     @Schema(description = "Время последнего входа", example = "2022-11-03T23:15:09.61")
-    private String loginDate;
+    private final String loginDate;
 
     public static InfoUsersDto fromUser(final User user, final int zone) {
         return new InfoUsersDto(user.getUserId(), user.getName(), user.getLogin(), user.getEmail(),

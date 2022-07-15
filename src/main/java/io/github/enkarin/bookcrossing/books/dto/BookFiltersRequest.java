@@ -6,6 +6,9 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import javax.annotation.concurrent.Immutable;
+
+@Immutable
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
 @Schema(description = "Фильтры для книг")

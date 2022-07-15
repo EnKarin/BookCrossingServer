@@ -1,6 +1,6 @@
 package io.github.enkarin.bookcrossing.books.service;
 
-import io.github.enkarin.bookcrossing.books.dto.AttachmentDto;
+import io.github.enkarin.bookcrossing.books.dto.AttachmentMultipartDto;
 import io.github.enkarin.bookcrossing.books.dto.BookModelDto;
 import io.github.enkarin.bookcrossing.books.model.Attachment;
 import io.github.enkarin.bookcrossing.books.model.Book;
@@ -27,12 +27,13 @@ public class AttachmentService {
     private final AttachmentRepository attachRepository;
     private final BookRepository bookRepository;
 
-    public BookModelDto saveAttachment(final AttachmentDto attachmentDto, final String login) throws IOException {
+    public BookModelDto saveAttachment(final AttachmentMultipartDto attachmentMultipartDto, final String login)
+            throws IOException {
         final Book book = userRepository.findByLogin(login).orElseThrow().getBooks().stream()
-                .filter(b -> b.getBookId() == attachmentDto.getBookId())
+                .filter(b -> b.getBookId() == attachmentMultipartDto.getBookId())
                 .findFirst()
                 .orElseThrow(BookNotFoundException::new);
-        final String fileName = attachmentDto.getFile().getOriginalFilename();
+        final String fileName = attachmentMultipartDto.getFile().getOriginalFilename();
         if (fileName == null || fileName.equals("")) {
             throw new BadRequestException("Имя не должно быть пустым");
         } else {
@@ -40,7 +41,7 @@ public class AttachmentService {
             if (expansion.contains("jpeg") || expansion.contains("jpg") ||
                     expansion.contains("png") || expansion.contains("bmp")) {
                 final Attachment attachment = new Attachment();
-                attachment.setData(attachmentDto.getFile().getBytes());
+                attachment.setData(attachmentMultipartDto.getFile().getBytes());
                 attachment.setBook(book);
                 attachment.setExpansion(expansion);
                 book.setAttachment(attachment);
