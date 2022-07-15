@@ -37,7 +37,7 @@ public class UserPublicProfileDto {
     public static UserPublicProfileDto fromUser(final User user, final int zone) {
         final Set<BookModelDto> books = user.getBooks().stream()
                 .map(BookModelDto::fromBook)
-                .collect(Collectors.toSet());
+                .collect(Collectors.toUnmodifiableSet());
         return new UserPublicProfileDto(user.getUserId(), user.getName(), user.getCity(),
                 user.getLoginDate() == 0 ? "0" :
                         LocalDateTime.ofEpochSecond(user.getLoginDate(), 0, ZoneOffset.ofHours(zone))

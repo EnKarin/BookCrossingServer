@@ -280,17 +280,17 @@
                                         <limit>
                                             <counter>CLASS</counter>
                                             <value>MISSEDCOUNT</value>
-                                            <maximum>40</maximum>
+                                            <maximum>39</maximum>
                                         </limit>
                                         <limit>
                                             <counter>METHOD</counter>
                                             <value>MISSEDCOUNT</value>
-                                            <maximum>133</maximum>
+                                            <maximum>132</maximum>
                                         </limit>
                                         <limit>
                                             <counter>LINE</counter>
                                             <value>MISSEDCOUNT</value>
-                                            <maximum>425</maximum>
+                                            <maximum>420</maximum>
                                         </limit>
                                     </limits>
                                 </rule>

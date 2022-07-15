@@ -7,11 +7,9 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import javax.annotation.concurrent.Immutable;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Immutable
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Schema(description = "Данные пользователя для внутреннего пользования")
@@ -38,7 +36,7 @@ public class UserProfileDto {
     public static UserProfileDto fromUser(final User user) {
         final Set<BookModelDto> books = user.getBooks().stream()
                 .map(BookModelDto::fromBook)
-                .collect(Collectors.toSet());
+                .collect(Collectors.toUnmodifiableSet());
         return new UserProfileDto(user.getUserId(), user.getName(), user.getLogin(), user.getCity(),
                 user.getEmail(), books);
     }

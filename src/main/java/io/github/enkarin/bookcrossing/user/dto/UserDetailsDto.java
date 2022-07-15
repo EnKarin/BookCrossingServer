@@ -36,7 +36,7 @@ public class UserDetailsDto implements UserDetails {
     public static UserDetailsDto fromUser(final User user) {
         final Set<RoleDto> roles = user.getUserRoles().stream()
                 .map(RoleDto::fromRole)
-                .collect(Collectors.toSet());
+                .collect(Collectors.toUnmodifiableSet());
         return new UserDetailsDto(user.getLogin(), user.getPassword(), user.isAccountNonLocked(),
                 user.isAccountNonExpired(), user.isCredentialsNonExpired(), user.isEnabled(), roles);
     }
