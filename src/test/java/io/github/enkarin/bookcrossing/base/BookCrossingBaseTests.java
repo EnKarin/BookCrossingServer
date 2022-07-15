@@ -24,7 +24,7 @@ import java.util.List;
 @ContextConfiguration(initializers = MySQLInitializer.class)
 public abstract class BookCrossingBaseTests {
 
-    protected final List<Integer> usersId = new ArrayList<>(2);
+    private final List<Integer> usersId = new ArrayList<>(2);
 
     @Autowired
     protected JdbcTemplate jdbcTemplate;
@@ -44,6 +44,10 @@ public abstract class BookCrossingBaseTests {
         final UserDto user = userService.saveUser(userRegistrationDto);
         usersId.add(user.getUserId());
         return user;
+    }
+
+    protected void trackUserId(final int userId) {
+        usersId.add(userId);
     }
 
     @AfterEach

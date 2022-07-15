@@ -16,6 +16,7 @@
     <properties>
         <java.version>12</java.version>
         <testcontainer.version>1.17.2</testcontainer.version>
+        <maven-enforcer-plugin.version>3.1.0</maven-enforcer-plugin.version>
     </properties>
     <dependencies>
         <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-data-jpa -->
@@ -156,7 +157,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
-                <version>3.1.0</version>
                 <executions>
                     <execution>
                         <id>enforce-versions</id>

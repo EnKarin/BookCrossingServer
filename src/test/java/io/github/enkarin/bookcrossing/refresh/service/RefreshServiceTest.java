@@ -22,8 +22,7 @@ class RefreshServiceTest extends BookCrossingBaseTests {
 
     @Test
     void createTokensTest() {
-        final UserDto user = userService.saveUser(TestDataProvider.buildAlex());
-        usersId.add(user.getUserId());
+        final UserDto user = super.createAndSaveUser(TestDataProvider.buildAlex());
         final AuthResponse tokens = refreshService.createTokens(user.getLogin());
         assertThat(jdbcTemplate.queryForObject("select exists(select * from t_refresh where refresh = ?)",
                 Boolean.class, tokens.getRefreshToken())).isTrue();
@@ -38,8 +37,7 @@ class RefreshServiceTest extends BookCrossingBaseTests {
 
     @Test
     void updateTokensTest() {
-        final UserDto user = userService.saveUser(TestDataProvider.buildAlex());
-        usersId.add(user.getUserId());
+        final UserDto user = super.createAndSaveUser(TestDataProvider.buildAlex());
         final AuthResponse tokens = refreshService.updateTokens(refreshService.createTokens(user.getLogin())
                 .getRefreshToken());
         assertThat(jdbcTemplate.queryForObject("select exists(select * from t_refresh where refresh = ?)",
@@ -55,8 +53,7 @@ class RefreshServiceTest extends BookCrossingBaseTests {
 
     @Test
     void updateTokenInvalidExcTest() {
-        final UserDto user = userService.saveUser(TestDataProvider.buildAlex());
-        usersId.add(user.getUserId());
+        final UserDto user = super.createAndSaveUser(TestDataProvider.buildAlex());
         final AuthResponse tokens = refreshService.createTokens(user.getLogin());
         jdbcTemplate.update("update t_refresh set date = 0 where refresh = ?", tokens.getRefreshToken());
         assertThatThrownBy(() -> refreshService.updateTokens(tokens.getRefreshToken()))
