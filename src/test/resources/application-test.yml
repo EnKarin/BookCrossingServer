@@ -3,9 +3,6 @@ spring:
         hibernate:
             ddl-auto: none
         show-sql: false
-#        properties:
-#            hibernate:
-#                enable_lazy_load_no_trans: false
     flyway:
         enabled: true
     mail:

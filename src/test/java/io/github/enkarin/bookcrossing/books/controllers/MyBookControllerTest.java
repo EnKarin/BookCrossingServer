@@ -17,7 +17,6 @@ import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-//TODO: When disabling lazy_no_trans in JwtFilter the roles field is not pulled up during the loadUserByUsername() call
 class MyBookControllerTest extends BookCrossingBaseTests {
 
     @Autowired
@@ -25,8 +24,7 @@ class MyBookControllerTest extends BookCrossingBaseTests {
 
     @Test
     void saveBookTest() {
-        final int user = userService.saveUser(TestDataProvider.buildBot()).getUserId();
-        usersId.add(user);
+        final int user = createAndSaveUser(TestDataProvider.buildBot()).getUserId();
         enabledUser(user);
         final BookModelDto bookDto = checkPost(
                 userService.findByLoginAndPassword(TestDataProvider.buildAuthBot()).getAccessToken(),
@@ -40,8 +38,7 @@ class MyBookControllerTest extends BookCrossingBaseTests {
 
     @Test
     void saveBadBookTest() {
-        final int user = userService.saveUser(TestDataProvider.buildBot()).getUserId();
-        usersId.add(user);
+        final int user = createAndSaveUser(TestDataProvider.buildBot()).getUserId();
         enabledUser(user);
         final var response = checkPost(
                 userService.findByLoginAndPassword(TestDataProvider.buildAuthBot()).getAccessToken(),
@@ -57,9 +54,8 @@ class MyBookControllerTest extends BookCrossingBaseTests {
     @Test
     void bookListTest() {
         final List<UserDto> users = TestDataProvider.buildUsers().stream()
-                .map(u -> userService.saveUser(u))
+                .map(this::createAndSaveUser)
                 .collect(Collectors.toList());
-        users.forEach(u -> usersId.add(u.getUserId()));
         enabledUser(users.get(0).getUserId());
         enabledUser(users.get(1).getUserId());
 
@@ -80,9 +76,8 @@ class MyBookControllerTest extends BookCrossingBaseTests {
     @Test
     void bookEmptyListTest() {
         final List<UserDto> users = TestDataProvider.buildUsers().stream()
-                .map(u -> userService.saveUser(u))
+                .map(this::createAndSaveUser)
                 .collect(Collectors.toList());
-        users.forEach(u -> usersId.add(u.getUserId()));
         enabledUser(users.get(0).getUserId());
         enabledUser(users.get(1).getUserId());
         bookService.saveBook(TestDataProvider.buildDandelion(), users.get(1).getLogin());
@@ -93,8 +88,7 @@ class MyBookControllerTest extends BookCrossingBaseTests {
 
     @Test
     void deleteBookTest() {
-        final UserDto user = userService.saveUser(TestDataProvider.buildBot());
-        usersId.add(user.getUserId());
+        final UserDto user = createAndSaveUser(TestDataProvider.buildBot());
         enabledUser(user.getUserId());
         final List<BookModelDto> book = TestDataProvider.buildBooks().stream()
                 .map(b -> bookService.saveBook(b, user.getLogin()))
@@ -108,8 +102,7 @@ class MyBookControllerTest extends BookCrossingBaseTests {
 
     @Test
     void deleteBookNotFoundExceptionTest() {
-        final UserDto user = userService.saveUser(TestDataProvider.buildBot());
-        usersId.add(user.getUserId());
+        final UserDto user = createAndSaveUser(TestDataProvider.buildBot());
         enabledUser(user.getUserId());
         checkDelete(userService.findByLoginAndPassword(TestDataProvider.buildAuthBot()).getAccessToken(),
                 Integer.MAX_VALUE, 404)
