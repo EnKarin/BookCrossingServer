@@ -1,14 +1,17 @@
 package io.github.enkarin.bookcrossing.user.dto;
 
-import io.github.enkarin.bookcrossing.books.model.Book;
+import io.github.enkarin.bookcrossing.books.dto.BookModelDto;
 import io.github.enkarin.bookcrossing.user.model.User;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import javax.annotation.concurrent.Immutable;
 import java.util.Set;
+import java.util.stream.Collectors;
 
+@Immutable
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Schema(description = "Данные пользователя для внутреннего пользования")
@@ -30,10 +33,13 @@ public class UserProfileDto {
     private final String email;
 
     @Schema(description = "Книги пользователя")
-    private final Set<Book> books;
+    private final Set<BookModelDto> books;
 
     public static UserProfileDto fromUser(final User user) {
+        final Set<BookModelDto> books = user.getBooks().stream()
+                .map(BookModelDto::fromBook)
+                .collect(Collectors.toSet());
         return new UserProfileDto(user.getUserId(), user.getName(), user.getLogin(), user.getCity(),
-                user.getEmail(), user.getBooks());
+                user.getEmail(), books);
     }
 }

@@ -1,11 +1,11 @@
 package io.github.enkarin.bookcrossing.security.jwt;
 
-import io.github.enkarin.bookcrossing.user.model.User;
 import io.github.enkarin.bookcrossing.user.service.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
 
@@ -36,7 +36,7 @@ public class JwtFilter extends GenericFilterBean {
         if (token != null && jwtProvider.validateToken(token)) {
             try {
                 final String userLogin = jwtProvider.getLoginFromToken(token);
-                final User user = customUserDetailsService.loadUserByUsername(userLogin);
+                final UserDetails user = customUserDetailsService.loadUserByUsername(userLogin);
                 final UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(user,
                         null, user.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(auth);

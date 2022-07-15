@@ -1,16 +1,19 @@
 package io.github.enkarin.bookcrossing.user.dto;
 
-import io.github.enkarin.bookcrossing.books.model.Book;
+import io.github.enkarin.bookcrossing.books.dto.BookModelDto;
 import io.github.enkarin.bookcrossing.user.model.User;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import javax.annotation.concurrent.Immutable;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Set;
+import java.util.stream.Collectors;
 
+@Immutable
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Schema(description = "Данные пользователя для общего доступа")
@@ -29,13 +32,16 @@ public class UserPublicProfileDto {
     private final String loginDate;
 
     @Schema(description = "Книги пользователя")
-    private final Set<Book> books;
+    private final Set<BookModelDto> books;
 
     public static UserPublicProfileDto fromUser(final User user, final int zone) {
+        final Set<BookModelDto> books = user.getBooks().stream()
+                .map(BookModelDto::fromBook)
+                .collect(Collectors.toSet());
         return new UserPublicProfileDto(user.getUserId(), user.getName(), user.getCity(),
                 user.getLoginDate() == 0 ? "0" :
                         LocalDateTime.ofEpochSecond(user.getLoginDate(), 0, ZoneOffset.ofHours(zone))
                                 .toString(),
-                user.getBooks());
+                books);
     }
 }
