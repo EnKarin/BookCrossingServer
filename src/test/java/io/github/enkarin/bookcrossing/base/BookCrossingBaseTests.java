@@ -4,6 +4,8 @@ import com.icegreen.greenmail.configuration.GreenMailConfiguration;
 import com.icegreen.greenmail.junit5.GreenMailExtension;
 import com.icegreen.greenmail.util.ServerSetupTest;
 import io.github.enkarin.bookcrossing.init.MySQLInitializer;
+import io.github.enkarin.bookcrossing.registation.dto.UserRegistrationDto;
+import io.github.enkarin.bookcrossing.user.dto.UserDto;
 import io.github.enkarin.bookcrossing.user.service.UserService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -22,7 +24,7 @@ import java.util.List;
 @ContextConfiguration(initializers = MySQLInitializer.class)
 public abstract class BookCrossingBaseTests {
 
-    protected final List<Integer> usersId = new ArrayList<>(2);
+    private final List<Integer> usersId = new ArrayList<>(2);
 
     @Autowired
     protected JdbcTemplate jdbcTemplate;
@@ -37,6 +39,16 @@ public abstract class BookCrossingBaseTests {
     protected static final GreenMailExtension GREEN_MAIL = new GreenMailExtension(ServerSetupTest.SMTP)
             .withConfiguration(GreenMailConfiguration.aConfig().withDisabledAuthentication())
             .withPerMethodLifecycle(false);
+
+    protected final UserDto createAndSaveUser(final UserRegistrationDto userRegistrationDto) {
+        final UserDto user = userService.saveUser(userRegistrationDto);
+        usersId.add(user.getUserId());
+        return user;
+    }
+
+    protected final void trackUserId(final int userId) {
+        usersId.add(userId);
+    }
 
     @AfterEach
     void delete() {

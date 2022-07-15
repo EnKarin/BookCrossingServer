@@ -135,10 +135,27 @@ public class TestDataProvider {
     }
 
     @Nonnull
+    public static UserRegistrationDto buildNonConfirmedPasswordUser() {
+        return prepareUser()
+                .passwordConfirm("654321")
+                .login("User")
+                .email("u.test@mail.ru")
+                .build();
+    }
+
+    @Nonnull
     public static UserRegistrationDto buildMax() {
         return prepareUser()
                 .login("Max")
                 .email("m.test@mail.ru")
+                .build();
+    }
+
+    @Nonnull
+    public static UserRegistrationDto buildUserWithAlexEmail() {
+        return prepareUser()
+                .login("NotAlex")
+                .email("t.test@mail.ru")
                 .build();
     }
 
