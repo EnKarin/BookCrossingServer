@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.security.Principal;
-import java.util.List;
 
 @Tag(
         name = "Раздел работы с книгами",
@@ -43,14 +42,14 @@ public class MyBookController {
                     schema = @Schema(implementation = ErrorListResponse.class))}),
         @ApiResponse(responseCode = "201", description = "Возвращает сохраненную книгу",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(implementation = BookModelDto[].class))})}
+                    schema = @Schema(implementation = BookModelDto.class))})}
     )
     @PostMapping
     public ResponseEntity<?> saveBook(@Valid @RequestBody final BookDto bookDTO,
                                       final BindingResult bindingResult,
                                       final Principal principal) {
-        final ErrorListResponse response = new ErrorListResponse();
         if (bindingResult.hasErrors()) {
+            final ErrorListResponse response = new ErrorListResponse();
             bindingResult.getAllErrors().forEach(f -> response.getErrors()
                     .add(f.getDefaultMessage()));
             return ResponseEntity
@@ -73,8 +72,7 @@ public class MyBookController {
     )
     @GetMapping
     public ResponseEntity<Object[]> bookList(final Principal principal) {
-        final List<BookModelDto> bookModelDtos = bookService.findBookForOwner(principal.getName());
-        return ResponseEntity.ok(bookModelDtos.toArray());
+        return ResponseEntity.ok(bookService.findBookForOwner(principal.getName()).toArray());
     }
 
     @Operation(
