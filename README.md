@@ -4,8 +4,10 @@
 
 [![Java CI](https://github.com/EnKarin/BookCrossingServer/actions/workflows/build.yml/badge.svg)](https://github.com/EnKarin/BookCrossingServer/actions/workflows/build.yml)
 [![GitHub](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/EnKarin/BookCrossingServer/blob/master/LICENSE "MIT")
-![Lines of code](https://img.shields.io/tokei/lines/github/EnKarin/BookCrossingServer)
 [![codecov](https://codecov.io/gh/EnKarin/BookCrossingServer/branch/master/graph/badge.svg)](https://codecov.io/gh/EnKarin/BookCrossingServer)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=io.github.enkarin%3Abookcrossing&metric=coverage)](https://sonarcloud.io/summary/new_code?id=io.github.enkarin%3Abookcrossing)
+[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=io.github.enkarin%3Abookcrossing&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=io.github.enkarin%3Abookcrossing)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=io.github.enkarin%3Abookcrossing&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=io.github.enkarin%3Abookcrossing)
 
 ### Requirements
 1. Java 12 and above
