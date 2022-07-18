@@ -8,7 +8,7 @@
         <version>2.6.7</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>ru.bookcrossing</groupId>
+    <groupId>io.github.enkarin</groupId>
     <artifactId>BookcrossingServer</artifactId>
     <version>0.1.0-SNAPSHOT</version>
     <name>BookCrossingServer</name>
@@ -17,6 +17,9 @@
         <java.version>12</java.version>
         <testcontainer.version>1.17.2</testcontainer.version>
         <maven-enforcer-plugin.version>3.1.0</maven-enforcer-plugin.version>
+        <sonar.organization>enkarin</sonar.organization>
+        <sonar.projectKey>io.github.enkarin:bookcrossing</sonar.projectKey>
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     </properties>
     <dependencies>
         <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-data-jpa -->
@@ -153,6 +156,15 @@
     </dependencies>
 
     <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.sonarsource.scanner.maven</groupId>
+                    <artifactId>sonar-maven-plugin</artifactId>
+                    <version>3.9.1.2184</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -320,6 +332,18 @@
                                 </rule>
                             </rules>
                         </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.sonarsource.scanner.maven</groupId>
+                <artifactId>sonar-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sonar</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>
