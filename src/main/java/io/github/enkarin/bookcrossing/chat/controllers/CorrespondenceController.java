@@ -21,7 +21,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
-import java.util.List;
 import java.util.Map;
 
 @Tag(
@@ -53,8 +52,8 @@ public class CorrespondenceController {
     @PostMapping
     public ResponseEntity<UsersCorrKeyDto> createCorrespondence(@RequestParam final int userId,
                                                   final Principal principal) {
-        final UsersCorrKeyDto usersCorrKeyDto = correspondenceService.createChat(userId, principal.getName());
-        return ResponseEntity.status(HttpStatus.CREATED).body(usersCorrKeyDto);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(correspondenceService.createChat(userId, principal.getName()));
     }
 
     @Operation(
@@ -69,8 +68,9 @@ public class CorrespondenceController {
         }
     )
     @DeleteMapping
-    public ResponseEntity<?> deleteCorrespondence(@RequestParam @Parameter(description = "Идентификатор пользователя")
-                                                      final int userId,
+    public ResponseEntity<Void> deleteCorrespondence(@RequestParam
+                                                         @Parameter(description = "Идентификатор пользователя")
+                                                         final int userId,
                                                   final Principal principal) {
         correspondenceService.deleteChat(userId, principal.getName());
         return ResponseEntity.ok().build();
@@ -92,8 +92,7 @@ public class CorrespondenceController {
     @GetMapping
     public ResponseEntity<Object[]> getCorrespondence(@RequestBody final ZonedUserCorrKeyDto dto,
                                                final Principal principal) {
-        final List<MessageDto> messageResponse = correspondenceService.getChat(dto, principal.getName());
-        return ResponseEntity.ok(messageResponse.toArray());
+        return ResponseEntity.ok(correspondenceService.getChat(dto, principal.getName()).toArray());
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)

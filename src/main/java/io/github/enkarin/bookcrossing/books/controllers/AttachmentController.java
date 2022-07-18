@@ -45,7 +45,7 @@ public class AttachmentController {
         @ApiResponse(responseCode = "201", description = "Вложение сохранено")
     })
     @PostMapping("/attachment")
-    public ResponseEntity<?> saveAttachment(@ModelAttribute final AttachmentMultipartDto attachmentMultipartDto,
+    public ResponseEntity<Void> saveAttachment(@ModelAttribute final AttachmentMultipartDto attachmentMultipartDto,
                                             final Principal principal) throws IOException {
         attachmentService.saveAttachment(attachmentMultipartDto, principal.getName());
         return ResponseEntity.status(HttpStatus.CREATED).build();
@@ -62,7 +62,7 @@ public class AttachmentController {
         @ApiResponse(responseCode = "200", description = "Вложение удалено")
     })
     @DeleteMapping("/attachment")
-    public ResponseEntity<?> deleteAttachment(@RequestParam final int bookId,
+    public ResponseEntity<Void> deleteAttachment(@RequestParam final int bookId,
                                             final Principal principal) {
         attachmentService.deleteAttachment(bookId, principal.getName());
         return ResponseEntity.ok().build();

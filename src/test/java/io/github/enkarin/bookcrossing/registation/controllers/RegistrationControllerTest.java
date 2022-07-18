@@ -2,7 +2,6 @@ package io.github.enkarin.bookcrossing.registation.controllers;
 
 import com.icegreen.greenmail.util.GreenMailUtil;
 import io.github.enkarin.bookcrossing.base.BookCrossingBaseTests;
-import io.github.enkarin.bookcrossing.errors.ErrorListResponse;
 import io.github.enkarin.bookcrossing.registation.dto.AuthResponse;
 import io.github.enkarin.bookcrossing.registation.dto.UserRegistrationDto;
 import io.github.enkarin.bookcrossing.support.TestDataProvider;
@@ -17,7 +16,6 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -41,14 +39,11 @@ class RegistrationControllerTest extends BookCrossingBaseTests {
 
     @Test
     void registerBadEmailExceptionTest() {
-        final var response = checkPost("/registration",
-                TestDataProvider.prepareUser().login("User").email("t.test.mail.ru").build(),
-                400)
-                .expectBody(ErrorListResponse.class)
-                .returnResult().getResponseBody();
-        assertThat(response)
-                .extracting(ErrorListResponse::getErrors)
-                .isEqualTo(List.of("email: Некорректный почтовый адрес"));
+        checkPost("/registration", TestDataProvider.prepareUser().login("User").email("t.test.mail.ru").build(),
+                406)
+                .expectBody()
+                .jsonPath("$.email")
+                .isEqualTo("Некорректный почтовый адрес");
     }
 
     @Test

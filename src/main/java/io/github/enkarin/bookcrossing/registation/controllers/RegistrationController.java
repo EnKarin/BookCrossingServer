@@ -1,11 +1,11 @@
 package io.github.enkarin.bookcrossing.registation.controllers;
 
 import io.github.enkarin.bookcrossing.constant.Constant;
-import io.github.enkarin.bookcrossing.errors.ErrorListResponse;
 import io.github.enkarin.bookcrossing.exception.*;
 import io.github.enkarin.bookcrossing.registation.dto.AuthResponse;
 import io.github.enkarin.bookcrossing.registation.dto.LoginRequest;
 import io.github.enkarin.bookcrossing.registation.dto.UserRegistrationDto;
+import io.github.enkarin.bookcrossing.user.dto.UserDto;
 import io.github.enkarin.bookcrossing.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -20,6 +20,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 @Tag(
@@ -40,25 +42,24 @@ public class RegistrationController {
         @ApiResponse(responseCode = "409", description = "Пароли не совпадают",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
                     schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
-        @ApiResponse(responseCode = "406", description = "Пользователь с таким логином или почтой уже существует",
+        @ApiResponse(responseCode = "409", description = "Пользователь с таким логином или почтой уже существует",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
                     schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
-        @ApiResponse(responseCode = "400", description = "Введены некорректные данные",
+        @ApiResponse(responseCode = "406", description = "Введены некорректные данные",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(implementation = ErrorListResponse.class))}),
+                    schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
         @ApiResponse(responseCode = "201", description = "Отправляет ссылку для подтверждения на почту",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(implementation = AuthResponse.class))})
+                    schema = @Schema(implementation = UserDto.class))})
     }
     )
     @PostMapping("/registration")
-    public ResponseEntity<?> registerUser(@Valid @RequestBody final UserRegistrationDto userForm,
-                                          final BindingResult bindingResult) {
+    public ResponseEntity<UserDto> registerUser(@Valid @RequestBody final UserRegistrationDto userForm,
+                                                final BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            final ErrorListResponse errorListResponse = new ErrorListResponse();
-            bindingResult.getAllErrors().forEach(f -> errorListResponse.getErrors()
-                    .add(f.getDefaultMessage()));
-            return new ResponseEntity<>(errorListResponse, HttpStatus.BAD_REQUEST);
+            final List<String> response = new LinkedList<>();
+            bindingResult.getAllErrors().forEach(f -> response.add(f.getDefaultMessage()));
+            throw new BindingErrorsException(response);
         }
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.saveUser(userForm));
     }
@@ -80,7 +81,7 @@ public class RegistrationController {
             )}
     )
     @PostMapping("/auth")
-    public ResponseEntity<?> auth(@RequestBody final LoginRequest request) {
+    public ResponseEntity<AuthResponse> auth(@RequestBody final LoginRequest request) {
         return ResponseEntity.ok(userService.findByLoginAndPassword(request));
     }
 
@@ -92,11 +93,13 @@ public class RegistrationController {
         @ApiResponse(responseCode = "404", description = "Токена не существует",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
                     schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
-        @ApiResponse(responseCode = "200", description = "Подтверждает почту для аккаунта")
+        @ApiResponse(responseCode = "200", description = "Подтверждает почту для аккаунта и возвращает токены",
+            content = {@Content(mediaType = Constant.MEDIA_TYPE,
+                    schema = @Schema(implementation = AuthResponse.class))})
     }
     )
     @GetMapping("/registration/confirmation")
-    public ResponseEntity<?> mailConfirm(@RequestParam final String token) {
+    public ResponseEntity<AuthResponse> mailConfirm(@RequestParam final String token) {
         return ResponseEntity.ok(userService.confirmMail(token));
     }
 

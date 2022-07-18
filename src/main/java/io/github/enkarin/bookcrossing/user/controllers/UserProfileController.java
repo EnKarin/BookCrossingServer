@@ -1,7 +1,7 @@
 package io.github.enkarin.bookcrossing.user.controllers;
 
 import io.github.enkarin.bookcrossing.constant.Constant;
-import io.github.enkarin.bookcrossing.errors.ErrorListResponse;
+import io.github.enkarin.bookcrossing.exception.BindingErrorsException;
 import io.github.enkarin.bookcrossing.exception.InvalidPasswordException;
 import io.github.enkarin.bookcrossing.exception.PasswordsDontMatchException;
 import io.github.enkarin.bookcrossing.user.dto.UserProfileDto;
@@ -23,6 +23,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.security.Principal;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 @Tag(
@@ -48,7 +50,7 @@ public class UserProfileController {
         }
     )
     @GetMapping
-    public ResponseEntity<?> getProfile(@RequestParam @Parameter(description = "Идентификатор пользователя")
+    public ResponseEntity<?> getProfile(@RequestParam @Parameter(description = "Идентификатор пользователя") // NOSONAR
                                             final int userId,
                                         @RequestParam @Parameter(description = "Часовой пояс пользователя")
                                         final int zone,
@@ -79,14 +81,13 @@ public class UserProfileController {
         }
     )
     @PutMapping
-    public ResponseEntity<?> putProfile(@Valid @RequestBody final UserPutProfileDto userPutProfileDto,
+    public ResponseEntity<UserProfileDto> putProfile(@Valid @RequestBody final UserPutProfileDto userPutProfileDto,
                                         final BindingResult bindingResult,
                                         final Principal principal) {
         if (bindingResult.hasErrors()) {
-            final ErrorListResponse response = new ErrorListResponse();
-            bindingResult.getAllErrors().forEach(f -> response.getErrors()
-                    .add(f.getDefaultMessage()));
-            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+            final List<String> response = new LinkedList<>();
+            bindingResult.getAllErrors().forEach(f -> response.add(f.getDefaultMessage()));
+            throw new BindingErrorsException(response);
         }
         return ResponseEntity.ok(userService.putUserInfo(userPutProfileDto, principal.getName()));
     }
@@ -101,8 +102,8 @@ public class UserProfileController {
                     schema = @Schema(implementation = UserPublicProfileDto[].class))})
     })
     @GetMapping("/users")
-    public ResponseEntity<?> getAllProfile(@RequestParam final int zone) {
-        return ResponseEntity.ok(userService.findAllUsers(zone));
+    public ResponseEntity<Object[]> getAllProfile(@RequestParam final int zone) {
+        return ResponseEntity.ok(userService.findAllUsers(zone).toArray());
     }
 
     @ResponseStatus(HttpStatus.PRECONDITION_FAILED)

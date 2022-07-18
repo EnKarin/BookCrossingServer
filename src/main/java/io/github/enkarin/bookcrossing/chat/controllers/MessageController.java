@@ -33,6 +33,8 @@ public class MessageController {
 
     private final MessageService messageService;
 
+    private static final String CORRESPONDENCE = "correspondence";
+
     @Operation(
             summary = "Отправка сообщения",
             description = "Позволяет отправить сообщение в чат"
@@ -103,7 +105,7 @@ public class MessageController {
         @ApiResponse(responseCode = "200", description = "Сообщение удалено")
     })
     @DeleteMapping
-    public ResponseEntity<?> deleteForEveryoneMessage(@RequestParam final long messageId,
+    public ResponseEntity<Void> deleteForEveryoneMessage(@RequestParam final long messageId,
                                            final Principal principal) {
         messageService.deleteForEveryoneMessage(messageId, principal.getName());
         return ResponseEntity.ok().build();
@@ -123,7 +125,7 @@ public class MessageController {
         @ApiResponse(responseCode = "200", description = "Сообщение удалено")
     })
     @DeleteMapping("/deleteForMe")
-    public ResponseEntity<?> deleteForMeMessage(@RequestParam final long messageId,
+    public ResponseEntity<Void> deleteForMeMessage(@RequestParam final long messageId,
                                            final Principal principal) {
         messageService.deleteForMeMessage(messageId, principal.getName());
         return ResponseEntity.ok().build();
@@ -138,7 +140,7 @@ public class MessageController {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(ChatNotFoundException.class)
     public Map<String, String> chatNotFound(final ChatNotFoundException exc) {
-        return Map.of("correspondence", exc.getMessage());
+        return Map.of(CORRESPONDENCE, exc.getMessage());
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
@@ -150,12 +152,12 @@ public class MessageController {
     @ResponseStatus(HttpStatus.FORBIDDEN)
     @ExceptionHandler(NoAccessToChatException.class)
     public Map<String, String> noAccess(final NoAccessToChatException exc) {
-        return Map.of("correspondence", exc.getMessage());
+        return Map.of(CORRESPONDENCE, exc.getMessage());
     }
 
     @ResponseStatus(HttpStatus.FORBIDDEN)
     @ExceptionHandler(UserIsNotSenderException.class)
     public Map<String, String> noSender(final UserIsNotSenderException exc) {
-        return Map.of("correspondence", exc.getMessage());
+        return Map.of(CORRESPONDENCE, exc.getMessage());
     }
 }

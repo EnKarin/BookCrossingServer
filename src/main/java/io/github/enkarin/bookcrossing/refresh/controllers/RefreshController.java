@@ -46,7 +46,7 @@ public class RefreshController {
             )}
     )
     @PostMapping("/refresh")
-    public ResponseEntity<?> refresh(@RequestBody final RefreshRequest request) {
+    public ResponseEntity<AuthResponse> refresh(@RequestBody final RefreshRequest request) {
         return ResponseEntity.ok(refreshService.updateTokens(request.getRefresh()));
     }
 

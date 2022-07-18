@@ -24,7 +24,7 @@ class RefreshServiceTest extends BookCrossingBaseTests {
     void createTokensTest() {
         final UserDto user = createAndSaveUser(TestDataProvider.buildAlex());
         final AuthResponse tokens = refreshService.createTokens(user.getLogin());
-        assertThat(jdbcTemplate.queryForObject("select exists(select * from t_refresh where refresh = ?)",
+        assertThat(jdbcTemplate.queryForObject("select exists(select * from t_refresh where refresh_id = ?)",
                 Boolean.class, tokens.getRefreshToken())).isTrue();
     }
 
@@ -40,7 +40,7 @@ class RefreshServiceTest extends BookCrossingBaseTests {
         final UserDto user = createAndSaveUser(TestDataProvider.buildAlex());
         final AuthResponse tokens = refreshService.updateTokens(refreshService.createTokens(user.getLogin())
                 .getRefreshToken());
-        assertThat(jdbcTemplate.queryForObject("select exists(select * from t_refresh where refresh = ?)",
+        assertThat(jdbcTemplate.queryForObject("select exists(select * from t_refresh where refresh_id = ?)",
                 Boolean.class, tokens.getRefreshToken())).isTrue();
     }
 
@@ -55,11 +55,11 @@ class RefreshServiceTest extends BookCrossingBaseTests {
     void updateTokenInvalidExcTest() {
         final UserDto user = createAndSaveUser(TestDataProvider.buildAlex());
         final AuthResponse tokens = refreshService.createTokens(user.getLogin());
-        jdbcTemplate.update("update t_refresh set date = 0 where refresh = ?", tokens.getRefreshToken());
+        jdbcTemplate.update("update t_refresh set date = 0 where refresh_id = ?", tokens.getRefreshToken());
         assertThatThrownBy(() -> refreshService.updateTokens(tokens.getRefreshToken()))
                 .isInstanceOf(RefreshTokenInvalidException.class)
                 .hasMessage("Токен истек");
-        assertThat(jdbcTemplate.queryForObject("select exists(select * from t_refresh where refresh = ?)",
+        assertThat(jdbcTemplate.queryForObject("select exists(select * from t_refresh where refresh_id = ?)",
                 Boolean.class, tokens.getRefreshToken())).isFalse();
     }
 }

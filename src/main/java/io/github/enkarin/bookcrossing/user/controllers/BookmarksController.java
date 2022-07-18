@@ -41,7 +41,7 @@ public class BookmarksController {
         }
     )
     @PostMapping
-    public ResponseEntity<?> saveBookmarks(@RequestParam @Parameter(description = "Идентификатор книги")
+    public ResponseEntity<Void> saveBookmarks(@RequestParam @Parameter(description = "Идентификатор книги")
                                                final int bookId,
                                            final Principal principal) {
         bookmarksService.saveBookmarks(bookId, principal.getName());
@@ -60,7 +60,7 @@ public class BookmarksController {
         }
     )
     @DeleteMapping
-    public ResponseEntity<?> deleteBookmarks(@RequestParam @Parameter(description = "Идентификатор книги")
+    public ResponseEntity<Void> deleteBookmarks(@RequestParam @Parameter(description = "Идентификатор книги")
                                                  final int bookId,
                                            final Principal principal) {
         bookmarksService.deleteBookmarks(bookId, principal.getName());
