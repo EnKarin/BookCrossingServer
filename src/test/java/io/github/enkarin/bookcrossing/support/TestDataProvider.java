@@ -3,8 +3,8 @@ package io.github.enkarin.bookcrossing.support;
 
 import io.github.enkarin.bookcrossing.books.dto.BookDto;
 import io.github.enkarin.bookcrossing.books.dto.BookModelDto;
-import io.github.enkarin.bookcrossing.registation.dto.LoginRequest;
-import io.github.enkarin.bookcrossing.registation.dto.UserRegistrationDto;
+import io.github.enkarin.bookcrossing.registration.dto.LoginRequest;
+import io.github.enkarin.bookcrossing.registration.dto.UserRegistrationDto;
 import lombok.experimental.UtilityClass;
 
 import javax.annotation.Nonnull;
@@ -47,8 +47,6 @@ public class TestDataProvider {
     @Nonnull
     public static BookModelDto.BookModelDtoBuilder<?, ?> prepareBookModel() {
         return BookModelDto.builder()
-                .author("author")
-                .publishingHouse("publishing_house")
                 .attachment(null);
     }
 
@@ -91,9 +89,10 @@ public class TestDataProvider {
     public static BookModelDto buildDorian(final int bookId) {
         return prepareBookModel()
                 .bookId(bookId)
-                .title("Dorian")
-                .genre(null)
-                .year(2000)
+                .bookDto(prepareBook()
+                        .title("Dorian")
+                        .year(2000)
+                        .build())
                 .build();
     }
 
@@ -101,10 +100,12 @@ public class TestDataProvider {
     public static BookModelDto buildDandelion(final int bookId) {
         return prepareBookModel()
                 .bookId(bookId)
-                .title("Dandelion")
-                .author("author2")
-                .genre("novel")
-                .year(2020)
+                .bookDto(prepareBook()
+                        .title("Dandelion")
+                        .author("author2")
+                        .genre("novel")
+                        .year(2020)
+                        .build())
                 .build();
     }
 
@@ -112,9 +113,11 @@ public class TestDataProvider {
     public static BookModelDto buildWolves(final int bookId) {
         return prepareBookModel()
                 .bookId(bookId)
-                .title("Wolves")
-                .genre("story")
-                .year(2000)
+                .bookDto(prepareBook()
+                        .title("Wolves")
+                        .genre("story")
+                        .year(2000)
+                        .build())
                 .build();
     }
 

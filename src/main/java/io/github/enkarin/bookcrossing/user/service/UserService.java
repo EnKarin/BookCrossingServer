@@ -5,9 +5,9 @@ import io.github.enkarin.bookcrossing.mail.model.ActionMailUser;
 import io.github.enkarin.bookcrossing.mail.repository.ActionMailUserRepository;
 import io.github.enkarin.bookcrossing.mail.service.MailService;
 import io.github.enkarin.bookcrossing.refresh.service.RefreshService;
-import io.github.enkarin.bookcrossing.registation.dto.AuthResponse;
-import io.github.enkarin.bookcrossing.registation.dto.LoginRequest;
-import io.github.enkarin.bookcrossing.registation.dto.UserRegistrationDto;
+import io.github.enkarin.bookcrossing.registration.dto.AuthResponse;
+import io.github.enkarin.bookcrossing.registration.dto.LoginRequest;
+import io.github.enkarin.bookcrossing.registration.dto.UserRegistrationDto;
 import io.github.enkarin.bookcrossing.user.dto.UserDto;
 import io.github.enkarin.bookcrossing.user.dto.UserProfileDto;
 import io.github.enkarin.bookcrossing.user.dto.UserPublicProfileDto;
@@ -50,7 +50,8 @@ public class UserService {
         }
         final User user = userRepository.save(convertToUser(userRegistrationDTO));
         mailService.sendApproveMail(user);
-        return UserDto.fromUser(user);
+        UserDto u = UserDto.fromUser(user);
+        return u;
     }
 
     @Transactional

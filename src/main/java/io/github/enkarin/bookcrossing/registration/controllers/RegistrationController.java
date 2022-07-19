@@ -1,10 +1,10 @@
-package io.github.enkarin.bookcrossing.registation.controllers;
+package io.github.enkarin.bookcrossing.registration.controllers;
 
 import io.github.enkarin.bookcrossing.constant.Constant;
 import io.github.enkarin.bookcrossing.exception.*;
-import io.github.enkarin.bookcrossing.registation.dto.AuthResponse;
-import io.github.enkarin.bookcrossing.registation.dto.LoginRequest;
-import io.github.enkarin.bookcrossing.registation.dto.UserRegistrationDto;
+import io.github.enkarin.bookcrossing.registration.dto.AuthResponse;
+import io.github.enkarin.bookcrossing.registration.dto.LoginRequest;
+import io.github.enkarin.bookcrossing.registration.dto.UserRegistrationDto;
 import io.github.enkarin.bookcrossing.user.dto.UserDto;
 import io.github.enkarin.bookcrossing.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;

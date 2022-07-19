@@ -2,29 +2,30 @@ package io.github.enkarin.bookcrossing.user.dto;
 
 import io.github.enkarin.bookcrossing.user.model.User;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.experimental.Delegate;
 
 import javax.annotation.concurrent.Immutable;
 
 @Immutable
-@EqualsAndHashCode(callSuper = true)
-@Getter
+@EqualsAndHashCode
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Schema(description = "Данные пользователя")
-public class UserDto extends UserParentDto {
+public class UserDto {
 
+    @Delegate
+    private final UserParentDto userParentDto;
+
+    @Getter
     @Schema(description = "Время последнего входа", example = "19845673")
     private final long loginDate;
 
-    private UserDto(final int userId, final String name, final String login, final String email, final String city,
-                    final boolean accountNonLocked, final boolean enabled, final long loginDate) {
-        super(userId, name, login, email, city, accountNonLocked, enabled);
-        this.loginDate = loginDate;
-
-    }
-
     public static UserDto fromUser(final User user) {
-        return new UserDto(user.getUserId(), user.getName(), user.getLogin(), user.getEmail(),
-                user.getCity(), user.isAccountNonLocked(), user.isEnabled(), user.getLoginDate());
+        UserParentDto u = UserParentDto.of(user.getUserId(), user.getName(), user.getLogin(), user.getEmail(),
+                user.getCity(), user.isAccountNonLocked(), user.isEnabled());
+        return new UserDto(u, user.getLoginDate());
     }
 }

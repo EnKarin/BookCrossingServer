@@ -11,7 +11,8 @@ import javax.annotation.concurrent.Immutable;
 @Immutable
 @EqualsAndHashCode
 @Getter
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Schema(description = "Общие данные пользователя")
 public class UserParentDto {
 
     @Schema(description = "Идентификатор", example = "0")
@@ -34,4 +35,9 @@ public class UserParentDto {
 
     @Schema(description = "Активирован ли аккаунт", example = "true")
     private final boolean enabled;
+
+    public static UserParentDto of(final int userId, final String name, final String login, final String email,
+                                   final String city, final boolean accountNonLocked, final boolean enabled) {
+        return new UserParentDto(userId, name, login, email, city, accountNonLocked, enabled);
+    }
 }
