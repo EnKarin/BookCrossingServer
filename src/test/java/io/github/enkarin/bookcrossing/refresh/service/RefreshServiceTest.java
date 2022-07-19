@@ -46,7 +46,8 @@ class RefreshServiceTest extends BookCrossingBaseTests {
 
     @Test
     void updateTokenNotFoundExcTest() {
-        assertThatThrownBy(() -> refreshService.updateTokens(UUID.randomUUID().toString()))
+        final String token = UUID.randomUUID().toString();
+        assertThatThrownBy(() -> refreshService.updateTokens(token))
                 .isInstanceOf(TokenNotFoundException.class)
                 .hasMessage("Токен не найден");
     }
@@ -54,12 +55,13 @@ class RefreshServiceTest extends BookCrossingBaseTests {
     @Test
     void updateTokenInvalidExcTest() {
         final UserDto user = createAndSaveUser(TestDataProvider.buildAlex());
-        final AuthResponse tokens = refreshService.createTokens(user.getLogin());
-        jdbcTemplate.update("update t_refresh set date = 0 where refresh_id = ?", tokens.getRefreshToken());
-        assertThatThrownBy(() -> refreshService.updateTokens(tokens.getRefreshToken()))
+        final String token = refreshService.createTokens(user.getLogin()).getRefreshToken();
+        jdbcTemplate.update("update t_refresh set date = 0 where refresh_id = ?", token);
+
+        assertThatThrownBy(() -> refreshService.updateTokens(token))
                 .isInstanceOf(RefreshTokenInvalidException.class)
                 .hasMessage("Токен истек");
         assertThat(jdbcTemplate.queryForObject("select exists(select * from t_refresh where refresh_id = ?)",
-                Boolean.class, tokens.getRefreshToken())).isFalse();
+                Boolean.class, token)).isFalse();
     }
 }
