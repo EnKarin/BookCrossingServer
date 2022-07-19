@@ -1,0 +1,37 @@
+package io.github.enkarin.bookcrossing.user.dto;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+
+import javax.annotation.concurrent.Immutable;
+
+@Immutable
+@EqualsAndHashCode
+@Getter
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
+public class UserParentDto {
+
+    @Schema(description = "Идентификатор", example = "0")
+    private final int userId;
+
+    @Schema(description = "Имя", example = "Alex")
+    private final String name;
+
+    @Schema(description = "Логин", example = "alex")
+    private final String login;
+
+    @Schema(description = "Почта", example = "al@yandex.ru")
+    private final String email;
+
+    @Schema(description = "Город", example = "Новосибирск")
+    private final String city;
+
+    @Schema(description = "Заблокирован ли аккаунт", example = "true")
+    private final boolean accountNonLocked;
+
+    @Schema(description = "Активирован ли аккаунт", example = "true")
+    private final boolean enabled;
+}

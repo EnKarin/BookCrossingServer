@@ -17,7 +17,7 @@ import javax.validation.constraints.NotBlank;
 @Getter
 @SuperBuilder
 @EqualsAndHashCode
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Schema(description = "Сущность книги")
 public class BookDto {
 
