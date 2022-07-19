@@ -12,6 +12,7 @@ import lombok.experimental.SuperBuilder;
 import javax.annotation.concurrent.Immutable;
 
 @Immutable
+@Getter
 @SuperBuilder
 @EqualsAndHashCode
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -21,11 +22,9 @@ public class BookModelDto {
     @Delegate
     private final BookDto bookDto;
 
-    @Getter
     @Schema(description = "Идентификатор", example = "15")
     private final int bookId;
 
-    @Getter
     @Schema(description = "Вложение")
     private final AttachmentDto attachment;
 

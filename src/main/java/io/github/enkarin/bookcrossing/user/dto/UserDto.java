@@ -11,6 +11,7 @@ import lombok.experimental.Delegate;
 import javax.annotation.concurrent.Immutable;
 
 @Immutable
+@Getter
 @EqualsAndHashCode
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Schema(description = "Данные пользователя")
@@ -19,13 +20,11 @@ public class UserDto {
     @Delegate
     private final UserParentDto userParentDto;
 
-    @Getter
     @Schema(description = "Время последнего входа", example = "19845673")
     private final long loginDate;
 
     public static UserDto fromUser(final User user) {
-        UserParentDto u = UserParentDto.of(user.getUserId(), user.getName(), user.getLogin(), user.getEmail(),
-                user.getCity(), user.isAccountNonLocked(), user.isEnabled());
-        return new UserDto(u, user.getLoginDate());
+        return new UserDto(UserParentDto.create(user.getUserId(), user.getName(), user.getLogin(), user.getEmail(),
+                user.getCity(), user.isAccountNonLocked(), user.isEnabled()), user.getLoginDate());
     }
 }

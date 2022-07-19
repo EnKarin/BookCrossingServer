@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
 @Immutable
+@Getter
 @EqualsAndHashCode
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Schema(description = "Данные пользователя для администатора")
@@ -23,18 +24,17 @@ public class InfoUsersDto {
     @Delegate
     private final UserParentDto userParentDto;
 
-    @Getter
     @Schema(description = "Время последнего входа", example = "2022-11-03T23:15:09.61")
     private final String loginDate;
 
     public static InfoUsersDto fromUser(final User user, final int zone) {
-        return new InfoUsersDto(UserParentDto.of(user.getUserId(), user.getName(), user.getLogin(), user.getEmail(),
+        return new InfoUsersDto(UserParentDto.create(user.getUserId(), user.getName(), user.getLogin(), user.getEmail(),
                 user.getCity(), user.isAccountNonLocked(), user.isEnabled()),
                 loginDateToString(user.getLoginDate(), zone));
     }
 
     public static InfoUsersDto fromUserDto(final UserDto user, final int zone) {
-        return new InfoUsersDto(UserParentDto.of(user.getUserId(), user.getName(), user.getLogin(), user.getEmail(),
+        return new InfoUsersDto(UserParentDto.create(user.getUserId(), user.getName(), user.getLogin(), user.getEmail(),
                 user.getCity(), user.isAccountNonLocked(), user.isEnabled()),
                 loginDateToString(user.getLoginDate(), zone));
     }

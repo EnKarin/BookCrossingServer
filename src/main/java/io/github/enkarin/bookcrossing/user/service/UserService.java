@@ -50,8 +50,7 @@ public class UserService {
         }
         final User user = userRepository.save(convertToUser(userRegistrationDTO));
         mailService.sendApproveMail(user);
-        UserDto u = UserDto.fromUser(user);
-        return u;
+        return UserDto.fromUser(user);
     }
 
     @Transactional

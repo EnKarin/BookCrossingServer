@@ -89,10 +89,7 @@ public class TestDataProvider {
     public static BookModelDto buildDorian(final int bookId) {
         return prepareBookModel()
                 .bookId(bookId)
-                .bookDto(prepareBook()
-                        .title("Dorian")
-                        .year(2000)
-                        .build())
+                .bookDto(buildDorian())
                 .build();
     }
 
@@ -100,12 +97,7 @@ public class TestDataProvider {
     public static BookModelDto buildDandelion(final int bookId) {
         return prepareBookModel()
                 .bookId(bookId)
-                .bookDto(prepareBook()
-                        .title("Dandelion")
-                        .author("author2")
-                        .genre("novel")
-                        .year(2020)
-                        .build())
+                .bookDto(buildDandelion())
                 .build();
     }
 
@@ -113,11 +105,7 @@ public class TestDataProvider {
     public static BookModelDto buildWolves(final int bookId) {
         return prepareBookModel()
                 .bookId(bookId)
-                .bookDto(prepareBook()
-                        .title("Wolves")
-                        .genre("story")
-                        .year(2000)
-                        .build())
+                .bookDto(buildWolves())
                 .build();
     }
 

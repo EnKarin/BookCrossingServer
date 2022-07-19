@@ -36,8 +36,8 @@ public class UserParentDto {
     @Schema(description = "Активирован ли аккаунт", example = "true")
     private final boolean enabled;
 
-    public static UserParentDto of(final int userId, final String name, final String login, final String email,
-                                   final String city, final boolean accountNonLocked, final boolean enabled) {
+    public static UserParentDto create(final int userId, final String name, final String login, final String email,
+                                       final String city, final boolean accountNonLocked, final boolean enabled) {
         return new UserParentDto(userId, name, login, email, city, accountNonLocked, enabled);
     }
 }
