@@ -102,8 +102,11 @@ public class BookService {
 
     @Transactional
     public void deleteBook(final int bookId) {
-        bookRepository.findById(bookId).orElseThrow(BookNotFoundException::new);
-        bookRepository.deleteById(bookId);
+        bookRepository.findById(bookId).ifPresentOrElse(
+                b -> bookRepository.deleteById(bookId),
+                () -> {
+                    throw new BookNotFoundException();
+                });
     }
 
     public List<BookModelDto> findByTitle(final String title) {

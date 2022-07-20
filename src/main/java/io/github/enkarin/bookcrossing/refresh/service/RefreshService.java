@@ -5,7 +5,7 @@ import io.github.enkarin.bookcrossing.exception.TokenNotFoundException;
 import io.github.enkarin.bookcrossing.exception.UserNotFoundException;
 import io.github.enkarin.bookcrossing.refresh.model.Refresh;
 import io.github.enkarin.bookcrossing.refresh.repository.RefreshRepository;
-import io.github.enkarin.bookcrossing.registation.dto.AuthResponse;
+import io.github.enkarin.bookcrossing.registration.dto.AuthResponse;
 import io.github.enkarin.bookcrossing.security.jwt.JwtProvider;
 import io.github.enkarin.bookcrossing.user.model.User;
 import io.github.enkarin.bookcrossing.user.repository.UserRepository;
@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.time.ZoneId;
 import java.util.UUID;
 
 @Service
@@ -42,7 +42,7 @@ public class RefreshService {
         final User user = userRepository.findByLogin(login)
                 .orElseThrow(UserNotFoundException::new);
         user.setLoginDate(LocalDateTime.now()
-                .toEpochSecond(ZoneOffset.systemDefault().getRules().getOffset(Instant.now())));
+                .toEpochSecond(ZoneId.systemDefault().getRules().getOffset(Instant.now())));
         userRepository.save(user);
 
         refreshRepository.findByUser(login).ifPresent(refreshRepository::delete);
@@ -50,7 +50,7 @@ public class RefreshService {
         final String token = UUID.randomUUID().toString();
 
         final Refresh refresh = new Refresh();
-        refresh.setRefresh(token);
+        refresh.setRefreshId(token);
         refresh.setDate(LocalDate.now().plusDays(15).toEpochDay());
         refresh.setUser(login);
         refreshRepository.save(refresh);

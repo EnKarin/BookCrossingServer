@@ -4,7 +4,7 @@ import io.github.enkarin.bookcrossing.admin.dto.InfoUsersDto;
 import io.github.enkarin.bookcrossing.admin.dto.LockedUserDto;
 import io.github.enkarin.bookcrossing.admin.service.AdminService;
 import io.github.enkarin.bookcrossing.constant.Constant;
-import io.github.enkarin.bookcrossing.errors.ErrorListResponse;
+import io.github.enkarin.bookcrossing.exception.BindingErrorsException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -13,12 +13,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.LinkedList;
+import java.util.List;
 
 @Tag(
         name = "Управление пользователями для администратора",
@@ -61,15 +62,12 @@ public class AdminController {
     }
     )
     @PostMapping("/locked")
-    public ResponseEntity<?> lockedUser(@RequestBody @Valid final LockedUserDto lockedUserDto,
+    public ResponseEntity<Void> lockedUser(@RequestBody @Valid final LockedUserDto lockedUserDto,
                                         final BindingResult bindingResult) {
-        final ErrorListResponse response = new ErrorListResponse();
         if (bindingResult.hasErrors()) {
-            bindingResult.getAllErrors().forEach(f -> response.getErrors()
-                    .add(f.getDefaultMessage()));
-            return ResponseEntity
-                    .status(HttpStatus.NOT_ACCEPTABLE)
-                    .body(response);
+            final List<String> response = new LinkedList<>();
+            bindingResult.getAllErrors().forEach(f -> response.add(f.getDefaultMessage()));
+            throw new BindingErrorsException(response);
         }
         adminService.lockedUser(lockedUserDto);
         return ResponseEntity.ok().build();
@@ -86,7 +84,7 @@ public class AdminController {
                             schema = @Schema(ref = "#/components/schemas/NewErrorBody"))})
     })
     @PostMapping("/nonLocked")
-    public ResponseEntity<?> nonLockedUser(@RequestParam final String login) {
+    public ResponseEntity<Void> nonLockedUser(@RequestParam final String login) {
         adminService.nonLockedUser(login);
         return ResponseEntity.ok().build();
     }

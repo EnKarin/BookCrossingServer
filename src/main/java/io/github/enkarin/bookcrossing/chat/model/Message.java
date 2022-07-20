@@ -33,7 +33,7 @@ public class Message {
     private boolean alertSent;
 
     @ManyToOne
-    @JoinColumns({
+    @JoinColumns({ // NOSONAR
         @JoinColumn(name = "correspondence_first_user_id", referencedColumnName = "first_user_id"),
         @JoinColumn(name = "correspondence_second_user_id", referencedColumnName = "second_user_id")
     })

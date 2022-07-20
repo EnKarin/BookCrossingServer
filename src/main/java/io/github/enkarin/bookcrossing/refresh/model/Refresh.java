@@ -3,7 +3,9 @@ package io.github.enkarin.bookcrossing.refresh.model;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.util.Objects;
 
 @Entity
@@ -13,7 +15,7 @@ import java.util.Objects;
 public class Refresh {
 
     @Id
-    private String refresh;
+    private String refreshId;
 
     private long date;
 
@@ -28,7 +30,7 @@ public class Refresh {
             return false;
         }
         final Refresh refreshObj = (Refresh) obj;
-        return Objects.equals(refresh, refreshObj.refresh);
+        return Objects.equals(refreshId, refreshObj.refreshId);
     }
 
     @Override

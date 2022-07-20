@@ -28,7 +28,8 @@ class AdminServiceTest extends BookCrossingBaseTests {
 
     @Test
     void lockedUserException() {
-        assertThatThrownBy(() -> adminService.lockedUser(LockedUserDto.create("Test", "Заблокировано")))
+        final LockedUserDto dto = LockedUserDto.create("Test", "Заблокировано");
+        assertThatThrownBy(() -> adminService.lockedUser(dto))
                 .isInstanceOf(UserNotFoundException.class)
                 .hasMessage("Пользователь не найден");
     }

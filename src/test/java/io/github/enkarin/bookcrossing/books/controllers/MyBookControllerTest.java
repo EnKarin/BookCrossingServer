@@ -4,7 +4,6 @@ import io.github.enkarin.bookcrossing.base.BookCrossingBaseTests;
 import io.github.enkarin.bookcrossing.books.dto.BookDto;
 import io.github.enkarin.bookcrossing.books.dto.BookModelDto;
 import io.github.enkarin.bookcrossing.books.service.BookService;
-import io.github.enkarin.bookcrossing.errors.ErrorListResponse;
 import io.github.enkarin.bookcrossing.support.TestDataProvider;
 import io.github.enkarin.bookcrossing.user.dto.UserDto;
 import org.junit.jupiter.api.Test;
@@ -40,15 +39,13 @@ class MyBookControllerTest extends BookCrossingBaseTests {
     void saveBadBookTest() {
         final int user = createAndSaveUser(TestDataProvider.buildBot()).getUserId();
         enabledUser(user);
-        final var response = checkPost(
-                userService.findByLoginAndPassword(TestDataProvider.buildAuthBot()).getAccessToken(),
-                TestDataProvider.prepareBook().author("").build(), 400)
-                .expectBody(ErrorListResponse.class)
-                .returnResult().getResponseBody();
-        assertThat(response).isNotNull();
-        assertThat(response.getErrors())
-                .containsExactlyInAnyOrder("title: Название должно содержать хотя бы один видимый символ",
-                        "author: Поле \"автор\" должно содержать хотя бы один видимый символ");
+        checkPost(userService.findByLoginAndPassword(TestDataProvider.buildAuthBot()).getAccessToken(),
+                TestDataProvider.prepareBook().author("").build(), 406)
+                .expectBody()
+                .jsonPath("$.title")
+                .isEqualTo("Название должно содержать хотя бы один видимый символ")
+                .jsonPath("$.author")
+                .isEqualTo("Поле \"автор\" должно содержать хотя бы один видимый символ");
     }
 
     @Test

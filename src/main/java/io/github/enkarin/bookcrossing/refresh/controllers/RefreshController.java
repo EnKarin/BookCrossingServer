@@ -5,7 +5,7 @@ import io.github.enkarin.bookcrossing.exception.RefreshTokenInvalidException;
 import io.github.enkarin.bookcrossing.exception.TokenNotFoundException;
 import io.github.enkarin.bookcrossing.refresh.dto.RefreshRequest;
 import io.github.enkarin.bookcrossing.refresh.service.RefreshService;
-import io.github.enkarin.bookcrossing.registation.dto.AuthResponse;
+import io.github.enkarin.bookcrossing.registration.dto.AuthResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -46,7 +46,7 @@ public class RefreshController {
             )}
     )
     @PostMapping("/refresh")
-    public ResponseEntity<?> refresh(@RequestBody final RefreshRequest request) {
+    public ResponseEntity<AuthResponse> refresh(@RequestBody final RefreshRequest request) {
         return ResponseEntity.ok(refreshService.updateTokens(request.getRefresh()));
     }
 

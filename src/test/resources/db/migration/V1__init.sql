@@ -56,10 +56,10 @@ create table t_messages (
 );
 
 create table t_refresh (
-    refresh varchar(255) not null,
+    refresh_id varchar(255) not null,
     date bigint not null,
     user varchar(255),
-    primary key (refresh)
+    primary key (refresh_id)
 );
 
 create table t_role (

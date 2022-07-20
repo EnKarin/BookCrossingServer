@@ -4,7 +4,7 @@ import io.github.enkarin.bookcrossing.base.BookCrossingBaseTests;
 import io.github.enkarin.bookcrossing.exception.RefreshTokenInvalidException;
 import io.github.enkarin.bookcrossing.exception.TokenNotFoundException;
 import io.github.enkarin.bookcrossing.exception.UserNotFoundException;
-import io.github.enkarin.bookcrossing.registation.dto.AuthResponse;
+import io.github.enkarin.bookcrossing.registration.dto.AuthResponse;
 import io.github.enkarin.bookcrossing.support.TestDataProvider;
 import io.github.enkarin.bookcrossing.user.dto.UserDto;
 import org.junit.jupiter.api.Test;
@@ -24,7 +24,7 @@ class RefreshServiceTest extends BookCrossingBaseTests {
     void createTokensTest() {
         final UserDto user = createAndSaveUser(TestDataProvider.buildAlex());
         final AuthResponse tokens = refreshService.createTokens(user.getLogin());
-        assertThat(jdbcTemplate.queryForObject("select exists(select * from t_refresh where refresh = ?)",
+        assertThat(jdbcTemplate.queryForObject("select exists(select * from t_refresh where refresh_id = ?)",
                 Boolean.class, tokens.getRefreshToken())).isTrue();
     }
 
@@ -40,13 +40,14 @@ class RefreshServiceTest extends BookCrossingBaseTests {
         final UserDto user = createAndSaveUser(TestDataProvider.buildAlex());
         final AuthResponse tokens = refreshService.updateTokens(refreshService.createTokens(user.getLogin())
                 .getRefreshToken());
-        assertThat(jdbcTemplate.queryForObject("select exists(select * from t_refresh where refresh = ?)",
+        assertThat(jdbcTemplate.queryForObject("select exists(select * from t_refresh where refresh_id = ?)",
                 Boolean.class, tokens.getRefreshToken())).isTrue();
     }
 
     @Test
     void updateTokenNotFoundExcTest() {
-        assertThatThrownBy(() -> refreshService.updateTokens(UUID.randomUUID().toString()))
+        final String token = UUID.randomUUID().toString();
+        assertThatThrownBy(() -> refreshService.updateTokens(token))
                 .isInstanceOf(TokenNotFoundException.class)
                 .hasMessage("Токен не найден");
     }
@@ -54,12 +55,13 @@ class RefreshServiceTest extends BookCrossingBaseTests {
     @Test
     void updateTokenInvalidExcTest() {
         final UserDto user = createAndSaveUser(TestDataProvider.buildAlex());
-        final AuthResponse tokens = refreshService.createTokens(user.getLogin());
-        jdbcTemplate.update("update t_refresh set date = 0 where refresh = ?", tokens.getRefreshToken());
-        assertThatThrownBy(() -> refreshService.updateTokens(tokens.getRefreshToken()))
+        final String token = refreshService.createTokens(user.getLogin()).getRefreshToken();
+        jdbcTemplate.update("update t_refresh set date = 0 where refresh_id = ?", token);
+
+        assertThatThrownBy(() -> refreshService.updateTokens(token))
                 .isInstanceOf(RefreshTokenInvalidException.class)
                 .hasMessage("Токен истек");
-        assertThat(jdbcTemplate.queryForObject("select exists(select * from t_refresh where refresh = ?)",
-                Boolean.class, tokens.getRefreshToken())).isFalse();
+        assertThat(jdbcTemplate.queryForObject("select exists(select * from t_refresh where refresh_id = ?)",
+                Boolean.class, token)).isFalse();
     }
 }

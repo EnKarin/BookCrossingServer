@@ -6,41 +6,25 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.experimental.Delegate;
 
 import javax.annotation.concurrent.Immutable;
 
 @Immutable
-@EqualsAndHashCode
 @Getter
+@EqualsAndHashCode
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Schema(description = "Данные пользователя")
 public class UserDto {
-    @Schema(description = "Идентификатор", example = "0")
-    private final int userId;
 
-    @Schema(description = "Имя", example = "Alex")
-    private final String name;
-
-    @Schema(description = "Логин", example = "alex")
-    private final String login;
-
-    @Schema(description = "Почта", example = "al@yandex.ru")
-    private final String email;
-
-    @Schema(description = "Город", example = "Новосибирск")
-    private final String city;
-
-    @Schema(description = "Заблокирован ли аккаунт", example = "true")
-    private final boolean accountNonLocked;
-
-    @Schema(description = "Активирован ли аккаунт", example = "true")
-    private final boolean enabled;
+    @Delegate
+    private final UserParentDto userParentDto;
 
     @Schema(description = "Время последнего входа", example = "19845673")
     private final long loginDate;
 
     public static UserDto fromUser(final User user) {
-        return new UserDto(user.getUserId(), user.getName(), user.getLogin(), user.getEmail(),
-                user.getCity(), user.isAccountNonLocked(), user.isEnabled(), user.getLoginDate());
+        return new UserDto(UserParentDto.create(user.getUserId(), user.getName(), user.getLogin(), user.getEmail(),
+                user.getCity(), user.isAccountNonLocked(), user.isEnabled()), user.getLoginDate());
     }
 }

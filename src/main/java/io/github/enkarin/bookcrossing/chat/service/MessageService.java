@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.time.ZoneId;
 
 @RequiredArgsConstructor
 @Service
@@ -43,7 +43,7 @@ public class MessageService {
             final Message message = new Message();
             message.setText(dto.getText());
             message.setDepartureDate(LocalDateTime.now()
-                    .toEpochSecond(ZoneOffset.systemDefault().getRules().getOffset(Instant.now())));
+                    .toEpochSecond(ZoneId.systemDefault().getRules().getOffset(Instant.now())));
             message.setCorrespondence(correspondence);
             message.setSender(user);
             message.setShownFirstUser(true);
@@ -62,7 +62,7 @@ public class MessageService {
             if (user.equals(correspondence.getUsersCorrKey().getFirstUser()) ||
                     user.equals(correspondence.getUsersCorrKey().getSecondUser())) {
                 message.setDepartureDate(LocalDateTime.now()
-                        .toEpochSecond(ZoneOffset.systemDefault().getRules().getOffset(Instant.now())));
+                        .toEpochSecond(ZoneId.systemDefault().getRules().getOffset(Instant.now())));
                 message.setText(messagePutRequest.getText());
                 return MessageDto.fromMessage(messageRepository.save(message));
             } else {

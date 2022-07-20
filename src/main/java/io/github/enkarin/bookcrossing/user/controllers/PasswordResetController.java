@@ -45,7 +45,7 @@ public class PasswordResetController {
         }
     )
     @PostMapping("/send")
-    public ResponseEntity<?> sendMessage(@RequestParam final String email) {
+    public ResponseEntity<Void> sendMessage(@RequestParam final String email) {
         mailService.sendResetPassword(email);
         return ResponseEntity.ok().build();
     }
@@ -65,7 +65,7 @@ public class PasswordResetController {
         }
     )
     @PostMapping("/update")
-    public ResponseEntity<?> updatePassword(@RequestParam final String token,
+    public ResponseEntity<Void> updatePassword(@RequestParam final String token,
                                             @Valid @RequestBody final UserPasswordDto userPasswordDto,
                                             final BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {

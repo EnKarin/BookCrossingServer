@@ -4,7 +4,7 @@ import io.github.enkarin.bookcrossing.books.dto.BookDto;
 import io.github.enkarin.bookcrossing.books.dto.BookModelDto;
 import io.github.enkarin.bookcrossing.books.service.BookService;
 import io.github.enkarin.bookcrossing.constant.Constant;
-import io.github.enkarin.bookcrossing.errors.ErrorListResponse;
+import io.github.enkarin.bookcrossing.exception.BindingErrorsException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.security.Principal;
+import java.util.LinkedList;
+import java.util.List;
 
 @Tag(
         name = "Раздел работы с книгами",
@@ -37,24 +39,21 @@ public class MyBookController {
             description = "Позволяет сохранить книгу для обмена"
     )
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "400", description = "Введены некорректные данные",
+        @ApiResponse(responseCode = "406", description = "Введены некорректные данные",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(implementation = ErrorListResponse.class))}),
+                    schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
         @ApiResponse(responseCode = "201", description = "Возвращает сохраненную книгу",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
                     schema = @Schema(implementation = BookModelDto.class))})}
     )
     @PostMapping
-    public ResponseEntity<?> saveBook(@Valid @RequestBody final BookDto bookDTO,
+    public ResponseEntity<BookModelDto> saveBook(@Valid @RequestBody final BookDto bookDTO,
                                       final BindingResult bindingResult,
                                       final Principal principal) {
         if (bindingResult.hasErrors()) {
-            final ErrorListResponse response = new ErrorListResponse();
-            bindingResult.getAllErrors().forEach(f -> response.getErrors()
-                    .add(f.getDefaultMessage()));
-            return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
-                    .body(response);
+            final List<String> response = new LinkedList<>();
+            bindingResult.getAllErrors().forEach(f -> response.add(f.getDefaultMessage()));
+            throw new BindingErrorsException(response);
         }
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -86,7 +85,7 @@ public class MyBookController {
         @ApiResponse(responseCode = "200", description = "Удаляет книгу из бд")}
     )
     @DeleteMapping
-    public ResponseEntity<?> deleteBook(@RequestParam final int bookId) {
+    public ResponseEntity<Void> deleteBook(@RequestParam final int bookId) {
         bookService.deleteBook(bookId);
         return ResponseEntity
                 .status(HttpStatus.OK)

@@ -1,4 +1,4 @@
-package io.github.enkarin.bookcrossing.registation.dto;
+package io.github.enkarin.bookcrossing.registration.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
