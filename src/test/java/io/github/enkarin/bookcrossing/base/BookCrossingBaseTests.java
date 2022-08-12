@@ -50,6 +50,10 @@ public abstract class BookCrossingBaseTests {
         usersId.add(userId);
     }
 
+    protected void enabledUser(final int userId) {
+        jdbcTemplate.update("update t_user set enabled = 1 where user_id = " + userId);
+    }
+
     @AfterEach
     void delete() {
         usersId.forEach(u -> userService.deleteUser(u));
