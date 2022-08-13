@@ -133,8 +133,4 @@ class MyBookControllerTest extends BookCrossingBaseTests {
                 .exchange()
                 .expectStatus().isEqualTo(status);
     }
-
-    private void enabledUser(final int userId) {
-        jdbcTemplate.update("update t_user set enabled = 1 where user_id = " + userId);
-    }
 }
