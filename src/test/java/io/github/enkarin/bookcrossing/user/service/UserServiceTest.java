@@ -29,7 +29,8 @@ class UserServiceTest extends BookCrossingBaseTests {
 
     @Test
     void saveUserNonConfirmedPasswordTest() {
-        assertThatThrownBy(() -> userService.saveUser(TestDataProvider.buildNonConfirmedPasswordUser()))
+        final var nonConfirmedUser = TestDataProvider.buildNonConfirmedPasswordUser();
+        assertThatThrownBy(() -> userService.saveUser(nonConfirmedUser))
                 .isInstanceOf(PasswordsDontMatchException.class)
                 .hasMessage("Пароли не совпадают");
     }
@@ -37,7 +38,8 @@ class UserServiceTest extends BookCrossingBaseTests {
     @Test
     void saveUserDuplicatedUserTest() {
         createAndSaveUser(TestDataProvider.buildAlex());
-        assertThatThrownBy(() -> userService.saveUser(TestDataProvider.buildAlex()))
+        final var user = TestDataProvider.buildAlex();
+        assertThatThrownBy(() -> userService.saveUser(user))
                 .isInstanceOf(LoginFailedException.class)
                 .hasMessage("Пользователь с таким логином уже существует");
     }
@@ -45,7 +47,8 @@ class UserServiceTest extends BookCrossingBaseTests {
     @Test
     void saveUserDuplicatedEmailTest() {
         createAndSaveUser(TestDataProvider.buildAlex());
-        assertThatThrownBy(() -> userService.saveUser(TestDataProvider.buildUserWithAlexEmail()))
+        final var userWithRegisteredEmail = TestDataProvider.buildUserWithAlexEmail();
+        assertThatThrownBy(() -> userService.saveUser(userWithRegisteredEmail))
                 .isInstanceOf(EmailFailedException.class)
                 .hasMessage("Пользователь с таким почтовым адресом уже существует");
     }
@@ -99,10 +102,10 @@ class UserServiceTest extends BookCrossingBaseTests {
 
     @Test
     void deleteUserTest() {
-        final UserDto user = userService.saveUser(TestDataProvider.buildAlex());
+        final var user = userService.saveUser(TestDataProvider.buildAlex()).getUserId();
 
-        userService.deleteUser(user.getUserId());
-        assertThatThrownBy(() -> userService.findById(user.getUserId(), GM_TIME_ZERO))
+        userService.deleteUser(user);
+        assertThatThrownBy(() -> userService.findById(user, GM_TIME_ZERO))
                 .isInstanceOf(UserNotFoundException.class)
                 .hasMessage("Пользователь не найден");
     }
@@ -127,7 +130,7 @@ class UserServiceTest extends BookCrossingBaseTests {
 
     @Test
     void putUserInfoNonConfirmedPasswordTest() {
-        final UserDto user = createAndSaveUser(TestDataProvider.buildAlex());
+        final var user = createAndSaveUser(TestDataProvider.buildAlex()).getLogin();
 
         final UserPutProfileDto putProfile = UserPutProfileDto.create(
                 "Mike",
@@ -137,14 +140,14 @@ class UserServiceTest extends BookCrossingBaseTests {
                 "Moscow"
         );
 
-        assertThatThrownBy(() -> userService.putUserInfo(putProfile, user.getLogin()))
+        assertThatThrownBy(() -> userService.putUserInfo(putProfile, user))
                 .isInstanceOf(PasswordsDontMatchException.class)
                 .hasMessage("Пароли не совпадают");
     }
 
     @Test
     void putUserInfoWrongOldPasswordTest() {
-        final UserDto user = createAndSaveUser(TestDataProvider.buildAlex());
+        final var user = createAndSaveUser(TestDataProvider.buildAlex()).getLogin();
 
         final UserPutProfileDto putProfile = UserPutProfileDto.create(
                 "Mike",
@@ -154,7 +157,7 @@ class UserServiceTest extends BookCrossingBaseTests {
                 "Moscow"
         );
 
-        assertThatThrownBy(() -> userService.putUserInfo(putProfile, user.getLogin()))
+        assertThatThrownBy(() -> userService.putUserInfo(putProfile, user))
                 .isInstanceOf(InvalidPasswordException.class)
                 .hasMessage("Некорректный пароль");
     }
