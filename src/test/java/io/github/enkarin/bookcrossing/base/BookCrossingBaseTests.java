@@ -3,8 +3,12 @@ package io.github.enkarin.bookcrossing.base;
 import com.icegreen.greenmail.configuration.GreenMailConfiguration;
 import com.icegreen.greenmail.junit5.GreenMailExtension;
 import com.icegreen.greenmail.util.ServerSetupTest;
+import io.github.enkarin.bookcrossing.books.dto.BookModelDto;
+import io.github.enkarin.bookcrossing.books.service.BookService;
 import io.github.enkarin.bookcrossing.init.MySQLInitializer;
+import io.github.enkarin.bookcrossing.registration.dto.LoginRequest;
 import io.github.enkarin.bookcrossing.registration.dto.UserRegistrationDto;
+import io.github.enkarin.bookcrossing.support.TestDataProvider;
 import io.github.enkarin.bookcrossing.user.dto.UserDto;
 import io.github.enkarin.bookcrossing.user.service.UserService;
 import org.junit.jupiter.api.AfterEach;
@@ -18,6 +22,7 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
@@ -35,10 +40,19 @@ public abstract class BookCrossingBaseTests {
     @Autowired
     protected UserService userService;
 
+    @Autowired
+    protected BookService bookService;
+
     @RegisterExtension
     protected static final GreenMailExtension GREEN_MAIL = new GreenMailExtension(ServerSetupTest.SMTP)
             .withConfiguration(GreenMailConfiguration.aConfig().withDisabledAuthentication())
             .withPerMethodLifecycle(false);
+
+    @AfterEach
+    void delete() {
+        usersId.forEach(u -> userService.deleteUser(u));
+        usersId.clear();
+    }
 
     protected final UserDto createAndSaveUser(final UserRegistrationDto userRegistrationDto) {
         final UserDto user = userService.saveUser(userRegistrationDto);
@@ -54,9 +68,14 @@ public abstract class BookCrossingBaseTests {
         jdbcTemplate.update("update t_user set enabled = 1 where user_id = " + userId);
     }
 
-    @AfterEach
-    void delete() {
-        usersId.forEach(u -> userService.deleteUser(u));
-        usersId.clear();
+    protected String generateAccessToken(final LoginRequest request) {
+        return userService.findByLoginAndPassword(request).getAccessToken();
+    }
+
+    protected List<Integer> createAndSaveBooks(final String user) {
+        return TestDataProvider.buildBooks().stream()
+                .map(b -> bookService.saveBook(b, user))
+                .map(BookModelDto::getBookId)
+                .collect(Collectors.toList());
     }
 }
