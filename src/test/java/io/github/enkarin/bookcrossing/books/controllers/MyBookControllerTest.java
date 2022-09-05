@@ -26,7 +26,7 @@ class MyBookControllerTest extends BookCrossingBaseTests {
         final int user = createAndSaveUser(TestDataProvider.buildBot()).getUserId();
         enabledUser(user);
         final BookModelDto bookDto = checkPost(
-                userService.findByLoginAndPassword(TestDataProvider.buildAuthBot()).getAccessToken(),
+                generateAccessToken(TestDataProvider.buildAuthBot()),
                 TestDataProvider.buildDorian(), 201)
                 .expectBody(BookModelDto.class)
                 .returnResult().getResponseBody();
@@ -39,7 +39,7 @@ class MyBookControllerTest extends BookCrossingBaseTests {
     void saveBadBookTest() {
         final int user = createAndSaveUser(TestDataProvider.buildBot()).getUserId();
         enabledUser(user);
-        checkPost(userService.findByLoginAndPassword(TestDataProvider.buildAuthBot()).getAccessToken(),
+        checkPost(generateAccessToken(TestDataProvider.buildAuthBot()),
                 TestDataProvider.prepareBook().author("").build(), 406)
                 .expectBody()
                 .jsonPath("$.title")
@@ -61,8 +61,7 @@ class MyBookControllerTest extends BookCrossingBaseTests {
         final int book1 = bookService.saveBook(books.get(1), users.get(0).getLogin()).getBookId();
         final int book2 = bookService.saveBook(books.get(2), users.get(0).getLogin()).getBookId();
 
-        final var response = checkGet(userService.findByLoginAndPassword(TestDataProvider.buildAuthBot())
-                .getAccessToken())
+        final var response = checkGet(generateAccessToken(TestDataProvider.buildAuthBot()))
                 .expectBodyList(BookModelDto.class).returnResult().getResponseBody();
         assertThat(response)
                 .hasSize(2)
@@ -79,7 +78,7 @@ class MyBookControllerTest extends BookCrossingBaseTests {
         enabledUser(users.get(1).getUserId());
         bookService.saveBook(TestDataProvider.buildDandelion(), users.get(1).getLogin());
 
-        checkGet(userService.findByLoginAndPassword(TestDataProvider.buildAuthBot()).getAccessToken())
+        checkGet(generateAccessToken(TestDataProvider.buildAuthBot()))
                 .expectBodyList(BookModelDto.class).hasSize(0);
     }
 
@@ -90,7 +89,7 @@ class MyBookControllerTest extends BookCrossingBaseTests {
         final List<BookModelDto> book = TestDataProvider.buildBooks().stream()
                 .map(b -> bookService.saveBook(b, user.getLogin()))
                 .collect(Collectors.toList());
-        checkDelete(userService.findByLoginAndPassword(TestDataProvider.buildAuthBot()).getAccessToken(),
+        checkDelete(generateAccessToken(TestDataProvider.buildAuthBot()),
                 book.get(0).getBookId(), 200);
         assertThat(bookService.findBookForOwner(user.getLogin())).hasSize(2);
         assertThat(jdbcTemplate.queryForObject("select exists(select * from t_book where book_id=?)", Boolean.class,
@@ -101,7 +100,7 @@ class MyBookControllerTest extends BookCrossingBaseTests {
     void deleteBookNotFoundExceptionTest() {
         final UserDto user = createAndSaveUser(TestDataProvider.buildBot());
         enabledUser(user.getUserId());
-        checkDelete(userService.findByLoginAndPassword(TestDataProvider.buildAuthBot()).getAccessToken(),
+        checkDelete(generateAccessToken(TestDataProvider.buildAuthBot()),
                 Integer.MAX_VALUE, 404)
                 .expectBody()
                 .jsonPath("$.book")

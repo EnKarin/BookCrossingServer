@@ -37,15 +37,15 @@ public class BookmarksController {
         @ApiResponse(responseCode = "404", description = "Книга с заданным Id не найдена",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
                     schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
-        @ApiResponse(responseCode = "201", description = "Книга добавлена")
+        @ApiResponse(responseCode = "201", description = "Возвращает список закладок",
+            content = {@Content(mediaType = Constant.MEDIA_TYPE,
+                    schema = @Schema(implementation = BookModelDto[].class))})
         }
     )
     @PostMapping
-    public ResponseEntity<Void> saveBookmarks(@RequestParam @Parameter(description = "Идентификатор книги")
-                                               final int bookId,
-                                           final Principal principal) {
-        bookmarksService.saveBookmarks(bookId, principal.getName());
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+    public ResponseEntity<List<BookModelDto>> saveBookmarks(@RequestParam @Parameter(description = "Идентификатор книги") final int bookId, final Principal principal) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(bookmarksService.saveBookmarks(bookId, principal.getName()));
     }
 
     @Operation(

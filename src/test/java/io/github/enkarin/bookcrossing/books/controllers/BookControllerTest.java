@@ -12,7 +12,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -29,10 +28,7 @@ class BookControllerTest extends BookCrossingBaseTests {
                 .orElseThrow();
         enabledUser(user.getUserId());
 
-        final var booksId = TestDataProvider.buildBooks().stream()
-                .map(b -> bookService.saveBook(b, user.getLogin()))
-                .map(BookModelDto::getBookId)
-                .collect(Collectors.toList());
+        final var booksId = createAndSaveBooks(user.getLogin());
         final var response = webClient.get()
                 .uri("/books/all")
                 .exchange()
@@ -138,10 +134,7 @@ class BookControllerTest extends BookCrossingBaseTests {
                 .findAny()
                 .orElseThrow();
 
-        final var booksId = TestDataProvider.buildBooks().stream()
-                .map(b -> bookService.saveBook(b, user))
-                .map(BookModelDto::getBookId)
-                .collect(Collectors.toList());
+        final var booksId = createAndSaveBooks(user);
 
         final var response = webClient
                 .method(HttpMethod.GET)
