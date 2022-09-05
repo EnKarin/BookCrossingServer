@@ -59,7 +59,8 @@ class BookmarksControllerTest extends BookCrossingBaseTests {
     void deleteBookmarksShouldnFailWithBookNotFound() {
         final var user = createAndSaveUser(TestDataProvider.buildBot());
         enabledUser(user.getUserId());
-        execute(HttpMethod.DELETE, generateAccessToken(TestDataProvider.buildAuthBot()), Integer.MAX_VALUE, 404)
+        final var bookId = createAndSaveBooks(user.getLogin()).stream().findAny().orElse(0);
+        execute(HttpMethod.DELETE, generateAccessToken(TestDataProvider.buildAuthBot()), bookId, 404)
                 .expectBody()
                 .jsonPath("$.book")
                 .isEqualTo("Книга не найдена");
