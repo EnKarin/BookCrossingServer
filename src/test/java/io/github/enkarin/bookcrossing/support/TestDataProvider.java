@@ -5,10 +5,14 @@ import io.github.enkarin.bookcrossing.books.dto.BookDto;
 import io.github.enkarin.bookcrossing.books.dto.BookModelDto;
 import io.github.enkarin.bookcrossing.registration.dto.LoginRequest;
 import io.github.enkarin.bookcrossing.registration.dto.UserRegistrationDto;
+import io.github.enkarin.bookcrossing.user.dto.UserProfileDto;
+import io.github.enkarin.bookcrossing.user.dto.UserPublicProfileDto;
+import io.github.enkarin.bookcrossing.user.dto.UserPutProfileDto;
 import lombok.experimental.UtilityClass;
 
 import javax.annotation.Nonnull;
 import java.util.List;
+import java.util.Set;
 
 @UtilityClass
 public class TestDataProvider {
@@ -154,6 +158,50 @@ public class TestDataProvider {
     public static LoginRequest buildAuthBot() {
         return prepareLogin()
                 .login("Bot")
+                .build();
+    }
+
+    @Nonnull
+    public static UserPublicProfileDto buildPublicProfileBot(final int userId) {
+        return UserPublicProfileDto.builder()
+                .userId(userId)
+                .name("Tester")
+                .city("Novosibirsk")
+                .loginDate("0")
+                .books(Set.of())
+                .build();
+    }
+
+    @Nonnull
+    public static UserProfileDto buildProfileBot(final int userId) {
+        return UserProfileDto.builder()
+                .userId(userId)
+                .login("Bot")
+                .email("k.test@mail.ru")
+                .name("Tester")
+                .city("Novosibirsk")
+                .build();
+    }
+
+    @Nonnull
+    public static UserPutProfileDto.UserPutProfileDtoBuilder<?, ?> preparePutProfile() {
+        return UserPutProfileDto.builder()
+                .name("Bott")
+                .city("Moscow")
+                .oldPassword("123456")
+                .newPassword("123456789")
+                .passwordConfirm("123456789");
+    }
+
+    @Nonnull
+    public static UserProfileDto buildPutProfileBot(final int userId) {
+        return UserProfileDto.builder()
+                .userId(userId)
+                .login("Bot")
+                .email("k.test@mail.ru")
+                .name("Bott")
+                .city("Moscow")
+                .books(Set.of())
                 .build();
     }
 }
