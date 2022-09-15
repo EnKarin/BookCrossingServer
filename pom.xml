@@ -311,22 +311,22 @@
                                         <limit>
                                             <counter>INSTRUCTION</counter>
                                             <value>COVEREDRATIO</value>
-                                            <minimum>0.56</minimum>
+                                            <minimum>0.6</minimum>
                                         </limit>
                                         <limit>
                                             <counter>CLASS</counter>
                                             <value>MISSEDCOUNT</value>
-                                            <maximum>29</maximum>
+                                            <maximum>25</maximum>
                                         </limit>
                                         <limit>
                                             <counter>METHOD</counter>
                                             <value>MISSEDCOUNT</value>
-                                            <maximum>98</maximum>
+                                            <maximum>89</maximum>
                                         </limit>
                                         <limit>
                                             <counter>LINE</counter>
                                             <value>MISSEDCOUNT</value>
-                                            <maximum>321</maximum>
+                                            <maximum>228</maximum>
                                         </limit>
                                     </limits>
                                 </rule>
