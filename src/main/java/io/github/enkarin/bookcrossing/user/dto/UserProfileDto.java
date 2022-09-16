@@ -5,12 +5,16 @@ import io.github.enkarin.bookcrossing.user.model.User;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.experimental.SuperBuilder;
 
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Getter
+@EqualsAndHashCode
+@SuperBuilder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Schema(description = "Данные пользователя для внутреннего пользования")
 public class UserProfileDto {

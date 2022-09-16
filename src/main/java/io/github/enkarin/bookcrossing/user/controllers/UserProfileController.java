@@ -50,10 +50,8 @@ public class UserProfileController {
         }
     )
     @GetMapping
-    public ResponseEntity<?> getProfile(@RequestParam @Parameter(description = "Идентификатор пользователя") // NOSONAR
-                                            final int userId,
-                                        @RequestParam @Parameter(description = "Часовой пояс пользователя")
-                                        final int zone,
+    public ResponseEntity<?> getProfile(@RequestParam(defaultValue = "-1") @Parameter(description = "Идентификатор пользователя") final int userId, // NOSONAR
+                                        @RequestParam @Parameter(description = "Часовой пояс пользователя") final int zone,
                                         final Principal principal) {
         if (userId == -1) {
             return ResponseEntity.ok(userService.getProfile(principal.getName()));
