@@ -8,6 +8,7 @@ import io.github.enkarin.bookcrossing.registration.dto.UserRegistrationDto;
 import io.github.enkarin.bookcrossing.user.dto.UserProfileDto;
 import io.github.enkarin.bookcrossing.user.dto.UserPublicProfileDto;
 import io.github.enkarin.bookcrossing.user.dto.UserPutProfileDto;
+import io.github.enkarin.bookcrossing.user.dto.UserPasswordDto;
 import lombok.experimental.UtilityClass;
 
 import javax.annotation.Nonnull;
@@ -158,6 +159,22 @@ public class TestDataProvider {
     public static LoginRequest buildAuthBot() {
         return prepareLogin()
                 .login("Bot")
+                .build();
+    }
+
+    @Nonnull
+    public static UserPasswordDto buildUserPasswordDto() {
+        return UserPasswordDto.builder()
+                .password("1234567")
+                .passwordConfirm("1234567")
+                .build();
+    }
+
+    @Nonnull
+    public static UserPasswordDto buildInvalidUserPasswordDto() {
+        return UserPasswordDto.builder()
+                .password("1234")
+                .passwordConfirm("1234567")
                 .build();
     }
 
