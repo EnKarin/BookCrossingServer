@@ -5,6 +5,7 @@ import com.icegreen.greenmail.junit5.GreenMailExtension;
 import com.icegreen.greenmail.util.ServerSetupTest;
 import io.github.enkarin.bookcrossing.books.dto.BookModelDto;
 import io.github.enkarin.bookcrossing.books.service.BookService;
+import io.github.enkarin.bookcrossing.chat.repository.CorrespondenceRepository;
 import io.github.enkarin.bookcrossing.init.MySQLInitializer;
 import io.github.enkarin.bookcrossing.registration.dto.LoginRequest;
 import io.github.enkarin.bookcrossing.registration.dto.UserRegistrationDto;
@@ -43,6 +44,9 @@ public abstract class BookCrossingBaseTests {
     @Autowired
     protected BookService bookService;
 
+    @Autowired
+    private CorrespondenceRepository correspondenceRepository;
+
     @RegisterExtension
     protected static final GreenMailExtension GREEN_MAIL = new GreenMailExtension(ServerSetupTest.SMTP)
             .withConfiguration(GreenMailConfiguration.aConfig().withDisabledAuthentication())
@@ -50,6 +54,7 @@ public abstract class BookCrossingBaseTests {
 
     @AfterEach
     void delete() {
+        correspondenceRepository.deleteAll();
         usersId.forEach(u -> userService.deleteUser(u));
         usersId.clear();
     }

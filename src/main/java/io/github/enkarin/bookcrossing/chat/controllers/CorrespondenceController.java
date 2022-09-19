@@ -2,12 +2,12 @@ package io.github.enkarin.bookcrossing.chat.controllers;
 
 import io.github.enkarin.bookcrossing.chat.dto.MessageDto;
 import io.github.enkarin.bookcrossing.chat.dto.UsersCorrKeyDto;
-import io.github.enkarin.bookcrossing.chat.dto.ZonedUserCorrKeyDto;
 import io.github.enkarin.bookcrossing.chat.service.CorrespondenceService;
 import io.github.enkarin.bookcrossing.constant.Constant;
 import io.github.enkarin.bookcrossing.exception.CannotBeCreatedCorrespondenceException;
 import io.github.enkarin.bookcrossing.exception.ChatAlreadyCreatedException;
 import io.github.enkarin.bookcrossing.exception.ChatNotFoundException;
+import io.github.enkarin.bookcrossing.exception.NoAccessToChatException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -18,7 +18,14 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.security.Principal;
 import java.util.Map;
@@ -33,6 +40,8 @@ import java.util.Map;
 public class CorrespondenceController {
 
     private final CorrespondenceService correspondenceService;
+
+    private static final String CORRESPONDENCE = "correspondence";
 
     @Operation(
             summary = "Создание чата",
@@ -51,7 +60,7 @@ public class CorrespondenceController {
     })
     @PostMapping
     public ResponseEntity<UsersCorrKeyDto> createCorrespondence(@RequestParam final int userId,
-                                                  final Principal principal) {
+                                                                final Principal principal) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(correspondenceService.createChat(userId, principal.getName()));
     }
@@ -68,10 +77,8 @@ public class CorrespondenceController {
         }
     )
     @DeleteMapping
-    public ResponseEntity<Void> deleteCorrespondence(@RequestParam
-                                                         @Parameter(description = "Идентификатор пользователя")
-                                                         final int userId,
-                                                  final Principal principal) {
+    public ResponseEntity<Void> deleteCorrespondence(@RequestParam @Parameter(description = "Идентификатор пользователя") final int userId,
+                                                     final Principal principal) {
         correspondenceService.deleteChat(userId, principal.getName());
         return ResponseEntity.ok().build();
     }
@@ -84,32 +91,43 @@ public class CorrespondenceController {
         @ApiResponse(responseCode = "404", description = "Чата не существует",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
                     schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+        @ApiResponse(responseCode = "403", description = "Нет доступа к чату",
+            content = {@Content(mediaType = Constant.MEDIA_TYPE,
+                    schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
         @ApiResponse(responseCode = "200", description = "Возвращает список сообщений",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
                     schema = @Schema(implementation = MessageDto[].class))})
         }
     )
     @GetMapping
-    public ResponseEntity<Object[]> getCorrespondence(@RequestBody final ZonedUserCorrKeyDto dto,
-                                               final Principal principal) {
-        return ResponseEntity.ok(correspondenceService.getChat(dto, principal.getName()).toArray());
+    public ResponseEntity<Object[]> getCorrespondence(@RequestParam final int firstUserId,
+                                                      @RequestParam final int secondUserId,
+                                                      @RequestParam final int zone,
+                                                      final Principal principal) {
+        return ResponseEntity.ok(correspondenceService.getChat(firstUserId, secondUserId, zone, principal.getName()).toArray());
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(ChatNotFoundException.class)
     public Map<String, String> chatNotFound(final ChatNotFoundException exc) {
-        return Map.of("correspondence", exc.getMessage());
+        return Map.of(CORRESPONDENCE, exc.getMessage());
     }
 
     @ResponseStatus(HttpStatus.CONFLICT)
     @ExceptionHandler(ChatAlreadyCreatedException.class)
     public Map<String, String> chatAlreadyCreated(final ChatAlreadyCreatedException exc) {
-        return Map.of("correspondence", exc.getMessage());
+        return Map.of(CORRESPONDENCE, exc.getMessage());
     }
 
     @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
     @ExceptionHandler(CannotBeCreatedCorrespondenceException.class)
     public Map<String, String> userIsLocked(final CannotBeCreatedCorrespondenceException exc) {
         return Map.of("user", exc.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ExceptionHandler(NoAccessToChatException.class)
+    public Map<String, String> chatNoAccess(final NoAccessToChatException exc) {
+        return Map.of(CORRESPONDENCE, exc.getMessage());
     }
 }

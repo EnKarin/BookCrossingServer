@@ -5,10 +5,14 @@ import io.github.enkarin.bookcrossing.chat.model.Correspondence;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.experimental.SuperBuilder;
 
 import javax.annotation.concurrent.Immutable;
 
+@SuperBuilder
+@EqualsAndHashCode
 @Immutable
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
