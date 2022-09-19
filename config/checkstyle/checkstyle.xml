@@ -21,12 +21,7 @@
             <property name="illegalMethodNames" value="emptyList, emptyMap, emptySet, emptyNavigableMap,
             emptyNavigableSet, emptySortedMap, emptySortedSet, singleton, singletonList, singletonMap"/>
         </module>
-        <module name="AvoidStarImport">
-            <property name="excludes" value="org.springframework.web.bind.annotation"/>
-            <property name="excludes" value="javax.persistence"/>
-            <property name="excludes" value="io.github.enkarin.bookcrossing.books.dto"/>
-            <property name="excludes" value="io.github.enkarin.bookcrossing.exception"/>
-        </module>
+        <module name="AvoidStarImport"/>
         <module name="AvoidEscapedUnicodeCharacters">
             <property name="allowEscapesForControlCharacters" value="true"/>
             <property name="allowByTailComment" value="true"/>
