@@ -18,7 +18,14 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.security.Principal;
 import java.util.Map;
@@ -33,6 +40,8 @@ import java.util.Map;
 public class CorrespondenceController {
 
     private final CorrespondenceService correspondenceService;
+
+    private static final String CORRESPONDENCE = "correspondence";
 
     @Operation(
             summary = "Создание чата",
@@ -101,13 +110,13 @@ public class CorrespondenceController {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(ChatNotFoundException.class)
     public Map<String, String> chatNotFound(final ChatNotFoundException exc) {
-        return Map.of("correspondence", exc.getMessage());
+        return Map.of(CORRESPONDENCE, exc.getMessage());
     }
 
     @ResponseStatus(HttpStatus.CONFLICT)
     @ExceptionHandler(ChatAlreadyCreatedException.class)
     public Map<String, String> chatAlreadyCreated(final ChatAlreadyCreatedException exc) {
-        return Map.of("correspondence", exc.getMessage());
+        return Map.of(CORRESPONDENCE, exc.getMessage());
     }
 
     @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
@@ -119,6 +128,6 @@ public class CorrespondenceController {
     @ResponseStatus(HttpStatus.FORBIDDEN)
     @ExceptionHandler(NoAccessToChatException.class)
     public Map<String, String> chatNoAccess(final NoAccessToChatException exc) {
-        return Map.of("correspondence", exc.getMessage());
+        return Map.of(CORRESPONDENCE, exc.getMessage());
     }
 }
