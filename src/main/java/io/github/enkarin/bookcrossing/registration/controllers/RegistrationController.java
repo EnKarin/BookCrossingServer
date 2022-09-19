@@ -1,7 +1,14 @@
 package io.github.enkarin.bookcrossing.registration.controllers;
 
 import io.github.enkarin.bookcrossing.constant.Constant;
-import io.github.enkarin.bookcrossing.exception.*;
+import io.github.enkarin.bookcrossing.exception.AccountNotConfirmedException;
+import io.github.enkarin.bookcrossing.exception.BindingErrorsException;
+import io.github.enkarin.bookcrossing.exception.EmailFailedException;
+import io.github.enkarin.bookcrossing.exception.InvalidPasswordException;
+import io.github.enkarin.bookcrossing.exception.LockedAccountException;
+import io.github.enkarin.bookcrossing.exception.LoginFailedException;
+import io.github.enkarin.bookcrossing.exception.PasswordsDontMatchException;
+import io.github.enkarin.bookcrossing.exception.TokenNotFoundException;
 import io.github.enkarin.bookcrossing.registration.dto.AuthResponse;
 import io.github.enkarin.bookcrossing.registration.dto.LoginRequest;
 import io.github.enkarin.bookcrossing.registration.dto.UserRegistrationDto;
@@ -17,7 +24,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.util.LinkedList;
