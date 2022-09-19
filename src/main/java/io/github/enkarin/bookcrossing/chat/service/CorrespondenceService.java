@@ -2,16 +2,12 @@ package io.github.enkarin.bookcrossing.chat.service;
 
 import io.github.enkarin.bookcrossing.chat.dto.MessageDto;
 import io.github.enkarin.bookcrossing.chat.dto.UsersCorrKeyDto;
-import io.github.enkarin.bookcrossing.chat.dto.ZonedUserCorrKeyDto;
 import io.github.enkarin.bookcrossing.chat.model.Correspondence;
 import io.github.enkarin.bookcrossing.chat.model.Message;
 import io.github.enkarin.bookcrossing.chat.model.UsersCorrKey;
 import io.github.enkarin.bookcrossing.chat.repository.CorrespondenceRepository;
 import io.github.enkarin.bookcrossing.chat.repository.MessageRepository;
-import io.github.enkarin.bookcrossing.exception.CannotBeCreatedCorrespondenceException;
-import io.github.enkarin.bookcrossing.exception.ChatAlreadyCreatedException;
-import io.github.enkarin.bookcrossing.exception.ChatNotFoundException;
-import io.github.enkarin.bookcrossing.exception.UserNotFoundException;
+import io.github.enkarin.bookcrossing.exception.*;
 import io.github.enkarin.bookcrossing.user.model.User;
 import io.github.enkarin.bookcrossing.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -64,12 +60,11 @@ public class CorrespondenceService {
         correspondenceRepository.delete(correspondence);
     }
 
-    public List<MessageDto> getChat(final ZonedUserCorrKeyDto zonedUserCorrKeyDto,
-                                    final String login) {
+    public List<MessageDto> getChat(final int firstUserId, final int secondUserId, final int zone, final String login) {
         final User user = userRepository.findByLogin(login).orElseThrow();
-        final User fUser = userRepository.findById(zonedUserCorrKeyDto.getFirstUserId())
+        final User fUser = userRepository.findById(firstUserId)
                 .orElseThrow(UserNotFoundException::new);
-        final User sUser = userRepository.findById(zonedUserCorrKeyDto.getSecondUserId())
+        final User sUser = userRepository.findById(secondUserId)
                 .orElseThrow(UserNotFoundException::new);
         final UsersCorrKey usersCorrKey = new UsersCorrKey();
         usersCorrKey.setFirstUser(fUser);
@@ -77,19 +72,18 @@ public class CorrespondenceService {
         final Correspondence correspondence = correspondenceRepository.findById(usersCorrKey)
                 .orElseThrow(ChatNotFoundException::new);
         if (user.equals(fUser)) {
-            return getMessages(Message::isShownFirstUser, correspondence, zonedUserCorrKeyDto, user);
+            return getMessages(Message::isShownFirstUser, correspondence, zone, user);
+        } else if (user.equals(sUser)) {
+            return getMessages(Message::isShownSecondUser, correspondence, zone, user);
         }
-        if (user.equals(sUser)) {
-            return getMessages(Message::isShownSecondUser, correspondence, zonedUserCorrKeyDto, user);
-        }
-        return List.of();
+        throw new NoAccessToChatException();
     }
 
     private List<MessageDto> getMessages(final Predicate<Message> rules, final Correspondence correspondence,
-                                         final ZonedUserCorrKeyDto zonedUserCorrKeyDto, final User user) {
+                                         final int zone, final User user) {
         final List<MessageDto> responses = correspondence.getMessage().stream()
                 .filter(rules)
-                .map(m -> MessageDto.fromMessageAndZone(m, zonedUserCorrKeyDto.getZone()))
+                .map(m -> MessageDto.fromMessageAndZone(m, zone))
                 .sorted(Comparator.comparing(MessageDto::getDepartureDate))
                 .collect(Collectors.toList());
         correspondence.setMessage(correspondence.getMessage().stream()

@@ -3,12 +3,16 @@ package io.github.enkarin.bookcrossing.chat.dto;
 import io.github.enkarin.bookcrossing.chat.model.Message;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.experimental.SuperBuilder;
 
 import javax.annotation.concurrent.Immutable;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
+@SuperBuilder
+@EqualsAndHashCode
 @Immutable
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)

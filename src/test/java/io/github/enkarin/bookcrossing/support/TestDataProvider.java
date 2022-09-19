@@ -3,12 +3,13 @@ package io.github.enkarin.bookcrossing.support;
 
 import io.github.enkarin.bookcrossing.books.dto.BookDto;
 import io.github.enkarin.bookcrossing.books.dto.BookModelDto;
+import io.github.enkarin.bookcrossing.chat.dto.MessageDto;
 import io.github.enkarin.bookcrossing.registration.dto.LoginRequest;
 import io.github.enkarin.bookcrossing.registration.dto.UserRegistrationDto;
+import io.github.enkarin.bookcrossing.user.dto.UserPasswordDto;
 import io.github.enkarin.bookcrossing.user.dto.UserProfileDto;
 import io.github.enkarin.bookcrossing.user.dto.UserPublicProfileDto;
 import io.github.enkarin.bookcrossing.user.dto.UserPutProfileDto;
-import io.github.enkarin.bookcrossing.user.dto.UserPasswordDto;
 import lombok.experimental.UtilityClass;
 
 import javax.annotation.Nonnull;
@@ -163,6 +164,13 @@ public class TestDataProvider {
     }
 
     @Nonnull
+    public static LoginRequest buildAuthAlex() {
+        return prepareLogin()
+                .login("Alex")
+                .build();
+    }
+
+    @Nonnull
     public static UserPasswordDto buildUserPasswordDto() {
         return UserPasswordDto.builder()
                 .password("1234567")
@@ -219,6 +227,17 @@ public class TestDataProvider {
                 .name("Bott")
                 .city("Moscow")
                 .books(Set.of())
+                .build();
+    }
+
+    @Nonnull
+    public static MessageDto buildMessageDto(final int userId, final long messageId, final String date) {
+        return MessageDto.builder()
+                .messageId(messageId)
+                .sender(userId)
+                .declaim(false)
+                .text("Hi")
+                .departureDate(date)
                 .build();
     }
 }

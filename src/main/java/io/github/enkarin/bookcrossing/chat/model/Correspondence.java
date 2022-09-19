@@ -3,7 +3,10 @@ package io.github.enkarin.bookcrossing.chat.model;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.*;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import java.util.List;
 import java.util.Objects;
 
@@ -16,7 +19,7 @@ public class Correspondence {
     @EmbeddedId
     private UsersCorrKey usersCorrKey;
 
-    @OneToMany(mappedBy = "correspondence")
+    @OneToMany(mappedBy = "correspondence", orphanRemoval = true)
     private List<Message> message;
 
     @Override
