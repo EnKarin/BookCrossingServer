@@ -4,6 +4,9 @@ package io.github.enkarin.bookcrossing.support;
 import io.github.enkarin.bookcrossing.books.dto.BookDto;
 import io.github.enkarin.bookcrossing.books.dto.BookModelDto;
 import io.github.enkarin.bookcrossing.chat.dto.MessageDto;
+import io.github.enkarin.bookcrossing.chat.dto.MessagePutRequest;
+import io.github.enkarin.bookcrossing.chat.dto.MessageRequest;
+import io.github.enkarin.bookcrossing.chat.dto.UsersCorrKeyDto;
 import io.github.enkarin.bookcrossing.registration.dto.LoginRequest;
 import io.github.enkarin.bookcrossing.registration.dto.UserRegistrationDto;
 import io.github.enkarin.bookcrossing.user.dto.UserPasswordDto;
@@ -238,6 +241,22 @@ public class TestDataProvider {
                 .declaim(false)
                 .text("Hi")
                 .departureDate(date)
+                .build();
+    }
+
+    @Nonnull
+    public static MessageRequest buildMessageRequest(final UsersCorrKeyDto key) {
+        return MessageRequest.builder()
+                .usersCorrKeyDto(key)
+                .text("Hi")
+                .build();
+    }
+
+    @Nonnull
+    public static MessagePutRequest buildMessagePutRequest(final long messageId) {
+        return MessagePutRequest.builder()
+                .messageId(messageId)
+                .text("New")
                 .build();
     }
 }
