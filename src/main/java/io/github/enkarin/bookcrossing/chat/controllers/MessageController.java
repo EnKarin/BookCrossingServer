@@ -86,7 +86,7 @@ public class MessageController {
         @ApiResponse(responseCode = "404", description = "Сообщение не найдено",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
                     schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
-        @ApiResponse(responseCode = "403", description = "Нет доступа к чату",
+        @ApiResponse(responseCode = "403", description = "Пользователь не является отправителем сообщения",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
                     schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
         @ApiResponse(responseCode = "200", description = "Сообщение изменено",
@@ -98,7 +98,7 @@ public class MessageController {
                                         final BindingResult bindingResult,
                                         final Principal principal) {
         if (bindingResult.hasErrors()) {
-            throw new MessageNotFountException();
+            throw new MessageContentException();
         }
         return ResponseEntity.ok(messageService.putMessage(messageRequest, principal.getName()));
     }

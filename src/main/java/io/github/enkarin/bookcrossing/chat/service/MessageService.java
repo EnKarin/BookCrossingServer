@@ -62,16 +62,10 @@ public class MessageService {
         final Message message = messageRepository.findById(messagePutRequest.getMessageId())
                 .orElseThrow(MessageNotFountException::new);
         if (user.equals(message.getSender())) {
-            final Correspondence correspondence = message.getCorrespondence();
-            if (user.equals(correspondence.getUsersCorrKey().getFirstUser()) ||
-                    user.equals(correspondence.getUsersCorrKey().getSecondUser())) {
-                message.setDepartureDate(LocalDateTime.now()
-                        .toEpochSecond(ZoneId.systemDefault().getRules().getOffset(Instant.now())));
-                message.setText(messagePutRequest.getText());
-                return MessageDto.fromMessage(messageRepository.save(message));
-            } else {
-                throw new NoAccessToChatException();
-            }
+            message.setDepartureDate(LocalDateTime.now()
+                    .toEpochSecond(ZoneId.systemDefault().getRules().getOffset(Instant.now())));
+            message.setText(messagePutRequest.getText());
+            return MessageDto.fromMessage(messageRepository.save(message));
         } else {
             throw new UserIsNotSenderException();
         }
@@ -81,16 +75,10 @@ public class MessageService {
         final User user = userRepository.findByLogin(login).orElseThrow();
         final Message message = messageRepository.findById(messageId)
                 .orElseThrow(MessageNotFountException::new);
-        final Correspondence correspondence = message.getCorrespondence();
-        if (correspondence.getUsersCorrKey().getFirstUser().equals(user) ||
-                correspondence.getUsersCorrKey().getSecondUser().equals(user)) {
-            if (user.equals(message.getSender())) {
-                messageRepository.delete(message);
-            } else {
-                throw new UserIsNotSenderException();
-            }
+        if (user.equals(message.getSender())) {
+            messageRepository.delete(message);
         } else {
-            throw new NoAccessToChatException();
+            throw new UserIsNotSenderException();
         }
     }
 
