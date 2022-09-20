@@ -321,12 +321,12 @@
                                         <limit>
                                             <counter>METHOD</counter>
                                             <value>MISSEDCOUNT</value>
-                                            <maximum>41</maximum>
+                                            <maximum>40</maximum>
                                         </limit>
                                         <limit>
                                             <counter>LINE</counter>
                                             <value>MISSEDCOUNT</value>
-                                            <maximum>117</maximum>
+                                            <maximum>116</maximum>
                                         </limit>
                                     </limits>
                                 </rule>

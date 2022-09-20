@@ -4,6 +4,7 @@ import io.github.enkarin.bookcrossing.base.BookCrossingBaseTests;
 import io.github.enkarin.bookcrossing.chat.dto.MessageDto;
 import io.github.enkarin.bookcrossing.chat.dto.MessagePutRequest;
 import io.github.enkarin.bookcrossing.chat.dto.MessageRequest;
+import io.github.enkarin.bookcrossing.chat.dto.UsersCorrKeyDto;
 import io.github.enkarin.bookcrossing.chat.service.CorrespondenceService;
 import io.github.enkarin.bookcrossing.chat.service.MessageService;
 import io.github.enkarin.bookcrossing.support.TestDataProvider;
@@ -39,6 +40,21 @@ class MessageControllerTest extends BookCrossingBaseTests {
                 .usingRecursiveComparison()
                 .ignoringFields("messageId", "departureDate") //Temporary date ignore
                 .isEqualTo(TestDataProvider.buildMessageDto(userBot.getUserId(), Long.MAX_VALUE, ""));
+    }
+
+    @Test
+    void sendMessageShouldFailWithChatNotFound() {
+        final var userBotId = createAndSaveUser(TestDataProvider.buildBot()).getUserId();
+        enabledUser(userBotId);
+        final var userAlexId = createAndSaveUser(TestDataProvider.buildAlex()).getUserId();
+        enabledUser(userAlexId);
+
+        execute(HttpMethod.POST, TestDataProvider.buildMessageRequest(UsersCorrKeyDto.builder()
+                .firstUserId(userBotId)
+                .secondUserId(userAlexId)
+                .build()), 404)
+                .expectBody()
+                .jsonPath("$.correspondence").isEqualTo("Чата не существует");
     }
 
     @Test
