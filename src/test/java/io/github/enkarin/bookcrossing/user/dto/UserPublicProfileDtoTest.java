@@ -1,6 +1,5 @@
 package io.github.enkarin.bookcrossing.user.dto;
 
-import io.github.enkarin.bookcrossing.base.BookCrossingBaseTests;
 import io.github.enkarin.bookcrossing.books.model.Book;
 import io.github.enkarin.bookcrossing.user.model.User;
 import org.junit.jupiter.api.Test;
@@ -10,24 +9,52 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class UserPublicProfileDtoTest extends BookCrossingBaseTests {
+class UserPublicProfileDtoTest {
 
     @Test
-    void fromUserTest() {
+    void fromUserShouldWorkWithLoginDateIsZero() {
         final User user = new User();
         user.setUserId(Integer.MAX_VALUE);
-        user.setEmail("t.test@mail.ru");
+        user.setName("name");
         user.setBooks(Stream.of(new Book()).collect(Collectors.toSet()));
 
-        final UserProfileDto userProfileDto = UserProfileDto.fromUser(user);
+        final UserPublicProfileDto userProfileDto = UserPublicProfileDto.fromUser(user, 3);
         assertThat(userProfileDto)
                 .isNotNull()
-                .extracting(UserProfileDto::getEmail)
-                .isEqualTo("t.test@mail.ru");
-        assertThat(userProfileDto.getUserId())
-                .isEqualTo(Integer.MAX_VALUE);
-        assertThat(userProfileDto.getBooks())
-                .hasSize(1)
-                .isUnmodifiable();
+                .satisfies(u -> {
+                    assertThat(u.getUserId())
+                            .isEqualTo(Integer.MAX_VALUE);
+                    assertThat(u.getName())
+                            .isEqualTo("name");
+                    assertThat(u.getLoginDate())
+                            .isEqualTo("0");
+                    assertThat(u.getBooks())
+                            .hasSize(1)
+                            .isUnmodifiable();
+                });
+    }
+
+    @Test
+    void fromUserShouldWorkWithLoginDateNotZero() {
+        final User user = new User();
+        user.setUserId(Integer.MAX_VALUE);
+        user.setName("name");
+        user.setLoginDate(123_567);
+        user.setBooks(Stream.of(new Book()).collect(Collectors.toSet()));
+
+        final UserPublicProfileDto userProfileDto = UserPublicProfileDto.fromUser(user, 3);
+        assertThat(userProfileDto)
+                .isNotNull()
+                .satisfies(u -> {
+                    assertThat(u.getUserId())
+                            .isEqualTo(Integer.MAX_VALUE);
+                    assertThat(u.getName())
+                            .isEqualTo("name");
+                    assertThat(u.getLoginDate())
+                            .isEqualTo("1970-01-02T13:19:27");
+                    assertThat(u.getBooks())
+                            .hasSize(1)
+                            .isUnmodifiable();
+                });
     }
 }

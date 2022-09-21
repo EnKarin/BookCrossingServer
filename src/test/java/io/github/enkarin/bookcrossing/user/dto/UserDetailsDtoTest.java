@@ -1,33 +1,43 @@
 package io.github.enkarin.bookcrossing.user.dto;
 
-import io.github.enkarin.bookcrossing.base.BookCrossingBaseTests;
-import io.github.enkarin.bookcrossing.books.model.Book;
+import io.github.enkarin.bookcrossing.user.model.Role;
 import io.github.enkarin.bookcrossing.user.model.User;
 import org.junit.jupiter.api.Test;
 
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class UserDetailsDtoTest extends BookCrossingBaseTests {
+class UserDetailsDtoTest {
 
     @Test
     void fromUserTest() {
         final User user = new User();
-        user.setUserId(Integer.MAX_VALUE);
         user.setLogin("login");
-        user.setBooks(Stream.of(new Book()).collect(Collectors.toSet()));
+        user.setPassword("pass");
+        user.setAccountNonLocked(false);
+        user.setEnabled(false);
+        user.setUserRoles(Set.of(new Role()));
 
-        final UserProfileDto userProfileDto = UserProfileDto.fromUser(user);
-        assertThat(userProfileDto)
+        final UserDetailsDto userDetailsDto = UserDetailsDto.fromUser(user);
+        assertThat(userDetailsDto)
                 .isNotNull()
-                .extracting(UserProfileDto::getLogin)
-                .isEqualTo("login");
-        assertThat(userProfileDto.getUserId())
-                .isEqualTo(Integer.MAX_VALUE);
-        assertThat(userProfileDto.getBooks())
-                .hasSize(1)
-                .isUnmodifiable();
+                .satisfies(u -> {
+                    assertThat(u.getLogin())
+                            .isEqualTo("login");
+                    assertThat(u.getPassword())
+                            .isEqualTo("pass");
+                    assertThat(u.isAccountNonLocked())
+                            .isFalse();
+                    assertThat(u.isEnabled())
+                            .isFalse();
+                    assertThat(u.isAccountNonExpired())
+                            .isTrue();
+                    assertThat(u.isCredentialsNonExpired())
+                            .isTrue();
+                    assertThat(u.getRoles())
+                            .hasSize(1)
+                            .isUnmodifiable();
+                });
     }
 }

@@ -1,6 +1,5 @@
 package io.github.enkarin.bookcrossing.user.dto;
 
-import io.github.enkarin.bookcrossing.base.BookCrossingBaseTests;
 import io.github.enkarin.bookcrossing.books.model.Book;
 import io.github.enkarin.bookcrossing.user.model.User;
 import org.junit.jupiter.api.Test;
@@ -10,7 +9,7 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class UserProfileDtoTest extends BookCrossingBaseTests {
+class UserProfileDtoTest {
 
     @Test
     void fromUserTest() {
