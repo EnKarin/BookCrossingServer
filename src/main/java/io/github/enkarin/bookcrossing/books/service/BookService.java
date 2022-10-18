@@ -77,7 +77,6 @@ public class BookService {
         }
         if (request.getTitle() != null) {
             books = books.stream()
-                    .filter(book -> book.getTitle() != null)
                     .filter(book -> book.getTitle().equalsIgnoreCase(request.getTitle()))
                     .collect(Collectors.toList());
         }

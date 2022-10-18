@@ -9,10 +9,13 @@ import io.github.enkarin.bookcrossing.exception.UserNotFoundException;
 import io.github.enkarin.bookcrossing.support.TestDataProvider;
 import io.github.enkarin.bookcrossing.user.dto.UserDto;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -23,7 +26,7 @@ class BookServiceTest extends BookCrossingBaseTests {
     private BookService bookService;
 
     @Test
-    void saveBook() {
+    void saveBookShouldWork() {
         final UserDto user = createAndSaveUser(TestDataProvider.buildAlex());
         final BookModelDto book = bookService.saveBook(TestDataProvider.buildDorian(), user.getLogin());
         assertThat(book)
@@ -31,7 +34,7 @@ class BookServiceTest extends BookCrossingBaseTests {
     }
 
     @Test
-    void saveExceptionTest() {
+    void saveShouldFailWithUserNotFound() {
         final BookDto dto = TestDataProvider.buildDorian();
         assertThatThrownBy(() -> bookService.saveBook(dto, "users"))
                 .isInstanceOf(UserNotFoundException.class)
@@ -39,7 +42,7 @@ class BookServiceTest extends BookCrossingBaseTests {
     }
 
     @Test
-    void findBookForOwnerTest() {
+    void findBookForOwnerShouldWork() {
         final List<UserDto> users = TestDataProvider.buildUsers().stream()
                 .map(this::createAndSaveUser)
                 .collect(Collectors.toList());
@@ -57,7 +60,7 @@ class BookServiceTest extends BookCrossingBaseTests {
     }
 
     @Test
-    void findEmptyBookForOwnerTest() {
+    void findBookForOwnerShouldWorkWithEmptyBookList() {
         final List<UserDto> users = TestDataProvider.buildUsers().stream()
                 .map(this::createAndSaveUser)
                 .collect(Collectors.toList());
@@ -68,7 +71,7 @@ class BookServiceTest extends BookCrossingBaseTests {
     }
 
     @Test
-    void findByIdTest() {
+    void findByIdShouldWork() {
         final UserDto user = createAndSaveUser(TestDataProvider.buildBot());
         final int book = TestDataProvider.buildBooks().stream()
                 .map(b -> bookService.saveBook(b, user.getLogin()))
@@ -79,14 +82,14 @@ class BookServiceTest extends BookCrossingBaseTests {
     }
 
     @Test
-    void findByIdExceptionTest() {
+    void findByIdShouldFailWithBookNotFound() {
         assertThatThrownBy(() -> bookService.findById(Integer.MAX_VALUE))
                 .isInstanceOf(BookNotFoundException.class)
                 .hasMessage("Книга не найдена");
     }
 
     @Test
-    void oneFilterTest() {
+    void filterShouldWorkWithOneField() {
         final List<UserDto> users = TestDataProvider.buildUsers().stream()
                 .map(this::createAndSaveUser)
                 .collect(Collectors.toList());
@@ -104,7 +107,7 @@ class BookServiceTest extends BookCrossingBaseTests {
     }
 
     @Test
-    void allFilterTest() {
+    void filterShouldWorkWithAllField() {
         final List<UserDto> users = TestDataProvider.buildUsers().stream()
                 .map(this::createAndSaveUser)
                 .collect(Collectors.toList());
@@ -119,8 +122,33 @@ class BookServiceTest extends BookCrossingBaseTests {
                 .containsOnly(TestDataProvider.buildWolves(book2));
     }
 
+    @ParameterizedTest
+    @MethodSource("provideFilter")
+    void filterShouldWorkWithNotSingleBookThatPassedFilter(final BookDto bookDto) {
+        final var user = createAndSaveUser(TestDataProvider.prepareUser()
+                .city(null)
+                .login("Bot")
+                .email("k.test@mail.ru")
+                .build());
+        bookService.saveBook(bookDto, user.getLogin());
+
+        assertThat(bookService.filter(BookFiltersRequest.create("Novosibirsk", "Wolves",
+                "author", "story", "publishing_house", 2000)))
+                .isEmpty();
+    }
+
+    static Stream<BookDto> provideFilter() {
+        return Stream.of(
+            BookDto.builder().genre("story").title("Wolves").build(),
+            BookDto.builder().genre("story").author("author").title("Wolves").build(),
+            BookDto.builder().genre("story").author("author").publishingHouse("publishing_house").title("Wolves").build(),
+            BookDto.builder().genre("story").author("author").publishingHouse("publishing_house").year(2000).title("Wolves").build(),
+            BookDto.builder().genre("story").author("author").publishingHouse("publishing_house").year(2000).title("Wolves").build()
+        );
+    }
+
     @Test
-    void filterLockedUserTest() {
+    void filterLockedUserShouldWork() {
         final UserDto user1 = createAndSaveUser(TestDataProvider.buildBot());
 
         bookService.saveBook(TestDataProvider.buildDorian(), user1.getLogin());
@@ -133,7 +161,7 @@ class BookServiceTest extends BookCrossingBaseTests {
     }
 
     @Test
-    void deleteBookTest() {
+    void deleteBookShouldWork() {
         final UserDto user1 = createAndSaveUser(TestDataProvider.buildBot());
 
         final BookModelDto book = bookService.saveBook(TestDataProvider.buildWolves(), user1.getLogin());
@@ -145,19 +173,19 @@ class BookServiceTest extends BookCrossingBaseTests {
     }
 
     @Test
-    void deleteBookExceptionTest() {
+    void deleteBookShouldFailWithBookNotFound() {
         assertThatThrownBy(() -> bookService.deleteBook(2))
                 .isInstanceOf(BookNotFoundException.class)
                 .hasMessage("Книга не найдена");
     }
 
     @Test
-    void findAllEmptyList() {
+    void findAllShouldWorkWithEmptyBookList() {
         assertThat(bookService.findAll()).isEmpty();
     }
 
     @Test
-    void findAll() {
+    void findAllShouldWork() {
         final List<UserDto> users = TestDataProvider.buildUsers().stream()
                 .map(this::createAndSaveUser)
                 .collect(Collectors.toList());
@@ -172,7 +200,7 @@ class BookServiceTest extends BookCrossingBaseTests {
     }
 
     @Test
-    void findByTitleTest() {
+    void findByTitleShouldWork() {
         final List<UserDto> users = TestDataProvider.buildUsers().stream()
                 .map(this::createAndSaveUser)
                 .collect(Collectors.toList());
@@ -187,7 +215,7 @@ class BookServiceTest extends BookCrossingBaseTests {
     }
 
     @Test
-    void findByTitleEmptyTest() {
+    void findByTitleShouldWorkWithBookNotFound() {
         final List<UserDto> users = TestDataProvider.buildUsers().stream()
                 .map(this::createAndSaveUser)
                 .collect(Collectors.toList());
