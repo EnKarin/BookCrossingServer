@@ -77,7 +77,8 @@ class AttachmentServiceTest extends BookCrossingBaseTests {
         final File file = ResourceUtils.getFile("classpath:files/text.txt");
         final MultipartFile multipartFile = new MockMultipartFile(file.getName(), file.getName(), "text/plain", Files.readAllBytes(file.toPath()));
         final AttachmentMultipartDto dto = AttachmentMultipartDto.fromFile(book1, multipartFile);
-        assertThatThrownBy(() -> attachmentService.saveAttachment(dto, users.get(1).getLogin()))
+        final var userLogin = users.get(1).getLogin();
+        assertThatThrownBy(() -> attachmentService.saveAttachment(dto, userLogin))
                 .isInstanceOf(BadRequestException.class)
                 .hasMessage("Недопустимый формат файла");
     }
@@ -88,7 +89,8 @@ class AttachmentServiceTest extends BookCrossingBaseTests {
         final MultipartFile multipartFile = new MockMultipartFile(file.getName(), file.getName(),
                 "image/jpg", Files.readAllBytes(file.toPath()));
         final AttachmentMultipartDto dto = AttachmentMultipartDto.fromFile(Integer.MAX_VALUE, multipartFile);
-        assertThatThrownBy(() -> attachmentService.saveAttachment(dto, users.get(1).getLogin()))
+        final var userLogin = users.get(1).getLogin();
+        assertThatThrownBy(() -> attachmentService.saveAttachment(dto, userLogin))
                 .isInstanceOf(BookNotFoundException.class)
                 .hasMessage("Книга не найдена");
     }
@@ -102,7 +104,8 @@ class AttachmentServiceTest extends BookCrossingBaseTests {
         final File file = ResourceUtils.getFile("classpath:files/image.jpg");
         final MultipartFile multipartFile = new MockMultipartFile(file.getName(), Files.readAllBytes(file.toPath()));
         final AttachmentMultipartDto dto = AttachmentMultipartDto.fromFile(book1, multipartFile);
-        assertThatThrownBy(() -> attachmentService.saveAttachment(dto, users.get(1).getLogin()))
+        final var userLogin = users.get(1).getLogin();
+        assertThatThrownBy(() -> attachmentService.saveAttachment(dto, userLogin))
                 .isInstanceOf(BadRequestException.class)
                 .hasMessage("Имя не должно быть пустым");
     }
@@ -132,15 +135,16 @@ class AttachmentServiceTest extends BookCrossingBaseTests {
         bookService.saveBook(TestDataProvider.buildDandelion(), users.get(0).getLogin());
         final int book1 =  bookService.saveBook(TestDataProvider.buildWolves(), users.get(1).getLogin()).getBookId();
         bookService.saveBook(TestDataProvider.buildDorian(), users.get(0).getLogin());
-
-        assertThatThrownBy(() -> attachmentService.deleteAttachment(book1, users.get(1).getLogin()))
+        final var userLogin = users.get(1).getLogin();
+        assertThatThrownBy(() -> attachmentService.deleteAttachment(book1, userLogin))
                 .isInstanceOf(AttachmentNotFoundException.class)
                 .hasMessage("Вложение не найдено");
     }
 
     @Test
     void deleteAttachmentShouldFailWithoutBook() {
-        assertThatThrownBy(() -> attachmentService.deleteAttachment(Integer.MAX_VALUE, users.get(1).getLogin()))
+        final var userLogin = users.get(1).getLogin();
+        assertThatThrownBy(() -> attachmentService.deleteAttachment(Integer.MAX_VALUE, userLogin))
                 .isInstanceOf(BookNotFoundException.class)
                 .hasMessage("Книга не найдена");
     }
