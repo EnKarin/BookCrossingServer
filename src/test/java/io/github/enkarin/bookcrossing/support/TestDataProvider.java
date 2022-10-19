@@ -1,6 +1,5 @@
 package io.github.enkarin.bookcrossing.support;
 
-
 import io.github.enkarin.bookcrossing.books.dto.BookDto;
 import io.github.enkarin.bookcrossing.books.dto.BookModelDto;
 import io.github.enkarin.bookcrossing.chat.dto.MessageDto;
@@ -9,6 +8,8 @@ import io.github.enkarin.bookcrossing.chat.dto.MessageRequest;
 import io.github.enkarin.bookcrossing.chat.dto.UsersCorrKeyDto;
 import io.github.enkarin.bookcrossing.registration.dto.LoginRequest;
 import io.github.enkarin.bookcrossing.registration.dto.UserRegistrationDto;
+import io.github.enkarin.bookcrossing.user.dto.UserDto;
+import io.github.enkarin.bookcrossing.user.dto.UserParentDto;
 import io.github.enkarin.bookcrossing.user.dto.UserPasswordDto;
 import io.github.enkarin.bookcrossing.user.dto.UserProfileDto;
 import io.github.enkarin.bookcrossing.user.dto.UserPublicProfileDto;
@@ -174,6 +175,13 @@ public class TestDataProvider {
     }
 
     @Nonnull
+    public static LoginRequest buildAuthAdmin() {
+        return prepareLogin()
+                .login("admin")
+                .build();
+    }
+
+    @Nonnull
     public static UserPasswordDto buildUserPasswordDto() {
         return UserPasswordDto.builder()
                 .password("1234567")
@@ -257,6 +265,19 @@ public class TestDataProvider {
         return MessagePutRequest.builder()
                 .messageId(messageId)
                 .text("New")
+                .build();
+    }
+
+    @Nonnull
+    public static UserDto buildUserDto() {
+        return UserDto.builder()
+                .loginDate(999_999L)
+                .userParentDto(
+                        UserParentDto.builder()
+                                .name("UserName")
+                                .login("login")
+                                .build()
+                )
                 .build();
     }
 }

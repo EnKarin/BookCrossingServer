@@ -5,10 +5,12 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.experimental.SuperBuilder;
 
 import javax.annotation.concurrent.Immutable;
 
 @Immutable
+@SuperBuilder
 @EqualsAndHashCode
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)

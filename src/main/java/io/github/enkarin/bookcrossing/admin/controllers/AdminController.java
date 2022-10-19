@@ -47,9 +47,9 @@ public class AdminController {
                     schema = @Schema(implementation = InfoUsersDto[].class))})
         }
     )
-    @GetMapping("/all")
-    public ResponseEntity<Object[]> userList(@RequestParam @Parameter(description = "Часовой пояс") final int zone) {
-        return ResponseEntity.ok(adminService.findAllUsers(zone).toArray());
+    @GetMapping
+    public ResponseEntity<List<InfoUsersDto>> userList(@RequestParam @Parameter(description = "Часовой пояс") final int zone) {
+        return ResponseEntity.ok(adminService.findAllUsers(zone));
     }
 
     @Operation(
