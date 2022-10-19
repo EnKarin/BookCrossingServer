@@ -7,7 +7,10 @@ import io.github.enkarin.bookcrossing.base.BookCrossingBaseTests;
 import io.github.enkarin.bookcrossing.support.TestDataProvider;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+
+import javax.annotation.Nonnull;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -23,7 +26,7 @@ class AdminControllerTest extends BookCrossingBaseTests {
                         .pathSegment("adm")
                         .queryParam("zone", 0)
                         .build())
-                .headers(headers -> headers.setBearerAuth(generateAccessToken(TestDataProvider.buildAuthAdmin())))
+                .headers(this::setBearerAuth)
                 .exchange()
                 .expectStatus().isOk()
                 .expectBodyList(InfoUsersDto.class)
@@ -40,7 +43,7 @@ class AdminControllerTest extends BookCrossingBaseTests {
                         .pathSegment("adm")
                         .queryParam("zone", 0)
                         .build())
-                .headers(headers -> headers.setBearerAuth(generateAccessToken(TestDataProvider.buildAuthAdmin())))
+                .headers(this::setBearerAuth)
                 .exchange()
                 .expectStatus().isOk()
                 .expectBodyList(InfoUsersDto.class)
@@ -63,7 +66,7 @@ class AdminControllerTest extends BookCrossingBaseTests {
                         .pathSegment("adm", "locked")
                         .queryParam("zone", 0)
                         .build())
-                .headers(headers -> headers.setBearerAuth(generateAccessToken(TestDataProvider.buildAuthAdmin())))
+                .headers(this::setBearerAuth)
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(LockedUserDto.builder().build())
                 .exchange()
@@ -83,7 +86,7 @@ class AdminControllerTest extends BookCrossingBaseTests {
                         .pathSegment("adm", "locked")
                         .queryParam("zone", 0)
                         .build())
-                .headers(headers -> headers.setBearerAuth(generateAccessToken(TestDataProvider.buildAuthAdmin())))
+                .headers(this::setBearerAuth)
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(LockedUserDto.create("Bot", "Заблокировано"))
                 .exchange()
@@ -99,8 +102,12 @@ class AdminControllerTest extends BookCrossingBaseTests {
                         .pathSegment("adm", "nonLocked")
                         .queryParam("login", "Bot")
                         .build())
-                .headers(headers -> headers.setBearerAuth(generateAccessToken(TestDataProvider.buildAuthAdmin())))
+                .headers(this::setBearerAuth)
                 .exchange()
                 .expectStatus().isEqualTo(200);
+    }
+
+    private void setBearerAuth(@Nonnull final HttpHeaders headers) {
+        headers.setBearerAuth(generateAccessToken(TestDataProvider.buildAuthAdmin()));
     }
 }
