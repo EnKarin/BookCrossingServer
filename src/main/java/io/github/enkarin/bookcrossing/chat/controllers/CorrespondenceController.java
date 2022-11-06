@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -42,6 +43,9 @@ public class CorrespondenceController {
     private final CorrespondenceService correspondenceService;
 
     private static final String CORRESPONDENCE = "correspondence";
+    private static final String USER_ID = "userId";
+    private static final String FIRST_USER_ID = "firstUserId";
+    private static final String SECOND_USER_ID = "secondUserId";
 
     @Operation(
             summary = "Создание чата",
@@ -59,7 +63,7 @@ public class CorrespondenceController {
                     schema = @Schema(implementation = UsersCorrKeyDto.class))})
     })
     @PostMapping
-    public ResponseEntity<UsersCorrKeyDto> createCorrespondence(@RequestParam final int userId,
+    public ResponseEntity<UsersCorrKeyDto> createCorrespondence(@RequestHeader(USER_ID) final int userId,
                                                                 final Principal principal) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(correspondenceService.createChat(userId, principal.getName()));
@@ -77,7 +81,7 @@ public class CorrespondenceController {
         }
     )
     @DeleteMapping
-    public ResponseEntity<Void> deleteCorrespondence(@RequestParam @Parameter(description = "Идентификатор пользователя") final int userId,
+    public ResponseEntity<Void> deleteCorrespondence(@RequestHeader(USER_ID) @Parameter(description = "Идентификатор пользователя") final int userId,
                                                      final Principal principal) {
         correspondenceService.deleteChat(userId, principal.getName());
         return ResponseEntity.ok().build();
@@ -100,8 +104,8 @@ public class CorrespondenceController {
         }
     )
     @GetMapping
-    public ResponseEntity<Object[]> getCorrespondence(@RequestParam final int firstUserId,
-                                                      @RequestParam final int secondUserId,
+    public ResponseEntity<Object[]> getCorrespondence(@RequestHeader(FIRST_USER_ID) final int firstUserId,
+                                                      @RequestHeader(SECOND_USER_ID) final int secondUserId,
                                                       @RequestParam final int zone,
                                                       final Principal principal) {
         return ResponseEntity.ok(correspondenceService.getChat(firstUserId, secondUserId, zone, principal.getName()).toArray());

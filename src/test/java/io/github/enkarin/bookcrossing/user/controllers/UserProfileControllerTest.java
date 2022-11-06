@@ -54,10 +54,12 @@ class UserProfileControllerTest extends BookCrossingBaseTests {
         final var response = webClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .pathSegment("user", "profile")
-                        .queryParam("userId", userAlex)
                         .queryParam("zone", 0)
                         .build())
-                .headers(headers -> headers.setBearerAuth(generateAccessToken(TestDataProvider.buildAuthBot())))
+                .headers(headers -> {
+                    headers.setBearerAuth(generateAccessToken(TestDataProvider.buildAuthBot()));
+                    headers.set("userId", String.valueOf(userAlex));
+                })
                 .exchange()
                 .expectStatus().isEqualTo(200)
                 .expectBody(UserPublicProfileDto.class)

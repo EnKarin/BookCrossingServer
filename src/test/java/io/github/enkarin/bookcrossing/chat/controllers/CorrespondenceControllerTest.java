@@ -25,6 +25,10 @@ class CorrespondenceControllerTest extends BookCrossingBaseTests {
     @Autowired
     private MessageService messageService;
 
+    private static final String USER_ID = "userId";
+    private static final String FIRST_USER_ID = "firstUserId";
+    private static final String SECOND_USER_ID = "secondUserId";
+
     @Test
     void createCorrespondenceShouldWork() {
         final var userBotId = createAndSaveUser(TestDataProvider.buildBot()).getUserId();
@@ -194,11 +198,13 @@ class CorrespondenceControllerTest extends BookCrossingBaseTests {
         final var response = webClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .pathSegment("user", "correspondence")
-                        .queryParam("firstUserId", userBot.getUserId())
-                        .queryParam("secondUserId", userAlexId)
                         .queryParam("zone", 0)
                         .build())
-                .headers(headers -> headers.setBearerAuth(generateAccessToken(TestDataProvider.buildAuthAlex())))
+                .headers(headers -> {
+                    headers.setBearerAuth(generateAccessToken(TestDataProvider.buildAuthBot()));
+                    headers.set(FIRST_USER_ID, String.valueOf(userBot.getUserId()));
+                    headers.set(SECOND_USER_ID, String.valueOf(userAlexId));
+                })
                 .exchange()
                 .expectStatus().isEqualTo(200)
                 .expectBodyList(MessageDto.class)
@@ -259,9 +265,11 @@ class CorrespondenceControllerTest extends BookCrossingBaseTests {
         return webClient.method(httpMethod)
                 .uri(uriBuilder -> uriBuilder
                         .pathSegment("user", "correspondence")
-                        .queryParam("userId", userId)
                         .build())
-                .headers(headers -> headers.setBearerAuth(generateAccessToken(TestDataProvider.buildAuthBot())))
+                .headers(headers -> {
+                    headers.setBearerAuth(generateAccessToken(TestDataProvider.buildAuthBot()));
+                    headers.set(USER_ID, String.valueOf(userId));
+                })
                 .exchange()
                 .expectStatus().isEqualTo(status);
     }
@@ -270,11 +278,13 @@ class CorrespondenceControllerTest extends BookCrossingBaseTests {
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .pathSegment("user", "correspondence")
-                        .queryParam("firstUserId", firstUserId)
-                        .queryParam("secondUserId", secondUserId)
                         .queryParam("zone", 0)
                         .build())
-                .headers(headers -> headers.setBearerAuth(generateAccessToken(TestDataProvider.buildAuthBot())))
+                .headers(headers -> {
+                    headers.setBearerAuth(generateAccessToken(TestDataProvider.buildAuthBot()));
+                    headers.set(FIRST_USER_ID, String.valueOf(firstUserId));
+                    headers.set(SECOND_USER_ID, String.valueOf(secondUserId));
+                })
                 .exchange()
                 .expectStatus().isEqualTo(status);
     }
