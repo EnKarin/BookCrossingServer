@@ -10,7 +10,7 @@
 [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=io.github.enkarin%3Abookcrossing&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=io.github.enkarin%3Abookcrossing)
 
 ### Requirements
-1. Java 12 and above
+1. Java 17 and above
 2. Maven
 3. MySQL
 ### The service provides the following functions:
