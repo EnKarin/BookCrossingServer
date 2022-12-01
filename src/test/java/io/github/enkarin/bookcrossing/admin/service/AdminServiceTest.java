@@ -2,8 +2,8 @@ package io.github.enkarin.bookcrossing.admin.service;
 
 import io.github.enkarin.bookcrossing.admin.dto.InfoUsersDto;
 import io.github.enkarin.bookcrossing.admin.dto.LockedUserDto;
-import io.github.enkarin.bookcrossing.base.BookCrossingBaseTests;
 import io.github.enkarin.bookcrossing.exception.UserNotFoundException;
+import io.github.enkarin.bookcrossing.support.BookCrossingBaseTests;
 import io.github.enkarin.bookcrossing.support.TestDataProvider;
 import io.github.enkarin.bookcrossing.user.dto.UserDto;
 import org.junit.jupiter.api.Test;
@@ -52,7 +52,7 @@ class AdminServiceTest extends BookCrossingBaseTests {
     void findAllUsers() {
         final List<UserDto> users = TestDataProvider.buildUsers().stream()
                 .map(this::createAndSaveUser)
-                .collect(Collectors.toList());
+                .toList();
         assertThat(adminService.findAllUsers(0))
                 .hasSize(2)
                 .hasSameElementsAs(users.stream()

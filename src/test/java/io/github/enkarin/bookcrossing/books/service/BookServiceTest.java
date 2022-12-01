@@ -1,11 +1,11 @@
 package io.github.enkarin.bookcrossing.books.service;
 
-import io.github.enkarin.bookcrossing.base.BookCrossingBaseTests;
 import io.github.enkarin.bookcrossing.books.dto.BookDto;
 import io.github.enkarin.bookcrossing.books.dto.BookFiltersRequest;
 import io.github.enkarin.bookcrossing.books.dto.BookModelDto;
 import io.github.enkarin.bookcrossing.exception.BookNotFoundException;
 import io.github.enkarin.bookcrossing.exception.UserNotFoundException;
+import io.github.enkarin.bookcrossing.support.BookCrossingBaseTests;
 import io.github.enkarin.bookcrossing.support.TestDataProvider;
 import io.github.enkarin.bookcrossing.user.dto.UserDto;
 import org.junit.jupiter.api.Test;
@@ -14,7 +14,6 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -45,7 +44,7 @@ class BookServiceTest extends BookCrossingBaseTests {
     void findBookForOwnerShouldWork() {
         final List<UserDto> users = TestDataProvider.buildUsers().stream()
                 .map(this::createAndSaveUser)
-                .collect(Collectors.toList());
+                .toList();
 
         final List<BookDto> books = TestDataProvider.buildBooks();
 
@@ -63,7 +62,7 @@ class BookServiceTest extends BookCrossingBaseTests {
     void findBookForOwnerShouldWorkWithEmptyBookList() {
         final List<UserDto> users = TestDataProvider.buildUsers().stream()
                 .map(this::createAndSaveUser)
-                .collect(Collectors.toList());
+                .toList();
 
         TestDataProvider.buildBooks().forEach(b -> bookService.saveBook(b, users.get(0).getLogin()));
 
@@ -75,7 +74,7 @@ class BookServiceTest extends BookCrossingBaseTests {
         final UserDto user = createAndSaveUser(TestDataProvider.buildBot());
         final int book = TestDataProvider.buildBooks().stream()
                 .map(b -> bookService.saveBook(b, user.getLogin()))
-                        .collect(Collectors.toList()).get(0).getBookId();
+                        .toList().get(0).getBookId();
         assertThat(bookService.findById(book))
                 .usingRecursiveComparison()
                 .isEqualTo(TestDataProvider.buildDorian(book));
@@ -92,7 +91,7 @@ class BookServiceTest extends BookCrossingBaseTests {
     void filterShouldWorkWithOneField() {
         final List<UserDto> users = TestDataProvider.buildUsers().stream()
                 .map(this::createAndSaveUser)
-                .collect(Collectors.toList());
+                .toList();
 
         bookService.saveBook(TestDataProvider.buildDandelion(), users.get(0).getLogin());
         final int book2 = bookService.saveBook(TestDataProvider.buildWolves(), users.get(1).getLogin())
@@ -110,7 +109,7 @@ class BookServiceTest extends BookCrossingBaseTests {
     void filterShouldWorkWithAllField() {
         final List<UserDto> users = TestDataProvider.buildUsers().stream()
                 .map(this::createAndSaveUser)
-                .collect(Collectors.toList());
+                .toList();
 
         bookService.saveBook(TestDataProvider.buildDandelion(), users.get(0).getLogin());
         final int book2 =  bookService.saveBook(TestDataProvider.buildWolves(), users.get(1).getLogin()).getBookId();
@@ -188,7 +187,7 @@ class BookServiceTest extends BookCrossingBaseTests {
     void findAllShouldWork() {
         final List<UserDto> users = TestDataProvider.buildUsers().stream()
                 .map(this::createAndSaveUser)
-                .collect(Collectors.toList());
+                .toList();
 
         final int book1 = bookService.saveBook(TestDataProvider.buildDorian(), users.get(0).getLogin()).getBookId();
         final int book2 = bookService.saveBook(TestDataProvider.buildDandelion(), users.get(1).getLogin()).getBookId();
@@ -203,7 +202,7 @@ class BookServiceTest extends BookCrossingBaseTests {
     void findByTitleShouldWork() {
         final List<UserDto> users = TestDataProvider.buildUsers().stream()
                 .map(this::createAndSaveUser)
-                .collect(Collectors.toList());
+                .toList();
 
         bookService.saveBook(TestDataProvider.buildDandelion(), users.get(0).getLogin());
         final int book1 =  bookService.saveBook(TestDataProvider.buildWolves(), users.get(1).getLogin()).getBookId();
@@ -218,7 +217,7 @@ class BookServiceTest extends BookCrossingBaseTests {
     void findByTitleShouldWorkWithBookNotFound() {
         final List<UserDto> users = TestDataProvider.buildUsers().stream()
                 .map(this::createAndSaveUser)
-                .collect(Collectors.toList());
+                .toList();
 
         bookService.saveBook(TestDataProvider.buildDandelion(), users.get(0).getLogin());
         bookService.saveBook(TestDataProvider.buildWolves(), users.get(1).getLogin());

@@ -1,6 +1,6 @@
 package io.github.enkarin.bookcrossing.security.jwt;
 
-import io.github.enkarin.bookcrossing.base.BookCrossingBaseTests;
+import io.github.enkarin.bookcrossing.support.BookCrossingBaseTests;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;

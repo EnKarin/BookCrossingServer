@@ -1,6 +1,6 @@
 package io.github.enkarin.bookcrossing.user.controllers;
 
-import io.github.enkarin.bookcrossing.base.BookCrossingBaseTests;
+import io.github.enkarin.bookcrossing.support.BookCrossingBaseTests;
 import io.github.enkarin.bookcrossing.support.TestDataProvider;
 import io.github.enkarin.bookcrossing.user.dto.UserProfileDto;
 import io.github.enkarin.bookcrossing.user.dto.UserPublicProfileDto;

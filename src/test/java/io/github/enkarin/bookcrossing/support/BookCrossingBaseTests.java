@@ -1,4 +1,4 @@
-package io.github.enkarin.bookcrossing.base;
+package io.github.enkarin.bookcrossing.support;
 
 import com.icegreen.greenmail.configuration.GreenMailConfiguration;
 import com.icegreen.greenmail.junit5.GreenMailExtension;
@@ -6,10 +6,8 @@ import com.icegreen.greenmail.util.ServerSetupTest;
 import io.github.enkarin.bookcrossing.books.dto.BookModelDto;
 import io.github.enkarin.bookcrossing.books.service.BookService;
 import io.github.enkarin.bookcrossing.chat.repository.CorrespondenceRepository;
-import io.github.enkarin.bookcrossing.init.MySQLInitializer;
 import io.github.enkarin.bookcrossing.registration.dto.LoginRequest;
 import io.github.enkarin.bookcrossing.registration.dto.UserRegistrationDto;
-import io.github.enkarin.bookcrossing.support.TestDataProvider;
 import io.github.enkarin.bookcrossing.user.dto.UserDto;
 import io.github.enkarin.bookcrossing.user.service.UserService;
 import org.junit.jupiter.api.AfterEach;
@@ -34,16 +32,12 @@ public abstract class BookCrossingBaseTests {
 
     @Autowired
     protected JdbcTemplate jdbcTemplate;
-
     @Autowired
     protected WebTestClient webClient;
-
     @Autowired
     protected UserService userService;
-
     @Autowired
     protected BookService bookService;
-
     @Autowired
     private CorrespondenceRepository correspondenceRepository;
 

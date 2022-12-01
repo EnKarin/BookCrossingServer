@@ -25,7 +25,7 @@ public class SwaggerConfig {
     @Bean
     public OpenAPI customOpenAPI() {
         final Schema<?> newErrorSchema = new Schema<Map<String, String>>()
-                .addProperties("message", new StringSchema().example("correspondence: Чата не существует"));
+                .addProperty("message", new StringSchema().example("correspondence: Чата не существует"));
         return new OpenAPI()
                 .components(new Components()
                 .addSchemas("NewErrorBody", newErrorSchema)

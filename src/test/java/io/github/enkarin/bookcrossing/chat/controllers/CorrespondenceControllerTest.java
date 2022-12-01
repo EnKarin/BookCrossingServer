@@ -2,7 +2,7 @@ package io.github.enkarin.bookcrossing.chat.controllers;
 
 import io.github.enkarin.bookcrossing.admin.dto.LockedUserDto;
 import io.github.enkarin.bookcrossing.admin.service.AdminService;
-import io.github.enkarin.bookcrossing.base.BookCrossingBaseTests;
+import io.github.enkarin.bookcrossing.support.BookCrossingBaseTests;
 import io.github.enkarin.bookcrossing.chat.dto.MessageDto;
 import io.github.enkarin.bookcrossing.chat.dto.MessageRequest;
 import io.github.enkarin.bookcrossing.chat.dto.UsersCorrKeyDto;
