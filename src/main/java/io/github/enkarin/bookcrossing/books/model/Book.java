@@ -14,6 +14,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Set;
 
@@ -23,6 +24,7 @@ import java.util.Set;
 @Table(name = "t_book")
 public class Book implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -2338626292552177485L;
 
     @Id

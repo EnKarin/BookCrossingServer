@@ -12,7 +12,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -30,8 +29,7 @@ public class MessageAlertsService {
                 .filter(m -> m.getCorrespondence().getUsersCorrKey().getFirstUser().isAccountNonLocked())
                 .filter(m -> m.getCorrespondence().getUsersCorrKey().getSecondUser().isAccountNonLocked())
                 .filter(m -> m.getCorrespondence().getUsersCorrKey().getFirstUser().isEnabled())
-                .filter(m -> m.getCorrespondence().getUsersCorrKey().getSecondUser().isEnabled())
-                .collect(Collectors.toList());
+                .filter(m -> m.getCorrespondence().getUsersCorrKey().getSecondUser().isEnabled()).toList();
         if (!unread.isEmpty()) {
             User user;
             for (final Message message : unread) {

@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -29,7 +28,7 @@ public class BookmarksService {
         user.getBookmarks().add(book);
         return userRepository.save(user).getBookmarks().stream()
                 .map(BookModelDto::fromBook)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Transactional
@@ -48,6 +47,6 @@ public class BookmarksService {
     public List<BookModelDto> getAll(final String login) {
         return userRepository.findByLogin(login).orElseThrow().getBookmarks().stream()
                 .map(BookModelDto::fromBook)
-                .collect(Collectors.toList());
+                .toList();
     }
 }

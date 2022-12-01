@@ -30,7 +30,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -89,7 +88,7 @@ public class UserService {
         final Role role = roleRepository.getRoleByName("ROLE_USER");
         return userRepository.findByUserRoles(role).stream()
                 .map(u -> UserPublicProfileDto.fromUser(u, zone))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public AuthResponse findByLoginAndPassword(final LoginRequest login) {

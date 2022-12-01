@@ -20,7 +20,7 @@ import javax.validation.constraints.Size;
 @SuperBuilder
 @Validated
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-@Schema(description = "Сущность пользователя")
+@Schema(description = "Сущность пользователя", requiredProperties = {"password, passwordConfirm"})
 public class UserRegistrationDto {
 
     @Schema(description = "Имя", example = "Alex")
@@ -36,7 +36,7 @@ public class UserRegistrationDto {
     @Size(min = 6, message = "password: Пароль должен содержать больше 6 символов")
     private final String password;
 
-    @Schema(description = "Подвержение пароля", example = "123456", required = true)
+    @Schema(description = "Подвержение пароля", example = "123456")
     private final String passwordConfirm;
 
     @Schema(description = "Почта", example = "al@yandex.ru")

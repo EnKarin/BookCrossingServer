@@ -17,7 +17,7 @@ import javax.validation.constraints.Size;
 @Validated
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-@Schema(description = "Сущность для изменения данных пользователя")
+@Schema(description = "Сущность для изменения данных пользователя", requiredProperties = {"newPassword", "passwordConfirm"})
 public class UserPutProfileDto {
 
     @Schema(description = "Имя", example = "Alex")
@@ -28,12 +28,12 @@ public class UserPutProfileDto {
     @NotBlank(message = "password: Пароль должен содержать хотя бы один видимый символ")
     private final String oldPassword;
 
-    @Schema(description = "Новый пароль", example = "123456s", required = true)
+    @Schema(description = "Новый пароль", example = "123456s")
     @NotBlank(message = "password: Пароль должен содержать хотя бы один видимый символ")
     @Size(min = 6, message = "Пароль должен содержать больше 6 символов")
     private final String newPassword;
 
-    @Schema(description = "Подвержение пароля", example = "123456s", required = true)
+    @Schema(description = "Подвержение пароля", example = "123456s")
     private final String passwordConfirm;
 
     @Schema(description = "Город", example = "Новосибирск")

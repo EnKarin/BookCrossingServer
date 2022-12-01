@@ -16,6 +16,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import java.io.Serial;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Set;
@@ -26,6 +27,7 @@ import java.util.Set;
 @Table(name = "t_user")
 public class User implements UserDetails {
 
+    @Serial
     private static final long serialVersionUID = -6289855612211696141L;
 
     @Id
@@ -102,10 +104,9 @@ public class User implements UserDetails {
         if (this == obj) {
             return true;
         }
-        if (!(obj instanceof User)) {
+        if (!(obj instanceof final User user)) {
             return false;
         }
-        final User user = (User) obj;
         return Objects.equals(userId, user.userId);
     }
 
