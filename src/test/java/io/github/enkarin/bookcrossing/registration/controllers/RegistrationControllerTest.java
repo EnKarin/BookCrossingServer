@@ -1,7 +1,7 @@
 package io.github.enkarin.bookcrossing.registration.controllers;
 
 import com.icegreen.greenmail.util.GreenMailUtil;
-import io.github.enkarin.bookcrossing.base.BookCrossingBaseTests;
+import io.github.enkarin.bookcrossing.support.BookCrossingBaseTests;
 import io.github.enkarin.bookcrossing.registration.dto.AuthResponse;
 import io.github.enkarin.bookcrossing.registration.dto.UserRegistrationDto;
 import io.github.enkarin.bookcrossing.support.TestDataProvider;

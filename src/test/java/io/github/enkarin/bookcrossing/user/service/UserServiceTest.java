@@ -1,12 +1,12 @@
 package io.github.enkarin.bookcrossing.user.service;
 
-import io.github.enkarin.bookcrossing.base.BookCrossingBaseTests;
 import io.github.enkarin.bookcrossing.exception.EmailFailedException;
 import io.github.enkarin.bookcrossing.exception.InvalidPasswordException;
 import io.github.enkarin.bookcrossing.exception.LoginFailedException;
 import io.github.enkarin.bookcrossing.exception.PasswordsDontMatchException;
 import io.github.enkarin.bookcrossing.exception.TokenNotFoundException;
 import io.github.enkarin.bookcrossing.exception.UserNotFoundException;
+import io.github.enkarin.bookcrossing.support.BookCrossingBaseTests;
 import io.github.enkarin.bookcrossing.support.TestDataProvider;
 import io.github.enkarin.bookcrossing.user.dto.UserDto;
 import io.github.enkarin.bookcrossing.user.dto.UserProfileDto;
@@ -16,7 +16,6 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -93,7 +92,7 @@ class UserServiceTest extends BookCrossingBaseTests {
     void findAllTest() {
         final List<UserDto> users = TestDataProvider.buildUsers().stream()
                 .map(this::createAndSaveUser)
-                .collect(Collectors.toList());
+                .toList();
 
         final var foundUsers = userService.findAllUsers(GM_TIME_ZERO);
         assertThat(foundUsers).hasSize(users.size());

@@ -3,23 +3,26 @@ package io.github.enkarin.bookcrossing.security;
 import io.github.enkarin.bookcrossing.handlers.AuthenticationEntryPointHandler;
 import io.github.enkarin.bookcrossing.security.jwt.JwtFilter;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @RequiredArgsConstructor
 @Configuration
 @EnableWebSecurity
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+public class SecurityConfig {
 
     private final JwtFilter jwtFilter;
     private final AuthenticationEntryPointHandler handler;
 
-    @Override
-    protected void configure(final HttpSecurity httpSecurity) throws Exception {
+    @SneakyThrows
+    @Bean
+    protected SecurityFilterChain filterChain(final HttpSecurity httpSecurity) {
         httpSecurity
                 .requiresChannel().antMatchers().requiresSecure()
                 .and()
@@ -36,6 +39,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .exceptionHandling().authenticationEntryPoint(handler)
                 .and()
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+        return httpSecurity.build();
     }
-
 }

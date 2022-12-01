@@ -1,6 +1,6 @@
 package io.github.enkarin.bookcrossing.refresh.service;
 
-import io.github.enkarin.bookcrossing.base.BookCrossingBaseTests;
+import io.github.enkarin.bookcrossing.support.BookCrossingBaseTests;
 import io.github.enkarin.bookcrossing.exception.RefreshTokenInvalidException;
 import io.github.enkarin.bookcrossing.exception.TokenNotFoundException;
 import io.github.enkarin.bookcrossing.exception.UserNotFoundException;

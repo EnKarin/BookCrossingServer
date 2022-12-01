@@ -1,6 +1,6 @@
 package io.github.enkarin.bookcrossing.books.controllers;
 
-import io.github.enkarin.bookcrossing.base.BookCrossingBaseTests;
+import io.github.enkarin.bookcrossing.support.BookCrossingBaseTests;
 import io.github.enkarin.bookcrossing.books.dto.BookDto;
 import io.github.enkarin.bookcrossing.books.dto.BookModelDto;
 import io.github.enkarin.bookcrossing.books.service.BookService;
@@ -12,7 +12,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -52,7 +51,7 @@ class MyBookControllerTest extends BookCrossingBaseTests {
     void bookListTest() {
         final List<UserDto> users = TestDataProvider.buildUsers().stream()
                 .map(this::createAndSaveUser)
-                .collect(Collectors.toList());
+                .toList();
         enabledUser(users.get(0).getUserId());
         enabledUser(users.get(1).getUserId());
 
@@ -73,7 +72,7 @@ class MyBookControllerTest extends BookCrossingBaseTests {
     void bookEmptyListTest() {
         final List<UserDto> users = TestDataProvider.buildUsers().stream()
                 .map(this::createAndSaveUser)
-                .collect(Collectors.toList());
+                .toList();
         enabledUser(users.get(0).getUserId());
         enabledUser(users.get(1).getUserId());
         bookService.saveBook(TestDataProvider.buildDandelion(), users.get(1).getLogin());
@@ -88,7 +87,7 @@ class MyBookControllerTest extends BookCrossingBaseTests {
         enabledUser(user.getUserId());
         final List<BookModelDto> book = TestDataProvider.buildBooks().stream()
                 .map(b -> bookService.saveBook(b, user.getLogin()))
-                .collect(Collectors.toList());
+                .toList();
         checkDelete(generateAccessToken(TestDataProvider.buildAuthBot()),
                 book.get(0).getBookId(), 200);
         assertThat(bookService.findBookForOwner(user.getLogin())).hasSize(2);

@@ -46,7 +46,7 @@ public class AttachmentService {
                 attachment.setExpansion(expansion);
                 book.setAttachment(attachment);
                 attachRepository.save(attachment);
-                return BookModelDto.fromBook(bookRepository.getById(book.getBookId()));
+                return BookModelDto.fromBook(bookRepository.getReferenceById(book.getBookId()));
             } else {
                 throw new BadRequestException("Недопустимый формат файла");
             }

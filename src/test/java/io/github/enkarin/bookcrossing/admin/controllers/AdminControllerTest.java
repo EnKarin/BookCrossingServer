@@ -3,7 +3,7 @@ package io.github.enkarin.bookcrossing.admin.controllers;
 import io.github.enkarin.bookcrossing.admin.dto.InfoUsersDto;
 import io.github.enkarin.bookcrossing.admin.dto.LockedUserDto;
 import io.github.enkarin.bookcrossing.admin.service.AdminService;
-import io.github.enkarin.bookcrossing.base.BookCrossingBaseTests;
+import io.github.enkarin.bookcrossing.support.BookCrossingBaseTests;
 import io.github.enkarin.bookcrossing.support.TestDataProvider;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
