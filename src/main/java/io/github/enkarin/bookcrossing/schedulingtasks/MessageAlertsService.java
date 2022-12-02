@@ -29,7 +29,6 @@ public class MessageAlertsService {
     public void sendAlerts() {
         final Map<User, Integer> map = new HashMap<>();
         final List<Message> unread = messageRepository.findAll().stream()
-                .peek(m -> log.info("For messageId {} isDeclaim = {} isAlertSent = {}", m.getMessageId(), m.isDeclaim(), m.isAlertSent()))
                 .filter(Predicate.not(Message::isDeclaim))
                 .filter(Predicate.not(Message::isAlertSent))
                 .filter(m -> m.getCorrespondence().getUsersCorrKey().getFirstUser().isAccountNonLocked())
