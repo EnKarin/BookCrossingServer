@@ -21,7 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -64,6 +63,7 @@ public class CorrespondenceService {
         correspondenceRepository.delete(correspondence);
     }
 
+    @Transactional
     public List<MessageDto> getChat(final int firstUserId, final int secondUserId, final int zone, final String login) {
         final User user = userRepository.findByLogin(login).orElseThrow();
         final User fUser = userRepository.findById(firstUserId)
@@ -83,19 +83,20 @@ public class CorrespondenceService {
         throw new NoAccessToChatException();
     }
 
-    private List<MessageDto> getMessages(final Predicate<Message> rules, final Correspondence correspondence,
-                                         final int zone, final User user) {
-        final List<MessageDto> responses = correspondence.getMessage().stream()
+    @Transactional
+    public List<MessageDto> getMessages(final Predicate<Message> rules, final Correspondence correspondence,
+                                        final int zone, final User user) {
+        final var messages = correspondence.getMessage();
+        final var response = messages.stream()
                 .filter(rules)
                 .map(m -> MessageDto.fromMessageAndZone(m, zone))
                 .sorted(Comparator.comparing(MessageDto::getDepartureDate))
-                .collect(Collectors.toList());
-        correspondence.setMessage(correspondence.getMessage().stream()
+                .toList();
+        messages.stream()
                 .filter(m -> !user.equals(m.getSender()))
                 .filter(Predicate.not(Message::isDeclaim))
                 .peek(m -> m.setDeclaim(true))
-                .map(messageRepository::save)
-                .collect(Collectors.toList()));
-        return responses;
+                .forEach(messageRepository::save);
+        return response;
     }
 }
