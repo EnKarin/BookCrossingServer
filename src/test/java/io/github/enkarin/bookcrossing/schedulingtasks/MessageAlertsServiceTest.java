@@ -78,7 +78,7 @@ class MessageAlertsServiceTest extends BookCrossingBaseTests {
         enabledUser(userAlex.getUserId());
         final var key = correspondenceService.createChat(userBot.getUserId(), userAlex.getLogin());
         final var messageId = messageService.sendMessage(TestDataProvider.buildMessageRequest(key), userBot.getLogin()).getMessageId();
-        correspondenceService.getChat(key.getFirstUserId(), key.getSecondUserId(), 0, userAlex.getLogin());
+        jdbcTemplate.update("update t_messages set declaim = 1 where message_id = " + messageId);
 
         messageAlertsService.sendAlerts();
 

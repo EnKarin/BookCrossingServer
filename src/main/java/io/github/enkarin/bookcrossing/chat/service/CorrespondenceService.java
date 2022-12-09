@@ -6,7 +6,6 @@ import io.github.enkarin.bookcrossing.chat.model.Correspondence;
 import io.github.enkarin.bookcrossing.chat.model.Message;
 import io.github.enkarin.bookcrossing.chat.model.UsersCorrKey;
 import io.github.enkarin.bookcrossing.chat.repository.CorrespondenceRepository;
-import io.github.enkarin.bookcrossing.chat.repository.MessageRepository;
 import io.github.enkarin.bookcrossing.exception.CannotBeCreatedCorrespondenceException;
 import io.github.enkarin.bookcrossing.exception.ChatAlreadyCreatedException;
 import io.github.enkarin.bookcrossing.exception.ChatNotFoundException;
@@ -18,9 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Comparator;
 import java.util.List;
-import java.util.function.Predicate;
 
 @RequiredArgsConstructor
 @Service
@@ -28,7 +25,7 @@ import java.util.function.Predicate;
 public class CorrespondenceService {
 
     private final CorrespondenceRepository correspondenceRepository;
-    private final MessageRepository messageRepository;
+    private final CorrespondenceServiceHelper correspondenceServiceHelper;
     private final UserRepository userRepository;
 
     @Transactional
@@ -63,7 +60,6 @@ public class CorrespondenceService {
         correspondenceRepository.delete(correspondence);
     }
 
-    @Transactional
     public List<MessageDto> getChat(final int firstUserId, final int secondUserId, final int zone, final String login) {
         final User user = userRepository.findByLogin(login).orElseThrow();
         final User fUser = userRepository.findById(firstUserId)
@@ -76,27 +72,10 @@ public class CorrespondenceService {
         final Correspondence correspondence = correspondenceRepository.findById(usersCorrKey)
                 .orElseThrow(ChatNotFoundException::new);
         if (user.equals(fUser)) {
-            return getMessages(Message::isShownFirstUser, correspondence, zone, user);
+            return correspondenceServiceHelper.getMessages(Message::isShownFirstUser, correspondence, zone, user);
         } else if (user.equals(sUser)) {
-            return getMessages(Message::isShownSecondUser, correspondence, zone, user);
+            return correspondenceServiceHelper.getMessages(Message::isShownSecondUser, correspondence, zone, user);
         }
         throw new NoAccessToChatException();
-    }
-
-    @Transactional
-    public List<MessageDto> getMessages(final Predicate<Message> rules, final Correspondence correspondence,
-                                        final int zone, final User user) {
-        final var messages = correspondence.getMessage();
-        final var response = messages.stream()
-                .filter(rules)
-                .map(m -> MessageDto.fromMessageAndZone(m, zone))
-                .sorted(Comparator.comparing(MessageDto::getDepartureDate))
-                .toList();
-        messages.stream()
-                .filter(m -> !user.equals(m.getSender()))
-                .filter(Predicate.not(Message::isDeclaim))
-                .peek(m -> m.setDeclaim(true))
-                .forEach(messageRepository::save);
-        return response;
     }
 }
