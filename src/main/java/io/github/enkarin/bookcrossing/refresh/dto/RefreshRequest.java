@@ -11,9 +11,10 @@ import javax.annotation.concurrent.Immutable;
 @Immutable
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Schema(description = "Сущность для обновления токена", requiredProperties = "refresh")
 public class RefreshRequest {
 
-    @Schema(description = "Токен обновления", example = "cac2ce3e-9ff0-49a7-8afc-3dcae34eafea", required = true)
+    @Schema(description = "Токен обновления", example = "cac2ce3e-9ff0-49a7-8afc-3dcae34eafea")
     private final String refresh;
 
     @JsonCreator

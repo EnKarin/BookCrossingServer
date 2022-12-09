@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -47,6 +46,6 @@ public class AdminService {
         final Role role = roleRepository.getRoleByName("ROLE_USER");
         return userRepository.findByUserRoles(role).stream()
                 .map(u -> InfoUsersDto.fromUser(u, zone))
-                .collect(Collectors.toList());
+                .toList();
     }
 }

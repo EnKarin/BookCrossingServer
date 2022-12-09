@@ -17,7 +17,7 @@ import javax.validation.constraints.Size;
 @Getter
 @Validated
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-@Schema(description = "Сущность для смены пароля")
+@Schema(description = "Сущность для смены пароля", requiredProperties = "passwordConfirm")
 public class UserPasswordDto {
 
     @Schema(description = "Пароль", example = "123456")
@@ -25,7 +25,7 @@ public class UserPasswordDto {
     @Size(min = 6, message = "Пароль должен содержать больше 6 символов")
     private final String password;
 
-    @Schema(description = "Подвержение пароля", example = "123456", required = true)
+    @Schema(description = "Подвержение пароля", example = "123456")
     private final String passwordConfirm;
 
     @JsonCreator

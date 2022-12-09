@@ -1,11 +1,11 @@
 package io.github.enkarin.bookcrossing.books.service;
 
-import io.github.enkarin.bookcrossing.support.BookCrossingBaseTests;
 import io.github.enkarin.bookcrossing.books.dto.AttachmentMultipartDto;
 import io.github.enkarin.bookcrossing.books.dto.BookModelDto;
 import io.github.enkarin.bookcrossing.exception.AttachmentNotFoundException;
 import io.github.enkarin.bookcrossing.exception.BadRequestException;
 import io.github.enkarin.bookcrossing.exception.BookNotFoundException;
+import io.github.enkarin.bookcrossing.support.BookCrossingBaseTests;
 import io.github.enkarin.bookcrossing.support.TestDataProvider;
 import io.github.enkarin.bookcrossing.user.dto.UserDto;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,7 +22,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -41,7 +40,7 @@ class AttachmentServiceTest extends BookCrossingBaseTests {
     void create() {
         users = TestDataProvider.buildUsers().stream()
                 .map(this::createAndSaveUser)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @ParameterizedTest

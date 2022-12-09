@@ -21,7 +21,6 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
@@ -39,7 +38,7 @@ public abstract class BookCrossingBaseTests {
     @Autowired
     protected BookService bookService;
     @Autowired
-    private CorrespondenceRepository correspondenceRepository;
+    protected CorrespondenceRepository correspondenceRepository;
 
     @RegisterExtension
     protected static final GreenMailExtension GREEN_MAIL = new GreenMailExtension(ServerSetupTest.SMTP)
@@ -75,6 +74,6 @@ public abstract class BookCrossingBaseTests {
         return TestDataProvider.buildBooks().stream()
                 .map(b -> bookService.saveBook(b, user))
                 .map(BookModelDto::getBookId)
-                .collect(Collectors.toList());
+                .toList();
     }
 }

@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import java.io.Serial;
 import java.util.Objects;
 import java.util.Set;
 
@@ -19,6 +20,7 @@ import java.util.Set;
 @Table(name = "t_role")
 public class Role implements GrantedAuthority {
 
+    @Serial
     private static final long serialVersionUID = -6364597624261857651L;
 
     @Id
@@ -40,10 +42,9 @@ public class Role implements GrantedAuthority {
         if (this == obj) {
             return true;
         }
-        if (!(obj instanceof Role)) {
+        if (!(obj instanceof final Role role)) {
             return false;
         }
-        final Role role = (Role) obj;
         return Objects.equals(roleId, role.roleId);
     }
 

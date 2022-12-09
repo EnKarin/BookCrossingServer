@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -42,7 +41,7 @@ public class BookService {
     public List<BookModelDto> findBookForOwner(final String login) {
         return bookRepository.findBooksByOwner(userRepository.findByLogin(login).orElseThrow()).stream()
                 .map(BookModelDto::fromBook)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public BookModelDto findById(final int bookId) {
@@ -56,47 +55,47 @@ public class BookService {
             books = books.stream()
                     .filter(book -> book.getGenre() != null)
                     .filter(book -> book.getGenre().equalsIgnoreCase(request.getGenre()))
-                    .collect(Collectors.toList());
+                    .toList();
         }
         if (request.getAuthor() != null) {
             books = books.stream()
                     .filter(book -> book.getAuthor() != null)
                     .filter(book -> book.getAuthor().equalsIgnoreCase(request.getAuthor()))
-                    .collect(Collectors.toList());
+                    .toList();
         }
         if (request.getPublishingHouse() != null) {
             books = books.stream()
                     .filter(book -> book.getPublishingHouse() != null)
                     .filter(book -> book.getPublishingHouse().equalsIgnoreCase(request.getPublishingHouse()))
-                    .collect(Collectors.toList());
+                    .toList();
         }
         if (request.getYear() != 0) {
             books = books.stream()
                     .filter(book -> book.getYear() == request.getYear())
-                    .collect(Collectors.toList());
+                    .toList();
         }
         if (request.getTitle() != null) {
             books = books.stream()
                     .filter(book -> book.getTitle().equalsIgnoreCase(request.getTitle()))
-                    .collect(Collectors.toList());
+                    .toList();
         }
         if (request.getCity() != null) {
             books = books.stream()
                     .filter(book -> book.getOwner().getCity() != null)
                     .filter(book -> book.getOwner().getCity().equalsIgnoreCase(request.getCity()))
-                    .collect(Collectors.toList());
+                    .toList();
         }
         return books.stream()
                 .filter(b -> b.getOwner().isAccountNonLocked())
                 .map(BookModelDto::fromBook)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public List<BookModelDto> findAll() {
         return bookRepository.findAll().stream()
                 .filter(b -> b.getOwner().isAccountNonLocked())
                 .map(BookModelDto::fromBook)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Transactional
@@ -112,6 +111,6 @@ public class BookService {
         return bookRepository.findBooksByTitleIgnoreCase(title).stream()
                 .filter(b -> b.getOwner().isAccountNonLocked())
                 .map(BookModelDto::fromBook)
-                .collect(Collectors.toList());
+                .toList();
     }
 }

@@ -13,6 +13,7 @@ import javax.persistence.Lob;
 import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -24,6 +25,7 @@ import java.util.Objects;
 @Table(name = "t_attach")
 public class Attachment implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 4600249981575739954L;
 
     @Id
@@ -45,10 +47,9 @@ public class Attachment implements Serializable {
         if (this == obj) {
             return true;
         }
-        if (!(obj instanceof Attachment)) {
+        if (!(obj instanceof final Attachment that)) {
             return false;
         }
-        final Attachment that = (Attachment) obj;
         return Objects.equals(attachId, that.attachId);
     }
 

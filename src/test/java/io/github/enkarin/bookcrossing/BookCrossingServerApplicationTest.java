@@ -9,8 +9,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class BookCrossingServerApplicationTest extends BookCrossingBaseTests {
 
+    @Autowired
+    private ApplicationContext context;
+
     @Test
-    void contextLoads(@Autowired final ApplicationContext context) {
+    void contextLoads() {
         assertThat(context).isNotNull();
     }
 }

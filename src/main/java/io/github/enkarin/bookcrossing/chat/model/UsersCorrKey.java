@@ -7,6 +7,7 @@ import lombok.Setter;
 import javax.persistence.Embeddable;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -15,6 +16,7 @@ import java.util.Objects;
 @Setter
 public class UsersCorrKey implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -4320535988539224004L;
 
     @ManyToOne
@@ -30,10 +32,9 @@ public class UsersCorrKey implements Serializable {
         if (this == obj) {
             return true;
         }
-        if (!(obj instanceof UsersCorrKey)) {
+        if (!(obj instanceof final UsersCorrKey usersCorrKey)) {
             return false;
         }
-        final UsersCorrKey usersCorrKey = (UsersCorrKey) obj;
         return Objects.equals(firstUser, usersCorrKey.firstUser) && Objects.equals(secondUser, usersCorrKey.secondUser);
     }
 
