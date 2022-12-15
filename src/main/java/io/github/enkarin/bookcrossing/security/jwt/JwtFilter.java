@@ -2,7 +2,6 @@ package io.github.enkarin.bookcrossing.security.jwt;
 
 import io.github.enkarin.bookcrossing.user.service.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.java.Log;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,7 +19,6 @@ import java.util.NoSuchElementException;
 import static org.springframework.util.StringUtils.hasText;
 
 @Component
-@Log
 @RequiredArgsConstructor
 public class JwtFilter extends GenericFilterBean {
 
