@@ -12,3 +12,8 @@ spring:
 server:
     ssl:
         enabled: false
+logging:
+    level:
+        org.testcontainers: INFO
+        com.github.dockerjava: WARN
+        org.springframework.orm.jpa.JpaTransactionManager: DEBUG

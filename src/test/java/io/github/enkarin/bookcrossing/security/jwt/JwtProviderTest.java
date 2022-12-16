@@ -21,7 +21,8 @@ class JwtProviderTest extends BookCrossingBaseTests {
                 .isFalse();
         assertThat(output)
                 .contains("ERROR")
-                .contains("JwtProvider - Token expired");
+                .contains("i.g.e.b.security.jwt.JwtProvider")
+                .contains("Token expired");
     }
 
     @Test
@@ -30,6 +31,7 @@ class JwtProviderTest extends BookCrossingBaseTests {
                 .isFalse();
         assertThat(output)
                 .contains("ERROR")
-                .contains("JwtProvider - invalid token");
+                .contains("i.g.e.b.security.jwt.JwtProvider")
+                .contains("invalid token");
     }
 }
