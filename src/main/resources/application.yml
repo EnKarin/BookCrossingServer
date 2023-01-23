@@ -24,6 +24,7 @@ spring:
                     characterEncoding: utf-8
                     CharSet: utf-8
                     useUnicode: true
+                default_schema: bookcrossing
         open-in-view: false
     datasource:
         url: jdbc:postgresql://localhost:5432/bookcrossing

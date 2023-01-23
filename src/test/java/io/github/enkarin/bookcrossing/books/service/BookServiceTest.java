@@ -152,7 +152,7 @@ class BookServiceTest extends BookCrossingBaseTests {
 
         bookService.saveBook(TestDataProvider.buildDorian(), user1.getLogin());
 
-        jdbcTemplate.update("update t_user set account_non_locked = false where user_id = ?", user1.getUserId());
+        jdbcTemplate.update("update bookcrossing.t_user set account_non_locked = false where user_id = ?", user1.getUserId());
 
         assertThat(bookService.filter(BookFiltersRequest.create(null, null, null, null,
                 "publishing_house", 0)))
@@ -166,7 +166,7 @@ class BookServiceTest extends BookCrossingBaseTests {
         final BookModelDto book = bookService.saveBook(TestDataProvider.buildWolves(), user1.getLogin());
 
         bookService.deleteBook(book.getBookId());
-        assertThat(jdbcTemplate.queryForObject("select exists(select * from t_book where book_id = ?)",
+        assertThat(jdbcTemplate.queryForObject("select exists(select * from bookcrossing.t_book where book_id = ?)",
                         Boolean.class, book.getBookId()))
                 .isFalse();
     }

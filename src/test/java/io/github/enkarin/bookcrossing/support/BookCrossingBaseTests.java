@@ -63,7 +63,7 @@ public abstract class BookCrossingBaseTests {
     }
 
     protected void enabledUser(final int userId) {
-        jdbcTemplate.update("update t_user set enabled = true where user_id = " + userId);
+        jdbcTemplate.update("update bookcrossing.t_user set enabled = true where user_id = " + userId);
     }
 
     protected String generateAccessToken(final LoginRequest request) {

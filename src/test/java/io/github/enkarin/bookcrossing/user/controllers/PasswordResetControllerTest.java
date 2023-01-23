@@ -32,7 +32,7 @@ class PasswordResetControllerTest extends BookCrossingBaseTests {
                 .exchange()
                 .expectStatus().isEqualTo(200);
 
-        final var token = jdbcTemplate.queryForObject("select confirmation_mail from t_action_mail_user where type = 1", String.class);
+        final var token = jdbcTemplate.queryForObject("select confirmation_mail from bookcrossing.t_action_mail_user where type = 1", String.class);
         webClient.post()
                 .uri(uriBuilder -> uriBuilder
                         .pathSegment("reset", "update")

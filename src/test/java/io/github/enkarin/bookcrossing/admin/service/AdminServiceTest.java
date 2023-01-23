@@ -36,7 +36,7 @@ class AdminServiceTest extends BookCrossingBaseTests {
     @Test
     void nonLockedUser() {
         final UserDto user = createAndSaveUser(TestDataProvider.buildAlex());
-        jdbcTemplate.update("update t_user set account_non_locked = false where user_id = " + user.getUserId());
+        jdbcTemplate.update("update bookcrossing.t_user set account_non_locked = false where user_id = " + user.getUserId());
         assertThat(adminService.nonLockedUser(user.getLogin())).isTrue();
     }
 

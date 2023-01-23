@@ -91,7 +91,7 @@ class MyBookControllerTest extends BookCrossingBaseTests {
         checkDelete(generateAccessToken(TestDataProvider.buildAuthBot()),
                 book.get(0).getBookId(), 200);
         assertThat(bookService.findBookForOwner(user.getLogin())).hasSize(2);
-        assertThat(jdbcTemplate.queryForObject("select exists(select * from t_book where book_id=?)", Boolean.class,
+        assertThat(jdbcTemplate.queryForObject("select exists(select * from bookcrossing.t_book where book_id=?)", Boolean.class,
                 book.get(0).getBookId())).isFalse();
     }
 

@@ -147,7 +147,7 @@ class CorrespondenceControllerTest extends BookCrossingBaseTests {
 
         execute(HttpMethod.DELETE, userAlexId, 200);
 
-        assertThat(jdbcTemplate.queryForObject("select exists(select * from t_correspondence where first_user_id=?)", Boolean.class, userBot.getUserId()))
+        assertThat(jdbcTemplate.queryForObject("select exists(select * from bookcrossing.t_correspondence where first_user_id=?)", Boolean.class, userBot.getUserId()))
                 .isFalse();
     }
 
