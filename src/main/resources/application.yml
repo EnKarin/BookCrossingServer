@@ -17,7 +17,7 @@ spring:
     jpa:
         hibernate:
             ddl-auto: create
-        database-platform: org.hibernate.dialect.MySQL8Dialect
+        database-platform: org.hibernate.dialect.PostgreSQLDialect
         properties:
             hibernate:
                 connection:
@@ -26,10 +26,10 @@ spring:
                     useUnicode: true
         open-in-view: false
     datasource:
-        url: jdbc:mysql://localhost:3306/bookcrossing
-        username: root
-        password: root
-        driver-class-name: com.mysql.cj.jdbc.Driver
+        url: jdbc:postgresql://localhost:5432/bookcrossing
+        username: postgres
+        password: 123456
+        driver-class-name: org.postgresql.Driver
     servlet:
         multipart:
             max-file-size: 5MB

@@ -1,8 +1,4 @@
-create table hibernate_sequence (
-    next_val bigint
-);
-
-insert into hibernate_sequence values ( 1 );
+create sequence hibernate_sequence start 1 increment 1;
 
 create table t_action_mail_user (
     confirmation_mail varchar(255) not null,
@@ -13,7 +9,7 @@ create table t_action_mail_user (
 
 create table t_attach (
     attach_id integer not null,
-    data longblob,
+    data bigint,
     expansion varchar(255),
     primary key (attach_id)
 );
@@ -43,11 +39,11 @@ create table t_correspondence (
 
 create table t_messages (
     message_id bigint not null,
-    alert_sent bit not null,
-    declaim bit not null,
+    alert_sent boolean not null,
+    declaim boolean not null,
     departure_date bigint not null,
-    shown_first_user bit not null,
-    shown_second_user bit not null,
+    shown_first_user boolean not null,
+    shown_second_user boolean not null,
     text varchar(255),
     correspondence_first_user_id integer,
     correspondence_second_user_id integer,
@@ -58,7 +54,7 @@ create table t_messages (
 create table t_refresh (
     refresh_id varchar(255) not null,
     date bigint not null,
-    user varchar(255),
+    r_user varchar(255),
     primary key (refresh_id)
 );
 
@@ -70,10 +66,10 @@ create table t_role (
 
 create table t_user (
     user_id integer not null,
-    account_non_locked bit not null,
+    account_non_locked boolean not null,
     city varchar(255),
     email varchar(255),
-    enabled bit not null,
+    enabled boolean not null,
     login varchar(255),
     login_date bigint not null,
     name varchar(255),
@@ -135,7 +131,7 @@ alter table t_user_role
 insert into t_role (role_id, name) values (0, 'ROLE_ADMIN'), (1, 'ROLE_USER');
 
 insert into t_user(user_id, email, name, login, password, account_non_locked, enabled, login_date)
-values (0, "al@mail.ru", "superUser", "admin", "$2a$10$suA9HnXlQoDSH0AQ/.Y60.JX/FxBkb1FIh.aX2I3vJ0RpfSZqHR.q",
+values (0, 'al@mail.ru', 'superUser', 'admin', '$2a$10$suA9HnXlQoDSH0AQ/.Y60.JX/FxBkb1FIh.aX2I3vJ0RpfSZqHR.q',
        true, true, 1652629914);
 
-insert into  t_user_role value (0, 0);
+insert into t_user_role values (0, 0);
