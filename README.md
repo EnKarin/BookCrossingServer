@@ -12,7 +12,7 @@
 ### Requirements
 1. Java 17 and above
 2. Maven
-3. MySQL
+3. PostgreSQL
 ### The service provides the following functions:
 - User registration/authorization
 - List of users

@@ -78,7 +78,7 @@ class MessageAlertsServiceTest extends BookCrossingBaseTests {
         enabledUser(userAlex.getUserId());
         final var key = correspondenceService.createChat(userBot.getUserId(), userAlex.getLogin());
         final var messageId = messageService.sendMessage(TestDataProvider.buildMessageRequest(key), userBot.getLogin()).getMessageId();
-        jdbcTemplate.update("update t_messages set declaim = 1 where message_id = " + messageId);
+        jdbcTemplate.update("update bookcrossing.t_messages set declaim = true where message_id = " + messageId);
 
         messageAlertsService.sendAlerts();
 
@@ -97,7 +97,7 @@ class MessageAlertsServiceTest extends BookCrossingBaseTests {
         enabledUser(userAlex.getUserId());
         final var messageId = createChatAndMessage(userBot, userAlex);
 
-        jdbcTemplate.update("update t_messages set alert_sent = 1 where message_id = " + messageId);
+        jdbcTemplate.update("update  bookcrossing.t_messages set alert_sent = true where message_id = " + messageId);
 
         messageAlertsService.sendAlerts();
 
@@ -132,11 +132,11 @@ class MessageAlertsServiceTest extends BookCrossingBaseTests {
         enabledUser(userAlex.getUserId());
         createChatAndMessage(userBot, userAlex);
 
-        jdbcTemplate.update("update t_user set enabled = 0 where user_id = " + userBot.getUserId());
+        jdbcTemplate.update("update  bookcrossing.t_user set enabled = false where user_id = " + userBot.getUserId());
         messageAlertsService.sendAlerts();
 
         enabledUser(userBot.getUserId());
-        jdbcTemplate.update("update t_user set enabled = 0 where user_id = " + userAlex.getUserId());
+        jdbcTemplate.update("update  bookcrossing.t_user set enabled = false where user_id = " + userAlex.getUserId());
         messageAlertsService.sendAlerts();
 
         assertThat(output)

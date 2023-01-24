@@ -24,7 +24,7 @@ import java.util.List;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
-@ContextConfiguration(initializers = MySQLInitializer.class)
+@ContextConfiguration(initializers = PostgreSQLInitializer.class)
 public abstract class BookCrossingBaseTests {
 
     private final List<Integer> usersId = new ArrayList<>(2);
@@ -63,7 +63,7 @@ public abstract class BookCrossingBaseTests {
     }
 
     protected void enabledUser(final int userId) {
-        jdbcTemplate.update("update t_user set enabled = 1 where user_id = " + userId);
+        jdbcTemplate.update("update bookcrossing.t_user set enabled = true where user_id = " + userId);
     }
 
     protected String generateAccessToken(final LoginRequest request) {

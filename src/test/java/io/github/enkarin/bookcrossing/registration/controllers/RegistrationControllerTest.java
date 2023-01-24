@@ -81,7 +81,7 @@ class RegistrationControllerTest extends BookCrossingBaseTests {
     @Test
     void authTest() {
         final int userId = createAndSaveUser(TestDataProvider.buildBot()).getUserId();
-        jdbcTemplate.update("update t_user set enabled = 1 where user_id = " + userId);
+        jdbcTemplate.update("update bookcrossing.t_user set enabled = true where user_id = " + userId);
         final var response = checkPost("/auth", TestDataProvider.buildAuthBot(), 200)
                 .expectBody(AuthResponse.class)
                 .returnResult().getResponseBody();
@@ -100,7 +100,7 @@ class RegistrationControllerTest extends BookCrossingBaseTests {
     @Test
     void authLockedExceptionTest() {
         final int userId = createAndSaveUser(TestDataProvider.buildBot()).getUserId();
-        jdbcTemplate.update("update t_user set enabled = 1, account_non_locked = 0 where user_id = " + userId);
+        jdbcTemplate.update("update bookcrossing.t_user set enabled = true, account_non_locked = false where user_id = " + userId);
         checkPost("/auth", TestDataProvider.buildAuthBot(), 403)
                 .expectBody()
                 .jsonPath("$.user")
@@ -127,7 +127,7 @@ class RegistrationControllerTest extends BookCrossingBaseTests {
                 StandardCharsets.UTF_8)
                 .split("token=")[1];
         checkToken(token, 200);
-        assertThat(jdbcTemplate.queryForObject("select enabled from t_user where user_id = ?", Boolean.class,
+        assertThat(jdbcTemplate.queryForObject("select enabled from bookcrossing.t_user where user_id = ?", Boolean.class,
                 user.getUserId()))
                 .isTrue();
     }
