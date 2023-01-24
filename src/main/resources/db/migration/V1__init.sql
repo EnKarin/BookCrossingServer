@@ -11,7 +11,7 @@ create table if not exists bookcrossing.t_action_mail_user (
 
 create table if not exists bookcrossing.t_attach (
     attach_id integer not null,
-    data oid,
+    data bytea,
     expansion varchar(255),
     primary key (attach_id)
 );

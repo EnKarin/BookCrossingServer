@@ -16,7 +16,7 @@ server:
 spring:
     jpa:
         hibernate:
-            ddl-auto: create
+            ddl-auto: validate
         database-platform: org.hibernate.dialect.PostgreSQLDialect
         properties:
             hibernate:
@@ -48,6 +48,6 @@ spring:
                     starttls:
                         enable: true
     flyway:
-        enabled: false
+        enabled: true
 jwt:
     secret: scjwtmaster
