@@ -49,5 +49,6 @@ spring:
                         enable: true
     flyway:
         enabled: true
+        default-schema: bookcrossing
 jwt:
     secret: scjwtmaster
