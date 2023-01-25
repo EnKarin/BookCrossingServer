@@ -148,7 +148,7 @@ alter table if exists bookcrossing.t_messages
             references bookcrossing.t_correspondence (first_user_id, second_user_id);
 
 create index if not exists messages_foreign_correspondence on bookcrossing.t_messages (correspondence_first_user_id, correspondence_second_user_id)
-    where (correspondence_first_user_id is not null and correspondence_second_user_id is not null);
+    where correspondence_first_user_id is not null;
 
 alter table if exists bookcrossing.t_messages
     add constraint messages_foreign_user
