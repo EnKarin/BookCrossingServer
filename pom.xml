@@ -20,6 +20,7 @@
         <maven.compiler.release>${java.version}</maven.compiler.release>
         <testcontainer.version>1.17.6</testcontainer.version>
         <maven-enforcer-plugin.version>3.1.0</maven-enforcer-plugin.version>
+        <pg-index-health.version>0.8.0</pg-index-health.version>
     </properties>
     <dependencies>
         <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-data-jpa -->
@@ -95,6 +96,14 @@
             <artifactId>springdoc-openapi-ui</artifactId>
             <version>1.6.13</version>
         </dependency>
+
+        <dependency>
+            <groupId>io.github.mfvanek</groupId>
+            <artifactId>pg-index-health-test-starter</artifactId>
+            <version>${pg-index-health.version}</version>
+            <scope>test</scope>
+        </dependency>
+
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>testcontainers</artifactId>
