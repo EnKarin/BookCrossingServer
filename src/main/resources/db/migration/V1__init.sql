@@ -109,15 +109,11 @@ alter table if exists bookcrossing.t_action_mail_user
     add constraint action_foreign_user
         foreign key (user_id) references bookcrossing.t_user (user_id) ON DELETE CASCADE;
 
-create index if not exists action_foreign_user on bookcrossing.t_action_mail_user (user_id)
-    where user_id is not null;
+create index if not exists action_foreign_user on bookcrossing.t_action_mail_user (user_id);
 
 alter table if exists bookcrossing.t_attach
     add constraint attach_foreign_book
         foreign key (attach_id) references bookcrossing.t_book (book_id);
-
-create index if not exists attach_foreign_book on bookcrossing.t_attach (attach_id)
-    where attach_id is not null;
 
 alter table if exists bookcrossing.t_book
     add constraint book_foreign_user
@@ -130,29 +126,21 @@ alter table if exists bookcrossing.t_bookmarks
     add constraint bookmarks_foreign_book
         foreign key (book_id) references bookcrossing.t_book (book_id);
 
-create index if not exists bookmarks_foreign_book on bookcrossing.t_bookmarks (book_id)
-    where book_id is not null;
+create index if not exists bookmarks_foreign_book on bookcrossing.t_bookmarks (book_id);
 
 alter table if exists bookcrossing.t_bookmarks
     add constraint bookmarks_foreign_user
         foreign key (user_id) references bookcrossing.t_user (user_id);
 
-create index if not exists bookmarks_foreign_user on bookcrossing.t_bookmarks (user_id)
-    where user_id is not null;
-
 alter table if exists bookcrossing.t_correspondence
     add constraint correspondence_foreign_first_user
         foreign key (first_user_id) references bookcrossing.t_user (user_id);
-
-create index if not exists correspondence_foreign_first_user on bookcrossing.t_correspondence (first_user_id)
-    where first_user_id is not null;
 
 alter table if exists bookcrossing.t_correspondence
     add constraint correspondence_foreign_second_user
         foreign key (second_user_id) references bookcrossing.t_user (user_id);
 
-create index if not exists correspondence_foreign_second_user on bookcrossing.t_correspondence (second_user_id)
-    where second_user_id is not null;
+create index if not exists correspondence_foreign_second_user on bookcrossing.t_correspondence (second_user_id);
 
 alter table if exists bookcrossing.t_messages
     add constraint messages_foreign_correspondence
@@ -173,15 +161,11 @@ alter table if exists bookcrossing.t_user_role
     add constraint user_role_foreign_role
         foreign key (role_id) references bookcrossing.t_role (role_id);
 
-create index if not exists user_role_foreign_role on bookcrossing.t_user_role (role_id)
-    where role_id is not null;
+create index if not exists user_role_foreign_role on bookcrossing.t_user_role (role_id);
 
 alter table if exists bookcrossing.t_user_role
     add constraint user_role_foreign_user
         foreign key (user_id) references bookcrossing.t_user (user_id);
-
-create index if not exists user_role_foreign_user on bookcrossing.t_user_role (user_id)
-    where user_id is not null;
 
 insert into bookcrossing.t_role (role_id, name) values (0, 'ROLE_ADMIN'), (1, 'ROLE_USER');
 
