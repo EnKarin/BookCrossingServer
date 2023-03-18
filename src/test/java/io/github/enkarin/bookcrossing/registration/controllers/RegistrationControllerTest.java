@@ -35,6 +35,18 @@ class RegistrationControllerTest extends BookCrossingBaseTests {
                 .extracting(MimeMessage::getAllRecipients)
                 .hasSize(1)
                 .contains(new Address[]{new InternetAddress(registrationDto.getEmail())});
+        assertThat(GREEN_MAIL.getReceivedMessagesForDomain(user.getEmail()))
+                .hasSize(1)
+                .satisfies(mimeMessages -> {
+                    assertThat(mimeMessages)
+                            .extracting(MimeMessage::getAllRecipients)
+                            .hasSize(1)
+                            .contains(new Address[]{new InternetAddress(registrationDto.getEmail())});
+                    assertThat(mimeMessages)
+                            .extracting(MimeMessage::getFrom)
+                            .hasSize(1)
+                            .contains(new Address[]{new InternetAddress("noreply@bookscrossing.com")});
+                });
     }
 
     @Test

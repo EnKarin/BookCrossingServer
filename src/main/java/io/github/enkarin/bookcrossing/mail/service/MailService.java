@@ -13,6 +13,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Nonnull;
 import java.util.UUID;
 
 @Service
@@ -26,6 +27,8 @@ public class MailService {
 
     @Value("${server.port}")
     private String port;
+    @Value("${spring.mail.from}")
+    private String fromEmail;
 
     @Transactional
     public void sendApproveMail(final User user) {
@@ -36,12 +39,10 @@ public class MailService {
         confirmationMailUser.setType(ApproveType.MAIL);
         confirmationMailUserRepository.save(confirmationMailUser);
 
-        final SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(user.getEmail());
+        final var message = prepareMailMessage(user.getEmail());
         message.setSubject("Подтверждение регистрации BookCrossing");
         message.setText("Перейдите по ссылке, чтобы подтвердить создание аккаунта: " +
                 String.format("https://localhost:%s/registration/confirmation?token=%s", port, token));
-
         emailSender.send(message);
     }
 
@@ -55,8 +56,7 @@ public class MailService {
         confirmationMailUser.setType(ApproveType.RESET);
         confirmationMailUserRepository.save(confirmationMailUser);
 
-        final SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(email);
+        final var message = prepareMailMessage(email);
         message.setSubject("Сброс пароля BookCrossing");
         message.setText("Перейдите по ссылке, чтобы сменить пароль: " +
                 String.format("https://localhost:%s/reset/update?token=%s", port, token));
@@ -64,26 +64,31 @@ public class MailService {
     }
 
     public void sendBlockingMessage(final User user, final String comment) {
-        final SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(user.getEmail());
+        final var message = prepareMailMessage(user.getEmail());
         message.setSubject("Ваш аккаунт заблокирован");
         message.setText("Аккаунт на сервисе BookCrossing был заблокирован администратором. Причина:" + comment);
         emailSender.send(message);
     }
 
     public void sendUnlockMessage(final User user) {
-        final SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(user.getEmail());
+        final var message = prepareMailMessage(user.getEmail());
         message.setSubject("Ваш аккаунт разблокирован");
         message.setText("Аккаунт на сервисе BookCrossing был разблокирован.");
         emailSender.send(message);
     }
 
     public void sendAlertsMessage(final User user, final int count) {
-        final SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(user.getEmail());
+        final var message = prepareMailMessage(user.getEmail());
         message.setSubject("Непрочитанные сообщения");
         message.setText(String.format("В вашем аккаунте есть непрочитанные сообщения: %s", count));
         emailSender.send(message);
+    }
+
+    @Nonnull
+    private SimpleMailMessage prepareMailMessage(@Nonnull final String toEmail) {
+        final SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(toEmail);
+        message.setFrom(fromEmail);
+        return message;
     }
 }
