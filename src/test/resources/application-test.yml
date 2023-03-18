@@ -3,6 +3,8 @@ spring:
         host: 127.0.0.1
         port: 3025
         protocol: smtp
+    main:
+        banner-mode: off
 server:
     ssl:
         enabled: false

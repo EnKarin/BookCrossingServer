@@ -36,6 +36,7 @@ spring:
             max-file-size: 5MB
             max-request-size: 6MB
     mail:
+        from: noreply@bookscrossing.com
         password: lgwr qqwh ttbh frhv
         username: bookscrossingdiploma@gmail.com
         host: smtp.gmail.com
