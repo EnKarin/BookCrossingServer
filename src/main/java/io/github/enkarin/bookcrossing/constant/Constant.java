@@ -2,6 +2,7 @@ package io.github.enkarin.bookcrossing.constant;
 
 import lombok.experimental.UtilityClass;
 
+@SuppressWarnings("PMD.MissingStaticMethodInNonInstantiatableClass")
 @UtilityClass
 public class Constant {
 
