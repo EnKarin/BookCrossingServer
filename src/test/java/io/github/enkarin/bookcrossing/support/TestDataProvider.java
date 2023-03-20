@@ -20,6 +20,7 @@ import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Set;
 
+@SuppressWarnings("PMD.TestClassWithoutTestCases")
 @UtilityClass
 public class TestDataProvider {
 
