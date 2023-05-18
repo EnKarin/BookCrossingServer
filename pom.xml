@@ -5,12 +5,12 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.9</version>
+        <version>2.7.11</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>io.github.enkarin</groupId>
     <artifactId>BookcrossingServer</artifactId>
-    <version>0.1.0-SNAPSHOT</version>
+    <version>0.1.1-SNAPSHOT</version>
     <name>BookCrossingServer</name>
     <description>Graduate work</description>
     <properties>
@@ -19,7 +19,7 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven.compiler.release>${java.version}</maven.compiler.release>
         <maven-enforcer-plugin.version>3.2.1</maven-enforcer-plugin.version>
-        <pg-index-health.version>0.9.0</pg-index-health.version>
+        <pg-index-health.version>0.9.1</pg-index-health.version>
     </properties>
 
     <dependencyManagement>
@@ -27,14 +27,14 @@
             <dependency>
                 <groupId>org.testcontainers</groupId>
                 <artifactId>testcontainers-bom</artifactId>
-                <version>1.17.6</version>
+                <version>1.18.1</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
             <dependency>
                 <groupId>org.junit</groupId>
                 <artifactId>junit-bom</artifactId>
-                <version>5.9.2</version>
+                <version>5.9.3</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -117,7 +117,7 @@
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-ui</artifactId>
-            <version>1.6.15</version>
+            <version>1.7.0</version>
         </dependency>
         <dependency>
             <groupId>io.github.mfvanek</groupId>
