@@ -26,9 +26,10 @@ services:
 
     bookscrossing-app:
         container_name: bookscrossing_container
-        image: docker.io/enkarin/bookcrossing-server:0.1.1-SNAPSHOT
+        image: docker.io/enkarin/bookcrossing-server:latest
         environment:
             SPRING_PROFILES_ACTIVE: "docker"
+            JAVA_TOOL_OPTIONS: -XX:+ExitOnOutOfMemoryError -XX:ActiveProcessorCount=1 -XX:MaxDirectMemorySize=10M -Xmx1470031K -XX:MaxMetaspaceSize=115120K -XX:ReservedCodeCacheSize=240M -Xss1M -XX:+UnlockDiagnosticVMOptions -XX:NativeMemoryTracking=summary -XX:+PrintNMTStatistics
         ports:
             - "8443:8443"
         restart: unless-stopped
@@ -38,7 +39,7 @@ services:
         deploy:
             resources:
                 limits:
-                    cpus: '1'
+                    cpus: '0.5'
                     memory: 2G
         networks:
             - postgres

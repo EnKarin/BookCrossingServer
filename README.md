@@ -31,6 +31,12 @@ cd BookCrossingServer
 ```
 
 #### Build Docker image
+##### With arm64 support
+```shell
+./mvnw clean package docker:build -DskipTests
+```
+
+##### Without arm64 support
 ```shell
 ./mvnw spring-boot:build-image -DskipTests
 ```

@@ -393,6 +393,25 @@
                     </layers>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>io.fabric8</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+                <version>0.42.1</version>
+                <configuration>
+                    <images>
+                        <image>
+                            <build>
+                                <contextDir>${project.basedir}</contextDir>
+                                <tags>
+                                    <tag>latest</tag>
+                                    <tag>${project.version}</tag>
+                                </tags>
+                            </build>
+                            <name>docker.io/enkarin/${project.artifactId}</name>
+                        </image>
+                    </images>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
     <profiles>
