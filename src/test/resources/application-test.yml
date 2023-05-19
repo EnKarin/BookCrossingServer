@@ -5,6 +5,8 @@ spring:
         protocol: smtp
     main:
         banner-mode: off
+    jpa:
+        show-sql: true
 server:
     ssl:
         enabled: false

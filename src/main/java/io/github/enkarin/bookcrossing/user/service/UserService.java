@@ -85,8 +85,9 @@ public class UserService {
     }
 
     public List<UserPublicProfileDto> findAllUsers(final int zone) {
+        // TODO Performance! Too many sql queries. Should retrieve all data within single select query
         final Role role = roleRepository.getRoleByName("ROLE_USER");
-        return userRepository.findByUserRoles(role).stream()
+        return userRepository.findByUserRolesOrderByUserId(role).stream()
                 .map(u -> UserPublicProfileDto.fromUser(u, zone))
                 .toList();
     }

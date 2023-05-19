@@ -44,7 +44,7 @@ public class AdminService {
 
     public List<InfoUsersDto> findAllUsers(final int zone) {
         final Role role = roleRepository.getRoleByName("ROLE_USER");
-        return userRepository.findByUserRoles(role).stream()
+        return userRepository.findByUserRolesOrderByUserId(role).stream()
                 .map(u -> InfoUsersDto.fromUser(u, zone))
                 .toList();
     }

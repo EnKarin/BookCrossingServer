@@ -12,6 +12,9 @@ import io.github.enkarin.bookcrossing.user.dto.UserDto;
 import io.github.enkarin.bookcrossing.user.dto.UserProfileDto;
 import io.github.enkarin.bookcrossing.user.dto.UserPublicProfileDto;
 import io.github.enkarin.bookcrossing.user.dto.UserPutProfileDto;
+
+import java.util.Comparator;
+
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -95,7 +98,11 @@ class UserServiceTest extends BookCrossingBaseTests {
                 .toList();
 
         final var foundUsers = userService.findAllUsers(GM_TIME_ZERO);
-        assertThat(foundUsers).hasSize(users.size());
+        assertThat(foundUsers)
+                .hasSize(3)
+                .hasSameSizeAs(users)
+                .as("Rows should be sorted by user_id")
+                .isSortedAccordingTo(Comparator.comparing(UserPublicProfileDto::getUserId));
 
         final var usersIterator = users.iterator();
         final var foundIterator = foundUsers.iterator();
