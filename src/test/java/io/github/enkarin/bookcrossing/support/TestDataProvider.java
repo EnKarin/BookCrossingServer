@@ -26,7 +26,7 @@ public class TestDataProvider {
 
     @Nonnull
     public static List<UserRegistrationDto> buildUsers() {
-        return List.of(buildBot(), buildAlex());
+        return List.of(buildBot(), buildAlex(), buildMax());
     }
 
     @Nonnull

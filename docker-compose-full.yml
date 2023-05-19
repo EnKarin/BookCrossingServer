@@ -1,0 +1,49 @@
+version: "3.9"
+services:
+    postgres:
+        container_name: postgres_container
+        image: postgres:14.6-alpine
+        environment:
+            POSTGRES_DB: "bookcrossing"
+            POSTGRES_USER: "postgres"
+            POSTGRES_PASSWORD: "123456"
+        ports:
+            - "6432:5432"
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -U habrpguser -d habrdb"]
+            interval: 10s
+            timeout: 5s
+            retries: 5
+            start_period: 10s
+        restart: unless-stopped
+        deploy:
+            resources:
+                limits:
+                    cpus: '1'
+                    memory: 4G
+        networks:
+            - postgres
+
+    bookscrossing-app:
+        container_name: bookscrossing_container
+        image: docker.io/enkarin/bookcrossing-server:latest
+        environment:
+            SPRING_PROFILES_ACTIVE: "docker"
+            JAVA_TOOL_OPTIONS: -XX:+ExitOnOutOfMemoryError -XX:ActiveProcessorCount=1 -XX:MaxDirectMemorySize=10M -Xmx1470031K -XX:MaxMetaspaceSize=115120K -XX:ReservedCodeCacheSize=240M -Xss1M -XX:+UnlockDiagnosticVMOptions -XX:NativeMemoryTracking=summary -XX:+PrintNMTStatistics
+        ports:
+            - "8443:8443"
+        restart: unless-stopped
+        depends_on:
+            postgres:
+                condition: service_healthy
+        deploy:
+            resources:
+                limits:
+                    cpus: '0.5'
+                    memory: 2G
+        networks:
+            - postgres
+
+networks:
+    postgres:
+        driver: bridge
