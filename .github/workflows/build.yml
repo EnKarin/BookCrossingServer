@@ -43,3 +43,5 @@ jobs:
               with:
                 fail_ci_if_error: true
                 verbose: false
+          -   name: Build Docker image
+              run: mvn package docker:build -DskipTests
