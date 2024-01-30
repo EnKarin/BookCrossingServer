@@ -26,7 +26,7 @@
             <dependency>
                 <groupId>org.testcontainers</groupId>
                 <artifactId>testcontainers-bom</artifactId>
-                <version>1.19.3</version>
+                <version>1.19.4</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -40,7 +40,7 @@
             <dependency>
                 <groupId>io.github.mfvanek</groupId>
                 <artifactId>pg-index-health-bom</artifactId>
-                <version>0.10.2</version>
+                <version>0.10.3</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -224,7 +224,7 @@
             <plugin>
                 <groupId>com.github.spotbugs</groupId>
                 <artifactId>spotbugs-maven-plugin</artifactId>
-                <version>4.8.2.0</version>
+                <version>4.8.3.0</version>
                 <configuration>
                     <excludeFilterFile>/config/spotbugs/spotbugs.xml</excludeFilterFile>
                     <includeTests>true</includeTests>
@@ -291,7 +291,7 @@
                     <dependency>
                         <groupId>com.puppycrawl.tools</groupId>
                         <artifactId>checkstyle</artifactId>
-                        <version>10.12.7</version>
+                        <version>10.13.0</version>
                     </dependency>
                     <dependency>
                         <groupId>com.thomasjensen.checkstyle.addons</groupId>
