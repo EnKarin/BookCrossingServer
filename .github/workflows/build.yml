@@ -39,9 +39,10 @@ jobs:
                   SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
               run: mvn verify -P sonar
           -   name: Upload coverage to Codecov
-              uses: codecov/codecov-action@v3
+              uses: codecov/codecov-action@v4
               with:
                 fail_ci_if_error: true
                 verbose: false
+                token: ${{ secrets.CODECOV_TOKEN }}
           -   name: Build Docker image
               run: mvn package docker:build -DskipTests
