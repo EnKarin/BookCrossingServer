@@ -43,5 +43,6 @@ jobs:
               with:
                 fail_ci_if_error: true
                 verbose: false
+                token: ${{ secrets.CODECOV_TOKEN }}
           -   name: Build Docker image
               run: mvn package docker:build -DskipTests
