@@ -14,41 +14,39 @@ class TimeUtilTest {
 
     @Test
     void setClock() {
-        final Clock clock = Clock.fixed(Instant.ofEpochSecond(1_711_098_855L), ZoneOffset.ofHours(4));
-        TimeUtil.setClock(clock);
+        final long seconds = 1_711_098_855L;
+        TimeUtil.setClock(Clock.fixed(Instant.ofEpochSecond(seconds), ZoneOffset.ofHours(4)));
 
-        assertThat(TimeUtil.getEpochSeconds()).isEqualTo(clock.instant().getEpochSecond());
+        assertThat(TimeUtil.getEpochSeconds()).isEqualTo(seconds);
     }
 
     @Test
     void offset() {
-        final Clock clock = Clock.system(ZoneOffset.ofHours(3));
-        TimeUtil.setClock(clock);
+        final ZoneOffset offset = ZoneOffset.ofHours(3);
+        TimeUtil.setClock(Clock.system(offset));
 
-        assertThat(TimeUtil.offset()).isEqualTo(ZoneOffset.ofHours(3));
+        assertThat(TimeUtil.offset()).isEqualTo(offset);
     }
 
     @Test
     void dateTimeNow() {
-        final Clock clock = Clock.fixed(Instant.ofEpochSecond(3_660), ZoneOffset.ofHours(7));
-        TimeUtil.setClock(clock);
+        TimeUtil.setClock(Clock.fixed(Instant.ofEpochSecond(3_660), ZoneOffset.ofHours(7)));
 
         assertThat(TimeUtil.dateTimeNow()).isEqualTo(LocalDateTime.of(1970, 1, 1, 8, 1, 0));
     }
 
     @Test
     void dateNow() {
-        final Clock clock = Clock.fixed(Instant.ofEpochSecond(100_000), ZoneOffset.ofHours(7));
-        TimeUtil.setClock(clock);
+        TimeUtil.setClock(Clock.fixed(Instant.ofEpochSecond(100_000), ZoneOffset.ofHours(7)));
 
         assertThat(TimeUtil.dateNow()).isEqualTo(LocalDate.of(1970, 1, 2));
     }
 
     @Test
     void getEpochSeconds() {
-        final Clock clock = Clock.fixed(Instant.ofEpochSecond(1_000), ZoneOffset.ofHours(10));
-        TimeUtil.setClock(clock);
+        final int seconds = 1_000;
+        TimeUtil.setClock(Clock.fixed(Instant.ofEpochSecond(seconds), ZoneOffset.ofHours(10)));
 
-        assertThat(TimeUtil.getEpochSeconds()).isEqualTo(1_000);
+        assertThat(TimeUtil.getEpochSeconds()).isEqualTo(seconds);
     }
 }
