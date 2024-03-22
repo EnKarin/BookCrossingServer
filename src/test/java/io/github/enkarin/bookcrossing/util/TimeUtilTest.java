@@ -1,5 +1,6 @@
 package io.github.enkarin.bookcrossing.util;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 
 import java.time.Clock;
@@ -11,6 +12,11 @@ import java.time.ZoneOffset;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class TimeUtilTest {
+
+    @AfterAll
+    static void rollbackClock() {
+        TimeUtil.setClock(Clock.system(ZoneOffset.ofHours(7)));
+    }
 
     @Test
     void setClock() {

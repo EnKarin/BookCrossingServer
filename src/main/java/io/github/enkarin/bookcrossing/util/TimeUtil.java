@@ -1,5 +1,6 @@
 package io.github.enkarin.bookcrossing.util;
 
+import lombok.Setter;
 import lombok.experimental.UtilityClass;
 
 import java.time.Clock;
@@ -9,11 +10,8 @@ import java.time.ZoneOffset;
 
 @UtilityClass
 public class TimeUtil {
+    @Setter
     private static Clock clock = Clock.system(ZoneOffset.ofHours(7));
-
-    public static void setClock(final Clock newClock) {
-        clock = newClock;
-    }
 
     public static ZoneOffset offset() {
         return clock.getZone().getRules().getOffset(clock.instant());
