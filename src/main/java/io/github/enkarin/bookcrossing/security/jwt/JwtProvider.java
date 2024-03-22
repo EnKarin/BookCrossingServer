@@ -1,5 +1,6 @@
 package io.github.enkarin.bookcrossing.security.jwt;
 
+import io.github.enkarin.bookcrossing.util.TimeUtil;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -8,8 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.Date;
 
 @Component
@@ -20,7 +19,7 @@ public class JwtProvider {
     private String jwtSecret;
 
     public String generateToken(final String login) {
-        final Date date = Date.from(LocalDateTime.now().plusMinutes(15).atZone(ZoneId.systemDefault()).toInstant());
+        final Date date = Date.from(TimeUtil.dateTimeNow().plusMinutes(15).toInstant(TimeUtil.offset()));
         return Jwts.builder()
                 .setSubject(login)
                 .setExpiration(date)
