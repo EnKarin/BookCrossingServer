@@ -192,7 +192,7 @@
                 <plugin>
                     <groupId>org.sonarsource.scanner.maven</groupId>
                     <artifactId>sonar-maven-plugin</artifactId>
-                    <version>3.10.0.2594</version>
+                    <version>3.11.0.3922</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -291,7 +291,7 @@
                     <dependency>
                         <groupId>com.puppycrawl.tools</groupId>
                         <artifactId>checkstyle</artifactId>
-                        <version>10.13.0</version>
+                        <version>10.14.2</version>
                     </dependency>
                     <dependency>
                         <groupId>com.thomasjensen.checkstyle.addons</groupId>
