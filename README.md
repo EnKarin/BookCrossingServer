@@ -7,6 +7,7 @@
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=io.github.enkarin%3Abookcrossing&metric=coverage)](https://sonarcloud.io/summary/new_code?id=io.github.enkarin%3Abookcrossing)
 [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=io.github.enkarin%3Abookcrossing&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=io.github.enkarin%3Abookcrossing)
 [![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=io.github.enkarin%3Abookcrossing&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=io.github.enkarin%3Abookcrossing)
+[![Mutation testing badge](https://img.shields.io/endpoint?style=plastic&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2FEnKarin%2FBookCrossingServer%2Fmaster)](https://dashboard.stryker-mutator.io/reports/github.com/EnKarin/BookCrossingServer/master)
 
 ### Requirements
 1. Java 17 and above
