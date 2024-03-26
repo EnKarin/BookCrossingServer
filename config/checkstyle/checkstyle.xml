@@ -19,7 +19,7 @@
     <module name="TreeWalker">
         <module name="IllegalMethodCall">
             <property name="illegalMethodNames" value="emptyList, emptyMap, emptySet, emptyNavigableMap,
-            emptyNavigableSet, emptySortedMap, emptySortedSet, singleton, singletonList, singletonMap"/>
+            emptyNavigableSet, emptySortedMap, emptySortedSet, singleton, singletonList, singletonMap, now"/>
         </module>
         <module name="AvoidStarImport"/>
         <module name="AvoidEscapedUnicodeCharacters">
@@ -170,5 +170,7 @@
                       default="checkstyle-xpath-suppressions.xml"/>
             <property name="optional" value="true"/>
         </module>
+        <module name="SuppressWarningsHolder"/>
     </module>
+    <module name="SuppressWarningsFilter"/>
 </module>

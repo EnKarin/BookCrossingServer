@@ -21,15 +21,13 @@ import static org.springframework.util.StringUtils.hasText;
 @Component
 @RequiredArgsConstructor
 public class JwtFilter extends GenericFilterBean {
-
     public static final String AUTHORIZATION = "Authorization";
+
     private final JwtProvider jwtProvider;
     private final CustomUserDetailsService customUserDetailsService;
 
     @Override
-    public void doFilter(final ServletRequest servletRequest, final ServletResponse servletResponse,
-                         final FilterChain filterChain)
-            throws IOException, ServletException {
+    public void doFilter(final ServletRequest servletRequest, final ServletResponse servletResponse, final FilterChain filterChain) throws IOException, ServletException {
         final String token = getTokenFromRequest((HttpServletRequest) servletRequest);
         if (token != null && jwtProvider.validateToken(token)) {
             try {
