@@ -19,6 +19,9 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven.compiler.release>${java.version}</maven.compiler.release>
         <maven-enforcer-plugin.version>3.2.1</maven-enforcer-plugin.version>
+        <pitest.maven.version>1.15.2</pitest.maven.version>
+        <pitest.junit5.version>1.2.1</pitest.junit5.version>
+        <stryker.reporter.version>0.2.1</stryker.reporter.version>
     </properties>
 
     <dependencyManagement>
@@ -26,7 +29,7 @@
             <dependency>
                 <groupId>org.testcontainers</groupId>
                 <artifactId>testcontainers-bom</artifactId>
-                <version>1.19.5</version>
+                <version>1.19.7</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -123,7 +126,7 @@
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-ui</artifactId>
-            <version>1.7.0</version>
+            <version>1.8.0</version>
         </dependency>
         <dependency>
             <groupId>io.github.mfvanek</groupId>
@@ -192,7 +195,33 @@
                 <plugin>
                     <groupId>org.sonarsource.scanner.maven</groupId>
                     <artifactId>sonar-maven-plugin</artifactId>
-                    <version>3.10.0.2594</version>
+                    <version>3.11.0.3922</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.pitest</groupId>
+                    <artifactId>pitest-maven</artifactId>
+                    <version>${pitest.maven.version}</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.pitest</groupId>
+                            <artifactId>pitest-junit5-plugin</artifactId>
+                            <version>${pitest.junit5.version}</version>
+                        </dependency>
+                    </dependencies>
+                    <configuration>
+                        <threads>4</threads>
+                        <exportLineCoverage>true</exportLineCoverage>
+                        <timestampedReports>false</timestampedReports>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>run-mutation-tests</id>
+                            <phase>test</phase>
+                            <goals>
+                                <goal>mutationCoverage</goal>
+                            </goals>
+                        </execution>
+                    </executions>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -291,7 +320,7 @@
                     <dependency>
                         <groupId>com.puppycrawl.tools</groupId>
                         <artifactId>checkstyle</artifactId>
-                        <version>10.13.0</version>
+                        <version>10.14.2</version>
                     </dependency>
                     <dependency>
                         <groupId>com.thomasjensen.checkstyle.addons</groupId>
@@ -401,7 +430,7 @@
             <plugin>
                 <groupId>io.fabric8</groupId>
                 <artifactId>docker-maven-plugin</artifactId>
-                <version>0.43.4</version>
+                <version>0.44.0</version>
                 <configuration>
                     <images>
                         <image>
@@ -419,6 +448,7 @@
             </plugin>
         </plugins>
     </build>
+
     <profiles>
         <profile>
             <id>sonar</id>
@@ -443,6 +473,51 @@
                                 </goals>
                             </execution>
                         </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>pitest-stryker</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.pitest</groupId>
+                        <artifactId>pitest-maven</artifactId>
+                        <configuration>
+                            <outputFormats>
+                                <outputFormats>stryker-dashboard</outputFormats>
+                            </outputFormats>
+                        </configuration>
+                        <dependencies>
+                            <dependency>
+                                <groupId>it.mulders.stryker</groupId>
+                                <artifactId>pit-dashboard-reporter</artifactId>
+                                <version>${stryker.reporter.version}</version>
+                            </dependency>
+                        </dependencies>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>pitest-html</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.pitest</groupId>
+                        <artifactId>pitest-maven</artifactId>
+                        <configuration>
+                            <outputFormats>
+                                <outputFormats>HTML</outputFormats>
+                            </outputFormats>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>
