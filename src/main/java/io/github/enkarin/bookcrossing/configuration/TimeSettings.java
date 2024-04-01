@@ -1,6 +1,5 @@
 package io.github.enkarin.bookcrossing.configuration;
 
-import lombok.Setter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -14,7 +13,6 @@ public class TimeSettings {
     @Value("${time.zone-offset}")
     private int defaultZoneOffset;
 
-    @Setter
     private Clock clock = Clock.system(ZoneOffset.ofHours(defaultZoneOffset));
 
     public ZoneOffset offset() {
@@ -32,5 +30,9 @@ public class TimeSettings {
 
     public long getEpochSeconds() {
         return clock.instant().getEpochSecond();
+    }
+
+    public void setClock(final Clock clock) {
+        this.clock = clock;
     }
 }
