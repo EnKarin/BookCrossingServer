@@ -185,7 +185,7 @@
         <dependency>
             <groupId>com.github.spotbugs</groupId>
             <artifactId>spotbugs-annotations</artifactId>
-            <version>4.8.4</version>
+            <version>4.8.5</version>
         </dependency>
     </dependencies>
 
@@ -320,7 +320,7 @@
                     <dependency>
                         <groupId>com.puppycrawl.tools</groupId>
                         <artifactId>checkstyle</artifactId>
-                        <version>10.15.0</version>
+                        <version>10.16.0</version>
                     </dependency>
                     <dependency>
                         <groupId>com.thomasjensen.checkstyle.addons</groupId>
