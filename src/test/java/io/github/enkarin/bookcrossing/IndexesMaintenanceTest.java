@@ -13,6 +13,8 @@ import io.github.mfvanek.pg.checks.host.IndexesWithNullValuesCheckOnHost;
 import io.github.mfvanek.pg.checks.host.IntersectedIndexesCheckOnHost;
 import io.github.mfvanek.pg.checks.host.InvalidIndexesCheckOnHost;
 import io.github.mfvanek.pg.checks.host.NotValidConstraintsCheckOnHost;
+import io.github.mfvanek.pg.checks.host.PrimaryKeysWithSerialTypesCheckOnHost;
+import io.github.mfvanek.pg.checks.host.SequenceOverflowCheckOnHost;
 import io.github.mfvanek.pg.checks.host.TablesWithoutDescriptionCheckOnHost;
 import io.github.mfvanek.pg.checks.host.TablesWithoutPrimaryKeyCheckOnHost;
 import io.github.mfvanek.pg.checks.predicates.FilterTablesByNamePredicate;
@@ -26,6 +28,7 @@ import java.util.function.Predicate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@SuppressWarnings("PMD.TooManyFields")
 class IndexesMaintenanceTest extends BookCrossingBaseTests {
 
     private static final String SCHEMA_NAME = "bookcrossing";
@@ -58,6 +61,10 @@ class IndexesMaintenanceTest extends BookCrossingBaseTests {
     private NotValidConstraintsCheckOnHost notValidConstraintsCheck;
     @Autowired
     private BtreeIndexesOnArrayColumnsCheckOnHost btreeIndexesOnArrayColumnsCheck;
+    @Autowired
+    private SequenceOverflowCheckOnHost sequenceOverflowCheck;
+    @Autowired
+    private PrimaryKeysWithSerialTypesCheckOnHost primaryKeysWithSerialTypesCheck;
 
     @Test
     void checkPostgresVersion() {
@@ -149,6 +156,18 @@ class IndexesMaintenanceTest extends BookCrossingBaseTests {
     @Test
     void btreeIndexesOnArrayColumnsShouldReturnNothing() {
         assertThat(btreeIndexesOnArrayColumnsCheck.check(PG_CONTEXT))
+                .isEmpty();
+    }
+
+    @Test
+    void sequenceOverflowShouldReturnNothing() {
+        assertThat(sequenceOverflowCheck.check(PG_CONTEXT))
+                .isEmpty();
+    }
+
+    @Test
+    void getPrimaryKeysWithSerialTypesShouldReturnNothing() {
+        assertThat(primaryKeysWithSerialTypesCheck.check(PG_CONTEXT))
                 .isEmpty();
     }
 
