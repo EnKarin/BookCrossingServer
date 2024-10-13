@@ -31,7 +31,7 @@ class IndexesMaintenanceTest extends BookCrossingBaseTests {
     @Test
     void checkPostgresVersion() {
         assertThat(jdbcTemplate.queryForObject("select version();", String.class))
-                .startsWith("PostgreSQL 16.2");
+                .startsWith("PostgreSQL 16.4");
     }
 
     @Test
