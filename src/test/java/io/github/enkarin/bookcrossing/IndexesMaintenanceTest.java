@@ -42,8 +42,8 @@ class IndexesMaintenanceTest extends BookCrossingBaseTests {
                     // TODO remove after https://github.com/mfvanek/pg-index-health/issues/477
                     //  and https://github.com/mfvanek/pg-index-health/issues/478
                     final Predicate<DbObject> skipFlywayTable = dbObject -> {
-                        if (dbObject instanceof TableNameAware t) {
-                            return !t.getTableName().equalsIgnoreCase(PG_CONTEXT.enrichWithSchema("flyway_schema_history"));
+                        if (dbObject instanceof TableNameAware table) {
+                            return !table.getTableName().equalsIgnoreCase(PG_CONTEXT.enrichWithSchema("flyway_schema_history"));
                         }
                         return true;
                     };
