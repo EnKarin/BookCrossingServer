@@ -15,19 +15,16 @@ import io.github.enkarin.bookcrossing.exception.UserIsNotSenderException;
 import io.github.enkarin.bookcrossing.exception.UserNotFoundException;
 import io.github.enkarin.bookcrossing.user.model.User;
 import io.github.enkarin.bookcrossing.user.repository.UserRepository;
+import io.github.enkarin.bookcrossing.configuration.TimeSettings;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 
 @RequiredArgsConstructor
 @Service
 @Transactional
 public class MessageService {
-
+    private final TimeSettings timeSettings;
     private final MessageRepository messageRepository;
     private final CorrespondenceRepository correspondenceRepository;
     private final UserRepository userRepository;
@@ -46,8 +43,7 @@ public class MessageService {
                     .orElseThrow(ChatNotFoundException::new);
             final Message message = new Message();
             message.setText(dto.getText());
-            message.setDepartureDate(LocalDateTime.now()
-                    .toEpochSecond(ZoneId.systemDefault().getRules().getOffset(Instant.now())));
+            message.setDepartureDate(timeSettings.getEpochSeconds());
             message.setCorrespondence(correspondence);
             message.setSender(user);
             message.setShownFirstUser(true);
@@ -62,8 +58,7 @@ public class MessageService {
         final Message message = messageRepository.findById(messagePutRequest.getMessageId())
                 .orElseThrow(MessageNotFountException::new);
         if (user.equals(message.getSender())) {
-            message.setDepartureDate(LocalDateTime.now()
-                    .toEpochSecond(ZoneId.systemDefault().getRules().getOffset(Instant.now())));
+            message.setDepartureDate(timeSettings.getEpochSeconds());
             message.setText(messagePutRequest.getText());
             return MessageDto.fromMessage(messageRepository.save(message));
         } else {

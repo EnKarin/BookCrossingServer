@@ -48,7 +48,7 @@ public abstract class BookCrossingBaseTests {
     @AfterEach
     void delete() {
         correspondenceRepository.deleteAll();
-        usersId.forEach(u -> userService.deleteUser(u));
+        usersId.forEach(userService::deleteUser);
         usersId.clear();
     }
 

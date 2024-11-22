@@ -14,6 +14,7 @@ import javax.annotation.Nonnull;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@SuppressWarnings("PMD.UnusedPrivateMethod")
 class AdminControllerTest extends BookCrossingBaseTests {
 
     @Autowired

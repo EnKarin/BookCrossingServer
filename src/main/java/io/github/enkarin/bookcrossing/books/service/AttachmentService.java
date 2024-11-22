@@ -34,7 +34,7 @@ public class AttachmentService {
                 .findFirst()
                 .orElseThrow(BookNotFoundException::new);
         final String fileName = attachmentMultipartDto.getFile().getOriginalFilename();
-        if (fileName == null || fileName.equals("")) {
+        if (fileName == null || fileName.isBlank()) {
             throw new BadRequestException("Имя не должно быть пустым");
         } else {
             final String expansion = fileName.substring(fileName.indexOf('.')).toLowerCase(Locale.ROOT);
