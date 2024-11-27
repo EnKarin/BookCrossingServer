@@ -1,18 +1,17 @@
 package io.github.enkarin.bookcrossing;
 
 import io.github.enkarin.bookcrossing.support.BookCrossingBaseTests;
-import io.github.mfvanek.pg.common.maintenance.DatabaseCheckOnHost;
-import io.github.mfvanek.pg.common.maintenance.Diagnostic;
-import io.github.mfvanek.pg.model.DbObject;
-import io.github.mfvanek.pg.model.PgContext;
+import io.github.mfvanek.pg.core.checks.common.DatabaseCheckOnHost;
+import io.github.mfvanek.pg.core.checks.common.Diagnostic;
+import io.github.mfvanek.pg.model.context.PgContext;
+import io.github.mfvanek.pg.model.dbobject.DbObject;
+import io.github.mfvanek.pg.model.predicates.SkipFlywayTablesPredicate;
 import io.github.mfvanek.pg.model.table.Table;
-import io.github.mfvanek.pg.model.table.TableNameAware;
 import org.assertj.core.api.ListAssert;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
-import java.util.function.Predicate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.InstanceOfAssertFactories.list;
@@ -39,15 +38,7 @@ class IndexesMaintenanceTest extends BookCrossingBaseTests {
         checks.stream()
                 .filter(DatabaseCheckOnHost::isStatic)
                 .forEach(check -> {
-                    // TODO remove after https://github.com/mfvanek/pg-index-health/issues/477
-                    //  and https://github.com/mfvanek/pg-index-health/issues/478
-                    final Predicate<DbObject> skipFlywayTable = dbObject -> {
-                        if (dbObject instanceof TableNameAware table) {
-                            return !table.getTableName().equalsIgnoreCase(PG_CONTEXT.enrichWithSchema("flyway_schema_history"));
-                        }
-                        return true;
-                    };
-                    final ListAssert<? extends DbObject> checkAssert = assertThat(check.check(PG_CONTEXT, skipFlywayTable))
+                    final ListAssert<? extends DbObject> checkAssert = assertThat(check.check(PG_CONTEXT, SkipFlywayTablesPredicate.of(PG_CONTEXT)))
                             .as(check.getDiagnostic().name());
 
                     if (check.getDiagnostic() == Diagnostic.COLUMNS_WITHOUT_DESCRIPTION) {
