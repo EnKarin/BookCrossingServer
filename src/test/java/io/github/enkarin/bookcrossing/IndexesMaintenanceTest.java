@@ -1,21 +1,17 @@
 package io.github.enkarin.bookcrossing;
 
 import io.github.enkarin.bookcrossing.support.BookCrossingBaseTests;
-import io.github.mfvanek.pg.checks.predicates.FilterTablesByNamePredicate;
-import io.github.mfvanek.pg.common.maintenance.DatabaseCheckOnHost;
-import io.github.mfvanek.pg.common.maintenance.Diagnostic;
-import io.github.mfvanek.pg.model.DbObject;
-import io.github.mfvanek.pg.model.PgContext;
-import io.github.mfvanek.pg.model.column.Column;
-import io.github.mfvanek.pg.model.index.IndexWithColumns;
+import io.github.mfvanek.pg.core.checks.common.DatabaseCheckOnHost;
+import io.github.mfvanek.pg.core.checks.common.Diagnostic;
+import io.github.mfvanek.pg.model.context.PgContext;
+import io.github.mfvanek.pg.model.dbobject.DbObject;
+import io.github.mfvanek.pg.model.predicates.SkipFlywayTablesPredicate;
 import io.github.mfvanek.pg.model.table.Table;
-import io.github.mfvanek.pg.model.table.TableNameAware;
+import org.assertj.core.api.ListAssert;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.annotation.Nonnull;
 import java.util.List;
-import java.util.function.Predicate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.InstanceOfAssertFactories.list;
@@ -39,38 +35,22 @@ class IndexesMaintenanceTest extends BookCrossingBaseTests {
         assertThat(checks)
                 .hasSameSizeAs(Diagnostic.values());
 
-        checks.forEach(check -> {
-            final List<? extends DbObject> checkResult = check.check(PG_CONTEXT);
+        checks.stream()
+                .filter(DatabaseCheckOnHost::isStatic)
+                .forEach(check -> {
+                    final ListAssert<? extends DbObject> checkAssert = assertThat(check.check(PG_CONTEXT, SkipFlywayTablesPredicate.of(PG_CONTEXT)))
+                            .as(check.getDiagnostic().name());
 
-            switch (check.getDiagnostic()) {
-                case TABLES_WITHOUT_DESCRIPTION -> assertThat(checkResult)
-                        .asInstanceOf(list(Table.class))
-                        .filteredOn(skipFlywayTable())
-                        .isEmpty();
-
-                case COLUMNS_WITHOUT_DESCRIPTION -> assertThat(checkResult)
-                        .asInstanceOf(list(Column.class))
-                        .filteredOn(skipFlywayTable())
-                        .hasSize(43);
-
-                case INDEXES_WITH_BOOLEAN -> assertThat(checkResult)
-                        .asInstanceOf(list(IndexWithColumns.class))
-                        .filteredOn(skipFlywayTable())
-                        .isEmpty();
-
-                case TABLES_WITH_MISSING_INDEXES, UNUSED_INDEXES -> assertThat(checkResult)
-                        .hasSizeLessThanOrEqualTo(1); // TODO skip runtime checks after https://github.com/mfvanek/pg-index-health/issues/456
-
-                default -> assertThat(checkResult)
-                        .as(check.getDiagnostic().name())
-                        .isEmpty();
-
-            }
-        });
-    }
-
-    @Nonnull
-    private static Predicate<TableNameAware> skipFlywayTable() {
-        return FilterTablesByNamePredicate.of(String.format("%s.flyway_schema_history", SCHEMA_NAME));
+                    if (check.getDiagnostic() == Diagnostic.COLUMNS_WITHOUT_DESCRIPTION) {
+                        checkAssert.hasSize(43);
+                    } else if (check.getDiagnostic() == Diagnostic.TABLES_NOT_LINKED_TO_OTHERS) {
+                        checkAssert
+                                .asInstanceOf(list(Table.class))
+                                .hasSize(1)
+                                .containsExactly(Table.of(PG_CONTEXT.enrichWithSchema("t_refresh"), 0L));
+                    } else {
+                        checkAssert.isEmpty();
+                    }
+                });
     }
 }
