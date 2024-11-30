@@ -6,7 +6,6 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
-import org.springframework.validation.annotation.Validated;
 
 import javax.annotation.concurrent.Immutable;
 import javax.validation.constraints.NotBlank;
@@ -14,7 +13,6 @@ import javax.validation.constraints.Size;
 
 @SuperBuilder
 @Immutable
-@Validated
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Schema(description = "Сущность для изменения данных пользователя", requiredProperties = {"newPassword", "passwordConfirm"})
