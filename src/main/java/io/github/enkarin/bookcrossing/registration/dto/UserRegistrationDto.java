@@ -7,7 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
-import org.springframework.validation.annotation.Validated;
 
 import javax.annotation.concurrent.Immutable;
 import javax.validation.constraints.Email;
@@ -18,7 +17,6 @@ import javax.validation.constraints.Size;
 @Getter
 @EqualsAndHashCode
 @SuperBuilder
-@Validated
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Schema(description = "Сущность пользователя", requiredProperties = {"password, passwordConfirm"})
 public class UserRegistrationDto {
