@@ -1,10 +1,10 @@
 package io.github.enkarin.bookcrossing;
 
 import io.github.enkarin.bookcrossing.support.BookCrossingBaseTests;
-import io.github.mfvanek.pg.common.maintenance.DatabaseCheckOnHost;
-import io.github.mfvanek.pg.common.maintenance.Diagnostic;
-import io.github.mfvanek.pg.model.DbObject;
-import io.github.mfvanek.pg.model.PgContext;
+import io.github.mfvanek.pg.core.checks.common.DatabaseCheckOnHost;
+import io.github.mfvanek.pg.core.checks.common.Diagnostic;
+import io.github.mfvanek.pg.model.context.PgContext;
+import io.github.mfvanek.pg.model.dbobject.DbObject;
 import io.github.mfvanek.pg.model.predicates.SkipFlywayTablesPredicate;
 import io.github.mfvanek.pg.model.table.Table;
 import org.assertj.core.api.ListAssert;
