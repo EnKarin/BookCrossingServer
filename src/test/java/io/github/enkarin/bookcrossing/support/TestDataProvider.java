@@ -9,7 +9,6 @@ import io.github.enkarin.bookcrossing.chat.dto.UsersCorrKeyDto;
 import io.github.enkarin.bookcrossing.registration.dto.LoginRequest;
 import io.github.enkarin.bookcrossing.registration.dto.UserRegistrationDto;
 import io.github.enkarin.bookcrossing.user.dto.UserDto;
-import io.github.enkarin.bookcrossing.user.dto.UserParentDto;
 import io.github.enkarin.bookcrossing.user.dto.UserPasswordDto;
 import io.github.enkarin.bookcrossing.user.dto.UserProfileDto;
 import io.github.enkarin.bookcrossing.user.dto.UserPublicProfileDto;
@@ -98,25 +97,40 @@ public class TestDataProvider {
 
     @Nonnull
     public static BookModelDto buildDorian(final int bookId) {
+        final BookDto bookDto = buildDorian();
         return prepareBookModel()
                 .bookId(bookId)
-                .bookDto(buildDorian())
+                .title(bookDto.getTitle())
+                .publishingHouse(bookDto.getPublishingHouse())
+                .genre(bookDto.getGenre())
+                .year(bookDto.getYear())
+                .author(bookDto.getAuthor())
                 .build();
     }
 
     @Nonnull
     public static BookModelDto buildDandelion(final int bookId) {
+        final BookDto bookDto = buildDandelion();
         return prepareBookModel()
                 .bookId(bookId)
-                .bookDto(buildDandelion())
+                .title(bookDto.getTitle())
+                .publishingHouse(bookDto.getPublishingHouse())
+                .genre(bookDto.getGenre())
+                .year(bookDto.getYear())
+                .author(bookDto.getAuthor())
                 .build();
     }
 
     @Nonnull
     public static BookModelDto buildWolves(final int bookId) {
+        final BookDto bookDto = buildWolves();
         return prepareBookModel()
                 .bookId(bookId)
-                .bookDto(buildWolves())
+                .title(bookDto.getTitle())
+                .publishingHouse(bookDto.getPublishingHouse())
+                .genre(bookDto.getGenre())
+                .year(bookDto.getYear())
+                .author(bookDto.getAuthor())
                 .build();
     }
 
@@ -271,14 +285,6 @@ public class TestDataProvider {
 
     @Nonnull
     public static UserDto buildUserDto() {
-        return UserDto.builder()
-                .loginDate(999_999L)
-                .userParentDto(
-                        UserParentDto.builder()
-                                .name("UserName")
-                                .login("login")
-                                .build()
-                )
-                .build();
+        return UserDto.builder().name("UserName").login("login").loginDate(999_999L).build();
     }
 }
