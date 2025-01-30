@@ -13,30 +13,30 @@ import javax.annotation.concurrent.Immutable;
 @SuperBuilder
 @EqualsAndHashCode
 @Getter
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Schema(description = "Общие данные пользователя")
 public class UserParentDto {
 
     @Schema(description = "Идентификатор", example = "0")
-    private final int userId;
+    protected final int userId;
 
     @Schema(description = "Имя", example = "Alex")
-    private final String name;
+    protected final String name;
 
     @Schema(description = "Логин", example = "alex")
-    private final String login;
+    protected final String login;
 
     @Schema(description = "Почта", example = "al@yandex.ru")
-    private final String email;
+    protected final String email;
 
     @Schema(description = "Город", example = "Новосибирск")
-    private final String city;
+    protected final String city;
 
     @Schema(description = "Заблокирован ли аккаунт", example = "true")
-    private final boolean accountNonLocked;
+    protected final boolean accountNonLocked;
 
     @Schema(description = "Активирован ли аккаунт", example = "true")
-    private final boolean enabled;
+    protected final boolean enabled;
 
     public static UserParentDto create(final int userId, final String name, final String login, final String email,
                                        final String city, final boolean accountNonLocked, final boolean enabled) {

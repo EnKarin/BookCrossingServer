@@ -98,25 +98,40 @@ public class TestDataProvider {
 
     @Nonnull
     public static BookModelDto buildDorian(final int bookId) {
+        final BookDto bookDto = buildDorian();
         return prepareBookModel()
                 .bookId(bookId)
-                .bookDto(buildDorian())
+                .title(bookDto.getTitle())
+                .publishingHouse(bookDto.getPublishingHouse())
+                .genre(bookDto.getGenre())
+                .year(bookDto.getYear())
+                .author(bookDto.getAuthor())
                 .build();
     }
 
     @Nonnull
     public static BookModelDto buildDandelion(final int bookId) {
+        final BookDto bookDto = buildDandelion();
         return prepareBookModel()
                 .bookId(bookId)
-                .bookDto(buildDandelion())
+                .title(bookDto.getTitle())
+                .publishingHouse(bookDto.getPublishingHouse())
+                .genre(bookDto.getGenre())
+                .year(bookDto.getYear())
+                .author(bookDto.getAuthor())
                 .build();
     }
 
     @Nonnull
     public static BookModelDto buildWolves(final int bookId) {
+        final BookDto bookDto = buildWolves();
         return prepareBookModel()
                 .bookId(bookId)
-                .bookDto(buildWolves())
+                .title(bookDto.getTitle())
+                .publishingHouse(bookDto.getPublishingHouse())
+                .genre(bookDto.getGenre())
+                .year(bookDto.getYear())
+                .author(bookDto.getAuthor())
                 .build();
     }
 
@@ -271,14 +286,6 @@ public class TestDataProvider {
 
     @Nonnull
     public static UserDto buildUserDto() {
-        return UserDto.builder()
-                .loginDate(999_999L)
-                .userParentDto(
-                        UserParentDto.builder()
-                                .name("UserName")
-                                .login("login")
-                                .build()
-                )
-                .build();
+        return new UserDto(UserParentDto.builder().name("UserName").login("login").build(), 999_999L);
     }
 }
