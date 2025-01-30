@@ -27,8 +27,12 @@ public class MailService {
 
     @Value("${server.port}")
     private String port;
+
     @Value("${spring.mail.from}")
     private String fromEmail;
+
+    @Value("${server.host}")
+    private String host;
 
     @Transactional
     public void sendApproveMail(final User user) {
@@ -42,7 +46,7 @@ public class MailService {
         final var message = prepareMailMessage(user.getEmail());
         message.setSubject("Подтверждение регистрации BookCrossing");
         message.setText("Перейдите по ссылке, чтобы подтвердить создание аккаунта: " +
-                String.format("https://localhost:%s/registration/confirmation?token=%s", port, token));
+                String.format("https://%s:%s/registration/confirmation?token=%s", host, port, token));
         emailSender.send(message);
     }
 

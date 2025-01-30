@@ -1,5 +1,6 @@
 server:
     port: ${port:8443}
+    host: ${SERVER_HOST:localhost}
     servlet:
         session:
             cookie:
@@ -30,8 +31,8 @@ spring:
         show-sql: false
     datasource:
         url: jdbc:postgresql://localhost:5432/bookcrossing
-        username: postgres
-        password: 123456
+        username: bookcrossing_app
+        password: ${BOOK_CROSSING_DATABASE_PASS:123456}
         driver-class-name: org.postgresql.Driver
     servlet:
         multipart:
