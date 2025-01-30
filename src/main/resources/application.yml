@@ -1,5 +1,6 @@
 server:
     port: ${port:8443}
+    host: ${SERVER_HOST:localhost}
     servlet:
         session:
             cookie:
