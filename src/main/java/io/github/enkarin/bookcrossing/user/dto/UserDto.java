@@ -18,13 +18,13 @@ public class UserDto extends UserParentDto {
     @Schema(description = "Время последнего входа", example = "19845673")
     private final long loginDate;
 
-    public UserDto(final UserParentDto user, final long loginDate) {
+    private UserDto(final UserParentDto user, final long loginDate) {
         super(user.getUserId(), user.getName(), user.getLogin(), user.getEmail(), user.getCity(), user.isAccountNonLocked(), user.isEnabled());
         this.loginDate = loginDate;
     }
 
     @JsonCreator
-    public UserDto(final int userId,
+    private UserDto(final int userId,
                    final String name,
                    final String login,
                    final String email,

@@ -28,7 +28,7 @@ public class BookModelDto extends BookDto {
     }
 
     @JsonCreator
-    public BookModelDto(final String title, final String author, final String genre, final String publishingHouse, final int year, final int bookId, final AttachmentDto attachment) {
+    private BookModelDto(final String title, final String author, final String genre, final String publishingHouse, final int year, final int bookId, final AttachmentDto attachment) {
         super(title, author, genre, publishingHouse, year);
         this.bookId = bookId;
         this.attachment = attachment;

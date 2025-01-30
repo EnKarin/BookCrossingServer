@@ -9,7 +9,6 @@ import io.github.enkarin.bookcrossing.chat.dto.UsersCorrKeyDto;
 import io.github.enkarin.bookcrossing.registration.dto.LoginRequest;
 import io.github.enkarin.bookcrossing.registration.dto.UserRegistrationDto;
 import io.github.enkarin.bookcrossing.user.dto.UserDto;
-import io.github.enkarin.bookcrossing.user.dto.UserParentDto;
 import io.github.enkarin.bookcrossing.user.dto.UserPasswordDto;
 import io.github.enkarin.bookcrossing.user.dto.UserProfileDto;
 import io.github.enkarin.bookcrossing.user.dto.UserPublicProfileDto;
@@ -286,6 +285,6 @@ public class TestDataProvider {
 
     @Nonnull
     public static UserDto buildUserDto() {
-        return new UserDto(UserParentDto.builder().name("UserName").login("login").build(), 999_999L);
+        return UserDto.builder().name("UserName").login("login").loginDate(999_999L).build();
     }
 }
