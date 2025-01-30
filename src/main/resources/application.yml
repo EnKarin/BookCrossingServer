@@ -30,8 +30,8 @@ spring:
         show-sql: false
     datasource:
         url: jdbc:postgresql://localhost:5432/bookcrossing
-        username: postgres
-        password: 123456
+        username: bookcrossing_app
+        password: ${BOOK_CROSSING_DATABASE_PASS}
         driver-class-name: org.postgresql.Driver
     servlet:
         multipart:
