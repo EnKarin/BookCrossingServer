@@ -1,5 +1,6 @@
 package io.github.enkarin.bookcrossing.books.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.github.enkarin.bookcrossing.books.model.Book;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
@@ -20,6 +21,7 @@ import javax.annotation.concurrent.Immutable;
 public class BookModelDto {
 
     @Delegate
+    @JsonIgnore
     private final BookDto bookDto;
 
     @Schema(description = "Идентификатор", example = "15")

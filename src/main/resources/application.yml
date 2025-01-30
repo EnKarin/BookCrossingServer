@@ -38,9 +38,9 @@ spring:
             max-file-size: 5MB
             max-request-size: 6MB
     mail:
-        from: noreply@bookscrossing.com
-        password: lgwr qqwh ttbh frhv
-        username: bookscrossingdiploma@gmail.com
+        from: ShareBook.inc@gmail.com
+        password: ${BOOK_CROSSING_EMAIL_TOKEN}
+        username: ShareBook.inc@gmail.com
         host: smtp.gmail.com
         port: 587
         protocol: smtp

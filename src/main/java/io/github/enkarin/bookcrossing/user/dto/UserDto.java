@@ -1,5 +1,6 @@
 package io.github.enkarin.bookcrossing.user.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.github.enkarin.bookcrossing.user.model.User;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
@@ -20,6 +21,7 @@ import javax.annotation.concurrent.Immutable;
 public class UserDto {
 
     @Delegate
+    @JsonIgnore
     private final UserParentDto userParentDto;
 
     @Schema(description = "Время последнего входа", example = "19845673")

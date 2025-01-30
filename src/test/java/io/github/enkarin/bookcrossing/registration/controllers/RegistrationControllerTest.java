@@ -1,9 +1,9 @@
 package io.github.enkarin.bookcrossing.registration.controllers;
 
 import com.icegreen.greenmail.util.GreenMailUtil;
-import io.github.enkarin.bookcrossing.support.BookCrossingBaseTests;
 import io.github.enkarin.bookcrossing.registration.dto.AuthResponse;
 import io.github.enkarin.bookcrossing.registration.dto.UserRegistrationDto;
+import io.github.enkarin.bookcrossing.support.BookCrossingBaseTests;
 import io.github.enkarin.bookcrossing.support.TestDataProvider;
 import io.github.enkarin.bookcrossing.user.dto.UserDto;
 import org.junit.jupiter.api.Test;
@@ -45,7 +45,7 @@ class RegistrationControllerTest extends BookCrossingBaseTests {
                     assertThat(mimeMessages)
                             .extracting(MimeMessage::getFrom)
                             .hasSize(1)
-                            .contains(new Address[]{new InternetAddress("noreply@bookscrossing.com")});
+                            .contains(new Address[]{new InternetAddress("ShareBook.inc@gmail.com")});
                 });
     }
 
