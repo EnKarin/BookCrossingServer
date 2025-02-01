@@ -142,7 +142,7 @@ public class UserService {
         return user;
     }
 
-    public String generateNewLogin() {
+    public String generateOriginalLogin() {
         String possibleLogin;
         do {
             possibleLogin = UUID.randomUUID().toString();
