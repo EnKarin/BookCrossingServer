@@ -10,6 +10,8 @@ import io.github.enkarin.bookcrossing.exception.ChatNotFoundException;
 import io.github.enkarin.bookcrossing.exception.NoAccessToChatException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -62,11 +64,12 @@ public class CorrespondenceController {
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
                     schema = @Schema(implementation = UsersCorrKeyDto.class))})
     })
+    @Parameters({
+        @Parameter(in = ParameterIn.HEADER, name = USER_ID)
+    })
     @PostMapping
-    public ResponseEntity<UsersCorrKeyDto> createCorrespondence(@RequestHeader(USER_ID) final int userId,
-                                                                final Principal principal) {
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(correspondenceService.createChat(userId, principal.getName()));
+    public ResponseEntity<UsersCorrKeyDto> createCorrespondence(@RequestHeader(USER_ID) final String userId, final Principal principal) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(correspondenceService.createChat(Integer.parseInt(userId), principal.getName()));
     }
 
     @Operation(
@@ -80,10 +83,13 @@ public class CorrespondenceController {
         @ApiResponse(responseCode = "200", description = "Чат удален")
         }
     )
+    @Parameters({
+        @Parameter(in = ParameterIn.HEADER, name = USER_ID)
+    })
     @DeleteMapping
-    public ResponseEntity<Void> deleteCorrespondence(@RequestHeader(USER_ID) @Parameter(description = "Идентификатор пользователя") final int userId,
+    public ResponseEntity<Void> deleteCorrespondence(@RequestHeader(USER_ID) @Parameter(description = "Идентификатор пользователя") final String userId,
                                                      final Principal principal) {
-        correspondenceService.deleteChat(userId, principal.getName());
+        correspondenceService.deleteChat(Integer.parseInt(userId), principal.getName());
         return ResponseEntity.ok().build();
     }
 
@@ -104,11 +110,15 @@ public class CorrespondenceController {
         }
     )
     @GetMapping
-    public ResponseEntity<Object[]> getCorrespondence(@RequestHeader(FIRST_USER_ID) final int firstUserId,
-                                                      @RequestHeader(SECOND_USER_ID) final int secondUserId,
+    @Parameters({
+        @Parameter(in = ParameterIn.HEADER, name = FIRST_USER_ID),
+        @Parameter(in = ParameterIn.HEADER, name = SECOND_USER_ID)
+    })
+    public ResponseEntity<Object[]> getCorrespondence(@RequestHeader(FIRST_USER_ID) final String firstUserId,
+                                                      @RequestHeader(SECOND_USER_ID) final String secondUserId,
                                                       @RequestParam final int zone,
                                                       final Principal principal) {
-        return ResponseEntity.ok(correspondenceService.getChat(firstUserId, secondUserId, zone, principal.getName()).toArray());
+        return ResponseEntity.ok(correspondenceService.getChat(Integer.parseInt(firstUserId), Integer.parseInt(secondUserId), zone, principal.getName()).toArray());
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)

@@ -30,7 +30,7 @@ public class SecurityConfig {
     @Bean
     protected SecurityFilterChain filterChain(final HttpSecurity httpSecurity) {
         final CorsConfiguration corsConfiguration = new CorsConfiguration();
-        corsConfiguration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+        corsConfiguration.setAllowedHeaders(List.of("Authorization", "Content-Type", "userId"));
         corsConfiguration.setAllowedOrigins(List.of(allowedOrigins.split(",")));
         corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
         corsConfiguration.setAllowCredentials(true);

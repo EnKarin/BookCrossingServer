@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 public class UserPublicProfileDto {
 
     @Schema(description = "Идентификатор", example = "0")
-    private final int userId;
+    private final String userId;
 
     @Schema(description = "Имя", example = "Alex")
     private final String name;
@@ -42,7 +42,7 @@ public class UserPublicProfileDto {
         final Set<BookModelDto> books = user.getBooks().stream()
                 .map(BookModelDto::fromBook)
                 .collect(Collectors.toUnmodifiableSet());
-        return new UserPublicProfileDto(user.getUserId(), user.getName(), user.getCity(),
+        return new UserPublicProfileDto(Integer.toString(user.getUserId()), user.getName(), user.getCity(),
                 user.getLoginDate() == 0 ? "0" :
                         LocalDateTime.ofEpochSecond(user.getLoginDate(), 0, ZoneOffset.ofHours(zone))
                                 .toString(),

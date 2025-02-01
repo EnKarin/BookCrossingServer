@@ -178,7 +178,7 @@ class UserServiceTest extends BookCrossingBaseTests {
 
     private static void checkUserDTOAndUserPublicPublicProfileDTO(
             final UserDto userDto, final UserPublicProfileDto userPublicProfileDto) {
-        assertThat(userPublicProfileDto.getUserId()).isEqualTo(userDto.getUserId());
+        assertThat(Integer.parseInt(userPublicProfileDto.getUserId())).isEqualTo(userDto.getUserId());
         assertThat(userPublicProfileDto.getName()).isEqualTo(userDto.getName());
         assertThat(userPublicProfileDto.getCity()).isEqualTo(userDto.getCity());
         assertThat(userPublicProfileDto.getBooks()).isEqualTo(Set.of());
