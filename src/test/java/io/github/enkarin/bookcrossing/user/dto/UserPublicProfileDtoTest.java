@@ -22,7 +22,7 @@ class UserPublicProfileDtoTest {
         assertThat(userProfileDto)
                 .isNotNull()
                 .satisfies(u -> {
-                    assertThat(u.getUserId())
+                    assertThat(Integer.parseInt(u.getUserId()))
                             .isEqualTo(Integer.MAX_VALUE);
                     assertThat(u.getName())
                             .isEqualTo("name");
@@ -46,7 +46,7 @@ class UserPublicProfileDtoTest {
         assertThat(userProfileDto)
                 .isNotNull()
                 .satisfies(u -> {
-                    assertThat(u.getUserId())
+                    assertThat(Integer.parseInt(u.getUserId()))
                             .isEqualTo(Integer.MAX_VALUE);
                     assertThat(u.getName())
                             .isEqualTo("name");
