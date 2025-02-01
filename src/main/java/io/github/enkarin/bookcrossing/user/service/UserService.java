@@ -30,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @Service
@@ -139,5 +140,13 @@ public class UserService {
         user.setEnabled(false);
         user.setPassword(bCryptPasswordEncoder.encode(userRegistrationDTO.getPassword()));
         return user;
+    }
+
+    public String generateNewLogin() {
+        String possibleLogin;
+        do {
+            possibleLogin = UUID.randomUUID().toString();
+        } while (userRepository.findByLogin(possibleLogin).isPresent());
+        return possibleLogin;
     }
 }
