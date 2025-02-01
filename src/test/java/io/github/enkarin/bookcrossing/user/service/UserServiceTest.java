@@ -12,11 +12,9 @@ import io.github.enkarin.bookcrossing.user.dto.UserDto;
 import io.github.enkarin.bookcrossing.user.dto.UserProfileDto;
 import io.github.enkarin.bookcrossing.user.dto.UserPublicProfileDto;
 import io.github.enkarin.bookcrossing.user.dto.UserPutProfileDto;
-
-import java.util.Comparator;
-
 import org.junit.jupiter.api.Test;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
@@ -171,6 +169,11 @@ class UserServiceTest extends BookCrossingBaseTests {
         assertThatThrownBy(() -> userService.putUserInfo(putProfile, user))
                 .isInstanceOf(InvalidPasswordException.class)
                 .hasMessage("Некорректный пароль");
+    }
+
+    @Test
+    void generateOriginalLoginTest() {
+        assertThat(userService.generateOriginalLogin()).isNotBlank();
     }
 
     private static void checkUserDTOAndUserPublicPublicProfileDTO(
