@@ -58,3 +58,5 @@ jwt:
     secret: scjwtmaster
 time:
     zone-offset: 7
+cors:
+    allowed-origins: https://frontend-wmyr.onrender.com/
