@@ -96,8 +96,15 @@ class RegistrationControllerTest extends BookCrossingBaseTests {
         jdbcTemplate.update("update bookcrossing.t_user set enabled = true where user_id = " + userId);
         final var response = checkPost("/auth", TestDataProvider.buildAuthBot(), 200)
                 .expectBody(AuthResponse.class)
-                .returnResult().getResponseBody();
-        assertThat(response).isNotNull();
+                .returnResult();
+        assertThat(response)
+                .isNotNull()
+                .satisfies(r -> {
+                    assertThat(r.getResponseBody())
+                            .isNotNull();
+                    assertThat(r.getResponseCookies().get("refresh-token"))
+                            .isNotEmpty();
+                });
     }
 
     @Test
@@ -138,7 +145,15 @@ class RegistrationControllerTest extends BookCrossingBaseTests {
         final String token = new String(Base64.getMimeDecoder().decode(GreenMailUtil.getBody(message)),
                 StandardCharsets.UTF_8)
                 .split("token=")[1];
-        checkToken(token, 200);
+        final var response = checkToken(token, 200);
+        assertThat(response.returnResult(AuthResponse.class))
+                .isNotNull()
+                .satisfies(r -> {
+                    assertThat(r.getResponseBody())
+                            .isNotNull();
+                    assertThat(r.getResponseCookies().get("refresh-token"))
+                            .isNotEmpty();
+                });
         assertThat(jdbcTemplate.queryForObject("select enabled from bookcrossing.t_user where user_id = ?", Boolean.class,
                 user.getUserId()))
                 .isTrue();

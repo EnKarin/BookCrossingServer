@@ -71,7 +71,7 @@
 
     <rule ref="category/java/design.xml/ExcessiveImports">
         <properties>
-            <property name="minimum" value="37" />
+            <property name="minimum" value="50" />
         </properties>
     </rule>
 
