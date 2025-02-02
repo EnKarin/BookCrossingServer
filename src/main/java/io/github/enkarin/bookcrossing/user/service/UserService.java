@@ -142,10 +142,10 @@ public class UserService {
         return user;
     }
 
-    public String generateOriginalLogin() {
+    public String generateLogin() {
         String possibleLogin;
         do {
-            possibleLogin = UUID.randomUUID().toString();
+            possibleLogin = UUID.randomUUID().toString().substring(0, 12);
         } while (userRepository.findByLogin(possibleLogin).isPresent());
         return possibleLogin;
     }

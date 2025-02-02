@@ -11,6 +11,7 @@ import io.github.enkarin.bookcrossing.exception.PasswordsDontMatchException;
 import io.github.enkarin.bookcrossing.exception.TokenNotFoundException;
 import io.github.enkarin.bookcrossing.registration.dto.AuthResponse;
 import io.github.enkarin.bookcrossing.registration.dto.LoginRequest;
+import io.github.enkarin.bookcrossing.registration.dto.OriginalLoginResponse;
 import io.github.enkarin.bookcrossing.registration.dto.UserRegistrationDto;
 import io.github.enkarin.bookcrossing.user.dto.UserDto;
 import io.github.enkarin.bookcrossing.user.service.UserService;
@@ -102,6 +103,16 @@ public class RegistrationController {
     @GetMapping("/registration/confirmation")
     public ResponseEntity<AuthResponse> mailConfirm(@RequestParam final String token) {
         return ResponseEntity.ok(userService.confirmMail(token));
+    }
+
+    @Operation(summary = "Генерация нового логина", description = "Предоставляет логин, пользователя с которым ещё не существует")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Уникальный на данный момент логин",
+            content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(implementation = OriginalLoginResponse.class))})
+    })
+    @GetMapping("/generate-login")
+    public ResponseEntity<OriginalLoginResponse> generateLogin() {
+        return ResponseEntity.ok(new OriginalLoginResponse(userService.generateLogin()));
     }
 
     @ResponseStatus(HttpStatus.CONFLICT)

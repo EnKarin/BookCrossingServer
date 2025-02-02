@@ -172,8 +172,8 @@ class UserServiceTest extends BookCrossingBaseTests {
     }
 
     @Test
-    void generateOriginalLoginTest() {
-        assertThat(userService.generateOriginalLogin()).isNotBlank();
+    void generateLoginTest() {
+        assertThat(userService.generateLogin()).isNotBlank();
     }
 
     private static void checkUserDTOAndUserPublicPublicProfileDTO(
