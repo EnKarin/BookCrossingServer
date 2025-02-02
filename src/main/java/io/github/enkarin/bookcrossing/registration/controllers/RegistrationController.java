@@ -15,13 +15,16 @@ import io.github.enkarin.bookcrossing.registration.dto.UserRegistrationDto;
 import io.github.enkarin.bookcrossing.user.dto.UserDto;
 import io.github.enkarin.bookcrossing.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.headers.Header;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -33,6 +36,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.time.Duration;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -89,13 +93,19 @@ public class RegistrationController {
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
                     schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
         @ApiResponse(responseCode = "200", description = "Возвращает токены",
-            content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(implementation = AuthResponse.class))}
+            content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(implementation = AuthResponse.class))}, headers = @Header(name = "Set-Cookie", description = "refresh token")
             )}
     )
     @PostMapping("/auth")
     public ResponseEntity<AuthResponse> auth(@RequestBody final LoginRequest request) {
-        return ResponseEntity.ok(userService.findByLoginAndPassword(request));
+        final AuthResponse auth = userService.findByLoginAndPassword(request);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, ResponseCookie.from("refresh-token", auth.getRefreshToken())
+                        .httpOnly(true)
+                        .path("/refresh")
+                        .maxAge(Duration.ofDays(3))
+                        .build().toString())
+                .body(auth);
     }
 
     @Operation(
@@ -107,13 +117,18 @@ public class RegistrationController {
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
                     schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
         @ApiResponse(responseCode = "200", description = "Подтверждает почту для аккаунта и возвращает токены",
-            content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(implementation = AuthResponse.class))})
-    }
-    )
+            content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(implementation = AuthResponse.class))}, headers = @Header(name = "Set-Cookie", description = "refresh token"))
+    })
     @GetMapping("/registration/confirmation")
     public ResponseEntity<AuthResponse> mailConfirm(@RequestParam final String token) {
-        return ResponseEntity.ok(userService.confirmMail(token));
+        final AuthResponse auth = userService.confirmMail(token);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, ResponseCookie.from("refresh-token", auth.getRefreshToken())
+                        .httpOnly(true)
+                        .path("/refresh")
+                        .maxAge(Duration.ofDays(3))
+                        .build().toString())
+                .body(auth);
     }
 
     @ResponseStatus(HttpStatus.CONFLICT)
