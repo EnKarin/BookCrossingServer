@@ -134,16 +134,6 @@ public class RegistrationController {
         return ResponseEntity.ok(new OriginalLoginResponse(userService.generateLogin()));
     }
 
-    @Operation(summary = "Генерация нового логина", description = "Предоставляет логин, пользователя с которым ещё не существует")
-    @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Уникальный на данный момент логин",
-            content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(implementation = OriginalLoginResponse.class))})
-    })
-    @GetMapping("/generate-login")
-    public ResponseEntity<OriginalLoginResponse> generateLogin() {
-        return ResponseEntity.ok(new OriginalLoginResponse(userService.generateLogin()));
-    }
-
     @ResponseStatus(HttpStatus.CONFLICT)
     @ExceptionHandler(PasswordsDontMatchException.class)
     public Map<String, String> passwordConflict(final PasswordsDontMatchException exc) {
