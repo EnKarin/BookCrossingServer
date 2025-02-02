@@ -2,12 +2,12 @@ package io.github.enkarin.bookcrossing.chat.controllers;
 
 import io.github.enkarin.bookcrossing.admin.dto.LockedUserDto;
 import io.github.enkarin.bookcrossing.admin.service.AdminService;
-import io.github.enkarin.bookcrossing.support.BookCrossingBaseTests;
 import io.github.enkarin.bookcrossing.chat.dto.MessageDto;
 import io.github.enkarin.bookcrossing.chat.dto.MessageRequest;
 import io.github.enkarin.bookcrossing.chat.dto.UsersCorrKeyDto;
 import io.github.enkarin.bookcrossing.chat.service.CorrespondenceService;
 import io.github.enkarin.bookcrossing.chat.service.MessageService;
+import io.github.enkarin.bookcrossing.support.BookCrossingBaseTests;
 import io.github.enkarin.bookcrossing.support.TestDataProvider;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -111,6 +111,26 @@ class CorrespondenceControllerTest extends BookCrossingBaseTests {
                 .expectBody()
                 .jsonPath("$.correspondence")
                 .isEqualTo("Чат с пользователем уже существует");
+    }
+
+    @Test
+    void createCorrespondenceWithoutUserIdShouldReturn400() {
+        execute(HttpMethod.POST, "", 400);
+    }
+
+    @Test
+    void getCorrespondenceWithoutFirstUserIdShouldReturn400() {
+        execute("", "123", 400);
+    }
+
+    @Test
+    void getCorrespondenceWithoutSecondUserIdShouldReturn400() {
+        execute("12", "", 400);
+    }
+
+    @Test
+    void deleteCorrespondenceWithoutUserIdShouldReturn400() {
+        execute(HttpMethod.DELETE, "", 400);
     }
 
     @Test
@@ -262,19 +282,27 @@ class CorrespondenceControllerTest extends BookCrossingBaseTests {
     }
 
     private WebTestClient.ResponseSpec execute(final HttpMethod httpMethod, final int userId, final int status) {
+        return execute(httpMethod, Integer.toString(userId), status);
+    }
+
+    private WebTestClient.ResponseSpec execute(final HttpMethod httpMethod, final String userId, final int status) {
         return webClient.method(httpMethod)
                 .uri(uriBuilder -> uriBuilder
                         .pathSegment("user", "correspondence")
                         .build())
                 .headers(headers -> {
                     headers.setBearerAuth(generateAccessToken(TestDataProvider.buildAuthBot()));
-                    headers.set(USER_ID, String.valueOf(userId));
+                    headers.set(USER_ID, userId);
                 })
                 .exchange()
                 .expectStatus().isEqualTo(status);
     }
 
     private WebTestClient.ResponseSpec execute(final int firstUserId, final int secondUserId, final int status) {
+        return execute(Integer.toString(firstUserId), Integer.toString(secondUserId), status);
+    }
+
+    private WebTestClient.ResponseSpec execute(final String firstUserId, final String secondUserId, final int status) {
         return webClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .pathSegment("user", "correspondence")
@@ -282,8 +310,8 @@ class CorrespondenceControllerTest extends BookCrossingBaseTests {
                         .build())
                 .headers(headers -> {
                     headers.setBearerAuth(generateAccessToken(TestDataProvider.buildAuthBot()));
-                    headers.set(FIRST_USER_ID, String.valueOf(firstUserId));
-                    headers.set(SECOND_USER_ID, String.valueOf(secondUserId));
+                    headers.set(FIRST_USER_ID, firstUserId);
+                    headers.set(SECOND_USER_ID, secondUserId);
                 })
                 .exchange()
                 .expectStatus().isEqualTo(status);

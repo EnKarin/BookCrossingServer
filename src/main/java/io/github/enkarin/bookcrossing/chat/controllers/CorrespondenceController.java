@@ -20,6 +20,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.constraints.NotBlank;
 import java.security.Principal;
 import java.util.Map;
 
@@ -40,6 +42,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/user/correspondence")
+@Validated
 public class CorrespondenceController {
 
     private final CorrespondenceService correspondenceService;
@@ -65,10 +68,10 @@ public class CorrespondenceController {
                     schema = @Schema(implementation = UsersCorrKeyDto.class))})
     })
     @Parameters({
-        @Parameter(in = ParameterIn.HEADER, name = USER_ID)
+        @Parameter(in = ParameterIn.HEADER, name = USER_ID, description = "Идентификатор пользователя")
     })
     @PostMapping
-    public ResponseEntity<UsersCorrKeyDto> createCorrespondence(@RequestHeader(USER_ID) final String userId, final Principal principal) {
+    public ResponseEntity<UsersCorrKeyDto> createCorrespondence(@RequestHeader(USER_ID) @NotBlank final String userId, final Principal principal) {
         return ResponseEntity.status(HttpStatus.CREATED).body(correspondenceService.createChat(Integer.parseInt(userId), principal.getName()));
     }
 
@@ -84,11 +87,10 @@ public class CorrespondenceController {
         }
     )
     @Parameters({
-        @Parameter(in = ParameterIn.HEADER, name = USER_ID)
+        @Parameter(in = ParameterIn.HEADER, name = USER_ID, description = "Идентификатор пользователя")
     })
     @DeleteMapping
-    public ResponseEntity<Void> deleteCorrespondence(@RequestHeader(USER_ID) @Parameter(description = "Идентификатор пользователя") final String userId,
-                                                     final Principal principal) {
+    public ResponseEntity<Void> deleteCorrespondence(@RequestHeader(USER_ID) @NotBlank final String userId, final Principal principal) {
         correspondenceService.deleteChat(Integer.parseInt(userId), principal.getName());
         return ResponseEntity.ok().build();
     }
@@ -111,11 +113,11 @@ public class CorrespondenceController {
     )
     @GetMapping
     @Parameters({
-        @Parameter(in = ParameterIn.HEADER, name = FIRST_USER_ID),
-        @Parameter(in = ParameterIn.HEADER, name = SECOND_USER_ID)
+        @Parameter(in = ParameterIn.HEADER, name = FIRST_USER_ID, description = "Идентификатор первого пользователя"),
+        @Parameter(in = ParameterIn.HEADER, name = SECOND_USER_ID, description = "Идентификатор второго пользователя")
     })
-    public ResponseEntity<Object[]> getCorrespondence(@RequestHeader(FIRST_USER_ID) final String firstUserId,
-                                                      @RequestHeader(SECOND_USER_ID) final String secondUserId,
+    public ResponseEntity<Object[]> getCorrespondence(@RequestHeader(FIRST_USER_ID) @NotBlank final String firstUserId,
+                                                      @RequestHeader(SECOND_USER_ID) @NotBlank final String secondUserId,
                                                       @RequestParam final int zone,
                                                       final Principal principal) {
         return ResponseEntity.ok(correspondenceService.getChat(Integer.parseInt(firstUserId), Integer.parseInt(secondUserId), zone, principal.getName()).toArray());
