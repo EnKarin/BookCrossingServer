@@ -164,6 +164,15 @@ class RegistrationControllerTest extends BookCrossingBaseTests {
         checkToken("token", 404);
     }
 
+    @Test
+    void generateToken() {
+        webClient.get()
+            .uri("/generate-login")
+            .exchange()
+            .expectStatus().isOk()
+            .expectBody().jsonPath("$.originalLogin").isNotEmpty();
+    }
+
     private WebTestClient.ResponseSpec checkPost(final String uri, final Object body, final int status) {
         return webClient.post()
                 .uri(uri)
