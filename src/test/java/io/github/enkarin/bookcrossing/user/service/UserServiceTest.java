@@ -16,7 +16,6 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -181,7 +180,6 @@ class UserServiceTest extends BookCrossingBaseTests {
         assertThat(Integer.parseInt(userPublicProfileDto.getUserId())).isEqualTo(userDto.getUserId());
         assertThat(userPublicProfileDto.getName()).isEqualTo(userDto.getName());
         assertThat(userPublicProfileDto.getCity()).isEqualTo(userDto.getCity());
-        assertThat(userPublicProfileDto.getBooks()).isEqualTo(Set.of());
     }
 
     private static void checkUserDTOAndUserProfileDTO(
@@ -191,6 +189,5 @@ class UserServiceTest extends BookCrossingBaseTests {
         assertThat(userProfileDto.getCity()).isEqualTo(userDto.getCity());
         assertThat(userProfileDto.getLogin()).isEqualTo(userDto.getLogin());
         assertThat(userProfileDto.getEmail()).isEqualTo(userDto.getEmail());
-        assertThat(userProfileDto.getBooks()).isEqualTo(Set.of());
     }
 }

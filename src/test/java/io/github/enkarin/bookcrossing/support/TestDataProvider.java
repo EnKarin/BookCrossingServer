@@ -17,7 +17,6 @@ import lombok.experimental.UtilityClass;
 
 import javax.annotation.Nonnull;
 import java.util.List;
-import java.util.Set;
 
 @SuppressWarnings("PMD.TestClassWithoutTestCases")
 @UtilityClass
@@ -219,7 +218,6 @@ public class TestDataProvider {
                 .name("Tester")
                 .city("Novosibirsk")
                 .loginDate("0")
-                .books(Set.of())
                 .build();
     }
 
@@ -252,7 +250,6 @@ public class TestDataProvider {
                 .email("k.test@mail.ru")
                 .name("Bott")
                 .city("Moscow")
-                .books(Set.of())
                 .build();
     }
 

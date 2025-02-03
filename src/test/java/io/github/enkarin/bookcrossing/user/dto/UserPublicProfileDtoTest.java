@@ -28,9 +28,6 @@ class UserPublicProfileDtoTest {
                             .isEqualTo("name");
                     assertThat(u.getLoginDate())
                             .isEqualTo("0");
-                    assertThat(u.getBooks())
-                            .hasSize(1)
-                            .isUnmodifiable();
                 });
     }
 
@@ -52,9 +49,6 @@ class UserPublicProfileDtoTest {
                             .isEqualTo("name");
                     assertThat(u.getLoginDate())
                             .isEqualTo("1970-01-02T13:19:27");
-                    assertThat(u.getBooks())
-                            .hasSize(1)
-                            .isUnmodifiable();
                 });
     }
 }

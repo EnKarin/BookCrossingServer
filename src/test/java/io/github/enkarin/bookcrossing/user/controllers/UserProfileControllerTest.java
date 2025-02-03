@@ -35,11 +35,6 @@ class UserProfileControllerTest extends BookCrossingBaseTests {
                             .usingRecursiveComparison()
                             .ignoringFields("books")
                             .isEqualTo(TestDataProvider.buildProfileBot(user.getUserId()));
-                    assertThat(r.getBooks())
-                            .usingRecursiveComparison()
-                            .ignoringFields("bookId")
-                            .ignoringCollectionOrder()
-                            .isEqualTo(TestDataProvider.buildBookModels(-1, -1, -1));
                 });
     }
 
@@ -140,11 +135,6 @@ class UserProfileControllerTest extends BookCrossingBaseTests {
                             .usingRecursiveComparison()
                             .ignoringFields("books")
                             .isEqualTo(TestDataProvider.buildPublicProfileBot(user.getUserId()));
-                    assertThat(r.getBooks())
-                            .usingRecursiveComparison()
-                            .ignoringFields("bookId")
-                            .ignoringCollectionOrder()
-                            .isEqualTo(TestDataProvider.buildBookModels(-1, -1, -1));
                 }
             );
     }
