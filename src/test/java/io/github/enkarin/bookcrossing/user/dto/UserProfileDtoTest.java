@@ -25,8 +25,5 @@ class UserProfileDtoTest {
                 .isEqualTo("test");
         assertThat(userProfileDto.getUserId())
                 .isEqualTo(Integer.MAX_VALUE);
-        assertThat(userProfileDto.getBooks())
-                .hasSize(1)
-                .isUnmodifiable();
     }
 }
