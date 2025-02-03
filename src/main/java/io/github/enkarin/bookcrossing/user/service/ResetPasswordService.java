@@ -22,7 +22,7 @@ public class ResetPasswordService {
 
     public void updatePassword(final String token, final UserPasswordDto passwordDto) {
         final ActionMailUser actionMailUser = actionMailUserRepository.findById(token)
-                .orElseThrow(TokenInvalidException::new);
+            .orElseThrow(TokenInvalidException::new);
         final User user = actionMailUser.getUser();
         user.setPassword(bCryptPasswordEncoder.encode(passwordDto.getPassword()));
         userRepository.save(user);

@@ -21,22 +21,22 @@ class RefreshControllerTest extends BookCrossingBaseTests {
         final UserDto user = createAndSaveUser(TestDataProvider.buildAlex());
         final MimeMessage message = GREEN_MAIL.getReceivedMessagesForDomain(user.getEmail())[0];
         final String token = new String(Base64.getMimeDecoder().decode(GreenMailUtil.getBody(message)),
-                StandardCharsets.UTF_8)
-                .split("token=")[1];
+            StandardCharsets.UTF_8)
+            .split("token=")[1];
         final var responseConfirm = webClient.get()
-                .uri("/registration/confirmation?token={token}", token)
-                .exchange()
-                .returnResult(AuthResponse.class);
+            .uri("/registration/confirmation?token={token}", token)
+            .exchange()
+            .returnResult(AuthResponse.class);
         final String refresh = responseConfirm.getResponseCookies().get("refresh-token").get(0).getValue();
 
         final var response = webClient.post()
-                .uri("/refresh")
-                .contentType(MediaType.APPLICATION_JSON)
-                .cookie("refresh-token", refresh)
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody(AuthResponse.class).returnResult();
+            .uri("/refresh")
+            .contentType(MediaType.APPLICATION_JSON)
+            .cookie("refresh-token", refresh)
+            .exchange()
+            .expectStatus().isOk()
+            .expectBody(AuthResponse.class).returnResult();
         assertThat(response.getResponseCookies().get("refresh-token"))
-                .isNotEmpty();
+            .isNotEmpty();
     }
 }

@@ -32,6 +32,6 @@ public class UserProfileDto {
 
     public static UserProfileDto fromUser(final User user) {
         return new UserProfileDto(user.getUserId(), user.getName(), user.getLogin(), user.getCity(),
-                user.getEmail());
+            user.getEmail());
     }
 }

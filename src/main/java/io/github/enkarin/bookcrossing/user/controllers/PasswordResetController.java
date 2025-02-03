@@ -28,8 +28,8 @@ import javax.validation.Valid;
 import java.util.Map;
 
 @Tag(
-        name = "Сброс пароля",
-        description = "Позволяет получить на привязанную почту ссылку для сброса пароля"
+    name = "Сброс пароля",
+    description = "Позволяет получить на привязанную почту ссылку для сброса пароля"
 )
 @RequiredArgsConstructor
 @RestController
@@ -40,15 +40,15 @@ public class PasswordResetController {
     private final ResetPasswordService resetPasswordService;
 
     @Operation(
-            summary = "Запрос на сброс пароля",
-            description = "Отправляет на почту ссылку для сброса пароля"
+        summary = "Запрос на сброс пароля",
+        description = "Отправляет на почту ссылку для сброса пароля"
     )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "404", description = "Пользователь с таким email не найден",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+                schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
         @ApiResponse(responseCode = "200", description = "Отправляет ссылку на сброс пароля на почту")
-        }
+    }
     )
     @PostMapping("/send")
     public ResponseEntity<Void> sendMessage(@RequestParam final String email) {
@@ -57,23 +57,23 @@ public class PasswordResetController {
     }
 
     @Operation(
-            summary = "Смена пароля",
-            description = "Смена пароля по ссылке"
+        summary = "Смена пароля",
+        description = "Смена пароля по ссылке"
     )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "409", description = "Пароли не совпадают",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+                schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
         @ApiResponse(responseCode = "403", description = "Ссылка недействительна",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+                schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
         @ApiResponse(responseCode = "201", description = "Пароль успешно изменен")
-        }
+    }
     )
     @PostMapping("/update")
     public ResponseEntity<Void> updatePassword(@RequestParam final String token,
-                                            @Valid @RequestBody final UserPasswordDto userPasswordDto,
-                                            final BindingResult bindingResult) {
+                                               @Valid @RequestBody final UserPasswordDto userPasswordDto,
+                                               final BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             throw new PasswordsDontMatchException();
         }

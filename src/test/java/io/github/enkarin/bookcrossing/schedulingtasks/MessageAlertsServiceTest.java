@@ -42,12 +42,12 @@ class MessageAlertsServiceTest extends BookCrossingBaseTests {
         messageAlertsService.sendAlerts();
 
         assertThat(messageRepository.findById(messageId))
-                .isPresent()
-                .get()
-                .extracting(Message::isAlertSent)
-                .isEqualTo(true);
+            .isPresent()
+            .get()
+            .extracting(Message::isAlertSent)
+            .isEqualTo(true);
         assertThat(output)
-                .contains(String.format("Sending alert for userId %d", userAlex.getUserId()));
+            .contains(String.format("Sending alert for userId %d", userAlex.getUserId()));
     }
 
     @Test
@@ -62,12 +62,12 @@ class MessageAlertsServiceTest extends BookCrossingBaseTests {
         messageAlertsService.sendAlerts();
 
         assertThat(messageRepository.findById(messageId))
-                .isPresent()
-                .get()
-                .extracting(Message::isAlertSent)
-                .isEqualTo(true);
+            .isPresent()
+            .get()
+            .extracting(Message::isAlertSent)
+            .isEqualTo(true);
         assertThat(output)
-                .contains(String.format("Sending alert for userId %d", userAlex.getUserId()));
+            .contains(String.format("Sending alert for userId %d", userAlex.getUserId()));
     }
 
     @Test
@@ -83,10 +83,10 @@ class MessageAlertsServiceTest extends BookCrossingBaseTests {
         messageAlertsService.sendAlerts();
 
         assertThat(messageRepository.findById(messageId))
-                .isPresent()
-                .get()
-                .extracting(Message::isAlertSent)
-                .isEqualTo(false);
+            .isPresent()
+            .get()
+            .extracting(Message::isAlertSent)
+            .isEqualTo(false);
     }
 
     @Test
@@ -102,7 +102,7 @@ class MessageAlertsServiceTest extends BookCrossingBaseTests {
         messageAlertsService.sendAlerts();
 
         assertThat(output)
-                .doesNotContain(String.format("Sending alert for userId %d", userAlex.getUserId()));
+            .doesNotContain(String.format("Sending alert for userId %d", userAlex.getUserId()));
     }
 
     @Test
@@ -121,7 +121,7 @@ class MessageAlertsServiceTest extends BookCrossingBaseTests {
         messageAlertsService.sendAlerts();
 
         assertThat(output)
-                .doesNotContain(String.format("Sending alert for userId %d", userAlex.getUserId()));
+            .doesNotContain(String.format("Sending alert for userId %d", userAlex.getUserId()));
     }
 
     @Test
@@ -140,7 +140,7 @@ class MessageAlertsServiceTest extends BookCrossingBaseTests {
         messageAlertsService.sendAlerts();
 
         assertThat(output)
-                .doesNotContain(String.format("Sending alert for userId %d", userAlex.getUserId()));
+            .doesNotContain(String.format("Sending alert for userId %d", userAlex.getUserId()));
     }
 
     private long createChatAndMessage(final UserDto userBot, final UserDto userAlex) {

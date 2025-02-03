@@ -38,7 +38,7 @@ public class RefreshService {
 
     public AuthResponse createTokens(final String login) {
         final User user = userRepository.findByLogin(login)
-                .orElseThrow(UserNotFoundException::new);
+            .orElseThrow(UserNotFoundException::new);
         user.setLoginDate(timeSettings.getEpochSeconds());
         userRepository.save(user);
 

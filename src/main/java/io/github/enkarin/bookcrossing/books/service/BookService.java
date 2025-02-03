@@ -40,14 +40,14 @@ public class BookService {
 
     public List<BookModelDto> findBookForOwner(final String login) {
         return bookRepository.findBooksByOwner(userRepository.findByLogin(login).orElseThrow()).stream()
-                .map(BookModelDto::fromBook)
-                .toList();
+            .map(BookModelDto::fromBook)
+            .toList();
     }
 
     public List<BookModelDto> findBookByOwnerId(final String userId) {
         return bookRepository.findBooksByOwnerUserId(Integer.parseInt(userId)).stream()
-                .map(BookModelDto::fromBook)
-                .toList();
+            .map(BookModelDto::fromBook)
+            .toList();
     }
 
     public BookModelDto findById(final int bookId) {
@@ -59,64 +59,64 @@ public class BookService {
         List<Book> books = bookRepository.findAll();
         if (request.getGenre() != null) {
             books = books.stream()
-                    .filter(book -> book.getGenre() != null)
-                    .filter(book -> book.getGenre().equalsIgnoreCase(request.getGenre()))
-                    .toList();
+                .filter(book -> book.getGenre() != null)
+                .filter(book -> book.getGenre().equalsIgnoreCase(request.getGenre()))
+                .toList();
         }
         if (request.getAuthor() != null) {
             books = books.stream()
-                    .filter(book -> book.getAuthor() != null)
-                    .filter(book -> book.getAuthor().equalsIgnoreCase(request.getAuthor()))
-                    .toList();
+                .filter(book -> book.getAuthor() != null)
+                .filter(book -> book.getAuthor().equalsIgnoreCase(request.getAuthor()))
+                .toList();
         }
         if (request.getPublishingHouse() != null) {
             books = books.stream()
-                    .filter(book -> book.getPublishingHouse() != null)
-                    .filter(book -> book.getPublishingHouse().equalsIgnoreCase(request.getPublishingHouse()))
-                    .toList();
+                .filter(book -> book.getPublishingHouse() != null)
+                .filter(book -> book.getPublishingHouse().equalsIgnoreCase(request.getPublishingHouse()))
+                .toList();
         }
         if (request.getYear() != 0) {
             books = books.stream()
-                    .filter(book -> book.getYear() == request.getYear())
-                    .toList();
+                .filter(book -> book.getYear() == request.getYear())
+                .toList();
         }
         if (request.getTitle() != null) {
             books = books.stream()
-                    .filter(book -> book.getTitle().equalsIgnoreCase(request.getTitle()))
-                    .toList();
+                .filter(book -> book.getTitle().equalsIgnoreCase(request.getTitle()))
+                .toList();
         }
         if (request.getCity() != null) {
             books = books.stream()
-                    .filter(book -> book.getOwner().getCity() != null)
-                    .filter(book -> book.getOwner().getCity().equalsIgnoreCase(request.getCity()))
-                    .toList();
+                .filter(book -> book.getOwner().getCity() != null)
+                .filter(book -> book.getOwner().getCity().equalsIgnoreCase(request.getCity()))
+                .toList();
         }
         return books.stream()
-                .filter(b -> b.getOwner().isAccountNonLocked())
-                .map(BookModelDto::fromBook)
-                .toList();
+            .filter(b -> b.getOwner().isAccountNonLocked())
+            .map(BookModelDto::fromBook)
+            .toList();
     }
 
     public List<BookModelDto> findAll() {
         return bookRepository.findAll().stream()
-                .filter(b -> b.getOwner().isAccountNonLocked())
-                .map(BookModelDto::fromBook)
-                .toList();
+            .filter(b -> b.getOwner().isAccountNonLocked())
+            .map(BookModelDto::fromBook)
+            .toList();
     }
 
     @Transactional
     public void deleteBook(final int bookId) {
         bookRepository.findById(bookId).ifPresentOrElse(
-                b -> bookRepository.deleteById(bookId),
-                () -> {
-                    throw new BookNotFoundException();
-                });
+            b -> bookRepository.deleteById(bookId),
+            () -> {
+                throw new BookNotFoundException();
+            });
     }
 
     public List<BookModelDto> findByTitle(final String title) {
         return bookRepository.findBooksByTitleIgnoreCase(title).stream()
-                .filter(b -> b.getOwner().isAccountNonLocked())
-                .map(BookModelDto::fromBook)
-                .toList();
+            .filter(b -> b.getOwner().isAccountNonLocked())
+            .map(BookModelDto::fromBook)
+            .toList();
     }
 }

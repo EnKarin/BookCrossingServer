@@ -21,23 +21,23 @@ class UserDetailsDtoTest {
 
         final UserDetailsDto userDetailsDto = UserDetailsDto.fromUser(user);
         assertThat(userDetailsDto)
-                .isNotNull()
-                .satisfies(u -> {
-                    assertThat(u.getLogin())
-                            .isEqualTo("login");
-                    assertThat(u.getPassword())
-                            .isEqualTo("pass");
-                    assertThat(u.isAccountNonLocked())
-                            .isFalse();
-                    assertThat(u.isEnabled())
-                            .isFalse();
-                    assertThat(u.isAccountNonExpired())
-                            .isTrue();
-                    assertThat(u.isCredentialsNonExpired())
-                            .isTrue();
-                    assertThat(u.getRoles())
-                            .hasSize(1)
-                            .isUnmodifiable();
-                });
+            .isNotNull()
+            .satisfies(u -> {
+                assertThat(u.getLogin())
+                    .isEqualTo("login");
+                assertThat(u.getPassword())
+                    .isEqualTo("pass");
+                assertThat(u.isAccountNonLocked())
+                    .isFalse();
+                assertThat(u.isEnabled())
+                    .isFalse();
+                assertThat(u.isAccountNonExpired())
+                    .isTrue();
+                assertThat(u.isCredentialsNonExpired())
+                    .isTrue();
+                assertThat(u.getRoles())
+                    .hasSize(1)
+                    .isUnmodifiable();
+            });
     }
 }

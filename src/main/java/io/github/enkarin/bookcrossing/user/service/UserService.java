@@ -63,7 +63,7 @@ public class UserService {
     @Transactional
     public AuthResponse confirmMail(final String token) {
         final ActionMailUser confirmationMailUser = confirmationMailUserRepository.findById(token)
-                .orElseThrow(TokenNotFoundException::new);
+            .orElseThrow(TokenNotFoundException::new);
         final User user = confirmationMailUser.getUser();
         user.setEnabled(true);
         confirmationMailUserRepository.delete(confirmationMailUser);
@@ -77,7 +77,7 @@ public class UserService {
 
     public UserPublicProfileDto findById(final int userId, final int zone) {
         return UserPublicProfileDto.fromUser(userRepository.findById(userId)
-                .orElseThrow(UserNotFoundException::new), zone);
+            .orElseThrow(UserNotFoundException::new), zone);
     }
 
     public UserProfileDto getProfile(final String login) {
@@ -89,13 +89,13 @@ public class UserService {
         // TODO Performance! Too many sql queries. Should retrieve all data within single select query
         final Role role = roleRepository.getRoleByName("ROLE_USER");
         return userRepository.findByUserRolesOrderByUserId(role).stream()
-                .map(u -> UserPublicProfileDto.fromUser(u, zone))
-                .toList();
+            .map(u -> UserPublicProfileDto.fromUser(u, zone))
+            .toList();
     }
 
     public AuthResponse findByLoginAndPassword(final LoginRequest login) {
         final User user = userRepository.findByLogin(login.getLogin())
-                .orElseThrow(UserNotFoundException::new);
+            .orElseThrow(UserNotFoundException::new);
         if (bCryptPasswordEncoder.matches(login.getPassword(), user.getPassword())) {
             if (user.isEnabled()) {
                 if (user.isAccountNonLocked()) {

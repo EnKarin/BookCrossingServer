@@ -88,17 +88,17 @@ public class RegistrationController {
             content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
         @ApiResponse(responseCode = "200", description = "Возвращает токены",
             content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(implementation = AuthResponse.class))}, headers = @Header(name = "Set-Cookie", description = "refresh token")
-            )}
+        )}
     )
     @PostMapping("/auth")
     public ResponseEntity<AuthResponse> auth(@RequestBody final LoginRequest request) {
         final AuthResponse auth = userService.findByLoginAndPassword(request);
         return ResponseEntity.ok()
-                .header(HttpHeaders.SET_COOKIE, ResponseCookie.from("refresh-token", auth.getRefreshToken())
-                        .httpOnly(true)
-                        .maxAge(Duration.ofDays(3))
-                        .build().toString())
-                .body(auth);
+            .header(HttpHeaders.SET_COOKIE, ResponseCookie.from("refresh-token", auth.getRefreshToken())
+                .httpOnly(true)
+                .maxAge(Duration.ofDays(3))
+                .build().toString())
+            .body(auth);
     }
 
     @Operation(
@@ -115,11 +115,11 @@ public class RegistrationController {
     public ResponseEntity<AuthResponse> mailConfirm(@RequestParam final String token) {
         final AuthResponse auth = userService.confirmMail(token);
         return ResponseEntity.ok()
-                .header(HttpHeaders.SET_COOKIE, ResponseCookie.from("refresh-token", auth.getRefreshToken())
-                        .httpOnly(true)
-                        .maxAge(Duration.ofDays(3))
-                        .build().toString())
-                .body(auth);
+            .header(HttpHeaders.SET_COOKIE, ResponseCookie.from("refresh-token", auth.getRefreshToken())
+                .httpOnly(true)
+                .maxAge(Duration.ofDays(3))
+                .build().toString())
+            .body(auth);
     }
 
     @Operation(summary = "Генерация нового логина", description = "Предоставляет логин, пользователя с которым ещё не существует")

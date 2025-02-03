@@ -39,8 +39,8 @@ import java.util.List;
 import java.util.Map;
 
 @Tag(
-        name = "Получение профиля пользователей",
-        description = "Позволяет получить профили пользователей или редактировать свой"
+    name = "Получение профиля пользователей",
+    description = "Позволяет получить профили пользователей или редактировать свой"
 )
 @RequiredArgsConstructor
 @RestController
@@ -51,15 +51,15 @@ public class UserProfileController {
     private final UserService userService;
 
     @Operation(
-            summary = "Получение профиля",
-            description = "Возвращает данные профиля по id"
+        summary = "Получение профиля",
+        description = "Возвращает данные профиля по id"
     )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "404", description = "Пользователь не найден",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+                schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
         @ApiResponse(responseCode = "200", description = "Возвращает профиль пользователя")
-        }
+    }
     )
     @Parameters({
         @Parameter(in = ParameterIn.HEADER, name = USER_ID, schema = @Schema(defaultValue = "-1"), description = "Идентификатор пользователя"),
@@ -76,23 +76,23 @@ public class UserProfileController {
     }
 
     @Operation(
-            summary = "Изменение данных пользователя",
-            description = "Возвращает обновленный профиль"
+        summary = "Изменение данных пользователя",
+        description = "Возвращает обновленный профиль"
     )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "412", description = "Пароли не совпадают",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+                schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
         @ApiResponse(responseCode = "409", description = "Неверный пароль",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+                schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
         @ApiResponse(responseCode = "404", description = "Пользователь не найден",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+                schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
         @ApiResponse(responseCode = "200", description = "Возвращает обновленный профиль пользователя",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(implementation = UserProfileDto.class))})
-        }
+                schema = @Schema(implementation = UserProfileDto.class))})
+    }
     )
     @PutMapping
     public ResponseEntity<UserProfileDto> putProfile(@Valid @RequestBody final UserPutProfileDto userPutProfileDto,
@@ -107,8 +107,8 @@ public class UserProfileController {
     }
 
     @Operation(
-            summary = "Список пользователей",
-            description = "Позволяет найти всех пользователей сервиса"
+        summary = "Список пользователей",
+        description = "Позволяет найти всех пользователей сервиса"
     )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Возвращает найденных пользователей",

@@ -46,7 +46,7 @@ public class MailService {
         final var message = prepareMailMessage(user.getEmail());
         message.setSubject("Подтверждение регистрации BookCrossing");
         message.setText("Перейдите по ссылке, чтобы подтвердить создание аккаунта: " +
-                String.format("https://%s:%s/registration/confirmation?token=%s", host, port, token));
+            String.format("https://%s:%s/registration/confirmation?token=%s", host, port, token));
         emailSender.send(message);
     }
 
@@ -63,7 +63,7 @@ public class MailService {
         final var message = prepareMailMessage(email);
         message.setSubject("Сброс пароля BookCrossing");
         message.setText("Перейдите по ссылке, чтобы сменить пароль: " +
-                String.format("https://localhost:%s/reset/update?token=%s", port, token));
+            String.format("https://localhost:%s/reset/update?token=%s", port, token));
         emailSender.send(message);
     }
 

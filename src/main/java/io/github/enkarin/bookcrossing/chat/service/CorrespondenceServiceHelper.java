@@ -25,15 +25,15 @@ public class CorrespondenceServiceHelper {
                                         final int zone, final User user) {
         final var messages = correspondence.getMessage();
         final var response = messages.stream()
-                .filter(rules)
-                .map(m -> MessageDto.fromMessageAndZone(m, zone))
-                .sorted(Comparator.comparing(MessageDto::getDepartureDate))
-                .toList();
+            .filter(rules)
+            .map(m -> MessageDto.fromMessageAndZone(m, zone))
+            .sorted(Comparator.comparing(MessageDto::getDepartureDate))
+            .toList();
         messages.stream()
-                .filter(m -> !user.equals(m.getSender()))
-                .filter(Predicate.not(Message::isDeclaim))
-                .peek(m -> m.setDeclaim(true))
-                .forEach(messageRepository::save);
+            .filter(m -> !user.equals(m.getSender()))
+            .filter(Predicate.not(Message::isDeclaim))
+            .peek(m -> m.setDeclaim(true))
+            .forEach(messageRepository::save);
         return response;
     }
 }

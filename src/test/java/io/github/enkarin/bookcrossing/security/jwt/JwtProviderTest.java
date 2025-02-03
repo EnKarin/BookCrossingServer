@@ -18,20 +18,20 @@ class JwtProviderTest extends BookCrossingBaseTests {
     @Test
     void validateTokenShouldFailWithTokenExpired(final CapturedOutput output) {
         assertThat(provider.validateToken("eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJBbGVrc2V5IiwiZXhwIjoxNjUyNjMxNTI4fQ.qdxyWmmjtybiwE8bgmyK9UTS5A-FgCfWTkNRanynhl69FaTqphzZR3Sy6GWAZqyKPP9MsiA0VBhsinYgDGdy5Q"))
-                .isFalse();
+            .isFalse();
         assertThat(output)
-                .contains("ERROR")
-                .contains("i.g.e.b.security.jwt.JwtProvider")
-                .contains("Token expired");
+            .contains("ERROR")
+            .contains("i.g.e.b.security.jwt.JwtProvider")
+            .contains("Token expired");
     }
 
     @Test
     void validateTokenShouldFailWithTokenInvalid(final CapturedOutput output) {
         assertThat(provider.validateToken("token"))
-                .isFalse();
+            .isFalse();
         assertThat(output)
-                .contains("ERROR")
-                .contains("i.g.e.b.security.jwt.JwtProvider")
-                .contains("invalid token");
+            .contains("ERROR")
+            .contains("i.g.e.b.security.jwt.JwtProvider")
+            .contains("invalid token");
     }
 }

@@ -36,8 +36,8 @@ public class BookModelDto extends BookDto {
 
     public static BookModelDto fromBook(final Book book) {
         return new BookModelDto(create(book.getTitle(), book.getAuthor(), book.getGenre(),
-                book.getPublishingHouse(), book.getYear()),
-                book.getBookId(),
-                AttachmentDto.fromAttachment(book.getAttachment()));
+            book.getPublishingHouse(), book.getYear()),
+            book.getBookId(),
+            AttachmentDto.fromAttachment(book.getAttachment()));
     }
 }

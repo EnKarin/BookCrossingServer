@@ -34,8 +34,8 @@ public class UserPublicProfileDto {
 
     public static UserPublicProfileDto fromUser(final User user, final int zone) {
         return new UserPublicProfileDto(Integer.toString(user.getUserId()), user.getName(), user.getCity(),
-                user.getLoginDate() == 0 ? "0" :
-                        LocalDateTime.ofEpochSecond(user.getLoginDate(), 0, ZoneOffset.ofHours(zone))
-                                .toString());
+            user.getLoginDate() == 0 ? "0" :
+                LocalDateTime.ofEpochSecond(user.getLoginDate(), 0, ZoneOffset.ofHours(zone))
+                    .toString());
     }
 }

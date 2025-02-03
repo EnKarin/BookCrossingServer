@@ -24,8 +24,8 @@ import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 @Tag(
-        name = "Раздел со всеми книгами в системе",
-        description = "Позволяет пользователю получить все книги, доступные для обмена"
+    name = "Раздел со всеми книгами в системе",
+    description = "Позволяет пользователю получить все книги, доступные для обмена"
 )
 @RequiredArgsConstructor
 @RestController
@@ -36,8 +36,8 @@ public class BookController {
     private final BookService bookService;
 
     @Operation(
-            summary = "Все книги в системе",
-            description = "Позволяет получить книги всех пользователей"
+        summary = "Все книги в системе",
+        description = "Позволяет получить книги всех пользователей"
     )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Возвращает все книги",
@@ -49,8 +49,8 @@ public class BookController {
     }
 
     @Operation(
-            summary = "Все книги пользователя",
-            description = "Позволяет получить книги пользователя по его id"
+        summary = "Все книги пользователя",
+        description = "Позволяет получить книги пользователя по его id"
     )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Возвращает все книги пользователя",
@@ -62,16 +62,16 @@ public class BookController {
     }
 
     @Operation(
-            summary = "Страница книги",
-            description = "Позволяет получить данные выбранной книги"
+        summary = "Страница книги",
+        description = "Позволяет получить данные выбранной книги"
     )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "404", description = "Книга не найдена",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+                schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
         @ApiResponse(responseCode = "200", description = "Возвращает данные книги",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(implementation = BookModelDto.class))})
+                schema = @Schema(implementation = BookModelDto.class))})
     })
     @GetMapping("/info")
     public ResponseEntity<BookModelDto> bookInfo(@RequestParam final int bookId) {
@@ -80,8 +80,8 @@ public class BookController {
     }
 
     @Operation(
-            summary = "Поиск книг по названию",
-            description = "Позволяет найти книги по названию"
+        summary = "Поиск книг по названию",
+        description = "Позволяет найти книги по названию"
     )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Возвращает найденные книги",
@@ -93,8 +93,8 @@ public class BookController {
     }
 
     @Operation(
-            summary = "Поиск книг с фильтрацией",
-            description = "Позволяет найти книги с помощью фильтров"
+        summary = "Поиск книг с фильтрацией",
+        description = "Позволяет найти книги с помощью фильтров"
     )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Возвращает найденные книги",

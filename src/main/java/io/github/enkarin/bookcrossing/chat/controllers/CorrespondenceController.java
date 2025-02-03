@@ -37,8 +37,8 @@ import java.security.Principal;
 import java.util.Map;
 
 @Tag(
-        name = "Чаты",
-        description = "Редактирование и создание чатов с пользователями"
+    name = "Чаты",
+    description = "Редактирование и создание чатов с пользователями"
 )
 @RequiredArgsConstructor
 @RestController
@@ -54,19 +54,19 @@ public class CorrespondenceController {
     private static final String SECOND_USER_ID = "secondUserId";
 
     @Operation(
-            summary = "Создание чата",
-            description = "Позволяет создать чат с выбранным пользователем"
+        summary = "Создание чата",
+        description = "Позволяет создать чат с выбранным пользователем"
     )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "409", description = "Чат уже существует",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+                schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
         @ApiResponse(responseCode = "406", description = "Нельзя создать чат с данным пользователем",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+                schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
         @ApiResponse(responseCode = "201", description = "Чат создан",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(implementation = UsersCorrKeyDto.class))})
+                schema = @Schema(implementation = UsersCorrKeyDto.class))})
     })
     @Parameters({
         @Parameter(in = ParameterIn.HEADER, name = USER_ID, description = "Идентификатор пользователя")
@@ -78,15 +78,15 @@ public class CorrespondenceController {
     }
 
     @Operation(
-            summary = "Удаление чата",
-            description = "Позволяет удалить чат с выбранным пользователем"
+        summary = "Удаление чата",
+        description = "Позволяет удалить чат с выбранным пользователем"
     )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "404", description = "Чата не существует",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+                schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
         @ApiResponse(responseCode = "200", description = "Чат удален")
-        }
+    }
     )
     @Parameters({
         @Parameter(in = ParameterIn.HEADER, name = USER_ID, description = "Идентификатор пользователя")
@@ -98,8 +98,8 @@ public class CorrespondenceController {
     }
 
     @Operation(
-            summary = "Получение чата",
-            description = "Позволяет получить чат с выбранным пользователем"
+        summary = "Получение чата",
+        description = "Позволяет получить чат с выбранным пользователем"
     )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "404", description = "Чата не существует",
@@ -108,7 +108,7 @@ public class CorrespondenceController {
             content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
         @ApiResponse(responseCode = "200", description = "Возвращает список сообщений",
             content = {@Content(mediaType = Constant.MEDIA_TYPE, array = @ArraySchema(schema = @Schema(implementation = MessageDto.class)))})
-        }
+    }
     )
     @GetMapping
     @Parameters({

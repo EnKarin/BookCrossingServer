@@ -26,7 +26,7 @@ public class AdminService {
     @Transactional
     public boolean lockedUser(final LockedUserDto lockedUserDto) {
         User user = userRepository.findByLogin(lockedUserDto.getLogin())
-                .orElseThrow(UserNotFoundException::new);
+            .orElseThrow(UserNotFoundException::new);
         user.setAccountNonLocked(false);
         user = userRepository.save(user);
         mailService.sendBlockingMessage(user, lockedUserDto.getComment());
@@ -45,7 +45,7 @@ public class AdminService {
     public List<InfoUsersDto> findAllUsers(final int zone) {
         final Role role = roleRepository.getRoleByName("ROLE_USER");
         return userRepository.findByUserRolesOrderByUserId(role).stream()
-                .map(u -> InfoUsersDto.fromUser(u, zone))
-                .toList();
+            .map(u -> InfoUsersDto.fromUser(u, zone))
+            .toList();
     }
 }

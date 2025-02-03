@@ -23,75 +23,75 @@ class AdminControllerTest extends BookCrossingBaseTests {
     @Test
     void userListShouldWorkWithEmptyUserList() {
         final var response = webClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .pathSegment("adm")
-                        .queryParam("zone", 0)
-                        .build())
-                .headers(this::setBearerAuth)
-                .exchange()
-                .expectStatus().isOk()
-                .expectBodyList(InfoUsersDto.class)
-                .returnResult().getResponseBody();
+            .uri(uriBuilder -> uriBuilder
+                .pathSegment("adm")
+                .queryParam("zone", 0)
+                .build())
+            .headers(this::setBearerAuth)
+            .exchange()
+            .expectStatus().isOk()
+            .expectBodyList(InfoUsersDto.class)
+            .returnResult().getResponseBody();
         assertThat(response)
-                .isEmpty();
+            .isEmpty();
     }
 
     @Test
     void userListShouldWork() {
         final var user = createAndSaveUser(TestDataProvider.buildBot());
         final var response = webClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .pathSegment("adm")
-                        .queryParam("zone", 0)
-                        .build())
-                .headers(this::setBearerAuth)
-                .exchange()
-                .expectStatus().isOk()
-                .expectBodyList(InfoUsersDto.class)
-                .returnResult().getResponseBody();
+            .uri(uriBuilder -> uriBuilder
+                .pathSegment("adm")
+                .queryParam("zone", 0)
+                .build())
+            .headers(this::setBearerAuth)
+            .exchange()
+            .expectStatus().isOk()
+            .expectBodyList(InfoUsersDto.class)
+            .returnResult().getResponseBody();
         assertThat(response)
-                .hasSize(1)
-                .singleElement()
-                .satisfies(r -> {
-                    assertThat(r.getLogin())
-                            .isEqualTo(user.getLogin());
-                    assertThat(r.getEmail())
-                            .isEqualTo(user.getEmail());
-                });
+            .hasSize(1)
+            .singleElement()
+            .satisfies(r -> {
+                assertThat(r.getLogin())
+                    .isEqualTo(user.getLogin());
+                assertThat(r.getEmail())
+                    .isEqualTo(user.getEmail());
+            });
     }
 
     @Test
     void lockedUserShouldFailWithBindingError() {
         webClient.post()
-                .uri(uriBuilder -> uriBuilder
-                        .pathSegment("adm", "locked")
-                        .queryParam("zone", 0)
-                        .build())
-                .headers(this::setBearerAuth)
-                .contentType(MediaType.APPLICATION_JSON)
-                .bodyValue(LockedUserDto.builder().build())
-                .exchange()
-                .expectStatus().isEqualTo(406)
-                .expectBody()
-                .jsonPath("$.login")
-                .isEqualTo("Логин должен содержать хотя бы один видимый символ")
-                .jsonPath("$.comment")
-                .isEqualTo("Комментарий должен содержать хотя бы один видимый символ");
+            .uri(uriBuilder -> uriBuilder
+                .pathSegment("adm", "locked")
+                .queryParam("zone", 0)
+                .build())
+            .headers(this::setBearerAuth)
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(LockedUserDto.builder().build())
+            .exchange()
+            .expectStatus().isEqualTo(406)
+            .expectBody()
+            .jsonPath("$.login")
+            .isEqualTo("Логин должен содержать хотя бы один видимый символ")
+            .jsonPath("$.comment")
+            .isEqualTo("Комментарий должен содержать хотя бы один видимый символ");
     }
 
     @Test
     void lockedUserShouldWork() {
         createAndSaveUser(TestDataProvider.buildBot());
         webClient.post()
-                .uri(uriBuilder -> uriBuilder
-                        .pathSegment("adm", "locked")
-                        .queryParam("zone", 0)
-                        .build())
-                .headers(this::setBearerAuth)
-                .contentType(MediaType.APPLICATION_JSON)
-                .bodyValue(LockedUserDto.create("Bot", "Заблокировано"))
-                .exchange()
-                .expectStatus().isEqualTo(200);
+            .uri(uriBuilder -> uriBuilder
+                .pathSegment("adm", "locked")
+                .queryParam("zone", 0)
+                .build())
+            .headers(this::setBearerAuth)
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(LockedUserDto.create("Bot", "Заблокировано"))
+            .exchange()
+            .expectStatus().isEqualTo(200);
     }
 
     @Test
@@ -99,13 +99,13 @@ class AdminControllerTest extends BookCrossingBaseTests {
         createAndSaveUser(TestDataProvider.buildBot());
         adminService.lockedUser(LockedUserDto.create("Bot", "Заблокировано"));
         webClient.post()
-                .uri(uriBuilder -> uriBuilder
-                        .pathSegment("adm", "nonLocked")
-                        .queryParam("login", "Bot")
-                        .build())
-                .headers(this::setBearerAuth)
-                .exchange()
-                .expectStatus().isEqualTo(200);
+            .uri(uriBuilder -> uriBuilder
+                .pathSegment("adm", "nonLocked")
+                .queryParam("login", "Bot")
+                .build())
+            .headers(this::setBearerAuth)
+            .exchange()
+            .expectStatus().isEqualTo(200);
     }
 
     private void setBearerAuth(@Nonnull final HttpHeaders headers) {

@@ -29,8 +29,8 @@ class AdminServiceTest extends BookCrossingBaseTests {
     void lockedUserException() {
         final LockedUserDto dto = LockedUserDto.create("Test", "Заблокировано");
         assertThatThrownBy(() -> adminService.lockedUser(dto))
-                .isInstanceOf(UserNotFoundException.class)
-                .hasMessage("Пользователь не найден");
+            .isInstanceOf(UserNotFoundException.class)
+            .hasMessage("Пользователь не найден");
     }
 
     @Test
@@ -43,20 +43,20 @@ class AdminServiceTest extends BookCrossingBaseTests {
     @Test
     void nonLockedUserException() {
         assertThatThrownBy(() -> adminService.nonLockedUser("Test"))
-                .isInstanceOf(UserNotFoundException.class)
-                .hasMessage("Пользователь не найден");
+            .isInstanceOf(UserNotFoundException.class)
+            .hasMessage("Пользователь не найден");
     }
 
     @Test
     void findAllUsers() {
         final List<UserDto> users = TestDataProvider.buildUsers().stream()
-                .map(this::createAndSaveUser)
-                .toList();
+            .map(this::createAndSaveUser)
+            .toList();
         assertThat(adminService.findAllUsers(0))
-                .hasSize(3)
-                .hasSameElementsAs(users.stream()
-                        .map(u -> InfoUsersDto.fromUserDto(u, 0))
-                        .toList());
+            .hasSize(3)
+            .hasSameElementsAs(users.stream()
+                .map(u -> InfoUsersDto.fromUserDto(u, 0))
+                .toList());
     }
 
     @Test

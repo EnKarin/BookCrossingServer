@@ -26,7 +26,7 @@ public class MessageRequest {
 
     public UsersCorrKeyDto getUsersCorrKeyDto() {
         return UsersCorrKeyDto.fromFirstAndSecondId(usersCorrKeyDto.getFirstUserId(),
-                usersCorrKeyDto.getSecondUserId());
+            usersCorrKeyDto.getSecondUserId());
     }
 
     @JsonCreator

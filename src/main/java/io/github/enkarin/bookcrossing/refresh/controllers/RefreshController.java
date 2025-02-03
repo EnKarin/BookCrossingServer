@@ -30,8 +30,8 @@ import java.time.Duration;
 import java.util.Map;
 
 @Tag(
-        name = "Обновление токенов пользователя",
-        description = "Позволяет обновить токены"
+    name = "Обновление токенов пользователя",
+    description = "Позволяет обновить токены"
 )
 @RestController
 @RequiredArgsConstructor
@@ -40,19 +40,19 @@ public class RefreshController {
     private final RefreshService refreshService;
 
     @Operation(
-            summary = "Обновление токенов",
-            description = "Выдает токены, если refresh корректен"
+        summary = "Обновление токенов",
+        description = "Выдает токены, если refresh корректен"
     )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "410", description = "Токен истек",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+                schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
         @ApiResponse(responseCode = "404", description = "Токена не существует",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+                schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
         @ApiResponse(responseCode = "200", description = "Возвращает токены",
             content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(implementation = AuthResponse.class))}, headers = @Header(name = "Set-Cookie", description = "refresh token")
-            )}
+        )}
     )
     @Parameters(
         @Parameter(name = "refresh-token", in = ParameterIn.COOKIE)
@@ -61,11 +61,11 @@ public class RefreshController {
     public ResponseEntity<AuthResponse> refresh(@CookieValue(name = "refresh-token") final String token) {
         final AuthResponse auth = refreshService.updateTokens(token);
         return ResponseEntity.ok()
-                .header(HttpHeaders.SET_COOKIE, ResponseCookie.from("refresh-token", auth.getRefreshToken())
-                        .httpOnly(true)
-                        .maxAge(Duration.ofDays(3))
-                        .build().toString())
-                .body(auth);
+            .header(HttpHeaders.SET_COOKIE, ResponseCookie.from("refresh-token", auth.getRefreshToken())
+                .httpOnly(true)
+                .maxAge(Duration.ofDays(3))
+                .build().toString())
+            .body(auth);
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)

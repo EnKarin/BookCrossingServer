@@ -52,9 +52,9 @@ public class User implements UserDetails {
 
     @ManyToMany
     @JoinTable(
-            name = "t_user_role",
-            joinColumns = { @JoinColumn(name = "user_id")},
-            inverseJoinColumns = { @JoinColumn(name = "role_id")}
+        name = "t_user_role",
+        joinColumns = {@JoinColumn(name = "user_id")},
+        inverseJoinColumns = {@JoinColumn(name = "role_id")}
     )
     private Set<Role> userRoles;
 
@@ -63,9 +63,9 @@ public class User implements UserDetails {
 
     @ManyToMany
     @JoinTable(
-            name = "t_bookmarks",
-            joinColumns = {@JoinColumn(name = "user_id")},
-            inverseJoinColumns = {@JoinColumn(name = "book_id")}
+        name = "t_bookmarks",
+        joinColumns = {@JoinColumn(name = "user_id")},
+        inverseJoinColumns = {@JoinColumn(name = "book_id")}
     )
     private Set<Book> bookmarks;
 

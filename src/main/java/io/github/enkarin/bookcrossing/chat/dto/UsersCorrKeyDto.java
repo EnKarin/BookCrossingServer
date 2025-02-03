@@ -27,7 +27,7 @@ public class UsersCorrKeyDto {
 
     public static UsersCorrKeyDto fromCorrespondence(final Correspondence correspondence) {
         return new UsersCorrKeyDto(correspondence.getUsersCorrKey().getFirstUser().getUserId(),
-                correspondence.getUsersCorrKey().getSecondUser().getUserId());
+            correspondence.getUsersCorrKey().getSecondUser().getUserId());
     }
 
     @JsonCreator

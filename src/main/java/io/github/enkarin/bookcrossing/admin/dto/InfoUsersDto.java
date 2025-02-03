@@ -22,12 +22,12 @@ public class InfoUsersDto extends UserParentDto {
 
     private InfoUsersDto(final UserParentDto userParentDto, final String loginDate) {
         super(userParentDto.getUserId(),
-                userParentDto.getName(),
-                userParentDto.getLogin(),
-                userParentDto.getEmail(),
-                userParentDto.getCity(),
-                userParentDto.isAccountNonLocked(),
-                userParentDto.isEnabled());
+            userParentDto.getName(),
+            userParentDto.getLogin(),
+            userParentDto.getEmail(),
+            userParentDto.getCity(),
+            userParentDto.isAccountNonLocked(),
+            userParentDto.isEnabled());
         this.loginDate = loginDate;
     }
 
@@ -46,19 +46,19 @@ public class InfoUsersDto extends UserParentDto {
 
     public static InfoUsersDto fromUser(final User user, final int zone) {
         return new InfoUsersDto(create(user.getUserId(), user.getName(), user.getLogin(), user.getEmail(),
-                user.getCity(), user.isAccountNonLocked(), user.isEnabled()),
-                loginDateToString(user.getLoginDate(), zone));
+            user.getCity(), user.isAccountNonLocked(), user.isEnabled()),
+            loginDateToString(user.getLoginDate(), zone));
     }
 
     public static InfoUsersDto fromUserDto(final UserDto user, final int zone) {
         return new InfoUsersDto(create(user.getUserId(), user.getName(), user.getLogin(), user.getEmail(),
-                user.getCity(), user.isAccountNonLocked(), user.isEnabled()),
-                loginDateToString(user.getLoginDate(), zone));
+            user.getCity(), user.isAccountNonLocked(), user.isEnabled()),
+            loginDateToString(user.getLoginDate(), zone));
     }
 
     private static String loginDateToString(final long loginDate, final int zone) {
         return loginDate == 0 ? "0" :
-                LocalDateTime.ofEpochSecond(loginDate, 0, ZoneOffset.ofHours(zone))
-                        .toString();
+            LocalDateTime.ofEpochSecond(loginDate, 0, ZoneOffset.ofHours(zone))
+                .toString();
     }
 }

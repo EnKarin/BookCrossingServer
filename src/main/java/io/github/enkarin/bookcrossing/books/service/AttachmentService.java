@@ -28,18 +28,18 @@ public class AttachmentService {
     private final BookRepository bookRepository;
 
     public BookModelDto saveAttachment(final AttachmentMultipartDto attachmentMultipartDto, final String login)
-            throws IOException {
+        throws IOException {
         final Book book = userRepository.findByLogin(login).orElseThrow().getBooks().stream()
-                .filter(b -> b.getBookId() == attachmentMultipartDto.getBookId())
-                .findFirst()
-                .orElseThrow(BookNotFoundException::new);
+            .filter(b -> b.getBookId() == attachmentMultipartDto.getBookId())
+            .findFirst()
+            .orElseThrow(BookNotFoundException::new);
         final String fileName = attachmentMultipartDto.getFile().getOriginalFilename();
         if (fileName == null || fileName.isBlank()) {
             throw new BadRequestException("Имя не должно быть пустым");
         } else {
             final String expansion = fileName.substring(fileName.indexOf('.')).toLowerCase(Locale.ROOT);
             if (expansion.contains("jpeg") || expansion.contains("jpg") ||
-                    expansion.contains("png") || expansion.contains("bmp")) {
+                expansion.contains("png") || expansion.contains("bmp")) {
                 final Attachment attachment = new Attachment();
                 attachment.setData(attachmentMultipartDto.getFile().getBytes());
                 attachment.setBook(book);
@@ -55,11 +55,11 @@ public class AttachmentService {
 
     public void deleteAttachment(final int bookId, final String login) {
         final Book book = userRepository.findByLogin(login).orElseThrow().getBooks().stream()
-                .filter(b -> b.getBookId() == bookId)
-                .findFirst()
-                .orElseThrow(BookNotFoundException::new);
+            .filter(b -> b.getBookId() == bookId)
+            .findFirst()
+            .orElseThrow(BookNotFoundException::new);
         Optional.ofNullable(book.getAttachment())
-                .orElseThrow(AttachmentNotFoundException::new);
+            .orElseThrow(AttachmentNotFoundException::new);
         attachRepository.deleteById(book.getAttachment().getAttachId());
     }
 }

@@ -19,6 +19,6 @@ public class AttachmentDto {
 
     public static AttachmentDto fromAttachment(final Attachment attachment) {
         return attachment == null ? null : new AttachmentDto(attachment.getAttachId(), attachment.getData(),
-                attachment.getExpansion());
+            attachment.getExpansion());
     }
 }

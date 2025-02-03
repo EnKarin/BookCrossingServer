@@ -32,15 +32,15 @@ public class MessageService {
     public MessageDto sendMessage(final MessageRequest dto, final String login) {
         final User user = userRepository.findByLogin(login).orElseThrow();
         final User firstUser = userRepository.findById(dto.getUsersCorrKeyDto().getFirstUserId())
-                .orElseThrow(UserNotFoundException::new);
+            .orElseThrow(UserNotFoundException::new);
         final User secondUser = userRepository.findById(dto.getUsersCorrKeyDto().getSecondUserId())
-                .orElseThrow(UserNotFoundException::new);
+            .orElseThrow(UserNotFoundException::new);
         final UsersCorrKey usersCorrKey = new UsersCorrKey();
         usersCorrKey.setFirstUser(firstUser);
         usersCorrKey.setSecondUser(secondUser);
         if (usersCorrKey.getFirstUser().equals(user) || usersCorrKey.getSecondUser().equals(user)) {
             final Correspondence correspondence = correspondenceRepository.findById(usersCorrKey)
-                    .orElseThrow(ChatNotFoundException::new);
+                .orElseThrow(ChatNotFoundException::new);
             final Message message = new Message();
             message.setText(dto.getText());
             message.setDepartureDate(timeSettings.getEpochSeconds());
@@ -56,7 +56,7 @@ public class MessageService {
     public MessageDto putMessage(final MessagePutRequest messagePutRequest, final String login) {
         final User user = userRepository.findByLogin(login).orElseThrow();
         final Message message = messageRepository.findById(messagePutRequest.getMessageId())
-                .orElseThrow(MessageNotFountException::new);
+            .orElseThrow(MessageNotFountException::new);
         if (user.equals(message.getSender())) {
             message.setDepartureDate(timeSettings.getEpochSeconds());
             message.setText(messagePutRequest.getText());
@@ -69,7 +69,7 @@ public class MessageService {
     public void deleteForEveryoneMessage(final long messageId, final String login) {
         final User user = userRepository.findByLogin(login).orElseThrow();
         final Message message = messageRepository.findById(messageId)
-                .orElseThrow(MessageNotFountException::new);
+            .orElseThrow(MessageNotFountException::new);
         if (user.equals(message.getSender())) {
             messageRepository.delete(message);
         } else {
@@ -80,7 +80,7 @@ public class MessageService {
     public void deleteForMeMessage(final long messageId, final String login) {
         final User user = userRepository.findByLogin(login).orElseThrow();
         final Message message = messageRepository.findById(messageId)
-                .orElseThrow(MessageNotFountException::new);
+            .orElseThrow(MessageNotFountException::new);
         final Correspondence correspondence = message.getCorrespondence();
         if (correspondence.getUsersCorrKey().getFirstUser().equals(user)) {
             message.setShownFirstUser(false);

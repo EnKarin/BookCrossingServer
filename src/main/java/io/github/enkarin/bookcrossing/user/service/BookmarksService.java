@@ -27,8 +27,8 @@ public class BookmarksService {
         final Book book = bookRepository.findById(bookId).orElseThrow(BookNotFoundException::new);
         user.getBookmarks().add(book);
         return userRepository.save(user).getBookmarks().stream()
-                .map(BookModelDto::fromBook)
-                .toList();
+            .map(BookModelDto::fromBook)
+            .toList();
     }
 
     @Transactional
@@ -46,7 +46,7 @@ public class BookmarksService {
 
     public List<BookModelDto> getAll(final String login) {
         return userRepository.findByLogin(login).orElseThrow().getBookmarks().stream()
-                .map(BookModelDto::fromBook)
-                .toList();
+            .map(BookModelDto::fromBook)
+            .toList();
     }
 }

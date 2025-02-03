@@ -11,14 +11,14 @@ class InfoUsersDtoTest extends BookCrossingBaseTests {
     @Test
     void fromUserDtoShouldWorkWithLoginDate() {
         assertThat(InfoUsersDto.fromUserDto(TestDataProvider.buildUserDto(), 0))
-                .isNotNull()
-                .satisfies(i -> {
-                    assertThat(i.getLoginDate())
-                            .isEqualTo("1970-01-12T13:46:39");
-                    assertThat(i.getLogin())
-                            .isEqualTo("login");
-                    assertThat(i.getName())
-                            .isEqualTo("UserName");
-                });
+            .isNotNull()
+            .satisfies(i -> {
+                assertThat(i.getLoginDate())
+                    .isEqualTo("1970-01-12T13:46:39");
+                assertThat(i.getLogin())
+                    .isEqualTo("login");
+                assertThat(i.getName())
+                    .isEqualTo("UserName");
+            });
     }
 }

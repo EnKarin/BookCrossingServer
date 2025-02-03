@@ -24,12 +24,12 @@ class BookmarksControllerTest extends BookCrossingBaseTests {
         final int booksId = createAndSaveBooks(user.getLogin()).stream().findAny().orElse(0);
 
         final var response = execute(HttpMethod.POST, generateAccessToken(TestDataProvider.buildAuthBot()), booksId, 201)
-                .expectBodyList(BookModelDto.class)
-                .returnResult().getResponseBody();
+            .expectBodyList(BookModelDto.class)
+            .returnResult().getResponseBody();
 
         assertThat(response)
-                .extracting(BookModelDto::getBookId)
-                .contains(booksId);
+            .extracting(BookModelDto::getBookId)
+            .contains(booksId);
     }
 
     @Test
@@ -38,9 +38,9 @@ class BookmarksControllerTest extends BookCrossingBaseTests {
         enabledUser(user);
 
         execute(HttpMethod.POST, generateAccessToken(TestDataProvider.buildAuthBot()), Integer.MAX_VALUE, 404)
-                .expectBody()
-                .jsonPath("$.book")
-                .isEqualTo("Книга не найдена");
+            .expectBody()
+            .jsonPath("$.book")
+            .isEqualTo("Книга не найдена");
     }
 
     @Test
@@ -61,9 +61,9 @@ class BookmarksControllerTest extends BookCrossingBaseTests {
         enabledUser(user.getUserId());
         final var bookId = createAndSaveBooks(user.getLogin()).stream().findAny().orElse(0);
         execute(HttpMethod.DELETE, generateAccessToken(TestDataProvider.buildAuthBot()), bookId, 404)
-                .expectBody()
-                .jsonPath("$.book")
-                .isEqualTo("Книга не найдена");
+            .expectBody()
+            .jsonPath("$.book")
+            .isEqualTo("Книга не найдена");
     }
 
     @Test
@@ -73,30 +73,30 @@ class BookmarksControllerTest extends BookCrossingBaseTests {
         final var books = createAndSaveBooks(user.getLogin());
         books.forEach(b -> bookmarksService.saveBookmarks(b, user.getLogin()));
         final var response = webClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .pathSegment("user", "bookmarks")
-                        .build())
-                .headers(headers -> headers.setBearerAuth(generateAccessToken(TestDataProvider.buildAuthBot())))
-                .exchange()
-                .expectStatus().isEqualTo(200)
-                .expectBodyList(BookModelDto.class)
-                .returnResult().getResponseBody();
+            .uri(uriBuilder -> uriBuilder
+                .pathSegment("user", "bookmarks")
+                .build())
+            .headers(headers -> headers.setBearerAuth(generateAccessToken(TestDataProvider.buildAuthBot())))
+            .exchange()
+            .expectStatus().isEqualTo(200)
+            .expectBodyList(BookModelDto.class)
+            .returnResult().getResponseBody();
         assertThat(response)
-                .hasSize(3)
-                .usingRecursiveFieldByFieldElementComparatorIgnoringFields("bookId")
-                .containsOnlyOnceElementsOf(TestDataProvider.buildBookModels(0, 0, 0));
+            .hasSize(3)
+            .usingRecursiveFieldByFieldElementComparatorIgnoringFields("bookId")
+            .containsOnlyOnceElementsOf(TestDataProvider.buildBookModels(0, 0, 0));
     }
 
     private WebTestClient.ResponseSpec execute(final HttpMethod method, final String access, final int bookId, final int status) {
         return webClient
-                .method(method)
-                .uri(uriBuilder -> uriBuilder
-                        .pathSegment("user", "bookmarks")
-                        .queryParam("bookId", bookId)
-                        .build())
-                .headers(headers -> headers.setBearerAuth(access))
-                .contentType(MediaType.APPLICATION_JSON)
-                .exchange()
-                .expectStatus().isEqualTo(status);
+            .method(method)
+            .uri(uriBuilder -> uriBuilder
+                .pathSegment("user", "bookmarks")
+                .queryParam("bookId", bookId)
+                .build())
+            .headers(headers -> headers.setBearerAuth(access))
+            .contentType(MediaType.APPLICATION_JSON)
+            .exchange()
+            .expectStatus().isEqualTo(status);
     }
 }

@@ -25,8 +25,8 @@ import java.security.Principal;
 import java.util.List;
 
 @Tag(
-        name = "Работа с закладками",
-        description = "Позволяет добавлять, удалять и просматривать закладки"
+    name = "Работа с закладками",
+    description = "Позволяет добавлять, удалять и просматривать закладки"
 )
 @RequiredArgsConstructor
 @RestController
@@ -36,49 +36,48 @@ public class BookmarksController {
     private final BookmarksService bookmarksService;
 
     @Operation(
-            summary = "Добавление в закладки",
-            description = "Позволяет сохранить книгу в закладки"
+        summary = "Добавление в закладки",
+        description = "Позволяет сохранить книгу в закладки"
     )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "404", description = "Книга с заданным Id не найдена",
             content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
         @ApiResponse(responseCode = "201", description = "Возвращает список закладок",
             content = {@Content(mediaType = Constant.MEDIA_TYPE, array = @ArraySchema(schema = @Schema(implementation = BookModelDto.class)))})
-        }
+    }
     )
     @PostMapping
     public ResponseEntity<List<BookModelDto>> saveBookmarks(@RequestParam @Parameter(description = "Идентификатор книги") final int bookId, final Principal principal) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(bookmarksService.saveBookmarks(bookId, principal.getName()));
+            .body(bookmarksService.saveBookmarks(bookId, principal.getName()));
     }
 
     @Operation(
-            summary = "Удаление из закладок",
-            description = "Позволяет удалить книгу из закладок"
+        summary = "Удаление из закладок",
+        description = "Позволяет удалить книгу из закладок"
     )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "404", description = "Книга с заданным Id не найдена",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+                schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
         @ApiResponse(responseCode = "200", description = "Книга удалена")
-        }
+    }
     )
     @DeleteMapping
-    public ResponseEntity<Void> deleteBookmarks(@RequestParam @Parameter(description = "Идентификатор книги")
-                                                 final int bookId,
-                                           final Principal principal) {
+    public ResponseEntity<Void> deleteBookmarks(@RequestParam @Parameter(description = "Идентификатор книги") final int bookId,
+                                                final Principal principal) {
         bookmarksService.deleteBookmarks(bookId, principal.getName());
         return ResponseEntity.ok().build();
     }
 
     @Operation(
-            summary = "Получение списка закладок",
-            description = "Позволяет получить все закладки пользователя"
+        summary = "Получение списка закладок",
+        description = "Позволяет получить все закладки пользователя"
     )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Возвращает список закладок",
             content = {@Content(mediaType = Constant.MEDIA_TYPE, array = @ArraySchema(schema = @Schema(implementation = BookModelDto.class)))})
-        }
+    }
     )
     @GetMapping
     public ResponseEntity<List<BookModelDto>> getAll(final Principal principal) {

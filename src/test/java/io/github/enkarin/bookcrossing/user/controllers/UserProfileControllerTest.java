@@ -18,24 +18,24 @@ class UserProfileControllerTest extends BookCrossingBaseTests {
         createAndSaveBooks(user.getLogin());
 
         final var response = webClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .pathSegment("user", "profile")
-                        .queryParam("zone", 0)
-                        .build())
-                .headers(headers -> headers.setBearerAuth(generateAccessToken(TestDataProvider.buildAuthBot())))
-                .exchange()
-                .expectStatus().isEqualTo(200)
-                .expectBody(UserProfileDto.class)
-                .returnResult().getResponseBody();
+            .uri(uriBuilder -> uriBuilder
+                .pathSegment("user", "profile")
+                .queryParam("zone", 0)
+                .build())
+            .headers(headers -> headers.setBearerAuth(generateAccessToken(TestDataProvider.buildAuthBot())))
+            .exchange()
+            .expectStatus().isEqualTo(200)
+            .expectBody(UserProfileDto.class)
+            .returnResult().getResponseBody();
 
         assertThat(response)
-                .isNotNull()
-                .satisfies(r -> {
-                    assertThat(r)
-                            .usingRecursiveComparison()
-                            .ignoringFields("books")
-                            .isEqualTo(TestDataProvider.buildProfileBot(user.getUserId()));
-                });
+            .isNotNull()
+            .satisfies(r -> {
+                assertThat(r)
+                    .usingRecursiveComparison()
+                    .ignoringFields("books")
+                    .isEqualTo(TestDataProvider.buildProfileBot(user.getUserId()));
+            });
     }
 
     @Test
@@ -47,22 +47,22 @@ class UserProfileControllerTest extends BookCrossingBaseTests {
         createAndSaveBooks(userBot.getLogin());
 
         final var response = webClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .pathSegment("user", "profile")
-                        .queryParam("zone", 0)
-                        .build())
-                .headers(headers -> {
-                    headers.setBearerAuth(generateAccessToken(TestDataProvider.buildAuthBot()));
-                    headers.set("userId", String.valueOf(userAlex));
-                })
-                .exchange()
-                .expectStatus().isEqualTo(200)
-                .expectBody(UserPublicProfileDto.class)
-                .returnResult().getResponseBody();
+            .uri(uriBuilder -> uriBuilder
+                .pathSegment("user", "profile")
+                .queryParam("zone", 0)
+                .build())
+            .headers(headers -> {
+                headers.setBearerAuth(generateAccessToken(TestDataProvider.buildAuthBot()));
+                headers.set("userId", String.valueOf(userAlex));
+            })
+            .exchange()
+            .expectStatus().isEqualTo(200)
+            .expectBody(UserPublicProfileDto.class)
+            .returnResult().getResponseBody();
 
         assertThat(response)
-                .isNotNull()
-                .isEqualTo(TestDataProvider.buildPublicProfileBot(userAlex));
+            .isNotNull()
+            .isEqualTo(TestDataProvider.buildPublicProfileBot(userAlex));
     }
 
     @Test
@@ -71,19 +71,19 @@ class UserProfileControllerTest extends BookCrossingBaseTests {
         enabledUser(userBot.getUserId());
 
         final var response = webClient.put()
-                .uri(uriBuilder -> uriBuilder
-                        .pathSegment("user", "profile")
-                        .build())
-                .headers(headers -> headers.setBearerAuth(generateAccessToken(TestDataProvider.buildAuthBot())))
-                .bodyValue(TestDataProvider.preparePutProfile().build())
-                .exchange()
-                .expectStatus().isEqualTo(200)
-                .expectBody(UserProfileDto.class)
-                .returnResult().getResponseBody();
+            .uri(uriBuilder -> uriBuilder
+                .pathSegment("user", "profile")
+                .build())
+            .headers(headers -> headers.setBearerAuth(generateAccessToken(TestDataProvider.buildAuthBot())))
+            .bodyValue(TestDataProvider.preparePutProfile().build())
+            .exchange()
+            .expectStatus().isEqualTo(200)
+            .expectBody(UserProfileDto.class)
+            .returnResult().getResponseBody();
 
         assertThat(response)
-                .isNotNull()
-                .isEqualTo(TestDataProvider.buildPutProfileBot(userBot.getUserId()));
+            .isNotNull()
+            .isEqualTo(TestDataProvider.buildPutProfileBot(userBot.getUserId()));
     }
 
     @Test
@@ -117,39 +117,39 @@ class UserProfileControllerTest extends BookCrossingBaseTests {
         createAndSaveBooks(user.getLogin());
 
         final var response = webClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .pathSegment("user", "profile", "users")
-                        .queryParam("zone", 0)
-                        .build())
-                .headers(headers -> headers.setBearerAuth(generateAccessToken(TestDataProvider.buildAuthBot())))
-                .exchange()
-                .expectStatus().isEqualTo(200)
-                .expectBodyList(UserPublicProfileDto.class)
-                .returnResult().getResponseBody();
+            .uri(uriBuilder -> uriBuilder
+                .pathSegment("user", "profile", "users")
+                .queryParam("zone", 0)
+                .build())
+            .headers(headers -> headers.setBearerAuth(generateAccessToken(TestDataProvider.buildAuthBot())))
+            .exchange()
+            .expectStatus().isEqualTo(200)
+            .expectBodyList(UserPublicProfileDto.class)
+            .returnResult().getResponseBody();
 
         assertThat(response)
-                .hasSize(1)
-                .singleElement()
-                .satisfies(r -> {
+            .hasSize(1)
+            .singleElement()
+            .satisfies(r -> {
                     assertThat(r)
-                            .usingRecursiveComparison()
-                            .ignoringFields("books")
-                            .isEqualTo(TestDataProvider.buildPublicProfileBot(user.getUserId()));
+                        .usingRecursiveComparison()
+                        .ignoringFields("books")
+                        .isEqualTo(TestDataProvider.buildPublicProfileBot(user.getUserId()));
                 }
             );
     }
 
     private void assertThatReturnException(final UserPutProfileDto putProfileDto, final int status, final String message) {
         webClient.put()
-                .uri(uriBuilder -> uriBuilder
-                        .pathSegment("user", "profile")
-                        .build())
-                .headers(headers -> headers.setBearerAuth(generateAccessToken(TestDataProvider.buildAuthBot())))
-                .bodyValue(putProfileDto)
-                .exchange()
-                .expectStatus().isEqualTo(status)
-                .expectBody()
-                .jsonPath("$.password")
-                .isEqualTo(message);
+            .uri(uriBuilder -> uriBuilder
+                .pathSegment("user", "profile")
+                .build())
+            .headers(headers -> headers.setBearerAuth(generateAccessToken(TestDataProvider.buildAuthBot())))
+            .bodyValue(putProfileDto)
+            .exchange()
+            .expectStatus().isEqualTo(status)
+            .expectBody()
+            .jsonPath("$.password")
+            .isEqualTo(message);
     }
 }

@@ -28,8 +28,8 @@ import java.security.Principal;
 import java.util.Map;
 
 @Tag(
-        name = "Вложения к книгам",
-        description = "Позволяет добавить или удалить фотографию книги"
+    name = "Вложения к книгам",
+    description = "Позволяет добавить или удалить фотографию книги"
 )
 @RestController
 @RequiredArgsConstructor
@@ -39,38 +39,38 @@ public class AttachmentController {
     private final AttachmentService attachmentService;
 
     @Operation(
-            summary = "Отправка вложения",
-            description = "Позволяет сохранить фотографию книги"
+        summary = "Отправка вложения",
+        description = "Позволяет сохранить фотографию книги"
     )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "415", description = "Некорректное вложение",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+                schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
         @ApiResponse(responseCode = "404", description = "Книги не существует",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+                schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
         @ApiResponse(responseCode = "201", description = "Вложение сохранено")
     })
     @PostMapping("/attachment")
     public ResponseEntity<Void> saveAttachment(@ModelAttribute final AttachmentMultipartDto attachmentMultipartDto,
-                                            final Principal principal) throws IOException {
+                                               final Principal principal) throws IOException {
         attachmentService.saveAttachment(attachmentMultipartDto, principal.getName());
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @Operation(
-            summary = "Удаление вложения",
-            description = "Позволяет удалить фотографию книги"
+        summary = "Удаление вложения",
+        description = "Позволяет удалить фотографию книги"
     )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "404", description = "Вложения или книги не существует",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+                schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
         @ApiResponse(responseCode = "200", description = "Вложение удалено")
     })
     @DeleteMapping("/attachment")
     public ResponseEntity<Void> deleteAttachment(@RequestParam final int bookId,
-                                            final Principal principal) {
+                                                 final Principal principal) {
         attachmentService.deleteAttachment(bookId, principal.getName());
         return ResponseEntity.ok().build();
     }

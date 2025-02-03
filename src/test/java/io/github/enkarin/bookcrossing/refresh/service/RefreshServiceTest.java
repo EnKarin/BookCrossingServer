@@ -25,31 +25,31 @@ class RefreshServiceTest extends BookCrossingBaseTests {
         final UserDto user = createAndSaveUser(TestDataProvider.buildAlex());
         final AuthResponse tokens = refreshService.createTokens(user.getLogin());
         assertThat(jdbcTemplate.queryForObject("select exists(select * from bookcrossing.t_refresh where refresh_id = ?)",
-                Boolean.class, tokens.getRefreshToken())).isTrue();
+            Boolean.class, tokens.getRefreshToken())).isTrue();
     }
 
     @Test
     void createTokensExceptionTest() {
         assertThatThrownBy(() -> refreshService.createTokens("Bot"))
-                .isInstanceOf(UserNotFoundException.class)
-                .hasMessage("Пользователь не найден");
+            .isInstanceOf(UserNotFoundException.class)
+            .hasMessage("Пользователь не найден");
     }
 
     @Test
     void updateTokensTest() {
         final UserDto user = createAndSaveUser(TestDataProvider.buildAlex());
         final AuthResponse tokens = refreshService.updateTokens(refreshService.createTokens(user.getLogin())
-                .getRefreshToken());
+            .getRefreshToken());
         assertThat(jdbcTemplate.queryForObject("select exists(select * from bookcrossing.t_refresh where refresh_id = ?)",
-                Boolean.class, tokens.getRefreshToken())).isTrue();
+            Boolean.class, tokens.getRefreshToken())).isTrue();
     }
 
     @Test
     void updateTokenNotFoundExcTest() {
         final String token = UUID.randomUUID().toString();
         assertThatThrownBy(() -> refreshService.updateTokens(token))
-                .isInstanceOf(TokenNotFoundException.class)
-                .hasMessage("Токен не найден");
+            .isInstanceOf(TokenNotFoundException.class)
+            .hasMessage("Токен не найден");
     }
 
     @Test
@@ -59,9 +59,9 @@ class RefreshServiceTest extends BookCrossingBaseTests {
         jdbcTemplate.update("update bookcrossing.t_refresh set date = 0 where refresh_id = ?", token);
 
         assertThatThrownBy(() -> refreshService.updateTokens(token))
-                .isInstanceOf(RefreshTokenInvalidException.class)
-                .hasMessage("Токен истек");
+            .isInstanceOf(RefreshTokenInvalidException.class)
+            .hasMessage("Токен истек");
         assertThat(jdbcTemplate.queryForObject("select exists(select * from bookcrossing.t_refresh where refresh_id = ?)",
-                Boolean.class, token)).isFalse();
+            Boolean.class, token)).isFalse();
     }
 }

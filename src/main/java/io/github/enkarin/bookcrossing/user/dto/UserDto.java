@@ -25,19 +25,19 @@ public class UserDto extends UserParentDto {
 
     @JsonCreator
     private UserDto(final int userId,
-                   final String name,
-                   final String login,
-                   final String email,
-                   final String city,
-                   final boolean accountNonLocked,
-                   final boolean enabled,
-                   final long loginDate) {
+                    final String name,
+                    final String login,
+                    final String email,
+                    final String city,
+                    final boolean accountNonLocked,
+                    final boolean enabled,
+                    final long loginDate) {
         super(userId, name, login, email, city, accountNonLocked, enabled);
         this.loginDate = loginDate;
     }
 
     public static UserDto fromUser(final User user) {
         return new UserDto(create(user.getUserId(), user.getName(), user.getLogin(), user.getEmail(),
-                user.getCity(), user.isAccountNonLocked(), user.isEnabled()), user.getLoginDate());
+            user.getCity(), user.isAccountNonLocked(), user.isEnabled()), user.getLoginDate());
     }
 }

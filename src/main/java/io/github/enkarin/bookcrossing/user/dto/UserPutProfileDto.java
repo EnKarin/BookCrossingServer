@@ -39,7 +39,7 @@ public class UserPutProfileDto {
 
     @JsonCreator
     public static UserPutProfileDto create(final String name, final String oldPassword, final String newPassword,
-                                              final String passwordConfirm, final String city) {
+                                           final String passwordConfirm, final String city) {
         return new UserPutProfileDto(name, oldPassword, newPassword, passwordConfirm, city);
     }
 }

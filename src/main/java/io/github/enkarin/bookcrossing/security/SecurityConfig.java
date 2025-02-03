@@ -37,23 +37,23 @@ public class SecurityConfig {
         corsConfiguration.setExposedHeaders(List.of("Authorization"));
 
         httpSecurity
-                .requiresChannel().antMatchers().requiresSecure()
-                .and()
-                .httpBasic().disable()
-                .csrf().disable()
-                .cors().configurationSource(request -> corsConfiguration)
-                .and()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                .authorizeRequests()
-                .antMatchers("/adm/**").hasRole("ADMIN")
-                .antMatchers("/user/**").hasRole("USER")
-                .antMatchers("/books/**").permitAll()
-                .antMatchers("/register", "/auth", "/refresh").permitAll()
-                .and()
-                .exceptionHandling().authenticationEntryPoint(handler)
-                .and()
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+            .requiresChannel().antMatchers().requiresSecure()
+            .and()
+            .httpBasic().disable()
+            .csrf().disable()
+            .cors().configurationSource(request -> corsConfiguration)
+            .and()
+            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            .and()
+            .authorizeRequests()
+            .antMatchers("/adm/**").hasRole("ADMIN")
+            .antMatchers("/user/**").hasRole("USER")
+            .antMatchers("/books/**").permitAll()
+            .antMatchers("/register", "/auth", "/refresh").permitAll()
+            .and()
+            .exceptionHandling().authenticationEntryPoint(handler)
+            .and()
+            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
         return httpSecurity.build();
     }
 }
