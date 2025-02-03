@@ -81,6 +81,17 @@ class BookServiceTest extends BookCrossingBaseTests {
     }
 
     @Test
+    void findByUserIdShouldWork() {
+        final UserDto user = createAndSaveUser(TestDataProvider.buildBot());
+        final int book =  bookService.saveBook(TestDataProvider.buildDorian(), user.getLogin()).getBookId();
+        assertThat(bookService.findBookByOwnerId(String.valueOf(user.getUserId())))
+                .hasSize(1)
+                .first()
+                .extracting(BookModelDto::getBookId)
+                .isEqualTo(book);
+    }
+
+    @Test
     void findByIdShouldFailWithBookNotFound() {
         assertThatThrownBy(() -> bookService.findById(Integer.MAX_VALUE))
                 .isInstanceOf(BookNotFoundException.class)
