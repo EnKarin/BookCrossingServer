@@ -71,7 +71,8 @@ public class CorrespondenceController {
         @Parameter(in = ParameterIn.HEADER, name = USER_ID, description = "Идентификатор пользователя")
     })
     @PostMapping
-    public ResponseEntity<UsersCorrKeyDto> createCorrespondence(@RequestHeader(USER_ID) @NotBlank final String userId, final Principal principal) {
+    public ResponseEntity<UsersCorrKeyDto> createCorrespondence(@RequestHeader(USER_ID) @NotBlank(message = "не должно быть пустым") final String userId,
+                                                                final Principal principal) {
         return ResponseEntity.status(HttpStatus.CREATED).body(correspondenceService.createChat(Integer.parseInt(userId), principal.getName()));
     }
 
@@ -90,7 +91,7 @@ public class CorrespondenceController {
         @Parameter(in = ParameterIn.HEADER, name = USER_ID, description = "Идентификатор пользователя")
     })
     @DeleteMapping
-    public ResponseEntity<Void> deleteCorrespondence(@RequestHeader(USER_ID) @NotBlank final String userId, final Principal principal) {
+    public ResponseEntity<Void> deleteCorrespondence(@RequestHeader(USER_ID) @NotBlank(message = "не должно быть пустым") final String userId, final Principal principal) {
         correspondenceService.deleteChat(Integer.parseInt(userId), principal.getName());
         return ResponseEntity.ok().build();
     }
@@ -116,8 +117,8 @@ public class CorrespondenceController {
         @Parameter(in = ParameterIn.HEADER, name = FIRST_USER_ID, description = "Идентификатор первого пользователя"),
         @Parameter(in = ParameterIn.HEADER, name = SECOND_USER_ID, description = "Идентификатор второго пользователя")
     })
-    public ResponseEntity<Object[]> getCorrespondence(@RequestHeader(FIRST_USER_ID) @NotBlank final String firstUserId,
-                                                      @RequestHeader(SECOND_USER_ID) @NotBlank final String secondUserId,
+    public ResponseEntity<Object[]> getCorrespondence(@RequestHeader(FIRST_USER_ID) @NotBlank(message = "не должно быть пустым") final String firstUserId,
+                                                      @RequestHeader(SECOND_USER_ID) @NotBlank(message = "не должно быть пустым") final String secondUserId,
                                                       @RequestParam final int zone,
                                                       final Principal principal) {
         return ResponseEntity.ok(correspondenceService.getChat(Integer.parseInt(firstUserId), Integer.parseInt(secondUserId), zone, principal.getName()).toArray());
