@@ -11,6 +11,7 @@ import io.github.enkarin.bookcrossing.exception.PasswordsDontMatchException;
 import io.github.enkarin.bookcrossing.exception.TokenNotFoundException;
 import io.github.enkarin.bookcrossing.registration.dto.AuthResponse;
 import io.github.enkarin.bookcrossing.registration.dto.LoginRequest;
+import io.github.enkarin.bookcrossing.registration.dto.OriginalLoginResponse;
 import io.github.enkarin.bookcrossing.registration.dto.UserRegistrationDto;
 import io.github.enkarin.bookcrossing.user.dto.UserDto;
 import io.github.enkarin.bookcrossing.user.service.UserService;
@@ -42,8 +43,8 @@ import java.util.List;
 import java.util.Map;
 
 @Tag(
-        name = "Регистрация и авторизация пользователей",
-        description = "Позволяет регистрироваться новым пользователям и выдает токен при аутентификации"
+    name = "Регистрация и авторизация пользователей",
+    description = "Позволяет регистрироваться новым пользователям и выдает токен при аутентификации"
 )
 @RestController
 @RequiredArgsConstructor
@@ -52,24 +53,19 @@ public class RegistrationController {
     private final UserService userService;
 
     @Operation(
-            summary = "Регистрация пользователя",
-            description = "Возвращает токены, если пользователь успешно зарегистрирован"
+        summary = "Регистрация пользователя",
+        description = "Возвращает токены, если пользователь успешно зарегистрирован"
     )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "409", description = "Пароли не совпадают",
-            content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+            content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
         @ApiResponse(responseCode = "409", description = "Пользователь с таким логином или почтой уже существует",
-            content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+            content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
         @ApiResponse(responseCode = "406", description = "Введены некорректные данные",
-            content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+            content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
         @ApiResponse(responseCode = "201", description = "Отправляет ссылку для подтверждения на почту",
-            content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(implementation = UserDto.class))})
-    }
-    )
+            content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(implementation = UserDto.class))})
+    })
     @PostMapping("/registration")
     public ResponseEntity<UserDto> registerUser(@Valid @RequestBody final UserRegistrationDto userForm,
                                                 final BindingResult bindingResult) {
@@ -82,16 +78,14 @@ public class RegistrationController {
     }
 
     @Operation(
-            summary = "Авторизация пользователя",
-            description = "Возвращает токены"
+        summary = "Авторизация пользователя",
+        description = "Возвращает токены"
     )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "404", description = "Некорректный логин или пароль",
-            content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+            content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
         @ApiResponse(responseCode = "403", description = "Аккаунт не подтвержден или заблокирован",
-            content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+            content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
         @ApiResponse(responseCode = "200", description = "Возвращает токены",
             content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(implementation = AuthResponse.class))}, headers = @Header(name = "Set-Cookie", description = "refresh token")
             )}
@@ -109,13 +103,12 @@ public class RegistrationController {
     }
 
     @Operation(
-            summary = "Подтвержение почты",
-            description = "Изменяет стату аккаунта на подтвержденный"
+        summary = "Подтвержение почты",
+        description = "Изменяет стату аккаунта на подтвержденный"
     )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "404", description = "Токена не существует",
-            content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+            content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
         @ApiResponse(responseCode = "200", description = "Подтверждает почту для аккаунта и возвращает токены",
             content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(implementation = AuthResponse.class))}, headers = @Header(name = "Set-Cookie", description = "refresh token"))
     })
@@ -129,6 +122,16 @@ public class RegistrationController {
                         .maxAge(Duration.ofDays(3))
                         .build().toString())
                 .body(auth);
+    }
+
+    @Operation(summary = "Генерация нового логина", description = "Предоставляет логин, пользователя с которым ещё не существует")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Уникальный на данный момент логин",
+            content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(implementation = OriginalLoginResponse.class))})
+    })
+    @GetMapping("/generate-login")
+    public ResponseEntity<OriginalLoginResponse> generateLogin() {
+        return ResponseEntity.ok(new OriginalLoginResponse(userService.generateLogin()));
     }
 
     @ResponseStatus(HttpStatus.CONFLICT)

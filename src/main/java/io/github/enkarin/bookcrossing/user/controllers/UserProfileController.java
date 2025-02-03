@@ -10,6 +10,8 @@ import io.github.enkarin.bookcrossing.user.dto.UserPutProfileDto;
 import io.github.enkarin.bookcrossing.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -44,6 +46,7 @@ import java.util.Map;
 @RequestMapping("/user/profile")
 public class UserProfileController {
 
+    private static final String USER_ID = "userId";
     private final UserService userService;
 
     @Operation(
@@ -57,14 +60,18 @@ public class UserProfileController {
         @ApiResponse(responseCode = "200", description = "Возвращает профиль пользователя")
         }
     )
+    @Parameters({
+        @Parameter(in = ParameterIn.HEADER, name = USER_ID, schema = @Schema(defaultValue = "-1"), description = "Идентификатор пользователя"),
+        @Parameter(in = ParameterIn.QUERY, name = "zone", description = "Часовой пояс пользователя")
+    })
     @GetMapping
-    public ResponseEntity<?> getProfile(@RequestHeader(defaultValue = "-1") @Parameter(description = "Идентификатор пользователя") final int userId, // NOSONAR
-                                        @RequestParam @Parameter(description = "Часовой пояс пользователя") final int zone,
+    public ResponseEntity<?> getProfile(@RequestHeader(name = USER_ID, defaultValue = "-1") final String userId, // NOSONAR
+                                        @RequestParam final int zone,
                                         final Principal principal) {
-        if (userId == -1) {
+        if ("-1".equals(userId)) {
             return ResponseEntity.ok(userService.getProfile(principal.getName()));
         }
-        return ResponseEntity.ok(userService.findById(userId, zone));
+        return ResponseEntity.ok(userService.findById(Integer.parseInt(userId), zone));
     }
 
     @Operation(
@@ -88,8 +95,8 @@ public class UserProfileController {
     )
     @PutMapping
     public ResponseEntity<UserProfileDto> putProfile(@Valid @RequestBody final UserPutProfileDto userPutProfileDto,
-                                        final BindingResult bindingResult,
-                                        final Principal principal) {
+                                                     final BindingResult bindingResult,
+                                                     final Principal principal) {
         if (bindingResult.hasErrors()) {
             final List<String> response = new LinkedList<>();
             bindingResult.getAllErrors().forEach(f -> response.add(f.getDefaultMessage()));

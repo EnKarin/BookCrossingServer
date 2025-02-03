@@ -2,6 +2,7 @@ package io.github.enkarin.bookcrossing.books.controllers;
 
 import io.github.enkarin.bookcrossing.books.dto.BookDto;
 import io.github.enkarin.bookcrossing.books.dto.BookModelDto;
+import io.github.enkarin.bookcrossing.books.dto.BookModelDtoList;
 import io.github.enkarin.bookcrossing.books.service.BookService;
 import io.github.enkarin.bookcrossing.constant.Constant;
 import io.github.enkarin.bookcrossing.exception.BindingErrorsException;
@@ -29,8 +30,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 @Tag(
-        name = "Раздел работы с книгами",
-        description = "Позволяет пользователю управлять своими книгами"
+    name = "Раздел работы с книгами",
+    description = "Позволяет пользователю управлять своими книгами"
 )
 
 @RestController
@@ -41,60 +42,54 @@ public class MyBookController {
     private final BookService bookService;
 
     @Operation(
-            summary = "Добавление книги",
-            description = "Позволяет сохранить книгу для обмена"
+        summary = "Добавление книги",
+        description = "Позволяет сохранить книгу для обмена"
     )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "406", description = "Введены некорректные данные",
-            content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+            content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
         @ApiResponse(responseCode = "201", description = "Возвращает сохраненную книгу",
-            content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(implementation = BookModelDto.class))})}
+            content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(implementation = BookModelDto.class))})}
     )
     @PostMapping
-    public ResponseEntity<BookModelDto> saveBook(@Valid @RequestBody final BookDto bookDTO,
-                                      final BindingResult bindingResult,
-                                      final Principal principal) {
+    public ResponseEntity<BookModelDto> saveBook(@Valid @RequestBody final BookDto bookDTO, final BindingResult bindingResult, final Principal principal) {
         if (bindingResult.hasErrors()) {
             final List<String> response = new LinkedList<>();
             bindingResult.getAllErrors().forEach(f -> response.add(f.getDefaultMessage()));
             throw new BindingErrorsException(response);
         }
         return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(bookService.saveBook(bookDTO, principal.getName()));
+            .status(HttpStatus.CREATED)
+            .body(bookService.saveBook(bookDTO, principal.getName()));
     }
 
     @Operation(
-            summary = "Список книг",
-            description = "Позволяет получить список всех книг пользователя"
+        summary = "Список книг",
+        description = "Позволяет получить список всех книг пользователя"
     )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Возвращает список книг",
-            content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(implementation = BookModelDto[].class))})}
+            content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(implementation = BookModelDtoList.class))})}
     )
     @GetMapping
-    public ResponseEntity<Object[]> bookList(final Principal principal) {
-        return ResponseEntity.ok(bookService.findBookForOwner(principal.getName()).toArray());
+    public ResponseEntity<BookModelDtoList> bookList(final Principal principal) {
+        return ResponseEntity.ok(new BookModelDtoList(bookService.findBookForOwner(principal.getName())));
     }
 
     @Operation(
-            summary = "Удаление книги",
-            description = "Позволяет удалить книгу по ее id"
+        summary = "Удаление книги",
+        description = "Позволяет удалить книгу по ее id"
     )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "404", description = "Книга не найдена",
-            content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                            schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
-        @ApiResponse(responseCode = "200", description = "Удаляет книгу из бд")}
-    )
+            content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+        @ApiResponse(responseCode = "200", description = "Удаляет книгу из бд")
+    })
     @DeleteMapping
     public ResponseEntity<Void> deleteBook(@RequestParam final int bookId) {
         bookService.deleteBook(bookId);
         return ResponseEntity
-                .status(HttpStatus.OK)
-                .build();
+            .status(HttpStatus.OK)
+            .build();
     }
 }

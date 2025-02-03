@@ -215,7 +215,7 @@ public class TestDataProvider {
     @Nonnull
     public static UserPublicProfileDto buildPublicProfileBot(final int userId) {
         return UserPublicProfileDto.builder()
-                .userId(userId)
+                .userId(Integer.toString(userId))
                 .name("Tester")
                 .city("Novosibirsk")
                 .loginDate("0")
