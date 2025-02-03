@@ -44,6 +44,12 @@ public class BookService {
                 .toList();
     }
 
+    public List<BookModelDto> findBookByOwnerId(final String userId) {
+        return bookRepository.findBooksByOwnerUserId(Integer.parseInt(userId)).stream()
+                .map(BookModelDto::fromBook)
+                .toList();
+    }
+
     public BookModelDto findById(final int bookId) {
         final Book book = bookRepository.findById(bookId).orElseThrow(BookNotFoundException::new);
         return BookModelDto.fromBook(book);

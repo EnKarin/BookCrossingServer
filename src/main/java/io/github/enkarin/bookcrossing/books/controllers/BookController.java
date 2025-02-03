@@ -13,11 +13,15 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.validation.constraints.NotBlank;
+import java.util.List;
 
 @Tag(
         name = "Раздел со всеми книгами в системе",
@@ -26,6 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/books")
+@Validated
 public class BookController {
 
     private final BookService bookService;
@@ -39,8 +44,21 @@ public class BookController {
             content = {@Content(mediaType = Constant.MEDIA_TYPE, array = @ArraySchema(schema = @Schema(implementation = BookModelDto.class)))})
     })
     @GetMapping("/all")
-    public ResponseEntity<Object[]> books() {
-        return ResponseEntity.ok(bookService.findAll().toArray());
+    public ResponseEntity<List<BookModelDto>> books() {
+        return ResponseEntity.ok(bookService.findAll());
+    }
+
+    @Operation(
+            summary = "Все книги пользователя",
+            description = "Позволяет получить книги пользователя по его id"
+    )
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Возвращает все книги пользователя",
+            content = {@Content(mediaType = Constant.MEDIA_TYPE, array = @ArraySchema(schema = @Schema(implementation = BookModelDto.class)))})
+    })
+    @GetMapping("/by-user")
+    public ResponseEntity<List<BookModelDto>> booksByUser(@RequestParam(name = "id") @NotBlank(message = "не должно быть пустым") final String userId) {
+        return ResponseEntity.ok(bookService.findBookByOwnerId(userId));
     }
 
     @Operation(

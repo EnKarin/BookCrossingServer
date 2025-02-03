@@ -1,13 +1,11 @@
 package io.github.enkarin.bookcrossing.books.controllers;
 
-import io.github.enkarin.bookcrossing.support.BookCrossingBaseTests;
 import io.github.enkarin.bookcrossing.books.dto.BookFiltersRequest;
 import io.github.enkarin.bookcrossing.books.dto.BookModelDto;
-import io.github.enkarin.bookcrossing.books.service.BookService;
+import io.github.enkarin.bookcrossing.support.BookCrossingBaseTests;
 import io.github.enkarin.bookcrossing.support.TestDataProvider;
 import io.github.enkarin.bookcrossing.user.dto.UserDto;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 
@@ -16,9 +14,6 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class BookControllerTest extends BookCrossingBaseTests {
-
-    @Autowired
-    private BookService bookService;
 
     @Test
     void booksShouldnWork() {
@@ -152,5 +147,37 @@ class BookControllerTest extends BookCrossingBaseTests {
         assertThat(response)
                 .hasSize(1)
                 .containsOnly(TestDataProvider.buildWolves(booksId.get(2)));
+    }
+
+    @Test
+    void getBooksByUserShouldWork() {
+        final var user = createAndSaveUser(TestDataProvider.buildAlex());
+        createAndSaveBooks(user.getLogin());
+
+        final var response = webClient
+            .method(HttpMethod.GET)
+            .uri(uriBuilder -> uriBuilder
+                .pathSegment("books", "by-user")
+                .queryParam("id", user.getUserId())
+                .build())
+            .exchange()
+            .expectStatus().isEqualTo(200)
+            .expectBodyList(BookModelDto.class)
+            .returnResult().getResponseBody();
+
+        assertThat(response)
+            .hasSize(3);
+    }
+
+    @Test
+    void getBooksByUserShouldReturnErrorWhenUserIdIsNull() {
+        webClient.get()
+            .uri(uriBuilder -> uriBuilder
+                .pathSegment("books", "by-user")
+                .queryParam("id", "  ")
+                .build())
+            .exchange()
+            .expectStatus().isEqualTo(400)
+            .expectBody().jsonPath("$.userId").isEqualTo("не должно быть пустым");
     }
 }
