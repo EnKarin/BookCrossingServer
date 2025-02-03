@@ -2,7 +2,6 @@ package io.github.enkarin.bookcrossing.books.controllers;
 
 import io.github.enkarin.bookcrossing.books.dto.BookDto;
 import io.github.enkarin.bookcrossing.books.dto.BookModelDto;
-import io.github.enkarin.bookcrossing.books.dto.BookModelDtoList;
 import io.github.enkarin.bookcrossing.books.service.BookService;
 import io.github.enkarin.bookcrossing.support.BookCrossingBaseTests;
 import io.github.enkarin.bookcrossing.support.TestDataProvider;
@@ -61,12 +60,13 @@ class MyBookControllerTest extends BookCrossingBaseTests {
         final int book1 = bookService.saveBook(books.get(1), users.get(0).getLogin()).getBookId();
         final int book2 = bookService.saveBook(books.get(2), users.get(0).getLogin()).getBookId();
 
-        final var response = checkGet(generateAccessToken(TestDataProvider.buildAuthBot()))
-            .expectBody(BookModelDtoList.class).returnResult().getResponseBody();
-        assertThat(response).isNotNull().satisfies(r -> assertThat(r.bookDtoList())
+        final var response = checkGet(generateAccessToken(TestDataProvider.buildAuthBot())).expectBodyList(BookModelDto.class)
+            .returnResult()
+            .getResponseBody();
+        assertThat(response)
             .hasSize(2)
             .containsExactlyInAnyOrder(TestDataProvider.buildDandelion(book1),
-                TestDataProvider.buildWolves(book2)));
+                TestDataProvider.buildWolves(book2));
     }
 
     @Test
@@ -78,9 +78,8 @@ class MyBookControllerTest extends BookCrossingBaseTests {
         enabledUser(users.get(1).getUserId());
         bookService.saveBook(TestDataProvider.buildDandelion(), users.get(1).getLogin());
 
-        final var response = checkGet(generateAccessToken(TestDataProvider.buildAuthBot()))
-            .expectBody(BookModelDtoList.class).returnResult().getResponseBody();
-        assertThat(response).isNotNull().satisfies(r -> assertThat(r.bookDtoList()).isEmpty());
+        checkGet(generateAccessToken(TestDataProvider.buildAuthBot())).expectBodyList(BookModelDto.class)
+            .hasSize(0);
     }
 
     @Test

@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -111,8 +112,7 @@ public class UserProfileController {
     )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Возвращает найденных пользователей",
-            content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(implementation = UserPublicProfileDto[].class))})
+            content = {@Content(mediaType = Constant.MEDIA_TYPE, array = @ArraySchema(schema = @Schema(implementation = UserPublicProfileDto.class)))})
     })
     @GetMapping("/users")
     public ResponseEntity<Object[]> getAllProfile(@RequestParam final int zone) {

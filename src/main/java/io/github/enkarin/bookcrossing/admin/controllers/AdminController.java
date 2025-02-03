@@ -7,6 +7,7 @@ import io.github.enkarin.bookcrossing.constant.Constant;
 import io.github.enkarin.bookcrossing.exception.BindingErrorsException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -43,8 +44,7 @@ public class AdminController {
     )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Возвращает список пользователей",
-            content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(implementation = InfoUsersDto[].class))})
+            content = {@Content(mediaType = Constant.MEDIA_TYPE, array = @ArraySchema(schema = @Schema(implementation = InfoUsersDto.class)))})
         }
     )
     @GetMapping

@@ -5,6 +5,7 @@ import io.github.enkarin.bookcrossing.books.dto.BookModelDto;
 import io.github.enkarin.bookcrossing.books.service.BookService;
 import io.github.enkarin.bookcrossing.constant.Constant;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -35,8 +36,7 @@ public class BookController {
     )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Возвращает все книги",
-            content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(implementation = BookModelDto[].class))})
+            content = {@Content(mediaType = Constant.MEDIA_TYPE, array = @ArraySchema(schema = @Schema(implementation = BookModelDto.class)))})
     })
     @GetMapping("/all")
     public ResponseEntity<Object[]> books() {
@@ -67,8 +67,7 @@ public class BookController {
     )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Возвращает найденные книги",
-            content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(implementation = BookModelDto[].class))})
+            content = {@Content(mediaType = Constant.MEDIA_TYPE, array = @ArraySchema(schema = @Schema(implementation = BookModelDto.class)))})
     })
     @GetMapping("/searchByTitle")
     public ResponseEntity<Object[]> searchByTitle(@RequestParam final String title) {
@@ -81,8 +80,7 @@ public class BookController {
     )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Возвращает найденные книги",
-            content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(implementation = BookModelDto[].class))})
+            content = {@Content(mediaType = Constant.MEDIA_TYPE, array = @ArraySchema(schema = @Schema(implementation = BookModelDto.class)))})
     })
     @GetMapping("/searchWithFilters")
     public ResponseEntity<Object[]> searchWithFilters(@RequestBody final BookFiltersRequest filters) {
