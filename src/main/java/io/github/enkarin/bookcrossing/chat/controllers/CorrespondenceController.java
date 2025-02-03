@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -102,14 +103,11 @@ public class CorrespondenceController {
     )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "404", description = "Чата не существует",
-            content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+            content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
         @ApiResponse(responseCode = "403", description = "Нет доступа к чату",
-            content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+            content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
         @ApiResponse(responseCode = "200", description = "Возвращает список сообщений",
-            content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(implementation = MessageDto[].class))})
+            content = {@Content(mediaType = Constant.MEDIA_TYPE, array = @ArraySchema(schema = @Schema(implementation = MessageDto.class)))})
         }
     )
     @GetMapping

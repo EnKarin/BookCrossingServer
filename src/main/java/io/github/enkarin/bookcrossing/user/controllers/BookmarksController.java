@@ -5,6 +5,7 @@ import io.github.enkarin.bookcrossing.constant.Constant;
 import io.github.enkarin.bookcrossing.user.service.BookmarksService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -40,11 +41,9 @@ public class BookmarksController {
     )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "404", description = "Книга с заданным Id не найдена",
-            content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+            content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
         @ApiResponse(responseCode = "201", description = "Возвращает список закладок",
-            content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(implementation = BookModelDto[].class))})
+            content = {@Content(mediaType = Constant.MEDIA_TYPE, array = @ArraySchema(schema = @Schema(implementation = BookModelDto.class)))})
         }
     )
     @PostMapping
@@ -78,8 +77,7 @@ public class BookmarksController {
     )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Возвращает список закладок",
-            content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(implementation = BookModelDto[].class))})
+            content = {@Content(mediaType = Constant.MEDIA_TYPE, array = @ArraySchema(schema = @Schema(implementation = BookModelDto.class)))})
         }
     )
     @GetMapping

@@ -2,11 +2,11 @@ package io.github.enkarin.bookcrossing.books.controllers;
 
 import io.github.enkarin.bookcrossing.books.dto.BookDto;
 import io.github.enkarin.bookcrossing.books.dto.BookModelDto;
-import io.github.enkarin.bookcrossing.books.dto.BookModelDtoList;
 import io.github.enkarin.bookcrossing.books.service.BookService;
 import io.github.enkarin.bookcrossing.constant.Constant;
 import io.github.enkarin.bookcrossing.exception.BindingErrorsException;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -69,11 +69,11 @@ public class MyBookController {
     )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Возвращает список книг",
-            content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(implementation = BookModelDtoList.class))})}
+            content = {@Content(mediaType = Constant.MEDIA_TYPE, array = @ArraySchema(schema = @Schema(implementation = BookModelDto.class)))})}
     )
     @GetMapping
-    public ResponseEntity<BookModelDtoList> bookList(final Principal principal) {
-        return ResponseEntity.ok(new BookModelDtoList(bookService.findBookForOwner(principal.getName())));
+    public ResponseEntity<BookModelDto[]> bookList(final Principal principal) {
+        return ResponseEntity.ok(bookService.findBookForOwner(principal.getName()).toArray(BookModelDto[]::new));
     }
 
     @Operation(
