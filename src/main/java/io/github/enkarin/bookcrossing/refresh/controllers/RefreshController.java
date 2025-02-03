@@ -63,7 +63,6 @@ public class RefreshController {
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, ResponseCookie.from("refresh-token", auth.getRefreshToken())
                         .httpOnly(true)
-                        .path("/refresh")
                         .maxAge(Duration.ofDays(3))
                         .build().toString())
                 .body(auth);
