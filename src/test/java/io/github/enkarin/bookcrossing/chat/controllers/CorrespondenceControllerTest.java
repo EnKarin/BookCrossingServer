@@ -115,22 +115,38 @@ class CorrespondenceControllerTest extends BookCrossingBaseTests {
 
     @Test
     void createCorrespondenceWithoutUserIdShouldReturn400() {
-        execute(HttpMethod.POST, "", 400);
+        final var userBot = createAndSaveUser(TestDataProvider.buildBot());
+        enabledUser(userBot.getUserId());
+
+        execute(HttpMethod.POST, "", 400).expectBody()
+            .jsonPath("$.userId").isEqualTo("не должно быть пустым");
     }
 
     @Test
     void getCorrespondenceWithoutFirstUserIdShouldReturn400() {
-        execute("", "123", 400);
+        final var userBot = createAndSaveUser(TestDataProvider.buildBot());
+        enabledUser(userBot.getUserId());
+
+        execute("", "123", 400).expectBody()
+            .jsonPath("$.firstUserId").isEqualTo("не должно быть пустым");
     }
 
     @Test
     void getCorrespondenceWithoutSecondUserIdShouldReturn400() {
-        execute("12", "", 400);
+        final var userBot = createAndSaveUser(TestDataProvider.buildBot());
+        enabledUser(userBot.getUserId());
+
+        execute("12", "", 400).expectBody()
+            .jsonPath("$.secondUserId").isEqualTo("не должно быть пустым");
     }
 
     @Test
     void deleteCorrespondenceWithoutUserIdShouldReturn400() {
-        execute(HttpMethod.DELETE, "", 400);
+        final var userBot = createAndSaveUser(TestDataProvider.buildBot());
+        enabledUser(userBot.getUserId());
+
+        execute(HttpMethod.DELETE, "", 400).expectBody()
+            .jsonPath("$.userId").isEqualTo("не должно быть пустым");
     }
 
     @Test

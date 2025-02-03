@@ -21,7 +21,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -33,7 +32,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
 import java.security.Principal;
 import java.util.LinkedList;
 import java.util.List;
@@ -46,7 +44,6 @@ import java.util.Map;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/user/profile")
-@Validated
 public class UserProfileController {
 
     private static final String USER_ID = "userId";
@@ -68,7 +65,7 @@ public class UserProfileController {
         @Parameter(in = ParameterIn.QUERY, name = "zone", description = "Часовой пояс пользователя")
     })
     @GetMapping
-    public ResponseEntity<?> getProfile(@RequestHeader(name = USER_ID, defaultValue = "-1") @NotBlank final String userId, // NOSONAR
+    public ResponseEntity<?> getProfile(@RequestHeader(name = USER_ID, defaultValue = "-1") final String userId, // NOSONAR
                                         @RequestParam final int zone,
                                         final Principal principal) {
         if ("-1".equals(userId)) {
