@@ -63,11 +63,10 @@ class MyBookControllerTest extends BookCrossingBaseTests {
 
         final var response = checkGet(generateAccessToken(TestDataProvider.buildAuthBot()))
             .expectBody(BookModelDtoList.class).returnResult().getResponseBody();
-        assertThat(response).isNotNull();
-        assertThat(response.bookDtoList())
+        assertThat(response).isNotNull().satisfies(r -> assertThat(r.bookDtoList())
             .hasSize(2)
             .containsExactlyInAnyOrder(TestDataProvider.buildDandelion(book1),
-                TestDataProvider.buildWolves(book2));
+                TestDataProvider.buildWolves(book2)));
     }
 
     @Test
@@ -81,8 +80,7 @@ class MyBookControllerTest extends BookCrossingBaseTests {
 
         final var response = checkGet(generateAccessToken(TestDataProvider.buildAuthBot()))
             .expectBody(BookModelDtoList.class).returnResult().getResponseBody();
-        assertThat(response).isNotNull();
-        assertThat(response.bookDtoList()).isEmpty();
+        assertThat(response).isNotNull().satisfies(r -> assertThat(r.bookDtoList()).isEmpty());
     }
 
     @Test
