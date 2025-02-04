@@ -1,5 +1,6 @@
 package io.github.enkarin.bookcrossing.registration.controllers;
 
+import io.github.enkarin.bookcrossing.configuration.CookieConfigurator;
 import io.github.enkarin.bookcrossing.constant.Constant;
 import io.github.enkarin.bookcrossing.exception.AccountNotConfirmedException;
 import io.github.enkarin.bookcrossing.exception.BindingErrorsException;
@@ -25,7 +26,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -37,7 +37,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import java.time.Duration;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -49,7 +48,7 @@ import java.util.Map;
 @RestController
 @RequiredArgsConstructor
 public class RegistrationController {
-
+    private final CookieConfigurator cookieConfigurator;
     private final UserService userService;
 
     @Operation(
@@ -94,10 +93,7 @@ public class RegistrationController {
     public ResponseEntity<AuthResponse> auth(@RequestBody final LoginRequest request) {
         final AuthResponse auth = userService.findByLoginAndPassword(request);
         return ResponseEntity.ok()
-            .header(HttpHeaders.SET_COOKIE, ResponseCookie.from("refresh-token", auth.getRefreshToken())
-                .httpOnly(true)
-                .maxAge(Duration.ofDays(3))
-                .build().toString())
+            .header(HttpHeaders.SET_COOKIE, cookieConfigurator.configureRefreshTokenCookie(auth.getRefreshToken()))
             .body(auth);
     }
 
@@ -115,10 +111,7 @@ public class RegistrationController {
     public ResponseEntity<AuthResponse> mailConfirm(@RequestParam final String token) {
         final AuthResponse auth = userService.confirmMail(token);
         return ResponseEntity.ok()
-            .header(HttpHeaders.SET_COOKIE, ResponseCookie.from("refresh-token", auth.getRefreshToken())
-                .httpOnly(true)
-                .maxAge(Duration.ofDays(3))
-                .build().toString())
+            .header(HttpHeaders.SET_COOKIE, cookieConfigurator.configureRefreshTokenCookie(auth.getRefreshToken()))
             .body(auth);
     }
 
