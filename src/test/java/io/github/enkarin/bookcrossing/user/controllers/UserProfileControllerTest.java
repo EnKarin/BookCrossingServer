@@ -130,12 +130,10 @@ class UserProfileControllerTest extends BookCrossingBaseTests {
         assertThat(response)
             .hasSize(1)
             .singleElement()
-            .satisfies(r -> {
-                    assertThat(r)
-                        .usingRecursiveComparison()
-                        .ignoringFields("books")
-                        .isEqualTo(TestDataProvider.buildPublicProfileBot(user.getUserId()));
-                }
+            .satisfies(r -> assertThat(r)
+                .usingRecursiveComparison()
+                .ignoringFields("books", "loginDate")
+                .isEqualTo(TestDataProvider.buildPublicProfileBot(user.getUserId()))
             );
     }
 

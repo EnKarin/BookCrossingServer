@@ -1,5 +1,6 @@
 package io.github.enkarin.bookcrossing.refresh.controllers;
 
+import io.github.enkarin.bookcrossing.configuration.CookieConfigurator;
 import io.github.enkarin.bookcrossing.constant.Constant;
 import io.github.enkarin.bookcrossing.exception.RefreshTokenInvalidException;
 import io.github.enkarin.bookcrossing.exception.TokenNotFoundException;
@@ -18,7 +19,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -26,7 +26,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.Duration;
 import java.util.Map;
 
 @Tag(
@@ -36,7 +35,7 @@ import java.util.Map;
 @RestController
 @RequiredArgsConstructor
 public class RefreshController {
-
+    private final CookieConfigurator cookieConfigurator;
     private final RefreshService refreshService;
 
     @Operation(
@@ -61,10 +60,7 @@ public class RefreshController {
     public ResponseEntity<AuthResponse> refresh(@CookieValue(name = "refresh-token") final String token) {
         final AuthResponse auth = refreshService.updateTokens(token);
         return ResponseEntity.ok()
-            .header(HttpHeaders.SET_COOKIE, ResponseCookie.from("refresh-token", auth.getRefreshToken())
-                .httpOnly(true)
-                .maxAge(Duration.ofDays(3))
-                .build().toString())
+            .header(HttpHeaders.SET_COOKIE, cookieConfigurator.configureRefreshTokenCookie(auth.getRefreshToken()))
             .body(auth);
     }
 
