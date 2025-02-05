@@ -13,6 +13,6 @@ public class GenreController {
 
     @GetMapping
     public GenreDto[] findAllGenre() {
-
+        return null;
     }
 }
