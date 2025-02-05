@@ -1,6 +1,5 @@
 package io.github.enkarin.bookcrossing.registration.controllers;
 
-import io.github.enkarin.bookcrossing.configuration.CookieConfigurator;
 import io.github.enkarin.bookcrossing.constant.Constant;
 import io.github.enkarin.bookcrossing.exception.AccountNotConfirmedException;
 import io.github.enkarin.bookcrossing.exception.BindingErrorsException;
@@ -41,6 +40,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import static io.github.enkarin.bookcrossing.utils.CookieConfigurator.configureRefreshTokenCookie;
+
 @Tag(
     name = "Регистрация и авторизация пользователей",
     description = "Позволяет регистрироваться новым пользователям и выдает токен при аутентификации"
@@ -48,7 +49,6 @@ import java.util.Map;
 @RestController
 @RequiredArgsConstructor
 public class RegistrationController {
-    private final CookieConfigurator cookieConfigurator;
     private final UserService userService;
 
     @Operation(
@@ -93,7 +93,7 @@ public class RegistrationController {
     public ResponseEntity<AuthResponse> auth(@RequestBody final LoginRequest request) {
         final AuthResponse auth = userService.findByLoginAndPassword(request);
         return ResponseEntity.ok()
-            .header(HttpHeaders.SET_COOKIE, cookieConfigurator.configureRefreshTokenCookie(auth.getRefreshToken()))
+            .header(HttpHeaders.SET_COOKIE, configureRefreshTokenCookie(auth.getRefreshToken()))
             .body(auth);
     }
 
@@ -111,7 +111,7 @@ public class RegistrationController {
     public ResponseEntity<AuthResponse> mailConfirm(@RequestParam final String token) {
         final AuthResponse auth = userService.confirmMail(token);
         return ResponseEntity.ok()
-            .header(HttpHeaders.SET_COOKIE, cookieConfigurator.configureRefreshTokenCookie(auth.getRefreshToken()))
+            .header(HttpHeaders.SET_COOKIE, configureRefreshTokenCookie(auth.getRefreshToken()))
             .body(auth);
     }
 
