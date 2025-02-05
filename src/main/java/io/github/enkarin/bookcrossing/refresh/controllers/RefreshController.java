@@ -1,6 +1,5 @@
 package io.github.enkarin.bookcrossing.refresh.controllers;
 
-import io.github.enkarin.bookcrossing.configuration.CookieConfigurator;
 import io.github.enkarin.bookcrossing.constant.Constant;
 import io.github.enkarin.bookcrossing.exception.RefreshTokenInvalidException;
 import io.github.enkarin.bookcrossing.exception.TokenNotFoundException;
@@ -28,6 +27,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
 
+import static io.github.enkarin.bookcrossing.utils.CookieConfigurator.configureRefreshTokenCookie;
+
 @Tag(
     name = "Обновление токенов пользователя",
     description = "Позволяет обновить токены"
@@ -35,7 +36,6 @@ import java.util.Map;
 @RestController
 @RequiredArgsConstructor
 public class RefreshController {
-    private final CookieConfigurator cookieConfigurator;
     private final RefreshService refreshService;
 
     @Operation(
@@ -60,7 +60,7 @@ public class RefreshController {
     public ResponseEntity<AuthResponse> refresh(@CookieValue(name = "refresh-token") final String token) {
         final AuthResponse auth = refreshService.updateTokens(token);
         return ResponseEntity.ok()
-            .header(HttpHeaders.SET_COOKIE, cookieConfigurator.configureRefreshTokenCookie(auth.getRefreshToken()))
+            .header(HttpHeaders.SET_COOKIE, configureRefreshTokenCookie(auth.getRefreshToken()))
             .body(auth);
     }
 

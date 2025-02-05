@@ -1,13 +1,13 @@
-package io.github.enkarin.bookcrossing.configuration;
+package io.github.enkarin.bookcrossing.utils;
 
+import lombok.experimental.UtilityClass;
 import org.springframework.http.ResponseCookie;
-import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 
-@Component
+@UtilityClass
 public class CookieConfigurator {
-    public String configureRefreshTokenCookie(final String refreshTokenValue) {
+    public static String configureRefreshTokenCookie(final String refreshTokenValue) {
         return ResponseCookie.from("refresh-token", refreshTokenValue)
             .httpOnly(true)
             .sameSite("None")
