@@ -145,11 +145,11 @@ class BookServiceTest extends BookCrossingBaseTests {
 
     static Stream<BookDto> provideFilter() {
         return Stream.of(
-            BookDto.builder().genre("story").title("Wolves").build(),
-            BookDto.builder().genre("story").author("author").title("Wolves").build(),
-            BookDto.builder().genre("story").author("author").publishingHouse("publishing_house").title("Wolves").build(),
-            BookDto.builder().genre("story").author("author").publishingHouse("publishing_house").year(2000).title("Wolves").build(),
-            BookDto.builder().genre("story").author("author").publishingHouse("publishing_house").year(2000).title("Wolves").build()
+            BookDto.builder().genre(2).title("Wolves").build(),
+            BookDto.builder().genre(2).author("author").title("Wolves").build(),
+            BookDto.builder().genre(2).author("author").publishingHouse("publishing_house").title("Wolves").build(),
+            BookDto.builder().genre(2).author("author").publishingHouse("publishing_house").year(2000).title("Wolves").build(),
+            BookDto.builder().genre(2).author("author").publishingHouse("publishing_house").year(2000).title("Wolves").build()
         );
     }
 

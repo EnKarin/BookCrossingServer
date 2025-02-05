@@ -70,7 +70,7 @@ public class TestDataProvider {
     public static BookDto buildDorian() {
         return prepareBook()
             .title("Dorian")
-            .genre(null)
+            .genre(0)
             .year(2000)
             .build();
     }
@@ -79,7 +79,7 @@ public class TestDataProvider {
     public static BookDto buildDandelion() {
         return prepareBook()
             .title("Dandelion")
-            .genre("novel")
+            .genre(3)
             .author("author2")
             .year(2020)
             .build();
@@ -89,7 +89,7 @@ public class TestDataProvider {
     public static BookDto buildWolves() {
         return prepareBook()
             .title("Wolves")
-            .genre("story")
+            .genre(2)
             .year(2000)
             .build();
     }

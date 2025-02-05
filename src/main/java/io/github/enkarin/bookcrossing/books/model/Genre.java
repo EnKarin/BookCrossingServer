@@ -9,7 +9,10 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import java.io.Serializable;
+import java.util.List;
 
 @Entity
 @Getter
@@ -17,7 +20,7 @@ import javax.persistence.Table;
 @Table(name = "t_genre")
 @EqualsAndHashCode
 @ToString
-public class Genre {
+public class Genre implements Serializable {
     @Id
     @GeneratedValue
     private int id;
@@ -27,4 +30,7 @@ public class Genre {
 
     @Column(name = "eng_name")
     private String engName;
+
+    @OneToMany(mappedBy = "genre")
+    private List<Book> book;
 }

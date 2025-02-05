@@ -28,14 +28,14 @@ public class BookModelDto extends BookDto {
     }
 
     @JsonCreator
-    private BookModelDto(final String title, final String author, final String genre, final String publishingHouse, final int year, final int bookId, final AttachmentDto attachment) {
+    private BookModelDto(final String title, final String author, final int genre, final String publishingHouse, final int year, final int bookId, final AttachmentDto attachment) {
         super(title, author, genre, publishingHouse, year);
         this.bookId = bookId;
         this.attachment = attachment;
     }
 
     public static BookModelDto fromBook(final Book book) {
-        return new BookModelDto(create(book.getTitle(), book.getAuthor(), book.getGenre(),
+        return new BookModelDto(create(book.getTitle(), book.getAuthor(), book.getGenre().getId(),
             book.getPublishingHouse(), book.getYear()),
             book.getBookId(),
             AttachmentDto.fromAttachment(book.getAttachment()));

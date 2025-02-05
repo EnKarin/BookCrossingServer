@@ -27,8 +27,8 @@ public class BookDto {
     @NotBlank(message = "author: Поле \"автор\" должно содержать хотя бы один видимый символ")
     protected final String author;
 
-    @Schema(description = "Жанр", example = "Классическая проза")
-    protected final String genre;
+    @Schema(description = "Идентификатор жанра", example = "12")
+    protected final int genre;
 
     @Schema(description = "Издательство", example = "АСТ")
     protected final String publishingHouse;
@@ -37,7 +37,7 @@ public class BookDto {
     protected final int year;
 
     @JsonCreator
-    public static BookDto create(final String title, final String author, final String genre,
+    public static BookDto create(final String title, final String author, final int genre,
                                  final String publishingHouse, final int year) {
         return new BookDto(title, author, genre, publishingHouse, year);
     }
