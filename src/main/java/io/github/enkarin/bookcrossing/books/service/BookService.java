@@ -57,12 +57,10 @@ public class BookService {
 
     public List<BookModelDto> filter(final BookFiltersRequest request) {
         List<Book> books = bookRepository.findAll();
-        if (request.getGenre() != null) {
-            books = books.stream()
-                .filter(book -> book.getGenre() != null)
-                .filter(book -> book.getGenre().equalsIgnoreCase(request.getGenre()))
-                .toList();
-        }
+        books = books.stream()
+            .filter(book -> book.getGenre() != null)
+            .filter(book -> book.getGenre().getId() == request.getGenre())
+            .toList();
         if (request.getAuthor() != null) {
             books = books.stream()
                 .filter(book -> book.getAuthor() != null)

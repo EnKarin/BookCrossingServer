@@ -23,8 +23,8 @@ public class BookFiltersRequest {
     @Schema(description = "Автор", example = "Оскар Уайльд")
     private final String author;
 
-    @Schema(description = "Жанр", example = "Классическая проза")
-    private final String genre;
+    @Schema(description = "Идентификатор жанра", example = "22")
+    private final int genre;
 
     @Schema(description = "Издательство", example = "АСТ")
     private final String publishingHouse;
@@ -34,7 +34,7 @@ public class BookFiltersRequest {
 
     @JsonCreator
     public static BookFiltersRequest create(final String city, final String title, final String author,
-                                            final String genre, final String publishingHouse, final int year) {
+                                            final int genre, final String publishingHouse, final int year) {
         return new BookFiltersRequest(city, title, author, genre, publishingHouse, year);
     }
 }

@@ -4,13 +4,8 @@ create table if not exists bookcrossing.t_genre(
     eng_name varchar(45)
 );
 
-alter table if exists bookcrossing.t_book alter column genre integer;
-
-alter table if exists bookcrossing.t_book
-    add constraint book_foreign_genre
-        foreign key (genre) references bookcrossing.t_genre (id);
-
 insert into bookcrossing.t_genre(id, ru_name, eng_name) values
+(0, 'Другое', 'Other'),
 (1, 'Роман', 'Novel'),
 (2, 'Повесть', 'Short novel'),
 (3, 'Рассказ', 'Story'),
@@ -70,7 +65,7 @@ insert into bookcrossing.t_genre(id, ru_name, eng_name) values
 (57, 'Магический реализм', 'Magical realism'),
 (58, 'Героическое фэнтези', 'Heroic fantasy'),
 (59, 'Молодежная литература', 'Young adult literature'),
-(60, 'Детская литература', 'Children\'s literature'),
+(60, 'Детская литература', 'Childrens literature'),
 (61, 'Графический роман', 'Graphic novel'),
 (62, 'Манга', 'Manga'),
 (63, 'Комикс', 'Comic book'),
@@ -86,7 +81,7 @@ insert into bookcrossing.t_genre(id, ru_name, eng_name) values
 (73, 'Газета', 'Newspaper'),
 (74, 'Журнал', 'Magazine'),
 (75, 'Ежедневник', 'Diary'),
-(76, 'Записки путешественника', 'Traveler\'s notes'),
+(76, 'Записки путешественника', 'Travelers notes'),
 (77, 'Письмо', 'Letter'),
 (78, 'Открытка', 'Postcard'),
 (79, 'Обзор', 'Overview'),
@@ -111,3 +106,11 @@ insert into bookcrossing.t_genre(id, ru_name, eng_name) values
 (98, 'Популярная психология', 'Popular psychology'),
 (99, 'Популярная философия', 'Popular philosophy'),
 (100, 'Популярная история', 'Popular history');
+
+alter table if exists bookcrossing.t_book add column genre_id integer default 0;
+update bookcrossing.t_book set genre_id = g.id from bookcrossing.t_genre as g where g.ru_name = genre or g.eng_name = genre;
+alter table if exists bookcrossing.t_book drop column genre;
+
+alter table if exists bookcrossing.t_book
+    add constraint book_foreign_genre
+        foreign key (genre_id) references bookcrossing.t_genre (id);

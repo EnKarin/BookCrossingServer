@@ -1,8 +1,11 @@
 package io.github.enkarin.bookcrossing.books.model;
 
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import javax.persistence.Column;
@@ -20,6 +23,8 @@ import java.util.List;
 @Table(name = "t_genre")
 @EqualsAndHashCode
 @ToString
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Genre implements Serializable {
     @Id
     @GeneratedValue
