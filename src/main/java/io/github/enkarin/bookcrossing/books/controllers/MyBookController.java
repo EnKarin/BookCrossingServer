@@ -5,6 +5,7 @@ import io.github.enkarin.bookcrossing.books.dto.BookModelDto;
 import io.github.enkarin.bookcrossing.books.service.BookService;
 import io.github.enkarin.bookcrossing.constant.Constant;
 import io.github.enkarin.bookcrossing.exception.BindingErrorsException;
+import io.github.enkarin.bookcrossing.exception.GenreNotFoundException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -17,17 +18,20 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.security.Principal;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 @Tag(
     name = "Раздел работы с книгами",
@@ -91,5 +95,11 @@ public class MyBookController {
         return ResponseEntity
             .status(HttpStatus.OK)
             .build();
+    }
+
+    @ExceptionHandler(GenreNotFoundException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map<String, String> genreNotFoundExceptionHandler(final GenreNotFoundException exception) {
+        return Map.of("genre", exception.getMessage());
     }
 }

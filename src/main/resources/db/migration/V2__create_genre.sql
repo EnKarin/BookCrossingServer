@@ -3,6 +3,7 @@ create table if not exists bookcrossing.t_genre(
     ru_name varchar(45),
     eng_name varchar(45)
 );
+comment on table bookcrossing.t_genre is 'Directory of book genres';
 
 insert into bookcrossing.t_genre(id, ru_name, eng_name) values
 (0, 'Другое', 'Other'),
@@ -107,10 +108,11 @@ insert into bookcrossing.t_genre(id, ru_name, eng_name) values
 (99, 'Популярная философия', 'Popular philosophy'),
 (100, 'Популярная история', 'Popular history');
 
-alter table if exists bookcrossing.t_book add column genre_id integer default 0;
+alter table if exists bookcrossing.t_book add column genre_id integer default 0 not null;
 update bookcrossing.t_book set genre_id = g.id from bookcrossing.t_genre as g where g.ru_name = genre or g.eng_name = genre;
 alter table if exists bookcrossing.t_book drop column genre;
 
 alter table if exists bookcrossing.t_book
     add constraint book_foreign_genre
         foreign key (genre_id) references bookcrossing.t_genre (id);
+create index if not exists book_foreign_genre on bookcrossing.t_book (genre_id);

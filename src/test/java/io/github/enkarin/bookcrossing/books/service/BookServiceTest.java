@@ -106,7 +106,7 @@ class BookServiceTest extends BookCrossingBaseTests {
         final int book3 = bookService.saveBook(TestDataProvider.buildDorian(), users.get(0).getLogin())
             .getBookId();
 
-        assertThat(bookService.filter(BookFiltersRequest.create(null, null, "author", 0, null, 0)))
+        assertThat(bookService.filter(BookFiltersRequest.create(null, null, "author", null, null, 0)))
             .hasSize(2)
             .containsExactlyInAnyOrder(TestDataProvider.buildWolves(book2), TestDataProvider.buildDorian(book3));
     }

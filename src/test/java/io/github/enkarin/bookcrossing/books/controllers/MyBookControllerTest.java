@@ -48,6 +48,16 @@ class MyBookControllerTest extends BookCrossingBaseTests {
     }
 
     @Test
+    void saveBookWithUnexpectedGenreIdMustThrowException() {
+        final int user = createAndSaveUser(TestDataProvider.buildBot()).getUserId();
+        enabledUser(user);
+
+        checkPost(generateAccessToken(TestDataProvider.buildAuthBot()), TestDataProvider.prepareBook().genre(200).title("Книжное...").build(), 400)
+            .expectBody()
+            .jsonPath("$.genre").isEqualTo("Указанный жанр не найден");
+    }
+
+    @Test
     void bookListTest() {
         final List<UserDto> users = TestDataProvider.buildUsers().stream()
             .map(this::createAndSaveUser)

@@ -14,6 +14,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
 
@@ -26,6 +27,9 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Genre implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 0;
+
     @Id
     @GeneratedValue
     private int id;
