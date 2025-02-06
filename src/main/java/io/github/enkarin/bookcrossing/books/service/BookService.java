@@ -5,7 +5,9 @@ import io.github.enkarin.bookcrossing.books.dto.BookFiltersRequest;
 import io.github.enkarin.bookcrossing.books.dto.BookModelDto;
 import io.github.enkarin.bookcrossing.books.model.Book;
 import io.github.enkarin.bookcrossing.books.repository.BookRepository;
+import io.github.enkarin.bookcrossing.books.repository.GenreRepository;
 import io.github.enkarin.bookcrossing.exception.BookNotFoundException;
+import io.github.enkarin.bookcrossing.exception.GenreNotFoundException;
 import io.github.enkarin.bookcrossing.exception.UserNotFoundException;
 import io.github.enkarin.bookcrossing.user.model.User;
 import io.github.enkarin.bookcrossing.user.repository.UserRepository;
@@ -18,16 +20,17 @@ import java.util.List;
 @Service
 @Transactional(readOnly = true)
 public class BookService {
-
+    private final GenreRepository genreRepository;
     private final UserRepository userRepository;
     private final BookRepository bookRepository;
     private final ModelMapper modelMapper;
 
-    public BookService(final UserRepository usr, final BookRepository bkr, final ModelMapper mdm) {
+    public BookService(final UserRepository usr, final BookRepository bkr, final ModelMapper mdm, final GenreRepository genreRepository) {
         userRepository = usr;
         bookRepository = bkr;
         modelMapper = mdm;
         modelMapper.createTypeMap(BookDto.class, Book.class).addMappings(ms -> ms.skip(Book::setOwner));
+        this.genreRepository = genreRepository;
     }
 
     @Transactional
@@ -35,6 +38,7 @@ public class BookService {
         final User user = userRepository.findByLogin(login).orElseThrow(UserNotFoundException::new);
         final Book book = modelMapper.map(bookDTO, Book.class);
         book.setOwner(user);
+        book.setGenre(genreRepository.findById(bookDTO.getGenre()).orElseThrow(GenreNotFoundException::new));
         return BookModelDto.fromBook(bookRepository.save(book));
     }
 
@@ -59,8 +63,7 @@ public class BookService {
         List<Book> books = bookRepository.findAll();
         if (request.getGenre() != null) {
             books = books.stream()
-                .filter(book -> book.getGenre() != null)
-                .filter(book -> book.getGenre().equalsIgnoreCase(request.getGenre()))
+                .filter(book -> book.getGenre().getId() == request.getGenre())
                 .toList();
         }
         if (request.getAuthor() != null) {

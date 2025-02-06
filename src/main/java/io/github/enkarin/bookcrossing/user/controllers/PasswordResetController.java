@@ -35,7 +35,6 @@ import java.util.Map;
 @RestController
 @RequestMapping("/reset")
 public class PasswordResetController {
-
     private final MailService mailService;
     private final ResetPasswordService resetPasswordService;
 
@@ -51,7 +50,7 @@ public class PasswordResetController {
     }
     )
     @PostMapping("/send")
-    public ResponseEntity<Void> sendMessage(@RequestParam final String email) {
+    public ResponseEntity<Void> sendResetPasswordEmail(@RequestParam final String email) {
         mailService.sendResetPassword(email);
         return ResponseEntity.ok().build();
     }

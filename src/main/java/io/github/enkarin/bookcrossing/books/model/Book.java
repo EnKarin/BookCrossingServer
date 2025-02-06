@@ -36,7 +36,9 @@ public class Book implements Serializable {
 
     private String author;
 
-    private String genre;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "genre_id")
+    private Genre genre;
 
     private String publishingHouse;
 

@@ -138,7 +138,7 @@ class BookControllerTest extends BookCrossingBaseTests {
                 .build())
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue(BookFiltersRequest.create("Novosibirsk", "Wolves",
-                "author", "story", "publishing_house", 2000))
+                "author", 2, "publishing_house", 2000))
             .exchange()
             .expectStatus().isEqualTo(200)
             .expectBodyList(BookModelDto.class)

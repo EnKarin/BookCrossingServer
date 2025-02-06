@@ -106,8 +106,7 @@ class BookServiceTest extends BookCrossingBaseTests {
         final int book3 = bookService.saveBook(TestDataProvider.buildDorian(), users.get(0).getLogin())
             .getBookId();
 
-        assertThat(bookService.filter(BookFiltersRequest.create(null, null, "author",
-            null, null, 0)))
+        assertThat(bookService.filter(BookFiltersRequest.create(null, null, "author", null, null, 0)))
             .hasSize(2)
             .containsExactlyInAnyOrder(TestDataProvider.buildWolves(book2), TestDataProvider.buildDorian(book3));
     }
@@ -122,8 +121,7 @@ class BookServiceTest extends BookCrossingBaseTests {
         final int book2 = bookService.saveBook(TestDataProvider.buildWolves(), users.get(1).getLogin()).getBookId();
         bookService.saveBook(TestDataProvider.buildDorian(), users.get(0).getLogin());
 
-        assertThat(bookService.filter(BookFiltersRequest.create("Novosibirsk", "Wolves",
-            "author", "story", "publishing_house", 2000)))
+        assertThat(bookService.filter(BookFiltersRequest.create("Novosibirsk", "Wolves", "author", 2, "publishing_house", 2000)))
             .hasSize(1)
             .containsOnly(TestDataProvider.buildWolves(book2));
     }
@@ -138,18 +136,17 @@ class BookServiceTest extends BookCrossingBaseTests {
             .build());
         bookService.saveBook(bookDto, user.getLogin());
 
-        assertThat(bookService.filter(BookFiltersRequest.create("Novosibirsk", "Wolves",
-            "author", "story", "publishing_house", 2000)))
+        assertThat(bookService.filter(BookFiltersRequest.create("Novosibirsk", "Wolves", "author", 2, "publishing_house", 2000)))
             .isEmpty();
     }
 
     static Stream<BookDto> provideFilter() {
         return Stream.of(
-            BookDto.builder().genre("story").title("Wolves").build(),
-            BookDto.builder().genre("story").author("author").title("Wolves").build(),
-            BookDto.builder().genre("story").author("author").publishingHouse("publishing_house").title("Wolves").build(),
-            BookDto.builder().genre("story").author("author").publishingHouse("publishing_house").year(2000).title("Wolves").build(),
-            BookDto.builder().genre("story").author("author").publishingHouse("publishing_house").year(2000).title("Wolves").build()
+            BookDto.builder().genre(2).title("Wolves").build(),
+            BookDto.builder().genre(2).author("author").title("Wolves").build(),
+            BookDto.builder().genre(2).author("author").publishingHouse("publishing_house").title("Wolves").build(),
+            BookDto.builder().genre(2).author("author").publishingHouse("publishing_house").year(2000).title("Wolves").build(),
+            BookDto.builder().genre(2).author("author").publishingHouse("publishing_house").year(2000).title("Wolves").build()
         );
     }
 
@@ -161,8 +158,7 @@ class BookServiceTest extends BookCrossingBaseTests {
 
         jdbcTemplate.update("update bookcrossing.t_user set account_non_locked = false where user_id = ?", user1.getUserId());
 
-        assertThat(bookService.filter(BookFiltersRequest.create(null, null, null, null,
-            "publishing_house", 0)))
+        assertThat(bookService.filter(BookFiltersRequest.create(null, null, null, 0, "publishing_house", 0)))
             .isEmpty();
     }
 

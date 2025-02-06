@@ -49,7 +49,7 @@ public class SecurityConfig {
             .antMatchers("/adm/**").hasRole("ADMIN")
             .antMatchers("/user/**").hasRole("USER")
             .antMatchers("/books/**").permitAll()
-            .antMatchers("/register", "/auth", "/refresh").permitAll()
+            .antMatchers("/register", "/auth", "/refresh", "/genre").permitAll()
             .and()
             .exceptionHandling().authenticationEntryPoint(handler)
             .and()
