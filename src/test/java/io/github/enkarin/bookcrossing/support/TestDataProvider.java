@@ -55,8 +55,7 @@ public class TestDataProvider {
 
     @Nonnull
     public static BookModelDto.BookModelDtoBuilder<?, ?> prepareBookModel() {
-        return BookModelDto.builder()
-            .attachment(null);
+        return BookModelDto.builder().attachmentId(null);
     }
 
     @Nonnull

@@ -39,8 +39,18 @@ public class Attachment implements Serializable {
 
     @Lob
     @Type(type = "org.hibernate.type.BinaryType")
-    @Column(length = 3_145_728)
-    private byte[] data;
+    @Column(length = 5_242_880)
+    private byte[] originalImage;
+
+    @Lob
+    @Type(type = "org.hibernate.type.BinaryType")
+    @Column(length = 5_242_880)
+    private byte[] listImage;
+
+    @Lob
+    @Type(type = "org.hibernate.type.BinaryType")
+    @Column(length = 512_000)
+    private byte[] thumbImage;
 
     private String expansion;
 

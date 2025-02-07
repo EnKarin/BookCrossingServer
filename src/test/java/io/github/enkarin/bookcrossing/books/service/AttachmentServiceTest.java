@@ -50,8 +50,7 @@ class AttachmentServiceTest extends BookCrossingBaseTests {
 
         final File file = ResourceUtils.getFile(fileName);
         final MultipartFile multipartFile = new MockMultipartFile(file.getName(), file.getName(), contentType, Files.readAllBytes(file.toPath()));
-        assertThat(attachmentService.saveAttachment(AttachmentMultipartDto.fromFile(book1.getBookId(), multipartFile),
-            users.get(1).getLogin()).getAttachment().getAttachId())
+        assertThat(attachmentService.saveAttachment(AttachmentMultipartDto.fromFile(book1.getBookId(), multipartFile), users.get(1).getLogin()).getAttachmentId())
             .isEqualTo(book1.getBookId());
     }
 
@@ -116,8 +115,7 @@ class AttachmentServiceTest extends BookCrossingBaseTests {
         final File file = ResourceUtils.getFile("classpath:files/image.jpg");
         final MultipartFile multipartFile = new MockMultipartFile(file.getName(), file.getName(),
             "image/jpg", Files.readAllBytes(file.toPath()));
-        final int name = attachmentService.saveAttachment(AttachmentMultipartDto.fromFile(book1, multipartFile),
-            users.get(1).getLogin()).getAttachment().getAttachId();
+        final int name = attachmentService.saveAttachment(AttachmentMultipartDto.fromFile(book1, multipartFile), users.get(1).getLogin()).getAttachmentId();
         attachmentService.deleteAttachment(book1, users.get(1).getLogin());
         assertThat(jdbcTemplate.queryForObject("select exists(select * from bookcrossing.t_attach where attach_id = ?)",
             Boolean.class, name))

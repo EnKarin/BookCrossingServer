@@ -11,9 +11,16 @@ import io.github.enkarin.bookcrossing.exception.BadRequestException;
 import io.github.enkarin.bookcrossing.exception.BookNotFoundException;
 import io.github.enkarin.bookcrossing.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.imgscalr.Scalr;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.imageio.IIOImage;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageWriter;
+import javax.imageio.stream.ImageOutputStream;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Locale;
 import java.util.Optional;
@@ -22,13 +29,21 @@ import java.util.Optional;
 @Service
 @Transactional
 public class AttachmentService {
-
     private final UserRepository userRepository;
     private final AttachmentRepository attachRepository;
     private final BookRepository bookRepository;
 
-    public BookModelDto saveAttachment(final AttachmentMultipartDto attachmentMultipartDto, final String login)
-        throws IOException {
+    public byte[] findAttachmentData(final int id, final String imageFormat) {
+        final Attachment attachment = attachRepository.findById(id).orElseThrow(AttachmentNotFoundException::new);
+        return switch (imageFormat) {
+            case "origin" -> attachment.getOriginalImage();
+            case "list" -> attachment.getListImage();
+            case "thumb" -> attachment.getThumbImage();
+            default -> throw new BadRequestException("Недопустимый формат изображения");
+        };
+    }
+
+    public BookModelDto saveAttachment(final AttachmentMultipartDto attachmentMultipartDto, final String login) throws IOException {
         final Book book = userRepository.findByLogin(login).orElseThrow().getBooks().stream()
             .filter(b -> b.getBookId() == attachmentMultipartDto.getBookId())
             .findFirst()
@@ -41,7 +56,10 @@ public class AttachmentService {
             if (expansion.contains("jpeg") || expansion.contains("jpg") ||
                 expansion.contains("png") || expansion.contains("bmp")) {
                 final Attachment attachment = new Attachment();
-                attachment.setData(attachmentMultipartDto.getFile().getBytes());
+                attachment.setOriginalImage(attachmentMultipartDto.getFile().getBytes());
+                final BufferedImage image = ImageIO.read(attachmentMultipartDto.getFile().getInputStream());
+                attachment.setListImage(compressImage(image, expansion, 200, 300));
+                attachment.setThumbImage(compressImage(image, expansion, 70, 70));
                 attachment.setBook(book);
                 attachment.setExpansion(expansion);
                 book.setAttachment(attachment);
@@ -50,6 +68,24 @@ public class AttachmentService {
             } else {
                 throw new BadRequestException("Недопустимый формат файла");
             }
+        }
+    }
+
+    private byte[] compressImage(final BufferedImage imageData, final String expansion, final int height, final int weight) {
+        try (final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
+            try (final ImageOutputStream imageOutputStream = ImageIO.createImageOutputStream(byteArrayOutputStream)) {
+                ImageWriter writer = ImageIO.getImageWritersByFormatName(expansion).next();
+                writer.setOutput(imageOutputStream);
+                final long time = System.currentTimeMillis();
+                final BufferedImage outputImage = Scalr.resize(imageData, weight, height);
+                System.out.println(System.currentTimeMillis() - time);
+                writer.write(null, new IIOImage(outputImage, null, null), null);
+                final byte[] result = byteArrayOutputStream.toByteArray();
+                writer.dispose();
+                return result;
+            }
+        } catch (IOException e) {
+            throw new BadRequestException(e.getMessage());
         }
     }
 
