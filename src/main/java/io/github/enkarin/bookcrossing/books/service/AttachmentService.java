@@ -2,6 +2,7 @@ package io.github.enkarin.bookcrossing.books.service;
 
 import io.github.enkarin.bookcrossing.books.dto.AttachmentMultipartDto;
 import io.github.enkarin.bookcrossing.books.dto.BookModelDto;
+import io.github.enkarin.bookcrossing.books.exceptions.UnsupportedFormatException;
 import io.github.enkarin.bookcrossing.books.model.Attachment;
 import io.github.enkarin.bookcrossing.books.model.Book;
 import io.github.enkarin.bookcrossing.books.repository.AttachmentRepository;
@@ -12,6 +13,8 @@ import io.github.enkarin.bookcrossing.exception.BookNotFoundException;
 import io.github.enkarin.bookcrossing.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.imgscalr.Scalr;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +32,7 @@ import java.util.Optional;
 @Service
 @Transactional
 public class AttachmentService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(AttachmentService.class);
     private final UserRepository userRepository;
     private final AttachmentRepository attachRepository;
     private final BookRepository bookRepository;
@@ -39,7 +43,7 @@ public class AttachmentService {
             case "origin" -> attachment.getOriginalImage();
             case "list" -> attachment.getListImage();
             case "thumb" -> attachment.getThumbImage();
-            default -> throw new BadRequestException("Недопустимый формат изображения");
+            default -> throw new UnsupportedFormatException();
         };
     }
 
@@ -52,9 +56,8 @@ public class AttachmentService {
         if (fileName == null || fileName.isBlank()) {
             throw new BadRequestException("Имя не должно быть пустым");
         } else {
-            final String expansion = fileName.substring(fileName.indexOf('.')).toLowerCase(Locale.ROOT);
-            if (expansion.contains("jpeg") || expansion.contains("jpg") ||
-                expansion.contains("png") || expansion.contains("bmp")) {
+            final String expansion = fileName.substring(fileName.indexOf('.') + 1).toLowerCase(Locale.ROOT);
+            if ("jpeg".equals(expansion) || "jpg".equals(expansion) || "png".equals(expansion) || "bmp".equals(expansion)) {
                 final Attachment attachment = new Attachment();
                 attachment.setOriginalImage(attachmentMultipartDto.getFile().getBytes());
                 final BufferedImage image = ImageIO.read(attachmentMultipartDto.getFile().getInputStream());
@@ -72,20 +75,19 @@ public class AttachmentService {
     }
 
     private byte[] compressImage(final BufferedImage imageData, final String expansion, final int height, final int weight) {
-        try (final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
-            try (final ImageOutputStream imageOutputStream = ImageIO.createImageOutputStream(byteArrayOutputStream)) {
-                ImageWriter writer = ImageIO.getImageWritersByFormatName(expansion).next();
+        try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
+            try (ImageOutputStream imageOutputStream = ImageIO.createImageOutputStream(byteArrayOutputStream)) {
+                final ImageWriter writer = ImageIO.getImageWritersByFormatName(expansion).next();
                 writer.setOutput(imageOutputStream);
-                final long time = System.currentTimeMillis();
                 final BufferedImage outputImage = Scalr.resize(imageData, weight, height);
-                System.out.println(System.currentTimeMillis() - time);
                 writer.write(null, new IIOImage(outputImage, null, null), null);
                 final byte[] result = byteArrayOutputStream.toByteArray();
                 writer.dispose();
                 return result;
             }
-        } catch (IOException e) {
-            throw new BadRequestException(e.getMessage());
+        } catch (IOException exception) {
+            LOGGER.error(exception.getMessage(), exception);
+            throw new BadRequestException(exception.getMessage(), exception);
         }
     }
 

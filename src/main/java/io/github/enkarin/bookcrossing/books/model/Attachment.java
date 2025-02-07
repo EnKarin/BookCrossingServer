@@ -39,7 +39,7 @@ public class Attachment implements Serializable {
 
     @Lob
     @Type(type = "org.hibernate.type.BinaryType")
-    @Column(length = 5_242_880)
+    @Column(length = 5_242_880, name = "data")
     private byte[] originalImage;
 
     @Lob

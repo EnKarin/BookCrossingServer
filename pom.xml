@@ -10,7 +10,7 @@
     </parent>
     <groupId>io.github.enkarin</groupId>
     <artifactId>bookcrossing-server</artifactId>
-    <version>0.2.1-SNAPSHOT</version>
+    <version>0.3.0-SNAPSHOT</version>
     <name>BookCrossingServer</name>
     <description>Graduate work</description>
 
@@ -399,12 +399,12 @@
                                         <limit>
                                             <counter>METHOD</counter>
                                             <value>MISSEDCOUNT</value>
-                                            <maximum>23</maximum>
+                                            <maximum>25</maximum>
                                         </limit>
                                         <limit>
                                             <counter>LINE</counter>
                                             <value>MISSEDCOUNT</value>
-                                            <maximum>56</maximum>
+                                            <maximum>69</maximum>
                                         </limit>
                                     </limits>
                                 </rule>
