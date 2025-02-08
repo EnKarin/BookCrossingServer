@@ -10,7 +10,7 @@ public interface BookRepository extends JpaRepository<Book, Integer> {
 
     List<Book> findBooksByTitleIgnoreCase(String title);
 
-    Optional<Book> findBooksByOwnerLoginAndId(String login, int id);
+    Optional<Book> findBooksByOwnerLoginAndBookId(String login, int id);
 
     List<Book> findBooksByOwnerUserId(int userId);
 }

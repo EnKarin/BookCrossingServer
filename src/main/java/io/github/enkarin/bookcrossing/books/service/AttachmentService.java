@@ -50,7 +50,7 @@ public class AttachmentService {
     }
 
     public BookModelDto saveAttachment(final AttachmentMultipartDto attachmentMultipartDto, final String login) throws IOException {
-        final Book book = bookRepository.findBooksByOwnerLoginAndId(login, attachmentMultipartDto.getBookId()).orElseThrow(BookNotFoundException::new);
+        final Book book = bookRepository.findBooksByOwnerLoginAndBookId(login, attachmentMultipartDto.getBookId()).orElseThrow(BookNotFoundException::new);
         final String fileName = attachmentMultipartDto.getFile().getOriginalFilename();
         if (fileName == null || fileName.isBlank()) {
             throw new BadRequestException("Имя не должно быть пустым");
