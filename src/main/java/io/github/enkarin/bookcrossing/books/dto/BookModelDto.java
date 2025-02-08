@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 
 import javax.annotation.concurrent.Immutable;
+import java.util.Optional;
 
 @Immutable
 @Getter
@@ -18,20 +19,20 @@ public class BookModelDto extends BookDto {
     @Schema(description = "Идентификатор", example = "15")
     private final int bookId;
 
-    @Schema(description = "Вложение")
-    private final AttachmentDto attachment;
+    @Schema(description = "Идентификатор вложения")
+    private final Integer attachmentId;
 
     private BookModelDto(final BookDto bookDto, final int bookId, final AttachmentDto attachment) {
         super(bookDto.title, bookDto.author, bookDto.genre, bookDto.publishingHouse, bookDto.year);
         this.bookId = bookId;
-        this.attachment = attachment;
+        this.attachmentId = Optional.ofNullable(attachment).map(AttachmentDto::getAttachId).orElse(null);
     }
 
     @JsonCreator
     private BookModelDto(final String title, final String author, final int genre, final String publishingHouse, final int year, final int bookId, final AttachmentDto attachment) {
         super(title, author, genre, publishingHouse, year);
         this.bookId = bookId;
-        this.attachment = attachment;
+        this.attachmentId = Optional.ofNullable(attachment).map(AttachmentDto::getAttachId).orElse(null);
     }
 
     public static BookModelDto fromBook(final Book book) {
