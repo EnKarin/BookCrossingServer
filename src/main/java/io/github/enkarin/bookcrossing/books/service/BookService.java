@@ -43,7 +43,7 @@ public class BookService {
     }
 
     public List<BookModelDto> findBookForOwner(final String login) {
-        return bookRepository.findBooksByOwner(userRepository.findByLogin(login).orElseThrow()).stream()
+        return userRepository.findByLogin(login).orElseThrow().getBooks().stream()
             .map(BookModelDto::fromBook)
             .toList();
     }

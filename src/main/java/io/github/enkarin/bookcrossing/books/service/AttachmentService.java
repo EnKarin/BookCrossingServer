@@ -28,6 +28,8 @@ import java.io.IOException;
 import java.util.Locale;
 import java.util.Optional;
 
+import static java.util.Objects.nonNull;
+
 @RequiredArgsConstructor
 @Service
 @Transactional
@@ -48,24 +50,26 @@ public class AttachmentService {
     }
 
     public BookModelDto saveAttachment(final AttachmentMultipartDto attachmentMultipartDto, final String login) throws IOException {
-        final Book book = userRepository.findByLogin(login).orElseThrow().getBooks().stream()
-            .filter(b -> b.getBookId() == attachmentMultipartDto.getBookId())
-            .findFirst()
-            .orElseThrow(BookNotFoundException::new);
+        final Book book = bookRepository.findBooksByOwnerLoginAndId(login, attachmentMultipartDto.getBookId()).orElseThrow(BookNotFoundException::new);
         final String fileName = attachmentMultipartDto.getFile().getOriginalFilename();
         if (fileName == null || fileName.isBlank()) {
             throw new BadRequestException("Имя не должно быть пустым");
         } else {
             final String expansion = fileName.substring(fileName.indexOf('.') + 1).toLowerCase(Locale.ROOT);
             if ("jpeg".equals(expansion) || "jpg".equals(expansion) || "png".equals(expansion) || "bmp".equals(expansion)) {
-                final Attachment attachment = new Attachment();
-                attachment.setOriginalImage(attachmentMultipartDto.getFile().getBytes());
+                Attachment attachment;
+                if (nonNull(book.getAttachment())) {
+                    attachment = book.getAttachment();
+                } else {
+                    attachment = new Attachment();
+                    attachment.setBook(book);
+                    attachment.setExpansion(expansion);
+                    book.setAttachment(attachment);
+                }
                 final BufferedImage image = ImageIO.read(attachmentMultipartDto.getFile().getInputStream());
+                attachment.setOriginalImage(attachmentMultipartDto.getFile().getBytes());
                 attachment.setListImage(compressImage(image, expansion, 200, 300));
                 attachment.setThumbImage(compressImage(image, expansion, 70, 70));
-                attachment.setBook(book);
-                attachment.setExpansion(expansion);
-                book.setAttachment(attachment);
                 attachRepository.save(attachment);
                 return BookModelDto.fromBook(bookRepository.getReferenceById(book.getBookId()));
             } else {

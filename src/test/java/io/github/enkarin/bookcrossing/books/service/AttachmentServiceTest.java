@@ -66,6 +66,23 @@ class AttachmentServiceTest extends BookCrossingBaseTests {
     }
 
     @Test
+    void saveAttachmentShouldWork() throws IOException {
+        bookService.saveBook(TestDataProvider.buildDandelion(), users.get(0).getLogin());
+        final BookModelDto book1 =  bookService.saveBook(TestDataProvider.buildWolves(), users.get(1).getLogin());
+        bookService.saveBook(TestDataProvider.buildDorian(), users.get(1).getLogin());
+        bookService.saveBook(TestDataProvider.buildDorian(), users.get(0).getLogin());
+
+        final File file = ResourceUtils.getFile("classpath:files/image.jpg");
+        final MultipartFile multipartFile = new MockMultipartFile(file.getName(), file.getName(), "image/jpg", Files.readAllBytes(file.toPath()));
+        var firstAttachId = attachmentService.saveAttachment(AttachmentMultipartDto.fromFile(book1.getBookId(), multipartFile),
+            users.get(1).getLogin()).getAttachmentId();
+
+        assertThat(attachmentService.saveAttachment(AttachmentMultipartDto.fromFile(book1.getBookId(), multipartFile),
+            users.get(1).getLogin()).getAttachmentId())
+            .isNotEqualTo(firstAttachId);
+    }
+
+    @Test
     void saveAttachmentShouldFailWithFileFormat() throws IOException {
         bookService.saveBook(TestDataProvider.buildDandelion(), users.get(0).getLogin());
         final int book1 = bookService.saveBook(TestDataProvider.buildWolves(), users.get(1).getLogin()).getBookId();
