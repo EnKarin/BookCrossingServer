@@ -159,6 +159,35 @@ class AttachmentServiceTest extends BookCrossingBaseTests {
 
     @Test
     @SneakyThrows
+    void findListImageAttachment() {
+        bookService.saveBook(TestDataProvider.buildDandelion(), users.get(0).getLogin());
+        final int book1 = bookService.saveBook(TestDataProvider.buildWolves(), users.get(1).getLogin()).getBookId();
+        bookService.saveBook(TestDataProvider.buildDorian(), users.get(1).getLogin());
+        bookService.saveBook(TestDataProvider.buildDorian(), users.get(0).getLogin());
+        final File file = ResourceUtils.getFile("classpath:files/image.jpg");
+        final MultipartFile multipartFile = new MockMultipartFile(file.getName(), file.getName(), "image/jpg", Files.readAllBytes(file.toPath()));
+        final int attachmentId = attachmentService.saveAttachment(AttachmentMultipartDto.fromFile(book1, multipartFile), users.get(1).getLogin()).getAttachmentId();
+
+        assertThat(attachmentService.findAttachmentData(attachmentId, "list").length).isLessThan(multipartFile.getBytes().length);
+    }
+
+    @Test
+    @SneakyThrows
+    void findThumbImageAttachment() {
+        bookService.saveBook(TestDataProvider.buildDandelion(), users.get(0).getLogin());
+        final int book1 = bookService.saveBook(TestDataProvider.buildWolves(), users.get(1).getLogin()).getBookId();
+        bookService.saveBook(TestDataProvider.buildDorian(), users.get(1).getLogin());
+        bookService.saveBook(TestDataProvider.buildDorian(), users.get(0).getLogin());
+        final File file = ResourceUtils.getFile("classpath:files/image.jpg");
+        final MultipartFile multipartFile = new MockMultipartFile(file.getName(), file.getName(), "image/jpg", Files.readAllBytes(file.toPath()));
+        final int attachmentId = attachmentService.saveAttachment(AttachmentMultipartDto.fromFile(book1, multipartFile), users.get(1).getLogin()).getAttachmentId();
+
+        assertThat(attachmentService.findAttachmentData(attachmentId, "thumb").length)
+            .isLessThan(attachmentService.findAttachmentData(attachmentId, "list").length);
+    }
+
+    @Test
+    @SneakyThrows
     void findAttachmentWithUnexpectedFormatMustThrowException() {
         bookService.saveBook(TestDataProvider.buildDandelion(), users.get(0).getLogin());
         final int book1 = bookService.saveBook(TestDataProvider.buildWolves(), users.get(1).getLogin()).getBookId();
