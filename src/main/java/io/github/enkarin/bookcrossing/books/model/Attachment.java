@@ -8,7 +8,6 @@ import org.hibernate.annotations.Type;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
@@ -31,7 +30,6 @@ public class Attachment implements Serializable {
     private static final long serialVersionUID = 4600249981575739954L;
 
     @Id
-    @GeneratedValue
     private int attachId;
 
     @MapsId
