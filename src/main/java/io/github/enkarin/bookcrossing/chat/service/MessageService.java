@@ -8,6 +8,7 @@ import io.github.enkarin.bookcrossing.chat.model.Message;
 import io.github.enkarin.bookcrossing.chat.model.UsersCorrKey;
 import io.github.enkarin.bookcrossing.chat.repository.CorrespondenceRepository;
 import io.github.enkarin.bookcrossing.chat.repository.MessageRepository;
+import io.github.enkarin.bookcrossing.configuration.TimeSettings;
 import io.github.enkarin.bookcrossing.exception.ChatNotFoundException;
 import io.github.enkarin.bookcrossing.exception.MessageNotFountException;
 import io.github.enkarin.bookcrossing.exception.NoAccessToChatException;
@@ -15,7 +16,6 @@ import io.github.enkarin.bookcrossing.exception.UserIsNotSenderException;
 import io.github.enkarin.bookcrossing.exception.UserNotFoundException;
 import io.github.enkarin.bookcrossing.user.model.User;
 import io.github.enkarin.bookcrossing.user.repository.UserRepository;
-import io.github.enkarin.bookcrossing.configuration.TimeSettings;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,16 +31,13 @@ public class MessageService {
 
     public MessageDto sendMessage(final MessageRequest dto, final String login) {
         final User user = userRepository.findByLogin(login).orElseThrow();
-        final User firstUser = userRepository.findById(dto.getUsersCorrKeyDto().getFirstUserId())
-            .orElseThrow(UserNotFoundException::new);
-        final User secondUser = userRepository.findById(dto.getUsersCorrKeyDto().getSecondUserId())
-            .orElseThrow(UserNotFoundException::new);
+        final User firstUser = userRepository.findById(dto.getUsersCorrKeyDto().getFirstUserId()).orElseThrow(UserNotFoundException::new);
+        final User secondUser = userRepository.findById(dto.getUsersCorrKeyDto().getSecondUserId()).orElseThrow(UserNotFoundException::new);
         final UsersCorrKey usersCorrKey = new UsersCorrKey();
         usersCorrKey.setFirstUser(firstUser);
         usersCorrKey.setSecondUser(secondUser);
         if (usersCorrKey.getFirstUser().equals(user) || usersCorrKey.getSecondUser().equals(user)) {
-            final Correspondence correspondence = correspondenceRepository.findById(usersCorrKey)
-                .orElseThrow(ChatNotFoundException::new);
+            final Correspondence correspondence = correspondenceRepository.findById(usersCorrKey).orElseThrow(ChatNotFoundException::new);
             final Message message = new Message();
             message.setText(dto.getText());
             message.setDepartureDate(timeSettings.getEpochSeconds());
