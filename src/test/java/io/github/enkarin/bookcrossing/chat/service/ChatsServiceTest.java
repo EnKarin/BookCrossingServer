@@ -27,8 +27,24 @@ class ChatsServiceTest extends BookCrossingBaseTests {
         final var userAlex = createAndSaveUser(TestDataProvider.buildAlex());
         enabledUser(userAlex.getUserId());
         correspondenceService.createChat(userAlex.getUserId(), userBot.getLogin());
+        messageService.sendMessage(MessageRequest.create(UsersCorrKeyDto.fromFirstAndSecondId(userBot.getUserId(), userAlex.getUserId()), "Hello"), userBot.getLogin());
+
+        assertThat(chatsService.findAllChats(0, 5, userBot.getLogin()))
+            .contains(new ChatInfo(userAlex.getName(), "Hello", userBot.getUserId(), userAlex.getUserId()));
+    }
+
+    @Test
+    void findAllChatsWithSwapKeys() {
+        final var userBot = createAndSaveUser(TestDataProvider.buildBot());
+        enabledUser(userBot.getUserId());
+        final var userAlex = createAndSaveUser(TestDataProvider.buildAlex());
+        enabledUser(userAlex.getUserId());
+        correspondenceService.createChat(userAlex.getUserId(), userBot.getLogin());
         messageService.sendMessage(MessageRequest.create(UsersCorrKeyDto.fromFirstAndSecondId(userAlex.getUserId(), userBot.getUserId()), "Hello"), userBot.getLogin());
 
-        assertThat(chatsService.findAllChats(0, 5, userBot.getLogin())).contains(new ChatInfo(userAlex.getName(), "Hello"));
+        assertThat(chatsService.findAllChats(0, 5, userBot.getLogin()))
+            .contains(new ChatInfo(userAlex.getName(), "Hello", userBot.getUserId(), userAlex.getUserId()));
     }
+
+    // todo: check pagination
 }
