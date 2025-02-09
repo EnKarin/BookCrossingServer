@@ -132,13 +132,10 @@ class BookControllerTest extends BookCrossingBaseTests {
         final var booksId = createAndSaveBooks(user);
 
         final var response = webClient
-            .method(HttpMethod.GET)
-            .uri(uriBuilder -> uriBuilder
-                .pathSegment("books", "searchWithFilters")
-                .build())
+            .method(HttpMethod.POST)
+            .uri(uriBuilder -> uriBuilder.pathSegment("books", "searchWithFilters").build())
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(BookFiltersRequest.create("Novosibirsk", "Wolves",
-                "author", 2, "publishing_house", 2000))
+            .bodyValue(BookFiltersRequest.create("Novosibirsk", "Wolves", "author", 2, "publishing_house", 2000))
             .exchange()
             .expectStatus().isEqualTo(200)
             .expectBodyList(BookModelDto.class)

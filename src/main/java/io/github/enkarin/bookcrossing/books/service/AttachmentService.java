@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
@@ -57,25 +58,29 @@ public class AttachmentService {
         } else {
             final String expansion = fileName.substring(fileName.indexOf('.') + 1).toLowerCase(Locale.ROOT);
             if ("jpeg".equals(expansion) || "jpg".equals(expansion) || "png".equals(expansion) || "bmp".equals(expansion)) {
-                Attachment attachment;
-                if (nonNull(book.getAttachment())) {
-                    attachment = book.getAttachment();
-                } else {
-                    attachment = new Attachment();
-                    attachment.setBook(book);
-                    attachment.setExpansion(expansion);
-                    book.setAttachment(attachment);
-                }
-                final BufferedImage image = ImageIO.read(attachmentMultipartDto.getFile().getInputStream());
-                attachment.setOriginalImage(attachmentMultipartDto.getFile().getBytes());
-                attachment.setListImage(compressImage(image, expansion, 200, 300));
-                attachment.setThumbImage(compressImage(image, expansion, 70, 70));
-                attachRepository.save(attachment);
+                createOrUpdateAttachment(book, attachmentMultipartDto.getFile(), expansion);
                 return BookModelDto.fromBook(bookRepository.getReferenceById(book.getBookId()));
             } else {
                 throw new BadRequestException("Недопустимый формат файла");
             }
         }
+    }
+
+    private void createOrUpdateAttachment(final Book book, final MultipartFile multipartFile, final String expansion) throws IOException {
+        final Attachment attachment;
+        if (nonNull(book.getAttachment())) {
+            attachment = book.getAttachment();
+        } else {
+            attachment = new Attachment();
+            attachment.setBook(book);
+            attachment.setExpansion(expansion);
+            book.setAttachment(attachment);
+        }
+        final BufferedImage image = ImageIO.read(multipartFile.getInputStream());
+        attachment.setOriginalImage(multipartFile.getBytes());
+        attachment.setListImage(compressImage(image, expansion, 200, 300));
+        attachment.setThumbImage(compressImage(image, expansion, 70, 70));
+        attachRepository.save(attachment);
     }
 
     private byte[] compressImage(final BufferedImage imageData, final String expansion, final int height, final int weight) {
