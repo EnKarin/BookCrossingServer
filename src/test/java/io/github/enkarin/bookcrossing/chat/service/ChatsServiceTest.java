@@ -30,7 +30,20 @@ class ChatsServiceTest extends BookCrossingBaseTests {
         messageService.sendMessage(MessageRequest.create(UsersCorrKeyDto.fromFirstAndSecondId(userBot.getUserId(), userAlex.getUserId()), "Hello"), userBot.getLogin());
 
         assertThat(chatsService.findAllChats(0, 5, userBot.getLogin()))
-            .contains(new ChatInfo(userAlex.getName(), "Hello", userBot.getUserId(), userAlex.getUserId()));
+            .contains(new ChatInfo(userAlex.getName(), "Hello", userBot.getUserId(), userAlex.getUserId(), 0));
+    }
+
+    @Test
+    void findAllChatsFromNotReadMessageUser() {
+        final var userBot = createAndSaveUser(TestDataProvider.buildBot());
+        enabledUser(userBot.getUserId());
+        final var userAlex = createAndSaveUser(TestDataProvider.buildAlex());
+        enabledUser(userAlex.getUserId());
+        correspondenceService.createChat(userAlex.getUserId(), userBot.getLogin());
+        messageService.sendMessage(MessageRequest.create(UsersCorrKeyDto.fromFirstAndSecondId(userBot.getUserId(), userAlex.getUserId()), "Hello"), userBot.getLogin());
+
+        assertThat(chatsService.findAllChats(0, 5, userAlex.getLogin()))
+            .contains(new ChatInfo(userBot.getName(), "Hello", userBot.getUserId(), userBot.getUserId(), 1));
     }
 
     @Test
@@ -43,7 +56,7 @@ class ChatsServiceTest extends BookCrossingBaseTests {
         messageService.sendMessage(MessageRequest.create(UsersCorrKeyDto.fromFirstAndSecondId(userAlex.getUserId(), userBot.getUserId()), "Hello"), userBot.getLogin());
 
         assertThat(chatsService.findAllChats(0, 5, userBot.getLogin()))
-            .contains(new ChatInfo(userAlex.getName(), "Hello", userBot.getUserId(), userAlex.getUserId()));
+            .contains(new ChatInfo(userAlex.getName(), "Hello", userBot.getUserId(), userAlex.getUserId(), 0));
     }
 
     // todo: check pagination

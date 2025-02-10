@@ -3,6 +3,7 @@ package io.github.enkarin.bookcrossing.chat.service;
 import io.github.enkarin.bookcrossing.chat.dto.ChatInfo;
 import io.github.enkarin.bookcrossing.chat.model.Message;
 import io.github.enkarin.bookcrossing.chat.repository.CorrespondenceRepository;
+import io.github.enkarin.bookcrossing.chat.repository.MessageRepository;
 import io.github.enkarin.bookcrossing.exception.MessageNotFountException;
 import io.github.enkarin.bookcrossing.exception.UserNotFoundException;
 import io.github.enkarin.bookcrossing.user.model.User;
@@ -20,6 +21,7 @@ import java.util.Comparator;
 public class ChatsService {
     private final CorrespondenceRepository correspondenceRepository;
     private final UserRepository userRepository;
+    private final MessageRepository messageRepository;
 
     public ChatInfo[] findAllChats(final int pageNumber, final int pageSize, String login) {
         final User currentUser = userRepository.findByLogin(login).orElseThrow(UserNotFoundException::new);
@@ -29,7 +31,11 @@ public class ChatsService {
                 final User interlocutor = correspondence.getUsersCorrKey().getFirstUser().equals(currentUser)
                     ? correspondence.getUsersCorrKey().getSecondUser()
                     : correspondence.getUsersCorrKey().getFirstUser();
-                return new ChatInfo(interlocutor.getName(), lastMessage.getText(), lastMessage.getSender().getUserId(), interlocutor.getUserId());
+                return new ChatInfo(interlocutor.getName(),
+                    lastMessage.getText(),
+                    lastMessage.getSender().getUserId(),
+                    interlocutor.getUserId(),
+                    messageRepository.countAllUnreadMessageFromSpecifiedChatAndToCurrentUser(correspondence, currentUser));
             })
             .toArray(ChatInfo[]::new);
     }
