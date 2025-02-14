@@ -18,7 +18,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class ChatsService {
+public class FindChatsService {
     private final CorrespondenceRepository correspondenceRepository;
     private final UserRepository userRepository;
     private final MessageRepository messageRepository;
