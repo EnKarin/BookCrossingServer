@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class ChatsServiceTest extends BookCrossingBaseTests {
+class FindChatsServiceTest extends BookCrossingBaseTests {
     @Autowired
     private CorrespondenceService correspondenceService;
 
@@ -20,7 +20,7 @@ class ChatsServiceTest extends BookCrossingBaseTests {
     private MessageService messageService;
 
     @Autowired
-    private ChatsService chatsService;
+    private FindChatsService findChatsService;
 
     @Test
     void findAllChats() {
@@ -31,7 +31,7 @@ class ChatsServiceTest extends BookCrossingBaseTests {
         correspondenceService.createChat(userAlex.getUserId(), userBot.getLogin());
         messageService.sendMessage(MessageRequest.create(UsersCorrKeyDto.fromFirstAndSecondId(userBot.getUserId(), userAlex.getUserId()), "Hello"), userBot.getLogin());
 
-        assertThat(chatsService.findAllChats(0, 5, userBot.getLogin()))
+        assertThat(findChatsService.findAllChats(0, 5, userBot.getLogin()))
             .contains(new ChatInfo(userAlex.getName(), "Hello", userBot.getUserId(), userAlex.getUserId(), 0));
     }
 
@@ -44,7 +44,7 @@ class ChatsServiceTest extends BookCrossingBaseTests {
         correspondenceService.createChat(userAlex.getUserId(), userBot.getLogin());
         messageService.sendMessage(MessageRequest.create(UsersCorrKeyDto.fromFirstAndSecondId(userBot.getUserId(), userAlex.getUserId()), "Hello"), userBot.getLogin());
 
-        assertThat(chatsService.findAllChats(0, 5, userAlex.getLogin()))
+        assertThat(findChatsService.findAllChats(0, 5, userAlex.getLogin()))
             .contains(new ChatInfo(userBot.getName(), "Hello", userBot.getUserId(), userBot.getUserId(), 1));
     }
 
@@ -57,7 +57,7 @@ class ChatsServiceTest extends BookCrossingBaseTests {
         correspondenceService.createChat(userAlex.getUserId(), userBot.getLogin());
         messageService.sendMessage(MessageRequest.create(UsersCorrKeyDto.fromFirstAndSecondId(userAlex.getUserId(), userBot.getUserId()), "Hello"), userBot.getLogin());
 
-        assertThat(chatsService.findAllChats(0, 5, userBot.getLogin()))
+        assertThat(findChatsService.findAllChats(0, 5, userBot.getLogin()))
             .contains(new ChatInfo(userAlex.getName(), "Hello", userBot.getUserId(), userAlex.getUserId(), 0));
     }
 
@@ -69,7 +69,7 @@ class ChatsServiceTest extends BookCrossingBaseTests {
         enabledUser(userAlex.getUserId());
         correspondenceService.createChat(userAlex.getUserId(), userBot.getLogin());
 
-        assertThat(chatsService.findAllChats(0, 5, userBot.getLogin()))
+        assertThat(findChatsService.findAllChats(0, 5, userBot.getLogin()))
             .contains(new ChatInfo(userAlex.getName(), null, null, userAlex.getUserId(), 0));
     }
 
@@ -80,7 +80,7 @@ class ChatsServiceTest extends BookCrossingBaseTests {
         enabledUser(userAlex.getUserId());
         final UserDto[] userDto = configureSomeChats(userAlex);
 
-        assertThat(chatsService.findAllChats(0, 2, userAlex.getLogin())).containsOnly(
+        assertThat(findChatsService.findAllChats(0, 2, userAlex.getLogin())).containsOnly(
             new ChatInfo(userDto[0].getName(), "))", userDto[0].getUserId(), userDto[0].getUserId(), 2),
             new ChatInfo(userDto[1].getName(), "Hi", userDto[1].getUserId(), userDto[1].getUserId(), 1));
     }
@@ -92,7 +92,7 @@ class ChatsServiceTest extends BookCrossingBaseTests {
         enabledUser(userAlex.getUserId());
         final UserDto[] userDto = configureSomeChats(userAlex);
 
-        assertThat(chatsService.findAllChats(1, 2, userAlex.getLogin()))
+        assertThat(findChatsService.findAllChats(1, 2, userAlex.getLogin()))
             .containsOnly(new ChatInfo(userDto[2].getName(), "Q", userDto[2].getUserId(), userDto[2].getUserId(), 2));
     }
 
