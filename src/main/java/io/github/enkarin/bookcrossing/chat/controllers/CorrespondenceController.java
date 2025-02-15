@@ -128,7 +128,7 @@ public class CorrespondenceController {
     @ApiResponse(responseCode = "200", description = "Возвращает список чатов",
         content = {@Content(mediaType = Constant.MEDIA_TYPE, array = @ArraySchema(schema = @Schema(implementation = ChatInfo.class)))})
     @GetMapping("/all")
-    public ChatInfo[] findAllChats(@RequestParam final int pageNumber, @RequestParam final int pageSize, Principal principal) {
+    public ChatInfo[] findAllChats(@RequestParam final int pageNumber, @RequestParam final int pageSize, final Principal principal) {
         return findAllChats.findAllChats(pageNumber, pageSize, principal.getName());
     }
 

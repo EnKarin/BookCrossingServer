@@ -8,5 +8,5 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface MessageRepository extends JpaRepository<Message, Long> {
     @Query("SELECT COUNT(m) FROM Message m WHERE m.correspondence = ?1 AND m.sender != ?2 AND m.declaim = false")
-    int countAllUnreadMessageFromSpecifiedChatAndToCurrentUser(final Correspondence chat, final User user);
+    int countAllUnreadMessageFromSpecifiedChatAndToCurrentUser(Correspondence chat, User user);
 }
