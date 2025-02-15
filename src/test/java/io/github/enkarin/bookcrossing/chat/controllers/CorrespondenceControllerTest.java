@@ -327,7 +327,7 @@ class CorrespondenceControllerTest extends BookCrossingBaseTests {
                 .queryParam("pageNumber", 0)
                 .queryParam("pageSize", 3)
                 .build())
-            .headers(headers -> headers.setBearerAuth(generateAccessToken(TestDataProvider.buildAuthBot())))
+            .headers(headers -> headers.setBearerAuth(generateAccessToken(TestDataProvider.buildAuthAlex())))
             .exchange()
             .expectStatus().isEqualTo(200)
             .expectBodyList(ChatInfo.class)

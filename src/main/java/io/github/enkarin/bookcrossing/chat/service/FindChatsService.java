@@ -23,13 +23,12 @@ public class FindChatsService {
     private final UserRepository userRepository;
     private final MessageRepository messageRepository;
 
-    public ChatInfo[] findAllChats(final int pageNumber, final int pageSize, String login) {
+    public ChatInfo[] findAllChats(final int pageNumber, final int pageSize, final String login) {
         final User currentUser = userRepository.findByLogin(login).orElseThrow(UserNotFoundException::new);
         return correspondenceRepository.findAllByUser(currentUser, PageRequest.of(pageNumber, pageSize)).stream()
             .map(correspondence -> {
                 final Optional<Message> lastMessage = correspondence.getMessage().stream().max(Comparator.comparing(Message::getDepartureDate));
-                final User interlocutor = correspondence.getUsersCorrKey().getFirstUser().equals(currentUser)
-                    ? correspondence.getUsersCorrKey().getSecondUser()
+                final User interlocutor = correspondence.getUsersCorrKey().getFirstUser().equals(currentUser) ? correspondence.getUsersCorrKey().getSecondUser()
                     : correspondence.getUsersCorrKey().getFirstUser();
                 return new ChatInfo(interlocutor.getName(),
                     lastMessage.map(Message::getText).orElse(null),

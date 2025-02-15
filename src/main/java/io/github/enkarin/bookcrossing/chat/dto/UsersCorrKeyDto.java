@@ -34,11 +34,14 @@ public class UsersCorrKeyDto {
     }
 
     @Override
-    public final boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof UsersCorrKeyDto that)) return false;
-        return firstUserId == that.firstUserId && secondUserId == that.secondUserId
-            || firstUserId == that.secondUserId && secondUserId == that.firstUserId;
+    public final boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof UsersCorrKeyDto that)) {
+            return false;
+        }
+        return firstUserId == that.firstUserId && secondUserId == that.secondUserId || firstUserId == that.secondUserId && secondUserId == that.firstUserId;
     }
 
     @Override
