@@ -8,11 +8,10 @@ import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.http.client.MultipartBodyBuilder;
 import org.springframework.util.ResourceUtils;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.reactive.function.BodyInserters;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -35,14 +34,16 @@ class AttachmentControllerTest extends BookCrossingBaseTests {
     void saveAttachment() {
         final var booksId = createAndSaveBooks(user.getLogin());
         final File file = ResourceUtils.getFile("classpath:files/image.jpg");
-        final MultipartFile multipartFile = new MockMultipartFile(file.getName(), file.getName(), "image/jpg", Files.readAllBytes(file.toPath()));
+        final MultipartBodyBuilder multipartBodyBuilder = new MultipartBodyBuilder();
+        multipartBodyBuilder.part("file", new ByteArrayResource(Files.readAllBytes(file.toPath())), MediaType.TEXT_PLAIN).filename(file.getName());
+        multipartBodyBuilder.part("bookId", booksId.get(0));
         webClient.post()
             .uri(uriBuilder -> uriBuilder.pathSegment("user", "myBook", "attachment").build())
             .contentType(MediaType.MULTIPART_FORM_DATA)
-            .body(BodyInserters.fromFormData())
             .headers(headers -> headers.setBearerAuth(generateAccessToken(TestDataProvider.buildAuthBot())))
+            .bodyValue(multipartBodyBuilder.build())
             .exchange()
-            .expectStatus().isEqualTo(200);
+            .expectStatus().isEqualTo(201);
 
         assertThat(attachmentRepository.count()).isOne();
     }
