@@ -2,6 +2,7 @@ package io.github.enkarin.bookcrossing.books.service;
 
 import io.github.enkarin.bookcrossing.books.dto.AttachmentMultipartDto;
 import io.github.enkarin.bookcrossing.books.dto.BookModelDto;
+import io.github.enkarin.bookcrossing.books.exceptions.NoAccessToAttachmentException;
 import io.github.enkarin.bookcrossing.books.exceptions.UnsupportedFormatException;
 import io.github.enkarin.bookcrossing.books.model.Attachment;
 import io.github.enkarin.bookcrossing.books.model.Book;
@@ -26,7 +27,6 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Locale;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -91,13 +91,12 @@ public class AttachmentService {
         }
     }
 
-    public void deleteAttachment(final int bookId, final String login) {
-        final Book book = userRepository.findByLogin(login).orElseThrow().getBooks().stream()
-            .filter(b -> b.getBookId() == bookId)
-            .findFirst()
-            .orElseThrow(BookNotFoundException::new);
-        Optional.ofNullable(book.getAttachment())
-            .orElseThrow(AttachmentNotFoundException::new);
-        attachRepository.deleteById(book.getAttachment().getAttachId());
+    public void deleteAttachment(final int id, final String login) {
+        final Attachment attachment = attachRepository.findById(id).orElseThrow(AttachmentNotFoundException::new);
+        if (attachment.getBook().getOwner().getLogin().equals(login)) {
+            attachRepository.delete(attachment);
+        } else {
+            throw new NoAccessToAttachmentException();
+        }
     }
 }

@@ -2,6 +2,7 @@ package io.github.enkarin.bookcrossing.books.service;
 
 import io.github.enkarin.bookcrossing.books.dto.AttachmentMultipartDto;
 import io.github.enkarin.bookcrossing.books.dto.BookModelDto;
+import io.github.enkarin.bookcrossing.books.exceptions.NoAccessToAttachmentException;
 import io.github.enkarin.bookcrossing.books.exceptions.UnsupportedFormatException;
 import io.github.enkarin.bookcrossing.exception.AttachmentNotFoundException;
 import io.github.enkarin.bookcrossing.exception.BadRequestException;
@@ -83,8 +84,7 @@ class AttachmentServiceTest extends BookCrossingBaseTests {
     @Test
     void saveAttachmentShouldFailWithoutBook() throws IOException {
         final File file = ResourceUtils.getFile("classpath:files/image.jpg");
-        final MultipartFile multipartFile = new MockMultipartFile(file.getName(), file.getName(),
-            "image/jpg", Files.readAllBytes(file.toPath()));
+        final MultipartFile multipartFile = new MockMultipartFile(file.getName(), file.getName(), "image/jpg", Files.readAllBytes(file.toPath()));
         final AttachmentMultipartDto dto = AttachmentMultipartDto.fromFile(Integer.MAX_VALUE, multipartFile);
         final var userLogin = users.get(1).getLogin();
         assertThatThrownBy(() -> attachmentService.saveAttachment(dto, userLogin))
@@ -139,8 +139,8 @@ class AttachmentServiceTest extends BookCrossingBaseTests {
     void deleteAttachmentShouldFailWithoutBook() {
         final var userLogin = users.get(1).getLogin();
         assertThatThrownBy(() -> attachmentService.deleteAttachment(Integer.MAX_VALUE, userLogin))
-            .isInstanceOf(BookNotFoundException.class)
-            .hasMessage("Книга не найдена");
+            .isInstanceOf(AttachmentNotFoundException.class)
+            .hasMessage("Вложение не найдено");
     }
 
     @Test
@@ -174,13 +174,7 @@ class AttachmentServiceTest extends BookCrossingBaseTests {
     @Test
     @SneakyThrows
     void findThumbImageAttachment() {
-        bookService.saveBook(TestDataProvider.buildDandelion(), users.get(0).getLogin());
-        final int book1 = bookService.saveBook(TestDataProvider.buildWolves(), users.get(1).getLogin()).getBookId();
-        bookService.saveBook(TestDataProvider.buildDorian(), users.get(1).getLogin());
-        bookService.saveBook(TestDataProvider.buildDorian(), users.get(0).getLogin());
-        final File file = ResourceUtils.getFile("classpath:files/image.jpg");
-        final MultipartFile multipartFile = new MockMultipartFile(file.getName(), file.getName(), "image/jpg", Files.readAllBytes(file.toPath()));
-        final int attachmentId = attachmentService.saveAttachment(AttachmentMultipartDto.fromFile(book1, multipartFile), users.get(1).getLogin()).getAttachmentId();
+        final int attachmentId = createAttachment();
 
         assertThat(attachmentService.findAttachmentData(attachmentId, "thumb").length)
             .isLessThan(attachmentService.findAttachmentData(attachmentId, "list").length);
@@ -189,15 +183,27 @@ class AttachmentServiceTest extends BookCrossingBaseTests {
     @Test
     @SneakyThrows
     void findAttachmentWithUnexpectedFormatMustThrowException() {
+        final int attachmentId = createAttachment();
+
+        assertThatThrownBy(() -> attachmentService.findAttachmentData(attachmentId, "aboba")).isInstanceOf(UnsupportedFormatException.class);
+    }
+
+    @Test
+    @SneakyThrows
+    void throwDeleteAttachmentFromOtherUser() {
+        final int attachmentId = createAttachment();
+
+        assertThatThrownBy(() -> attachmentService.deleteAttachment(attachmentId, TestDataProvider.buildMax().getLogin())).isInstanceOf(NoAccessToAttachmentException.class);
+    }
+
+    private int createAttachment() throws IOException {
         bookService.saveBook(TestDataProvider.buildDandelion(), users.get(0).getLogin());
         final int book1 = bookService.saveBook(TestDataProvider.buildWolves(), users.get(1).getLogin()).getBookId();
         bookService.saveBook(TestDataProvider.buildDorian(), users.get(1).getLogin());
         bookService.saveBook(TestDataProvider.buildDorian(), users.get(0).getLogin());
         final File file = ResourceUtils.getFile("classpath:files/image.jpg");
         final MultipartFile multipartFile = new MockMultipartFile(file.getName(), file.getName(), "image/jpg", Files.readAllBytes(file.toPath()));
-        final int attachmentId = attachmentService.saveAttachment(AttachmentMultipartDto.fromFile(book1, multipartFile), users.get(1).getLogin()).getAttachmentId();
-
-        assertThatThrownBy(() -> attachmentService.findAttachmentData(attachmentId, "aboba")).isInstanceOf(UnsupportedFormatException.class);
+        return attachmentService.saveAttachment(AttachmentMultipartDto.fromFile(book1, multipartFile), users.get(1).getLogin()).getAttachmentId();
     }
 
     @Test
