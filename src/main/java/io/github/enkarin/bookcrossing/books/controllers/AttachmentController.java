@@ -1,6 +1,7 @@
 package io.github.enkarin.bookcrossing.books.controllers;
 
 import io.github.enkarin.bookcrossing.books.dto.AttachmentMultipartDto;
+import io.github.enkarin.bookcrossing.books.exceptions.NoAccessToAttachmentException;
 import io.github.enkarin.bookcrossing.books.exceptions.UnsupportedFormatException;
 import io.github.enkarin.bookcrossing.books.service.AttachmentService;
 import io.github.enkarin.bookcrossing.constant.Constant;
@@ -61,7 +62,6 @@ public class AttachmentController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-
     @Operation(summary = "Получение вложения", description = "Позволяет получить вложение по идентификатору и требуемому формату")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "400", description = "Запрошен некорректный формат изображения",
@@ -90,8 +90,8 @@ public class AttachmentController {
         @ApiResponse(responseCode = "200", description = "Вложение удалено")
     })
     @DeleteMapping
-    public ResponseEntity<Void> deleteAttachment(@RequestParam final int bookId, final Principal principal) {
-        attachmentService.deleteAttachment(bookId, principal.getName());
+    public ResponseEntity<Void> deleteAttachment(@RequestParam final int id, final Principal principal) {
+        attachmentService.deleteAttachment(id, principal.getName());
         return ResponseEntity.ok().build();
     }
 
@@ -111,5 +111,11 @@ public class AttachmentController {
     @ExceptionHandler(UnsupportedFormatException.class)
     public Map<String, String> formatNotFound(final UnsupportedFormatException exception) {
         return Map.of("format", exception.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ExceptionHandler(NoAccessToAttachmentException.class)
+    public Map<String, String> attachAccessForbidden(final NoAccessToAttachmentException exception) {
+        return Map.of("id", exception.getMessage());
     }
 }
