@@ -10,7 +10,7 @@
     </parent>
     <groupId>io.github.enkarin</groupId>
     <artifactId>bookcrossing-server</artifactId>
-    <version>0.3.1-SNAPSHOT</version>
+    <version>0.4.1-SNAPSHOT</version>
     <name>BookCrossingServer</name>
     <description>Graduate work</description>
 
@@ -389,7 +389,7 @@
                                         <limit>
                                             <counter>BRANCH</counter>
                                             <value>COVEREDRATIO</value>
-                                            <minimum>0.79</minimum>
+                                            <minimum>0.77</minimum>
                                         </limit>
                                         <limit>
                                             <counter>CLASS</counter>

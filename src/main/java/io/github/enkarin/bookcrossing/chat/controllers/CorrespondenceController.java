@@ -1,8 +1,10 @@
 package io.github.enkarin.bookcrossing.chat.controllers;
 
+import io.github.enkarin.bookcrossing.chat.dto.ChatInfo;
 import io.github.enkarin.bookcrossing.chat.dto.MessageDto;
 import io.github.enkarin.bookcrossing.chat.dto.UsersCorrKeyDto;
 import io.github.enkarin.bookcrossing.chat.service.CorrespondenceService;
+import io.github.enkarin.bookcrossing.chat.service.FindChatsService;
 import io.github.enkarin.bookcrossing.constant.Constant;
 import io.github.enkarin.bookcrossing.exception.CannotBeCreatedCorrespondenceException;
 import io.github.enkarin.bookcrossing.exception.ChatAlreadyCreatedException;
@@ -45,7 +47,7 @@ import java.util.Map;
 @RequestMapping("/user/correspondence")
 @Validated
 public class CorrespondenceController {
-
+    private final FindChatsService findAllChats;
     private final CorrespondenceService correspondenceService;
 
     private static final String CORRESPONDENCE = "correspondence";
@@ -120,6 +122,14 @@ public class CorrespondenceController {
                                                       @RequestParam final int zone,
                                                       final Principal principal) {
         return ResponseEntity.ok(correspondenceService.getChat(Integer.parseInt(firstUserId), Integer.parseInt(secondUserId), zone, principal.getName()).toArray());
+    }
+
+    @Operation(summary = "Поиск всех чатов пользователя", description = "Позволяет получить краткую информацию о всех чатах пользователя")
+    @ApiResponse(responseCode = "200", description = "Возвращает список чатов",
+        content = {@Content(mediaType = Constant.MEDIA_TYPE, array = @ArraySchema(schema = @Schema(implementation = ChatInfo.class)))})
+    @GetMapping("/all")
+    public ChatInfo[] findAllChats(@RequestParam final int pageNumber, @RequestParam final int pageSize, final Principal principal) {
+        return findAllChats.findAllChats(pageNumber, pageSize, principal.getName());
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)

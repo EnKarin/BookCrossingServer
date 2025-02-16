@@ -2,6 +2,7 @@ package io.github.enkarin.bookcrossing.chat.controllers;
 
 import io.github.enkarin.bookcrossing.admin.dto.LockedUserDto;
 import io.github.enkarin.bookcrossing.admin.service.AdminService;
+import io.github.enkarin.bookcrossing.chat.dto.ChatInfo;
 import io.github.enkarin.bookcrossing.chat.dto.MessageDto;
 import io.github.enkarin.bookcrossing.chat.dto.MessageRequest;
 import io.github.enkarin.bookcrossing.chat.dto.UsersCorrKeyDto;
@@ -9,6 +10,7 @@ import io.github.enkarin.bookcrossing.chat.service.CorrespondenceService;
 import io.github.enkarin.bookcrossing.chat.service.MessageService;
 import io.github.enkarin.bookcrossing.support.BookCrossingBaseTests;
 import io.github.enkarin.bookcrossing.support.TestDataProvider;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
@@ -295,6 +297,45 @@ class CorrespondenceControllerTest extends BookCrossingBaseTests {
         execute(userBotId, userAlexId, 404)
             .expectBody()
             .jsonPath("$.correspondence").isEqualTo("Чата не существует");
+    }
+
+    @Test
+    @SneakyThrows
+    void findAllChats() {
+        final var userAlex = createAndSaveUser(TestDataProvider.buildAlex());
+        enabledUser(userAlex.getUserId());
+        final var userBot = createAndSaveUser(TestDataProvider.buildBot());
+        enabledUser(userBot.getUserId());
+        correspondenceService.createChat(userAlex.getUserId(), userBot.getLogin());
+        messageService.sendMessage(MessageRequest.create(UsersCorrKeyDto.fromFirstAndSecondId(userAlex.getUserId(), userBot.getUserId()), "Hello"), userBot.getLogin());
+        Thread.sleep(1000);
+        messageService.sendMessage(MessageRequest.create(UsersCorrKeyDto.fromFirstAndSecondId(userAlex.getUserId(), userBot.getUserId()), "))"), userBot.getLogin());
+        final var secondBot = createAndSaveUser(TestDataProvider.prepareUser().login("secondUser").email("secondUser@mail.ru").build());
+        enabledUser(secondBot.getUserId());
+        correspondenceService.createChat(userAlex.getUserId(), secondBot.getLogin());
+        messageService.sendMessage(MessageRequest.create(UsersCorrKeyDto.fromFirstAndSecondId(userAlex.getUserId(), secondBot.getUserId()), "Hi"), secondBot.getLogin());
+        final var thirdBot = createAndSaveUser(TestDataProvider.buildMax());
+        enabledUser(thirdBot.getUserId());
+        correspondenceService.createChat(userAlex.getUserId(), thirdBot.getLogin());
+        messageService.sendMessage(MessageRequest.create(UsersCorrKeyDto.fromFirstAndSecondId(userAlex.getUserId(), thirdBot.getUserId()), "QQQ"), thirdBot.getLogin());
+        Thread.sleep(1000);
+        messageService.sendMessage(MessageRequest.create(UsersCorrKeyDto.fromFirstAndSecondId(userAlex.getUserId(), thirdBot.getUserId()), "Q"), thirdBot.getLogin());
+
+        final var response = webClient.get()
+            .uri(uriBuilder -> uriBuilder
+                .pathSegment("user", "correspondence", "all")
+                .queryParam("pageNumber", 0)
+                .queryParam("pageSize", 3)
+                .build())
+            .headers(headers -> headers.setBearerAuth(generateAccessToken(TestDataProvider.buildAuthAlex())))
+            .exchange()
+            .expectStatus().isEqualTo(200)
+            .expectBodyList(ChatInfo.class)
+            .returnResult().getResponseBody();
+        assertThat(response).containsOnly(
+            new ChatInfo(userBot.getName(), "))", userBot.getUserId(), userBot.getUserId(), 2),
+            new ChatInfo(secondBot.getName(), "Hi", secondBot.getUserId(), secondBot.getUserId(), 1),
+            new ChatInfo(thirdBot.getName(), "Q", thirdBot.getUserId(), thirdBot.getUserId(), 2));
     }
 
     private WebTestClient.ResponseSpec execute(final HttpMethod httpMethod, final int userId, final int status) {
