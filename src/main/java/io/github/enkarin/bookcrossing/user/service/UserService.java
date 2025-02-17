@@ -32,6 +32,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import static java.util.Objects.isNull;
+
 @RequiredArgsConstructor
 @Service
 @Transactional(readOnly = true)
@@ -48,6 +50,9 @@ public class UserService {
     public UserDto saveUser(final UserRegistrationDto userRegistrationDTO) {
         if (!userRegistrationDTO.getPassword().equals(userRegistrationDTO.getPasswordConfirm())) {
             throw new PasswordsDontMatchException();
+        }
+        if (isNull(userRegistrationDTO.getLogin()) || userRegistrationDTO.getLogin().isBlank()) {
+            userRegistrationDTO.setLogin(generateLogin());
         }
         if (userRepository.findByLogin(userRegistrationDTO.getLogin()).isPresent()) {
             throw new LoginFailedException();
@@ -94,12 +99,11 @@ public class UserService {
     }
 
     public AuthResponse findByLoginAndPassword(final LoginRequest login) {
-        final User user = userRepository.findByLogin(login.getLogin())
-            .orElseThrow(UserNotFoundException::new);
+        final User user = userRepository.findByLogin(login.getLogin()).orElseGet(() -> userRepository.findByEmail(login.getLogin()).orElseThrow(UserNotFoundException::new));
         if (bCryptPasswordEncoder.matches(login.getPassword(), user.getPassword())) {
             if (user.isEnabled()) {
                 if (user.isAccountNonLocked()) {
-                    return refreshService.createTokens(login.getLogin());
+                    return refreshService.createTokens(user.getLogin());
                 }
                 throw new LockedAccountException();
             }
@@ -142,10 +146,10 @@ public class UserService {
         return user;
     }
 
-    public String generateLogin() {
+    private String generateLogin() {
         String possibleLogin;
         do {
-            possibleLogin = UUID.randomUUID().toString().substring(0, 12);
+            possibleLogin = UUID.randomUUID().toString();
         } while (userRepository.findByLogin(possibleLogin).isPresent());
         return possibleLogin;
     }

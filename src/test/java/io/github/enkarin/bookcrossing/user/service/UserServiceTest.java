@@ -6,6 +6,8 @@ import io.github.enkarin.bookcrossing.exception.LoginFailedException;
 import io.github.enkarin.bookcrossing.exception.PasswordsDontMatchException;
 import io.github.enkarin.bookcrossing.exception.TokenNotFoundException;
 import io.github.enkarin.bookcrossing.exception.UserNotFoundException;
+import io.github.enkarin.bookcrossing.registration.dto.LoginRequest;
+import io.github.enkarin.bookcrossing.registration.dto.UserRegistrationDto;
 import io.github.enkarin.bookcrossing.support.BookCrossingBaseTests;
 import io.github.enkarin.bookcrossing.support.TestDataProvider;
 import io.github.enkarin.bookcrossing.user.dto.UserDto;
@@ -26,9 +28,7 @@ class UserServiceTest extends BookCrossingBaseTests {
 
     @Test
     void saveUserCorrectUserTest() {
-        assertThat(userService.findById(
-            createAndSaveUser(TestDataProvider.buildAlex()).getUserId(), GM_TIME_ZERO)
-        ).isNotNull();
+        assertThat(userService.findById(createAndSaveUser(TestDataProvider.buildAlex()).getUserId(), GM_TIME_ZERO)).isNotNull();
     }
 
     @Test
@@ -55,6 +55,14 @@ class UserServiceTest extends BookCrossingBaseTests {
         assertThatThrownBy(() -> userService.saveUser(userWithRegisteredEmail))
             .isInstanceOf(EmailFailedException.class)
             .hasMessage("Пользователь с таким почтовым адресом уже существует");
+    }
+
+    @Test
+    void loginOnEmail() {
+        final UserRegistrationDto userDto = TestDataProvider.buildAlex();
+        enabledUser(createAndSaveUser(userDto).getUserId());
+
+        assertThat(userService.findByLoginAndPassword(LoginRequest.create(userDto.getEmail(), userDto.getPassword(), 7))).isNotNull();
     }
 
     @Test
@@ -171,19 +179,33 @@ class UserServiceTest extends BookCrossingBaseTests {
     }
 
     @Test
-    void generateLoginTest() {
-        assertThat(userService.generateLogin()).isNotBlank();
+    void registrationWithNullLogin() {
+        final UserRegistrationDto userRegistrationDto = TestDataProvider.buildAlex();
+        userRegistrationDto.setLogin(null);
+        assertThat(createAndSaveUser(userRegistrationDto)).satisfies(userDto -> checkEqual(userDto, userRegistrationDto));
     }
 
-    private static void checkUserDTOAndUserPublicPublicProfileDTO(
-        final UserDto userDto, final UserPublicProfileDto userPublicProfileDto) {
+    @Test
+    void registrationWithEmptyLogin() {
+        final UserRegistrationDto userRegistrationDto = TestDataProvider.buildMax();
+        userRegistrationDto.setLogin("  ");
+        assertThat(createAndSaveUser(userRegistrationDto)).satisfies(userDto -> checkEqual(userDto, userRegistrationDto));
+    }
+
+    private static void checkEqual(final UserDto userDto, final UserRegistrationDto userRegistrationDto) {
+        assertThat(userDto.getName()).isEqualTo(userRegistrationDto.getName());
+        assertThat(userDto.getCity()).isEqualTo(userRegistrationDto.getCity());
+        assertThat(userDto.getEmail()).isEqualTo(userRegistrationDto.getEmail());
+        assertThat(userDto.getLogin()).isNotBlank();
+    }
+
+    private static void checkUserDTOAndUserPublicPublicProfileDTO(final UserDto userDto, final UserPublicProfileDto userPublicProfileDto) {
         assertThat(Integer.parseInt(userPublicProfileDto.getUserId())).isEqualTo(userDto.getUserId());
         assertThat(userPublicProfileDto.getName()).isEqualTo(userDto.getName());
         assertThat(userPublicProfileDto.getCity()).isEqualTo(userDto.getCity());
     }
 
-    private static void checkUserDTOAndUserProfileDTO(
-        final UserDto userDto, final UserProfileDto userProfileDto) {
+    private static void checkUserDTOAndUserProfileDTO(final UserDto userDto, final UserProfileDto userProfileDto) {
         assertThat(userProfileDto.getUserId()).isEqualTo(userDto.getUserId());
         assertThat(userProfileDto.getName()).isEqualTo(userDto.getName());
         assertThat(userProfileDto.getCity()).isEqualTo(userDto.getCity());
