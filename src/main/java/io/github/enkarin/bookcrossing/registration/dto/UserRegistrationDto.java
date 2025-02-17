@@ -6,14 +6,13 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
-import javax.annotation.concurrent.Immutable;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
-@Immutable
 @Getter
 @EqualsAndHashCode
 @SuperBuilder
@@ -26,8 +25,8 @@ public class UserRegistrationDto {
     private final String name;
 
     @Schema(description = "Логин", example = "LogAll")
-    @NotBlank(message = "login: Логин должен содержать хотя бы один видимый символ")
-    private final String login;
+    @Setter
+    private String login;
 
     @Schema(description = "Пароль", example = "123456")
     @NotBlank(message = "password: Пароль должен содержать хотя бы один видимый символ")
