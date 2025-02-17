@@ -19,7 +19,7 @@ import javax.validation.constraints.Size;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class LoginRequest {
 
-    @Schema(description = "Логин", example = "LogAll")
+    @Schema(description = "Логин или email", example = "LogAll")
     @NotBlank
     private final String login;
 
