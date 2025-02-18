@@ -116,8 +116,8 @@ public class BookService {
             });
     }
 
-    public List<BookModelDto> findByTitle(final String title) {
-        return bookRepository.findBooksByTitleIgnoreCase(title).stream()
+    public List<BookModelDto> findByTitleOrAuthor(final String field) {
+        return bookRepository.findBooksByTitleOrAuthorIgnoreCase(field).stream()
             .filter(b -> b.getOwner().isAccountNonLocked())
             .map(BookModelDto::fromBook)
             .toList();
