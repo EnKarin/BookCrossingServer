@@ -9,7 +9,8 @@ import java.util.Optional;
 
 public interface BookRepository extends JpaRepository<Book, Integer> {
 
-    List<Book> findBooksByTitleIgnoreCase(String title);
+    @Query("FROM Book b WHERE lower(b.title) = lower(?1) OR lower(b.author) = lower(?1)")
+    List<Book> findBooksByTitleOrAuthorIgnoreCase(String title);
 
     Optional<Book> findBooksByOwnerLoginAndBookId(String login, int id);
 

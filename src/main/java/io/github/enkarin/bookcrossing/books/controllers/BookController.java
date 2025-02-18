@@ -81,16 +81,16 @@ public class BookController {
     }
 
     @Operation(
-        summary = "Поиск книг по названию",
-        description = "Позволяет найти книги по названию"
+        summary = "Поиск книг по названию или автору",
+        description = "Позволяет найти книги по названию или автору"
     )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Возвращает найденные книги",
             content = {@Content(mediaType = Constant.MEDIA_TYPE, array = @ArraySchema(schema = @Schema(implementation = BookModelDto.class)))})
     })
     @GetMapping("/searchByTitle")
-    public ResponseEntity<Object[]> searchByTitle(@RequestParam final String title) {
-        return ResponseEntity.ok(bookService.findByTitle(title).toArray());
+    public ResponseEntity<List<BookModelDto>> searchByTitleOrAuthor(@RequestParam final String field) {
+        return ResponseEntity.ok(bookService.findByTitleOrAuthor(field));
     }
 
     @Operation(

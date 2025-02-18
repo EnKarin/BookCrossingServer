@@ -95,7 +95,7 @@ class BookControllerTest extends BookCrossingBaseTests {
         final var response = webClient.get()
             .uri(uriBuilder -> uriBuilder
                 .pathSegment("books", "searchByTitle")
-                .queryParam("title", "Dandelion")
+                .queryParam("field", "Dandelion")
                 .build())
             .exchange()
             .expectStatus().isEqualTo(200)
@@ -112,7 +112,7 @@ class BookControllerTest extends BookCrossingBaseTests {
         final var response = webClient.get()
             .uri(uriBuilder -> uriBuilder
                 .pathSegment("books", "searchByTitle")
-                .queryParam("title", "TestName") //books not contains in db
+                .queryParam("field", "TestName") //books not contains in db
                 .build())
             .exchange()
             .expectStatus().isEqualTo(200)

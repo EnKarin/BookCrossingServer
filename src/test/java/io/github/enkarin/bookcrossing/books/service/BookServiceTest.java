@@ -211,9 +211,23 @@ class BookServiceTest extends BookCrossingBaseTests {
         final int book1 = bookService.saveBook(TestDataProvider.buildWolves(), users.get(1).getLogin()).getBookId();
         bookService.saveBook(TestDataProvider.buildDorian(), users.get(0).getLogin());
 
-        assertThat(bookService.findByTitle("Wolves"))
+        assertThat(bookService.findByTitleOrAuthor("Wolves"))
             .hasSize(1)
             .containsOnly(TestDataProvider.buildWolves(book1));
+    }
+
+    @Test
+    void findByAuthorShouldWork() {
+        final List<UserDto> users = TestDataProvider.buildUsers().stream()
+            .map(this::createAndSaveUser)
+            .toList();
+
+        final int bookid = bookService.saveBook(TestDataProvider.buildDandelion(), users.get(0).getLogin()).getBookId();
+
+        assertThat(bookService.findByTitleOrAuthor("AUTHOR2"))
+            .hasSize(1)
+            .first()
+            .isEqualTo(TestDataProvider.buildDandelion(bookid));
     }
 
     @Test
@@ -226,6 +240,6 @@ class BookServiceTest extends BookCrossingBaseTests {
         bookService.saveBook(TestDataProvider.buildWolves(), users.get(1).getLogin());
         bookService.saveBook(TestDataProvider.buildDorian(), users.get(0).getLogin());
 
-        assertThat(bookService.findByTitle("tit")).isEmpty();
+        assertThat(bookService.findByTitleOrAuthor("tit")).isEmpty();
     }
 }
