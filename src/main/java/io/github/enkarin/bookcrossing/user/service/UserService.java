@@ -19,7 +19,6 @@ import io.github.enkarin.bookcrossing.user.dto.UserDto;
 import io.github.enkarin.bookcrossing.user.dto.UserProfileDto;
 import io.github.enkarin.bookcrossing.user.dto.UserPublicProfileDto;
 import io.github.enkarin.bookcrossing.user.dto.UserPutProfileDto;
-import io.github.enkarin.bookcrossing.user.model.Role;
 import io.github.enkarin.bookcrossing.user.model.User;
 import io.github.enkarin.bookcrossing.user.repository.RoleRepository;
 import io.github.enkarin.bookcrossing.user.repository.UserRepository;
@@ -38,7 +37,6 @@ import static java.util.Objects.isNull;
 @Service
 @Transactional(readOnly = true)
 public class UserService {
-
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final ActionMailUserRepository confirmationMailUserRepository;
@@ -91,9 +89,7 @@ public class UserService {
     }
 
     public List<UserPublicProfileDto> findAllUsers(final int zone) {
-        // TODO Performance! Too many sql queries. Should retrieve all data within single select query
-        final Role role = roleRepository.getRoleByName("ROLE_USER");
-        return userRepository.findByUserRolesOrderByUserId(role).stream()
+        return userRepository.findByUserRolesOrderByUserId("ROLE_USER").stream()
             .map(u -> UserPublicProfileDto.fromUser(u, zone))
             .toList();
     }

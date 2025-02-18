@@ -4,9 +4,7 @@ import io.github.enkarin.bookcrossing.admin.dto.InfoUsersDto;
 import io.github.enkarin.bookcrossing.admin.dto.LockedUserDto;
 import io.github.enkarin.bookcrossing.exception.UserNotFoundException;
 import io.github.enkarin.bookcrossing.mail.service.MailService;
-import io.github.enkarin.bookcrossing.user.model.Role;
 import io.github.enkarin.bookcrossing.user.model.User;
-import io.github.enkarin.bookcrossing.user.repository.RoleRepository;
 import io.github.enkarin.bookcrossing.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,9 +16,7 @@ import java.util.List;
 @Service
 @Transactional(readOnly = true)
 public class AdminService {
-
     private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
     private final MailService mailService;
 
     @Transactional
@@ -43,8 +39,7 @@ public class AdminService {
     }
 
     public List<InfoUsersDto> findAllUsers(final int zone) {
-        final Role role = roleRepository.getRoleByName("ROLE_USER");
-        return userRepository.findByUserRolesOrderByUserId(role).stream()
+        return userRepository.findByUserRolesOrderByUserId("ROLE_USER").stream()
             .map(u -> InfoUsersDto.fromUser(u, zone))
             .toList();
     }

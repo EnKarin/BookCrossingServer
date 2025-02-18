@@ -1,0 +1,1 @@
+update bookcrossing.t_user set password = '$2a$10$eWKkIPCbaFMlrxn6hImRleQwu9CFgw8G2BLGy9UnnbH0EkH9tTVp.' where login = 'admin';

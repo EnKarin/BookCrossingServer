@@ -132,9 +132,9 @@ class UserServiceTest extends BookCrossingBaseTests {
 
         final UserPutProfileDto putProfile = UserPutProfileDto.create(
             "Mike",
-            "123456",
-            "654321",
-            "654321",
+            "12345678",
+            "87654321",
+            "87654321",
             "Moscow"
         );
 

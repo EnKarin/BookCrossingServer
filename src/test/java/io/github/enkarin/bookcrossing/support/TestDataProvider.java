@@ -236,7 +236,7 @@ public class TestDataProvider {
         return UserPutProfileDto.builder()
             .name("Bott")
             .city("Moscow")
-            .oldPassword("123456")
+            .oldPassword("12345678")
             .newPassword("123456789")
             .passwordConfirm("123456789");
     }
