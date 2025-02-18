@@ -7,10 +7,14 @@ import io.github.enkarin.bookcrossing.support.BookCrossingBaseTests;
 import io.github.enkarin.bookcrossing.support.TestDataProvider;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 
 import javax.annotation.Nonnull;
+
+import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -62,7 +66,7 @@ class AdminControllerTest extends BookCrossingBaseTests {
 
     @Test
     void lockedUserShouldFailWithBindingError() {
-        webClient.post()
+        assertThat(webClient.post()
             .uri(uriBuilder -> uriBuilder
                 .pathSegment("adm", "locked")
                 .queryParam("zone", 0)
@@ -72,11 +76,10 @@ class AdminControllerTest extends BookCrossingBaseTests {
             .bodyValue(LockedUserDto.builder().build())
             .exchange()
             .expectStatus().isEqualTo(406)
-            .expectBody()
-            .jsonPath("$.login")
-            .isEqualTo("Логин должен содержать хотя бы один видимый символ")
-            .jsonPath("$.comment")
-            .isEqualTo("Комментарий должен содержать хотя бы один видимый символ");
+            .expectBody(new ParameterizedTypeReference<Map<String, List<String>>>() {
+            }).returnResult().getResponseBody())
+            .isNotEmpty()
+            .satisfies(m -> assertThat(m.get("errorList")).containsExactlyInAnyOrder("3004", "3003"));
     }
 
     @Test

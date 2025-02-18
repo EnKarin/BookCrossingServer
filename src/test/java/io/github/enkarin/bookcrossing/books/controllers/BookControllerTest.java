@@ -2,6 +2,7 @@ package io.github.enkarin.bookcrossing.books.controllers;
 
 import io.github.enkarin.bookcrossing.books.dto.BookFiltersRequest;
 import io.github.enkarin.bookcrossing.books.dto.BookModelDto;
+import io.github.enkarin.bookcrossing.constant.ErrorMessage;
 import io.github.enkarin.bookcrossing.support.BookCrossingBaseTests;
 import io.github.enkarin.bookcrossing.support.TestDataProvider;
 import io.github.enkarin.bookcrossing.user.dto.UserDto;
@@ -78,8 +79,8 @@ class BookControllerTest extends BookCrossingBaseTests {
             .exchange()
             .expectStatus().isEqualTo(404)
             .expectBody()
-            .jsonPath("$.book")
-            .isEqualTo("Книга не найдена");
+            .jsonPath("$.error")
+            .isEqualTo(ErrorMessage.ERROR_1004.getCode());
     }
 
     @Test

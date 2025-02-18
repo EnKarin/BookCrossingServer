@@ -1,5 +1,6 @@
 package io.github.enkarin.bookcrossing.user.controllers;
 
+import io.github.enkarin.bookcrossing.constant.ErrorMessage;
 import io.github.enkarin.bookcrossing.support.BookCrossingBaseTests;
 import io.github.enkarin.bookcrossing.books.dto.BookModelDto;
 import io.github.enkarin.bookcrossing.support.TestDataProvider;
@@ -39,8 +40,8 @@ class BookmarksControllerTest extends BookCrossingBaseTests {
 
         execute(HttpMethod.POST, generateAccessToken(TestDataProvider.buildAuthBot()), Integer.MAX_VALUE, 404)
             .expectBody()
-            .jsonPath("$.book")
-            .isEqualTo("Книга не найдена");
+            .jsonPath("$.error")
+            .isEqualTo(ErrorMessage.ERROR_1004.getCode());
     }
 
     @Test
@@ -62,8 +63,8 @@ class BookmarksControllerTest extends BookCrossingBaseTests {
         final var bookId = createAndSaveBooks(user.getLogin()).stream().findAny().orElse(0);
         execute(HttpMethod.DELETE, generateAccessToken(TestDataProvider.buildAuthBot()), bookId, 404)
             .expectBody()
-            .jsonPath("$.book")
-            .isEqualTo("Книга не найдена");
+            .jsonPath("$.error")
+            .isEqualTo(ErrorMessage.ERROR_1004.getCode());
     }
 
     @Test

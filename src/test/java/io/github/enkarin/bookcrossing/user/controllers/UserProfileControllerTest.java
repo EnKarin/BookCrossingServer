@@ -1,11 +1,16 @@
 package io.github.enkarin.bookcrossing.user.controllers;
 
+import io.github.enkarin.bookcrossing.constant.ErrorMessage;
 import io.github.enkarin.bookcrossing.support.BookCrossingBaseTests;
 import io.github.enkarin.bookcrossing.support.TestDataProvider;
 import io.github.enkarin.bookcrossing.user.dto.UserProfileDto;
 import io.github.enkarin.bookcrossing.user.dto.UserPublicProfileDto;
 import io.github.enkarin.bookcrossing.user.dto.UserPutProfileDto;
 import org.junit.jupiter.api.Test;
+import org.springframework.core.ParameterizedTypeReference;
+
+import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -91,7 +96,7 @@ class UserProfileControllerTest extends BookCrossingBaseTests {
         final var userBot = createAndSaveUser(TestDataProvider.buildBot());
         enabledUser(userBot.getUserId());
 
-        assertThatReturnException(TestDataProvider.preparePutProfile().passwordConfirm("123456").build(), 412, "Пароли не совпадают");
+        assertThatReturnException(TestDataProvider.preparePutProfile().passwordConfirm("123456").build(), 412, ErrorMessage.ERROR_1000.getCode());
     }
 
     @Test
@@ -99,7 +104,7 @@ class UserProfileControllerTest extends BookCrossingBaseTests {
         final var userBot = createAndSaveUser(TestDataProvider.buildBot());
         enabledUser(userBot.getUserId());
 
-        assertThatReturnException(TestDataProvider.preparePutProfile().oldPassword("123457").build(), 409, "Некорректный пароль");
+        assertThatReturnException(TestDataProvider.preparePutProfile().oldPassword("123457").build(), 409, ErrorMessage.ERROR_1007.getCode());
     }
 
     @Test
@@ -107,7 +112,19 @@ class UserProfileControllerTest extends BookCrossingBaseTests {
         final var userBot = createAndSaveUser(TestDataProvider.buildBot());
         enabledUser(userBot.getUserId());
 
-        assertThatReturnException(TestDataProvider.preparePutProfile().oldPassword("").build(), 406, "Пароль должен содержать хотя бы один видимый символ");
+        final var map = webClient.put()
+            .uri(uriBuilder -> uriBuilder
+                .pathSegment("user", "profile")
+                .build())
+            .headers(headers -> headers.setBearerAuth(generateAccessToken(TestDataProvider.buildAuthBot())))
+            .bodyValue(TestDataProvider.preparePutProfile().oldPassword("").build())
+            .exchange()
+            .expectStatus().isEqualTo(406).expectBody(new ParameterizedTypeReference<Map<String, List<String>>>() {
+            }).returnResult().getResponseBody();
+        assertThat(map)
+            .isNotEmpty()
+            .extracting(m -> m.get("errorList"))
+            .isEqualTo(List.of("3012"));
     }
 
     @Test
@@ -147,7 +164,7 @@ class UserProfileControllerTest extends BookCrossingBaseTests {
             .exchange()
             .expectStatus().isEqualTo(status)
             .expectBody()
-            .jsonPath("$.password")
+            .jsonPath("$.error")
             .isEqualTo(message);
     }
 }

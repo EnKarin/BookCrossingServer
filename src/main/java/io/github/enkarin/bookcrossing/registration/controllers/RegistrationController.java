@@ -1,6 +1,7 @@
 package io.github.enkarin.bookcrossing.registration.controllers;
 
 import io.github.enkarin.bookcrossing.constant.Constant;
+import io.github.enkarin.bookcrossing.constant.ErrorMessage;
 import io.github.enkarin.bookcrossing.exception.AccountNotConfirmedException;
 import io.github.enkarin.bookcrossing.exception.BindingErrorsException;
 import io.github.enkarin.bookcrossing.exception.EmailFailedException;
@@ -40,6 +41,7 @@ import java.util.List;
 import java.util.Map;
 
 import static io.github.enkarin.bookcrossing.utils.CookieConfigurator.configureRefreshTokenCookie;
+import static io.github.enkarin.bookcrossing.utils.Util.createErrorMap;
 
 @Tag(
     name = "Регистрация и авторизация пользователей",
@@ -116,43 +118,43 @@ public class RegistrationController {
 
     @ResponseStatus(HttpStatus.CONFLICT)
     @ExceptionHandler(PasswordsDontMatchException.class)
-    public Map<String, String> passwordConflict(final PasswordsDontMatchException exc) {
-        return Map.of("password", exc.getMessage());
+    public Map<String, String> passwordConflict() {
+        return createErrorMap(ErrorMessage.ERROR_1000);
     }
 
     @ResponseStatus(HttpStatus.CONFLICT)
     @ExceptionHandler(LoginFailedException.class)
-    public Map<String, String> loginFailed(final LoginFailedException exc) {
-        return Map.of("login", exc.getMessage());
+    public Map<String, String> loginFailed() {
+        return createErrorMap(ErrorMessage.ERROR_1002);
     }
 
     @ResponseStatus(HttpStatus.CONFLICT)
     @ExceptionHandler(EmailFailedException.class)
-    public Map<String, String> emailFailed(final EmailFailedException exc) {
-        return Map.of("email", exc.getMessage());
+    public Map<String, String> emailFailed() {
+        return createErrorMap(ErrorMessage.ERROR_1006);
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(TokenNotFoundException.class)
-    public Map<String, String> tokenInvalid(final TokenNotFoundException exc) {
-        return Map.of("token", exc.getMessage());
+    public Map<String, String> tokenInvalid() {
+        return createErrorMap(ErrorMessage.ERROR_2004);
     }
 
     @ResponseStatus(HttpStatus.FORBIDDEN)
     @ExceptionHandler(LockedAccountException.class)
-    public Map<String, String> lockedUser(final LockedAccountException exc) {
-        return Map.of("user", exc.getMessage());
+    public Map<String, String> lockedUser() {
+        return createErrorMap(ErrorMessage.ERROR_1001);
     }
 
     @ResponseStatus(HttpStatus.FORBIDDEN)
     @ExceptionHandler(AccountNotConfirmedException.class)
-    public Map<String, String> notConfirmedUser(final AccountNotConfirmedException exc) {
-        return Map.of("user", exc.getMessage());
+    public Map<String, String> notConfirmedUser() {
+        return createErrorMap(ErrorMessage.ERROR_1005);
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(InvalidPasswordException.class)
     public Map<String, String> passwordInvalid() {
-        return Map.of("user", "Пользователь не найден");
+        return createErrorMap(ErrorMessage.ERROR_1007);
     }
 }

@@ -6,6 +6,7 @@ import io.github.enkarin.bookcrossing.chat.dto.UsersCorrKeyDto;
 import io.github.enkarin.bookcrossing.chat.service.CorrespondenceService;
 import io.github.enkarin.bookcrossing.chat.service.FindChatsService;
 import io.github.enkarin.bookcrossing.constant.Constant;
+import io.github.enkarin.bookcrossing.constant.ErrorMessage;
 import io.github.enkarin.bookcrossing.exception.CannotBeCreatedCorrespondenceException;
 import io.github.enkarin.bookcrossing.exception.ChatAlreadyCreatedException;
 import io.github.enkarin.bookcrossing.exception.ChatNotFoundException;
@@ -37,6 +38,8 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.constraints.NotBlank;
 import java.security.Principal;
 import java.util.Map;
+
+import static io.github.enkarin.bookcrossing.utils.Util.createErrorMap;
 
 @Tag(
     name = "Чаты",
@@ -134,25 +137,25 @@ public class CorrespondenceController {
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(ChatNotFoundException.class)
-    public Map<String, String> chatNotFound(final ChatNotFoundException exc) {
-        return Map.of(CORRESPONDENCE, exc.getMessage());
+    public Map<String, String> chatNotFound() {
+        return createErrorMap(ErrorMessage.ERROR_1009);
     }
 
     @ResponseStatus(HttpStatus.CONFLICT)
     @ExceptionHandler(ChatAlreadyCreatedException.class)
-    public Map<String, String> chatAlreadyCreated(final ChatAlreadyCreatedException exc) {
-        return Map.of(CORRESPONDENCE, exc.getMessage());
+    public Map<String, String> chatAlreadyCreated() {
+        return createErrorMap(ErrorMessage.ERROR_1010);
     }
 
     @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
     @ExceptionHandler(CannotBeCreatedCorrespondenceException.class)
-    public Map<String, String> userIsLocked(final CannotBeCreatedCorrespondenceException exc) {
-        return Map.of("user", exc.getMessage());
+    public Map<String, String> userIsLocked() {
+        return createErrorMap(ErrorMessage.ERROR_1011);
     }
 
     @ResponseStatus(HttpStatus.FORBIDDEN)
     @ExceptionHandler(NoAccessToChatException.class)
-    public Map<String, String> chatNoAccess(final NoAccessToChatException exc) {
-        return Map.of(CORRESPONDENCE, exc.getMessage());
+    public Map<String, String> chatNoAccess() {
+        return createErrorMap(ErrorMessage.ERROR_1012);
     }
 }

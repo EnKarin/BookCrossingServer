@@ -1,6 +1,7 @@
 package io.github.enkarin.bookcrossing.user.controllers;
 
 import io.github.enkarin.bookcrossing.constant.Constant;
+import io.github.enkarin.bookcrossing.constant.ErrorMessage;
 import io.github.enkarin.bookcrossing.exception.PasswordsDontMatchException;
 import io.github.enkarin.bookcrossing.exception.TokenInvalidException;
 import io.github.enkarin.bookcrossing.mail.service.MailService;
@@ -26,6 +27,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.util.Map;
+
+import static io.github.enkarin.bookcrossing.utils.Util.createErrorMap;
 
 @Tag(
     name = "Сброс пароля",
@@ -82,13 +85,13 @@ public class PasswordResetController {
 
     @ResponseStatus(HttpStatus.CONFLICT)
     @ExceptionHandler(PasswordsDontMatchException.class)
-    public Map<String, String> passwordConflict(final PasswordsDontMatchException exc) {
-        return Map.of("password", exc.getMessage());
+    public Map<String, String> passwordConflict() {
+        return createErrorMap(ErrorMessage.ERROR_1000);
     }
 
     @ResponseStatus(HttpStatus.FORBIDDEN)
     @ExceptionHandler(TokenInvalidException.class)
-    public Map<String, String> tokenInvalid(final TokenInvalidException exc) {
-        return Map.of("token", exc.getMessage());
+    public Map<String, String> tokenInvalid() {
+        return createErrorMap(ErrorMessage.ERROR_2003);
     }
 }

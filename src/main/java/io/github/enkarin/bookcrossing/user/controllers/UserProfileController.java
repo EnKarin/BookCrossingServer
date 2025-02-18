@@ -1,6 +1,7 @@
 package io.github.enkarin.bookcrossing.user.controllers;
 
 import io.github.enkarin.bookcrossing.constant.Constant;
+import io.github.enkarin.bookcrossing.constant.ErrorMessage;
 import io.github.enkarin.bookcrossing.exception.BindingErrorsException;
 import io.github.enkarin.bookcrossing.exception.InvalidPasswordException;
 import io.github.enkarin.bookcrossing.exception.PasswordsDontMatchException;
@@ -37,6 +38,8 @@ import java.security.Principal;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
+import static io.github.enkarin.bookcrossing.utils.Util.createErrorMap;
 
 @Tag(
     name = "Получение профиля пользователей",
@@ -121,14 +124,14 @@ public class UserProfileController {
 
     @ResponseStatus(HttpStatus.PRECONDITION_FAILED)
     @ExceptionHandler(PasswordsDontMatchException.class)
-    public Map<String, String> passwordExc(final PasswordsDontMatchException exc) {
-        return Map.of("password", exc.getMessage());
+    public Map<String, String> passwordExc() {
+        return createErrorMap(ErrorMessage.ERROR_1000);
     }
 
     @ResponseStatus(HttpStatus.CONFLICT)
     @ExceptionHandler(InvalidPasswordException.class)
     public Map<String, String> passwordInvalid(final InvalidPasswordException exc) {
-        return Map.of("password", exc.getMessage());
+        return createErrorMap(ErrorMessage.ERROR_1007);
     }
 }
 

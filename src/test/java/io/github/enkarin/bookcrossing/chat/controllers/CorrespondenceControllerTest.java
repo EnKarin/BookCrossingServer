@@ -8,6 +8,7 @@ import io.github.enkarin.bookcrossing.chat.dto.MessageRequest;
 import io.github.enkarin.bookcrossing.chat.dto.UsersCorrKeyDto;
 import io.github.enkarin.bookcrossing.chat.service.CorrespondenceService;
 import io.github.enkarin.bookcrossing.chat.service.MessageService;
+import io.github.enkarin.bookcrossing.constant.ErrorMessage;
 import io.github.enkarin.bookcrossing.support.BookCrossingBaseTests;
 import io.github.enkarin.bookcrossing.support.TestDataProvider;
 import lombok.SneakyThrows;
@@ -57,8 +58,8 @@ class CorrespondenceControllerTest extends BookCrossingBaseTests {
 
         execute(HttpMethod.POST, Integer.MAX_VALUE, 404)
             .expectBody()
-            .jsonPath("$.user")
-            .isEqualTo("Пользователь не найден");
+            .jsonPath("$.error")
+            .isEqualTo(ErrorMessage.ERROR_1003.getCode());
     }
 
     @Test
@@ -69,8 +70,8 @@ class CorrespondenceControllerTest extends BookCrossingBaseTests {
 
         execute(HttpMethod.POST, userAlexId, 406)
             .expectBody()
-            .jsonPath("$.user")
-            .isEqualTo("С выбранным пользователем нельзя создать чат");
+            .jsonPath("$.error")
+            .isEqualTo(ErrorMessage.ERROR_1011.getCode());
     }
 
     @Test
@@ -83,8 +84,8 @@ class CorrespondenceControllerTest extends BookCrossingBaseTests {
 
         execute(HttpMethod.POST, userAlex.getUserId(), 406)
             .expectBody()
-            .jsonPath("$.user")
-            .isEqualTo("С выбранным пользователем нельзя создать чат");
+            .jsonPath("$.error")
+            .isEqualTo(ErrorMessage.ERROR_1011.getCode());
     }
 
     @Test
@@ -96,8 +97,8 @@ class CorrespondenceControllerTest extends BookCrossingBaseTests {
 
         execute(HttpMethod.POST, userAlex.getUserId(), 406)
             .expectBody()
-            .jsonPath("$.user")
-            .isEqualTo("С выбранным пользователем нельзя создать чат");
+            .jsonPath("$.error")
+            .isEqualTo(ErrorMessage.ERROR_1011.getCode());
     }
 
     @Test
@@ -111,8 +112,8 @@ class CorrespondenceControllerTest extends BookCrossingBaseTests {
 
         execute(HttpMethod.POST, userAlexId, 409)
             .expectBody()
-            .jsonPath("$.correspondence")
-            .isEqualTo("Чат с пользователем уже существует");
+            .jsonPath("$.error")
+            .isEqualTo(ErrorMessage.ERROR_1010.getCode());
     }
 
     @Test
@@ -158,8 +159,8 @@ class CorrespondenceControllerTest extends BookCrossingBaseTests {
 
         execute(HttpMethod.DELETE, Integer.MAX_VALUE, 404)
             .expectBody()
-            .jsonPath("$.user")
-            .isEqualTo("Пользователь не найден");
+            .jsonPath("$.error")
+            .isEqualTo(ErrorMessage.ERROR_1003.getCode());
     }
 
     @Test
@@ -171,8 +172,8 @@ class CorrespondenceControllerTest extends BookCrossingBaseTests {
 
         execute(HttpMethod.DELETE, userAlexId, 404)
             .expectBody()
-            .jsonPath("$.correspondence")
-            .isEqualTo("Чата не существует");
+            .jsonPath("$.error")
+            .isEqualTo(ErrorMessage.ERROR_1009.getCode());
     }
 
     @Test
@@ -263,8 +264,8 @@ class CorrespondenceControllerTest extends BookCrossingBaseTests {
 
         execute(userAlex.getUserId(), userAlex.getUserId(), 403)
             .expectBody()
-            .jsonPath("$.correspondence")
-            .isEqualTo("Нет доступа к чату");
+            .jsonPath("$.error")
+            .isEqualTo(ErrorMessage.ERROR_1012.getCode());
     }
 
     @Test
@@ -274,7 +275,8 @@ class CorrespondenceControllerTest extends BookCrossingBaseTests {
 
         execute(Integer.MAX_VALUE, userBotId, 404)
             .expectBody()
-            .jsonPath("$.user").isEqualTo("Пользователь не найден");
+            .jsonPath("$.error")
+            .isEqualTo(ErrorMessage.ERROR_1003.getCode());
     }
 
     @Test
@@ -284,7 +286,8 @@ class CorrespondenceControllerTest extends BookCrossingBaseTests {
 
         execute(userBotId, Integer.MAX_VALUE, 404)
             .expectBody()
-            .jsonPath("$.user").isEqualTo("Пользователь не найден");
+            .jsonPath("$.error")
+            .isEqualTo(ErrorMessage.ERROR_1003.getCode());
     }
 
     @Test
@@ -296,7 +299,8 @@ class CorrespondenceControllerTest extends BookCrossingBaseTests {
 
         execute(userBotId, userAlexId, 404)
             .expectBody()
-            .jsonPath("$.correspondence").isEqualTo("Чата не существует");
+            .jsonPath("$.error")
+            .isEqualTo(ErrorMessage.ERROR_1009.getCode());
     }
 
     @Test

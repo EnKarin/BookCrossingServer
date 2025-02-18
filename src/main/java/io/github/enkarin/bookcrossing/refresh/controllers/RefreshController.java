@@ -1,6 +1,7 @@
 package io.github.enkarin.bookcrossing.refresh.controllers;
 
 import io.github.enkarin.bookcrossing.constant.Constant;
+import io.github.enkarin.bookcrossing.constant.ErrorMessage;
 import io.github.enkarin.bookcrossing.exception.RefreshTokenInvalidException;
 import io.github.enkarin.bookcrossing.exception.TokenNotFoundException;
 import io.github.enkarin.bookcrossing.refresh.service.RefreshService;
@@ -28,6 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Map;
 
 import static io.github.enkarin.bookcrossing.utils.CookieConfigurator.configureRefreshTokenCookie;
+import static io.github.enkarin.bookcrossing.utils.Util.createErrorMap;
 
 @Tag(
     name = "Обновление токенов пользователя",
@@ -66,13 +68,13 @@ public class RefreshController {
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(TokenNotFoundException.class)
-    public Map<String, String> tokenNotFound(final TokenNotFoundException exc) {
-        return Map.of("refresh", exc.getMessage());
+    public Map<String, String> tokenNotFound() {
+        return createErrorMap(ErrorMessage.ERROR_2004);
     }
 
     @ResponseStatus(HttpStatus.GONE)
     @ExceptionHandler(RefreshTokenInvalidException.class)
-    public Map<String, String> tokenInvalid(final RefreshTokenInvalidException exc) {
-        return Map.of("refresh", exc.getMessage());
+    public Map<String, String> tokenInvalid() {
+        return createErrorMap(ErrorMessage.ERROR_2002);
     }
 }

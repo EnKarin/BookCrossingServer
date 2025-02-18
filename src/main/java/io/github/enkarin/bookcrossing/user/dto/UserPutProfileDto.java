@@ -19,16 +19,16 @@ import javax.validation.constraints.Size;
 public class UserPutProfileDto {
 
     @Schema(description = "Имя", example = "Alex")
-    @NotBlank(message = "name: Имя должно содержать хотя бы один видимый символ")
+    @NotBlank(message = "3008")
     private final String name;
 
     @Schema(description = "Старый пароль", example = "123456")
-    @NotBlank(message = "password: Пароль должен содержать хотя бы один видимый символ")
+    @NotBlank(message = "3012")
     private final String oldPassword;
 
     @Schema(description = "Новый пароль", example = "123456s")
-    @NotBlank(message = "password: Пароль должен содержать хотя бы один видимый символ")
-    @Size(min = 6, message = "Пароль должен содержать больше 6 символов")
+    @NotBlank(message = "3009")
+    @Size(min = 6, message = "3010")
     private final String newPassword;
 
     @Schema(description = "Подвержение пароля", example = "123456s")
