@@ -21,7 +21,7 @@ class GenreServiceTest extends BookCrossingBaseTests {
 
     @Test
     void findAllEngGenre() {
-        assertThat(genreService.findAllGenre("eng")).hasSize(101)
+        assertThat(genreService.findAllGenre("en")).hasSize(101)
             .contains(new GenreDto(1, "Novel"), new GenreDto(3, "Story"));
     }
 
