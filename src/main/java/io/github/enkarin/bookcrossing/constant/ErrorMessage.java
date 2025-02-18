@@ -45,7 +45,7 @@ public enum ErrorMessage {
     ERROR_3007("3007", "message: Сообщение должно состоять хотя бы из одного видимого символа", "message: The message must consist of at least one visible character"),
     ERROR_3008("3008", "name: Имя должно содержать хотя бы один видимый символ", "name: The name must consist of at least one visible character"),
     ERROR_3009("3009", "password: Пароль должен содержать хотя бы один видимый символ", "password: The password must consist of at least one visible character"),
-    ERROR_3010("3010", "password: Пароль должен состоять минимум из шести символов", "password: The password must be at least six characters long"),
+    ERROR_3010("3010", "password: Пароль должен состоять минимум из восьми символов", "password: The password must be at least eleven characters long"),
     ERROR_3011("3011", "email: Некорректный почтовый адрес", "email: Invalid email"),
     ERROR_3012("3012", "oldPassword: Пароль должен содержать хотя бы один видимый символ", "oldPassword: The password must consist of at least one visible character");
 

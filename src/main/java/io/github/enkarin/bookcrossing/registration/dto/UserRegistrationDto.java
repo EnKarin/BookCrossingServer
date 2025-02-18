@@ -30,7 +30,7 @@ public class UserRegistrationDto {
 
     @Schema(description = "Пароль", example = "123456")
     @NotBlank(message = "3009")
-    @Size(min = 6, message = "3010")
+    @Size(min = 8, message = "3010")
     private final String password;
 
     @Schema(description = "Подвержение пароля", example = "123456")

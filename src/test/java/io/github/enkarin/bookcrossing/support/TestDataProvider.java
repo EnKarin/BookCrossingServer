@@ -41,8 +41,8 @@ public class TestDataProvider {
     public static UserRegistrationDto.UserRegistrationDtoBuilder<?, ?> prepareUser() {
         return UserRegistrationDto.builder()
             .name("Tester")
-            .password("123456")
-            .passwordConfirm("123456")
+            .password("12345678")
+            .passwordConfirm("12345678")
             .city("Novosibirsk");
     }
 
@@ -61,7 +61,7 @@ public class TestDataProvider {
     @Nonnull
     public static LoginRequest.LoginRequestBuilder<?, ?> prepareLogin() {
         return LoginRequest.builder()
-            .password("123456")
+            .password("12345678")
             .zone(0);
     }
 
@@ -236,7 +236,7 @@ public class TestDataProvider {
         return UserPutProfileDto.builder()
             .name("Bott")
             .city("Moscow")
-            .oldPassword("123456")
+            .oldPassword("12345678")
             .newPassword("123456789")
             .passwordConfirm("123456789");
     }
