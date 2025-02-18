@@ -19,7 +19,7 @@ public class GenreService {
     public GenreDto[] findAllGenre(final String locale) {
         final Function<Genre, String> localeMapper = switch (locale) {
             case "ru" -> Genre::getRuName;
-            case "eng" -> Genre::getEngName;
+            case "en" -> Genre::getEngName;
             default -> throw new LocaleNotFoundException();
         };
         return genreRepository.findAll().stream()
