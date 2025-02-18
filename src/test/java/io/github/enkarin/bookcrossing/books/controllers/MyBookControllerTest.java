@@ -3,15 +3,18 @@ package io.github.enkarin.bookcrossing.books.controllers;
 import io.github.enkarin.bookcrossing.books.dto.BookDto;
 import io.github.enkarin.bookcrossing.books.dto.BookModelDto;
 import io.github.enkarin.bookcrossing.books.service.BookService;
+import io.github.enkarin.bookcrossing.constant.ErrorMessage;
 import io.github.enkarin.bookcrossing.support.BookCrossingBaseTests;
 import io.github.enkarin.bookcrossing.support.TestDataProvider;
 import io.github.enkarin.bookcrossing.user.dto.UserDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -38,13 +41,14 @@ class MyBookControllerTest extends BookCrossingBaseTests {
     void saveBadBookTest() {
         final int user = createAndSaveUser(TestDataProvider.buildBot()).getUserId();
         enabledUser(user);
-        checkPost(generateAccessToken(TestDataProvider.buildAuthBot()),
+        final var map = checkPost(generateAccessToken(TestDataProvider.buildAuthBot()),
             TestDataProvider.prepareBook().author("").build(), 406)
-            .expectBody()
-            .jsonPath("$.title")
-            .isEqualTo("Название должно содержать хотя бы один видимый символ")
-            .jsonPath("$.author")
-            .isEqualTo("Поле \"автор\" должно содержать хотя бы один видимый символ");
+            .expectBody(new ParameterizedTypeReference<Map<String, List<String>>>() {
+            })
+            .returnResult().getResponseBody();
+        assertThat(map)
+            .isNotEmpty()
+            .satisfies(m -> assertThat(m.get("errorList")).containsExactlyInAnyOrder("3005", "3006"));
     }
 
     @Test
@@ -54,7 +58,7 @@ class MyBookControllerTest extends BookCrossingBaseTests {
 
         checkPost(generateAccessToken(TestDataProvider.buildAuthBot()), TestDataProvider.prepareBook().genre(200).title("Книжное...").build(), 400)
             .expectBody()
-            .jsonPath("$.genre").isEqualTo("Указанный жанр не найден");
+            .jsonPath("$.error").isEqualTo(ErrorMessage.ERROR_2007.getCode());
     }
 
     @Test
@@ -113,8 +117,8 @@ class MyBookControllerTest extends BookCrossingBaseTests {
         checkDelete(generateAccessToken(TestDataProvider.buildAuthBot()),
             Integer.MAX_VALUE, 404)
             .expectBody()
-            .jsonPath("$.book")
-            .isEqualTo("Книга не найдена");
+            .jsonPath("$.error")
+            .isEqualTo(ErrorMessage.ERROR_1004.getCode());
     }
 
     private WebTestClient.ResponseSpec checkPost(final String access, final Object body, final int status) {

@@ -21,6 +21,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
 
+import static io.github.enkarin.bookcrossing.constant.ErrorMessage.ERROR_2006;
+import static io.github.enkarin.bookcrossing.utils.Util.createErrorMap;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/genre")
@@ -38,7 +41,7 @@ public class GenreController {
 
     @ExceptionHandler(LocaleNotFoundException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Map<String, String> localeNotFoundExceptingHandler(final LocaleNotFoundException exception) {
-        return Map.of("locale", exception.getMessage());
+    public Map<String, String> localeNotFoundExceptingHandler() {
+        return createErrorMap(ERROR_2006);
     }
 }

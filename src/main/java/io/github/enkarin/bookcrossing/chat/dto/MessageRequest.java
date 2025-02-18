@@ -21,7 +21,7 @@ public class MessageRequest {
 
     @Getter
     @Schema(description = "Текст сообщения")
-    @NotBlank(message = "Сообщение должно состоять хотя бы из одного видимого символа")
+    @NotBlank(message = "3007")
     private final String text;
 
     public UsersCorrKeyDto getUsersCorrKeyDto() {

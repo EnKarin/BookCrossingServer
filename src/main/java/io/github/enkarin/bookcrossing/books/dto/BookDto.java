@@ -20,11 +20,11 @@ import javax.validation.constraints.NotBlank;
 public class BookDto {
 
     @Schema(description = "Название", example = "Портрет Дориана Грея")
-    @NotBlank(message = "title: Название должно содержать хотя бы один видимый символ")
+    @NotBlank(message = "3005")
     protected final String title;
 
     @Schema(description = "Автор", example = "Оскар Уайльд")
-    @NotBlank(message = "author: Поле \"автор\" должно содержать хотя бы один видимый символ")
+    @NotBlank(message = "3006")
     protected final String author;
 
     @Schema(description = "Идентификатор жанра", example = "12")

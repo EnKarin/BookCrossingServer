@@ -33,6 +33,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import static io.github.enkarin.bookcrossing.constant.ErrorMessage.ERROR_2007;
+import static io.github.enkarin.bookcrossing.utils.Util.createErrorMap;
+
 @Tag(
     name = "Раздел работы с книгами",
     description = "Позволяет пользователю управлять своими книгами"
@@ -99,7 +102,7 @@ public class MyBookController {
 
     @ExceptionHandler(GenreNotFoundException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Map<String, String> genreNotFoundExceptionHandler(final GenreNotFoundException exception) {
-        return Map.of("genre", exception.getMessage());
+    public Map<String, String> genreNotFoundExceptionHandler() {
+        return createErrorMap(ERROR_2007);
     }
 }

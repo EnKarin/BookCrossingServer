@@ -5,6 +5,7 @@ import io.github.enkarin.bookcrossing.books.exceptions.NoAccessToAttachmentExcep
 import io.github.enkarin.bookcrossing.books.exceptions.UnsupportedFormatException;
 import io.github.enkarin.bookcrossing.books.service.AttachmentService;
 import io.github.enkarin.bookcrossing.constant.Constant;
+import io.github.enkarin.bookcrossing.constant.ErrorMessage;
 import io.github.enkarin.bookcrossing.exception.AttachmentNotFoundException;
 import io.github.enkarin.bookcrossing.exception.BadRequestException;
 import io.swagger.v3.oas.annotations.Operation;
@@ -32,6 +33,8 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.Map;
+
+import static io.github.enkarin.bookcrossing.utils.Util.createErrorMap;
 
 @Tag(
     name = "Вложения к книгам",
@@ -98,24 +101,24 @@ public class AttachmentController {
     @ResponseStatus(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
     @ExceptionHandler(BadRequestException.class)
     public Map<String, String> badRequest(final BadRequestException exc) {
-        return Map.of("attachment", exc.getMessage());
+        return createErrorMap(exc.getMessage());
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(AttachmentNotFoundException.class)
-    public Map<String, String> attachNotFound(final AttachmentNotFoundException exc) {
-        return Map.of("attachment", exc.getMessage());
+    public Map<String, String> attachNotFound() {
+        return createErrorMap(ErrorMessage.ERROR_1016);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(UnsupportedFormatException.class)
-    public Map<String, String> formatNotFound(final UnsupportedFormatException exception) {
-        return Map.of("format", exception.getMessage());
+    public Map<String, String> formatNotFound() {
+        return createErrorMap(ErrorMessage.ERROR_2005);
     }
 
     @ResponseStatus(HttpStatus.FORBIDDEN)
     @ExceptionHandler(NoAccessToAttachmentException.class)
-    public Map<String, String> attachAccessForbidden(final NoAccessToAttachmentException exception) {
-        return Map.of("id", exception.getMessage());
+    public Map<String, String> attachAccessForbidden() {
+        return createErrorMap(ErrorMessage.ERROR_1008);
     }
 }

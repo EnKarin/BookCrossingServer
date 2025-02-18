@@ -1,5 +1,6 @@
 package io.github.enkarin.bookcrossing.chat.controllers;
 
+import io.github.enkarin.bookcrossing.constant.ErrorMessage;
 import io.github.enkarin.bookcrossing.support.BookCrossingBaseTests;
 import io.github.enkarin.bookcrossing.chat.dto.MessageDto;
 import io.github.enkarin.bookcrossing.chat.dto.MessagePutRequest;
@@ -54,7 +55,7 @@ class MessageControllerTest extends BookCrossingBaseTests {
             .secondUserId(userAlexId)
             .build()), 404)
             .expectBody()
-            .jsonPath("$.correspondence").isEqualTo("Чата не существует");
+            .jsonPath("$.error").isEqualTo(ErrorMessage.ERROR_1009.getCode());
     }
 
     @Test
@@ -68,7 +69,7 @@ class MessageControllerTest extends BookCrossingBaseTests {
 
         execute(HttpMethod.POST, MessageRequest.builder().usersCorrKeyDto(key).build(), 406)
             .expectBody()
-            .jsonPath("$.message").isEqualTo("Сообщение не может быть пустым");
+            .jsonPath("$.error").isEqualTo(ErrorMessage.ERROR_1013.getCode());
     }
 
     @Test
@@ -82,7 +83,7 @@ class MessageControllerTest extends BookCrossingBaseTests {
 
         execute(HttpMethod.POST, TestDataProvider.buildMessageRequest(key), 403)
             .expectBody()
-            .jsonPath("$.correspondence").isEqualTo("Нет доступа к чату");
+            .jsonPath("$.error").isEqualTo(ErrorMessage.ERROR_1012.getCode());
     }
 
     @Test
@@ -117,7 +118,7 @@ class MessageControllerTest extends BookCrossingBaseTests {
 
         execute(HttpMethod.PUT, MessagePutRequest.builder().messageId(messageId).build(), 406)
             .expectBody()
-            .jsonPath("$.message").isEqualTo("Сообщение не может быть пустым");
+            .jsonPath("$.error").isEqualTo(ErrorMessage.ERROR_1013.getCode());
     }
 
     @Test
@@ -127,7 +128,7 @@ class MessageControllerTest extends BookCrossingBaseTests {
 
         execute(HttpMethod.PUT, TestDataProvider.buildMessagePutRequest(Long.MAX_VALUE), 404)
             .expectBody()
-            .jsonPath("$.message").isEqualTo("Сообщения не существует");
+            .jsonPath("$.error").isEqualTo(ErrorMessage.ERROR_1014.getCode());
     }
 
     @Test
@@ -142,7 +143,7 @@ class MessageControllerTest extends BookCrossingBaseTests {
 
         execute(HttpMethod.PUT, TestDataProvider.buildMessagePutRequest(messageId), 403)
             .expectBody()
-            .jsonPath("$.correspondence").isEqualTo("Пользователь не является отправителем");
+            .jsonPath("$.error").isEqualTo(ErrorMessage.ERROR_1015.getCode());
     }
 
     @Test
@@ -175,7 +176,7 @@ class MessageControllerTest extends BookCrossingBaseTests {
 
         execute(messageId, 403)
             .expectBody()
-            .jsonPath("$.correspondence").isEqualTo("Пользователь не является отправителем");
+            .jsonPath("$.error").isEqualTo(ErrorMessage.ERROR_1015.getCode());
     }
 
     @Test
@@ -185,7 +186,7 @@ class MessageControllerTest extends BookCrossingBaseTests {
 
         execute(Long.MAX_VALUE, 404)
             .expectBody()
-            .jsonPath("$.message").isEqualTo("Сообщения не существует");
+            .jsonPath("$.error").isEqualTo(ErrorMessage.ERROR_1014.getCode());
     }
 
     @Test
@@ -231,7 +232,7 @@ class MessageControllerTest extends BookCrossingBaseTests {
 
         executeDeleteForMe(Long.MAX_VALUE, generateAccessToken(TestDataProvider.buildAuthBot()), 404)
             .expectBody()
-            .jsonPath("$.message").isEqualTo("Сообщения не существует");
+            .jsonPath("$.error").isEqualTo(ErrorMessage.ERROR_1014.getCode());
     }
 
     @Test
@@ -246,7 +247,7 @@ class MessageControllerTest extends BookCrossingBaseTests {
 
         executeDeleteForMe(messageId, generateAccessToken(TestDataProvider.buildAuthBot()), 403)
             .expectBody()
-            .jsonPath("$.correspondence").isEqualTo("Нет доступа к чату");
+            .jsonPath("$.error").isEqualTo(ErrorMessage.ERROR_1012.getCode());
     }
 
     private WebTestClient.ResponseSpec execute(final HttpMethod method, final Object body, final int status) {

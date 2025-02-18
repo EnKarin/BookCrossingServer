@@ -18,11 +18,11 @@ import javax.validation.constraints.NotBlank;
 public class LockedUserDto {
 
     @Schema(description = "Логин", example = "LogAll")
-    @NotBlank(message = "login: Логин должен содержать хотя бы один видимый символ")
+    @NotBlank(message = "3003")
     private final String login;
 
     @Schema(description = "Комментарий", example = "Неприемлимые комментарии")
-    @NotBlank(message = "comment: Комментарий должен содержать хотя бы один видимый символ")
+    @NotBlank(message = "3004")
     private final String comment;
 
     @JsonCreator

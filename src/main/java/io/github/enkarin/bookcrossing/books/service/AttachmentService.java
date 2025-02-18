@@ -8,6 +8,7 @@ import io.github.enkarin.bookcrossing.books.model.Attachment;
 import io.github.enkarin.bookcrossing.books.model.Book;
 import io.github.enkarin.bookcrossing.books.repository.AttachmentRepository;
 import io.github.enkarin.bookcrossing.books.repository.BookRepository;
+import io.github.enkarin.bookcrossing.constant.ErrorMessage;
 import io.github.enkarin.bookcrossing.exception.AttachmentNotFoundException;
 import io.github.enkarin.bookcrossing.exception.BadRequestException;
 import io.github.enkarin.bookcrossing.exception.BookNotFoundException;
@@ -54,14 +55,14 @@ public class AttachmentService {
         final Book book = bookRepository.findBooksByOwnerLoginAndBookId(login, attachmentMultipartDto.getBookId()).orElseThrow(BookNotFoundException::new);
         final String fileName = attachmentMultipartDto.getFile().getOriginalFilename();
         if (fileName == null || fileName.isBlank()) {
-            throw new BadRequestException("Имя не должно быть пустым");
+            throw new BadRequestException(ErrorMessage.ERROR_3001.getCode());
         } else {
             final String expansion = fileName.substring(fileName.indexOf('.') + 1).toLowerCase(Locale.ROOT);
             if ("jpeg".equals(expansion) || "jpg".equals(expansion) || "png".equals(expansion) || "bmp".equals(expansion)) {
                 createOrUpdateAttachment(book, attachmentMultipartDto.getFile(), expansion);
                 return BookModelDto.fromBook(bookRepository.getReferenceById(book.getBookId()));
             } else {
-                throw new BadRequestException("Недопустимый формат файла");
+                throw new BadRequestException(ErrorMessage.ERROR_3002.getCode());
             }
         }
     }

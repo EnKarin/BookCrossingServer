@@ -1,5 +1,6 @@
 package io.github.enkarin.bookcrossing.user.controllers;
 
+import io.github.enkarin.bookcrossing.constant.ErrorMessage;
 import io.github.enkarin.bookcrossing.support.BookCrossingBaseTests;
 import io.github.enkarin.bookcrossing.support.TestDataProvider;
 import io.github.enkarin.bookcrossing.user.dto.UserPasswordDto;
@@ -17,8 +18,8 @@ class PasswordResetControllerTest extends BookCrossingBaseTests {
             .exchange()
             .expectStatus().isEqualTo(404)
             .expectBody()
-            .jsonPath("$.user")
-            .isEqualTo("Пользователь не найден");
+            .jsonPath("$.error")
+            .isEqualTo(ErrorMessage.ERROR_1003.getCode());
     }
 
     @Test
@@ -45,14 +46,14 @@ class PasswordResetControllerTest extends BookCrossingBaseTests {
 
     @Test
     void updatePasswordShouldFailWithBindingException() {
-        assertThatReturnException(TestDataProvider.buildInvalidUserPasswordDto(), 409, "$.password", "Пароли не совпадают");
+        assertThatReturnException(TestDataProvider.buildInvalidUserPasswordDto(), 409, "$.error", ErrorMessage.ERROR_1000.getCode());
     }
 
     @Test
     void updatePasswordShouldFailWithTokenInvalid() {
         createAndSaveUser(TestDataProvider.buildBot());
 
-        assertThatReturnException(TestDataProvider.buildUserPasswordDto(), 403, "$.token", "Токен недействителен");
+        assertThatReturnException(TestDataProvider.buildUserPasswordDto(), 403, "$.error", ErrorMessage.ERROR_2003.getCode());
     }
 
     private void assertThatReturnException(final UserPasswordDto userPasswordDto, final int status, final String path, final String message) {

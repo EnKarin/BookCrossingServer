@@ -21,7 +21,7 @@ import javax.validation.constraints.Size;
 public class UserRegistrationDto {
 
     @Schema(description = "Имя", example = "Alex")
-    @NotBlank(message = "name: Имя должно содержать хотя бы один видимый символ")
+    @NotBlank(message = "3008")
     private final String name;
 
     @Schema(description = "Логин", example = "LogAll")
@@ -29,15 +29,15 @@ public class UserRegistrationDto {
     private String login;
 
     @Schema(description = "Пароль", example = "123456")
-    @NotBlank(message = "password: Пароль должен содержать хотя бы один видимый символ")
-    @Size(min = 6, message = "password: Пароль должен содержать больше 6 символов")
+    @NotBlank(message = "3009")
+    @Size(min = 6, message = "3010")
     private final String password;
 
     @Schema(description = "Подвержение пароля", example = "123456")
     private final String passwordConfirm;
 
     @Schema(description = "Почта", example = "al@yandex.ru")
-    @Email(message = "email: Некорректный почтовый адрес")
+    @Email(message = "3011")
     private final String email;
 
     @Schema(description = "Город", example = "Новосибирск")

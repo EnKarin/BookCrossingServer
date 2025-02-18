@@ -4,6 +4,7 @@ import io.github.enkarin.bookcrossing.books.dto.AttachmentMultipartDto;
 import io.github.enkarin.bookcrossing.books.dto.BookModelDto;
 import io.github.enkarin.bookcrossing.books.exceptions.NoAccessToAttachmentException;
 import io.github.enkarin.bookcrossing.books.exceptions.UnsupportedFormatException;
+import io.github.enkarin.bookcrossing.constant.ErrorMessage;
 import io.github.enkarin.bookcrossing.exception.AttachmentNotFoundException;
 import io.github.enkarin.bookcrossing.exception.BadRequestException;
 import io.github.enkarin.bookcrossing.exception.BookNotFoundException;
@@ -96,7 +97,7 @@ class AttachmentServiceTest extends BookCrossingBaseTests {
         final var userLogin = users.get(1).getLogin();
         assertThatThrownBy(() -> attachmentService.saveAttachment(dto, userLogin))
             .isInstanceOf(BadRequestException.class)
-            .hasMessage("Недопустимый формат файла");
+            .hasMessage(ErrorMessage.ERROR_3002.getCode());
     }
 
     @Test
@@ -122,7 +123,7 @@ class AttachmentServiceTest extends BookCrossingBaseTests {
         final var userLogin = users.get(1).getLogin();
         assertThatThrownBy(() -> attachmentService.saveAttachment(dto, userLogin))
             .isInstanceOf(BadRequestException.class)
-            .hasMessage("Имя не должно быть пустым");
+            .hasMessage(ErrorMessage.ERROR_3001.getCode());
     }
 
     @Test
