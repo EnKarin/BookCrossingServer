@@ -69,7 +69,7 @@ class RegistrationControllerTest extends BookCrossingBaseTests {
     @Test
     void registerPasswordConflictExceptionTest() {
         checkPost("/registration",
-            TestDataProvider.prepareUser().login("User").email("t.test@mail.ru").password("7654321").build(),
+            TestDataProvider.prepareUser().login("User").email("t.test@mail.ru").password("87654321").build(),
             409)
             .expectBody()
             .jsonPath("$.error")
