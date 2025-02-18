@@ -36,7 +36,7 @@ class AutocompletionServiceTest extends BookCrossingBaseTests {
         bookService.saveBook(TestDataProvider.buildWolves(), user.getLogin());
         bookService.saveBook(TestDataProvider.buildDorian(), user.getLogin());
 
-        assertThat(autocompletionService.autocompleteBookAuthor("author2")).containsOnly("author2");
+        assertThat(autocompletionService.autocompleteBookAuthor("2")).containsOnly("author2");
     }
 
     @Test
