@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import javax.annotation.concurrent.Immutable;
+import java.util.List;
 
 @Immutable
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -24,7 +25,7 @@ public class BookFiltersRequest {
     private final String author;
 
     @Schema(description = "Идентификатор жанра", example = "22")
-    private final Integer genre;
+    private final List<Integer> genre;
 
     @Schema(description = "Издательство", example = "АСТ")
     private final String publishingHouse;
@@ -34,7 +35,7 @@ public class BookFiltersRequest {
 
     @JsonCreator
     public static BookFiltersRequest create(final String city, final String title, final String author,
-                                            final Integer genre, final String publishingHouse, final int year) {
+                                            final List<Integer> genre, final String publishingHouse, final int year) {
         return new BookFiltersRequest(city, title, author, genre, publishingHouse, year);
     }
 }

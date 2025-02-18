@@ -14,6 +14,7 @@ import io.github.enkarin.bookcrossing.user.repository.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 
@@ -61,9 +62,9 @@ public class BookService {
 
     public List<BookModelDto> filter(final BookFiltersRequest request) {
         List<Book> books = bookRepository.findAll();
-        if (request.getGenre() != null) {
+        if (!CollectionUtils.isEmpty(request.getGenre())) {
             books = books.stream()
-                .filter(book -> book.getGenre().getId() == request.getGenre())
+                .filter(book -> request.getGenre().contains(book.getGenre().getId()))
                 .toList();
         }
         if (request.getAuthor() != null) {
