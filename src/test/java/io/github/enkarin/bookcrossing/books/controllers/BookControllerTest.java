@@ -136,7 +136,7 @@ class BookControllerTest extends BookCrossingBaseTests {
             .method(HttpMethod.POST)
             .uri(uriBuilder -> uriBuilder.pathSegment("books", "searchWithFilters").build())
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(BookFiltersRequest.create("Novosibirsk", "Wolves", "author", 2, "publishing_house", 2000))
+            .bodyValue(BookFiltersRequest.create("Novosibirsk", "Wolves", "author", List.of(2), "publishing_house", 2000))
             .exchange()
             .expectStatus().isEqualTo(200)
             .expectBodyList(BookModelDto.class)

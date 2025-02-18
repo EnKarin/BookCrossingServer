@@ -121,9 +121,24 @@ class BookServiceTest extends BookCrossingBaseTests {
         final int book2 = bookService.saveBook(TestDataProvider.buildWolves(), users.get(1).getLogin()).getBookId();
         bookService.saveBook(TestDataProvider.buildDorian(), users.get(0).getLogin());
 
-        assertThat(bookService.filter(BookFiltersRequest.create("Novosibirsk", "Wolves", "author", 2, "publishing_house", 2000)))
+        assertThat(bookService.filter(BookFiltersRequest.create("Novosibirsk", "Wolves", "author", List.of(2), "publishing_house", 2000)))
             .hasSize(1)
             .containsOnly(TestDataProvider.buildWolves(book2));
+    }
+
+    @Test
+    void filterShouldWorkWithListGenre() {
+        final List<UserDto> users = TestDataProvider.buildUsers().stream()
+            .map(this::createAndSaveUser)
+            .toList();
+
+        final int book1 = bookService.saveBook(TestDataProvider.buildDandelion(), users.get(0).getLogin()).getBookId();
+        final int book2 = bookService.saveBook(TestDataProvider.buildWolves(), users.get(1).getLogin()).getBookId();
+        bookService.saveBook(TestDataProvider.buildDorian(), users.get(0).getLogin());
+
+        assertThat(bookService.filter(BookFiltersRequest.create(null, null, null, List.of(2, 3), null, 0)))
+            .hasSize(2)
+            .containsOnly(TestDataProvider.buildDandelion(book1), TestDataProvider.buildWolves(book2));
     }
 
     @ParameterizedTest
@@ -136,7 +151,7 @@ class BookServiceTest extends BookCrossingBaseTests {
             .build());
         bookService.saveBook(bookDto, user.getLogin());
 
-        assertThat(bookService.filter(BookFiltersRequest.create("Novosibirsk", "Wolves", "author", 2, "publishing_house", 2000)))
+        assertThat(bookService.filter(BookFiltersRequest.create("Novosibirsk", "Wolves", "author", List.of(2), "publishing_house", 2000)))
             .isEmpty();
     }
 
@@ -158,7 +173,7 @@ class BookServiceTest extends BookCrossingBaseTests {
 
         jdbcTemplate.update("update bookcrossing.t_user set account_non_locked = false where user_id = ?", user1.getUserId());
 
-        assertThat(bookService.filter(BookFiltersRequest.create(null, null, null, 0, "publishing_house", 0)))
+        assertThat(bookService.filter(BookFiltersRequest.create(null, null, null, List.of(0), "publishing_house", 0)))
             .isEmpty();
     }
 

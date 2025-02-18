@@ -102,7 +102,7 @@ public class BookController {
             content = {@Content(mediaType = Constant.MEDIA_TYPE, array = @ArraySchema(schema = @Schema(implementation = BookModelDto.class)))})
     })
     @PostMapping("/searchWithFilters")
-    public ResponseEntity<Object[]> searchWithFilters(@RequestBody final BookFiltersRequest filters) {
-        return ResponseEntity.ok(bookService.filter(filters).toArray());
+    public ResponseEntity<List<BookModelDto>> searchWithFilters(@RequestBody final BookFiltersRequest filters) {
+        return ResponseEntity.ok(bookService.filter(filters));
     }
 }
