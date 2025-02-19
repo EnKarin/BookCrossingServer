@@ -19,14 +19,14 @@ class AutocompletionServiceTest extends BookCrossingBaseTests {
         bookService.saveBook(TestDataProvider.buildWolves(), user.getLogin());
         bookService.saveBook(TestDataProvider.buildDorian(), user.getLogin());
 
-        assertThat(autocompletionService.autocompleteBookName("an")).containsOnly("Dandelion", "Dorian");
+        assertThat(autocompletionService.autocompleteBookNameOrAuthor("an")).containsOnly("Dandelion", "Dorian");
     }
 
     @Test
     void autocompleteBookNameWithManyResult() {
         largeInitBook();
 
-        assertThat(autocompletionService.autocompleteBookName("a")).hasSize(5);
+        assertThat(autocompletionService.autocompleteBookNameOrAuthor("a")).hasSize(5);
     }
 
     @Test
@@ -36,14 +36,14 @@ class AutocompletionServiceTest extends BookCrossingBaseTests {
         bookService.saveBook(TestDataProvider.buildWolves(), user.getLogin());
         bookService.saveBook(TestDataProvider.buildDorian(), user.getLogin());
 
-        assertThat(autocompletionService.autocompleteBookAuthor("2")).containsOnly("author2");
+        assertThat(autocompletionService.autocompleteBookNameOrAuthor("2")).containsOnly("author2");
     }
 
     @Test
     void autocompleteBookAuthorWithManyResult() {
         largeInitBook();
 
-        assertThat(autocompletionService.autocompleteBookAuthor("author")).hasSize(5);
+        assertThat(autocompletionService.autocompleteBookNameOrAuthor("author")).hasSize(5);
     }
 
     private void largeInitBook() {

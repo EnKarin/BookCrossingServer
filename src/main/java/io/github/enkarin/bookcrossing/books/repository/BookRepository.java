@@ -17,7 +17,7 @@ public interface BookRepository extends JpaRepository<Book, Integer> {
     List<Book> findBooksByOwnerUserId(int userId);
 
     @Query(value = "SELECT * FROM bookcrossing.t_book WHERE lower(title) LIKE lower(concat('%', ?1,'%')) LIMIT 5", nativeQuery = true)
-    List<Book> findBooksByPartOfName(String partName);
+    List<Book> findBooksByPartOfNameOrAuthor(String partName);
 
     @Query(value = "SELECT * FROM bookcrossing.t_book WHERE author IS NOT NULL AND lower(author) LIKE lower(concat('%', ?1,'%')) LIMIT 5", nativeQuery = true)
     List<Book> findBooksByPartOfAuthor(String partName);

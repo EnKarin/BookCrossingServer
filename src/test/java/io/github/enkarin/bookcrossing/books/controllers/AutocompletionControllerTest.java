@@ -18,7 +18,7 @@ class AutocompletionControllerTest extends BookCrossingBaseTests {
 
         final var response = webClient.get()
             .uri(uriBuilder -> uriBuilder
-                .pathSegment("books", "autocompletion", "title")
+                .pathSegment("books", "autocompletion")
                 .queryParam("name", "i")
                 .build())
             .exchange()
@@ -37,7 +37,7 @@ class AutocompletionControllerTest extends BookCrossingBaseTests {
 
         final var response = webClient.get()
             .uri(uriBuilder -> uriBuilder
-                .pathSegment("books", "autocompletion", "author")
+                .pathSegment("books", "autocompletion")
                 .queryParam("name", "2")
                 .build())
             .exchange()
