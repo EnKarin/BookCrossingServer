@@ -54,7 +54,7 @@ class AdminServiceTest extends BookCrossingBaseTests {
         final List<UserDto> users = TestDataProvider.buildUsers().stream()
             .map(this::createAndSaveUser)
             .toList();
-        assertThat(adminService.findAllUsers(0,0, 5))
+        assertThat(adminService.findAllUsers(0, 0, 5))
             .hasSize(3)
             .hasSameElementsAs(users.stream()
                 .map(u -> InfoUsersDto.fromUserDto(u, 0))
