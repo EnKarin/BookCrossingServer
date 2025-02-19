@@ -6,21 +6,22 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class AutocompletionService {
     private final BookRepository bookRepository;
 
-    public String[] autocompleteBookName(final String partName) {
-        return bookRepository.findBooksByPartOfName(partName).stream()
+    public List<String> autocompleteBookNameOrAuthor(final String partName) {
+        final List<String> result = bookRepository.findBooksByPartOfNameOrAuthor(partName).stream()
             .map(Book::getTitle)
-            .toArray(String[]::new);
-    }
-
-    public String[] autocompleteBookAuthor(final String partName) {
-        return bookRepository.findBooksByPartOfAuthor(partName).stream()
+            .collect(Collectors.toList());
+        result.addAll(bookRepository.findBooksByPartOfAuthor(partName).stream()
             .map(Book::getAuthor)
-            .toArray(String[]::new);
+            .toList());
+        return result.subList(0, Math.min(result.size(), 5));
     }
 }

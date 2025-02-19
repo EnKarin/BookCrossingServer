@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @Tag(name = "Автодополнение", description = "Позволяет получить существующие в сервисе наименования по подстроке")
 @RestController
 @RequiredArgsConstructor
@@ -21,19 +23,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class AutocompletionController {
     private final AutocompletionService autocompletionService;
 
-    @Operation(summary = "Автодополнение названия книги", description = "Позволяет получить существующие в системе названия книг по части названия")
-    @ApiResponse(responseCode = "200", description = "Имеющиеся в системе названия книг",
+    @Operation(summary = "Автодополнение названия книги и имён авторов", description = "Позволяет получить существующие в системе названия книг и авторов по части названия")
+    @ApiResponse(responseCode = "200", description = "Имеющиеся в системе названия книг и авторов",
         content = @Content(mediaType = Constant.MEDIA_TYPE, array = @ArraySchema(schema = @Schema(implementation = String.class))))
-    @GetMapping("/title")
-    public String[] bookNameAutocompletion(@RequestParam final String name) {
-        return autocompletionService.autocompleteBookName(name);
-    }
-
-    @Operation(summary = "Автодополения имён авторов", description = "Позволяет получить существующих в системе авторов по части имени")
-    @ApiResponse(responseCode = "200", description = "Имеющиеся в системе авторы",
-        content = @Content(mediaType = Constant.MEDIA_TYPE, array = @ArraySchema(schema = @Schema(implementation = String.class))))
-    @GetMapping("/author")
-    public String[] bookAuthorAutocompletion(@RequestParam final String name) {
-        return autocompletionService.autocompleteBookAuthor(name);
+    @GetMapping
+    public List<String> bookNameOrAuthorAutocompletion(@RequestParam final String name) {
+        return autocompletionService.autocompleteBookNameOrAuthor(name);
     }
 }
