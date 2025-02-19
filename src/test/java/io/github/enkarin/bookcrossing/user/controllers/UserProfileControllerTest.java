@@ -117,14 +117,38 @@ class UserProfileControllerTest extends BookCrossingBaseTests {
                 .pathSegment("user", "profile")
                 .build())
             .headers(headers -> headers.setBearerAuth(generateAccessToken(TestDataProvider.buildAuthBot())))
-            .bodyValue(TestDataProvider.preparePutProfile().oldPassword("").build())
-            .exchange()
-            .expectStatus().isEqualTo(406).expectBody(new ParameterizedTypeReference<Map<String, List<String>>>() {
+            .bodyValue(TestDataProvider.preparePutProfile().newPassword("123").build())
+            .exchange().expectStatus()
+            .isEqualTo(406).expectBody(new ParameterizedTypeReference<Map<String, List<String>>>() {
             }).returnResult().getResponseBody();
+
         assertThat(map)
             .isNotEmpty()
             .extracting(m -> m.get("errorList"))
-            .isEqualTo(List.of("3012"));
+            .isEqualTo(List.of("3010"));
+    }
+
+    @Test
+    void putProfileShouldWorkWhenUpdateOneField() {
+        final var userBot = createAndSaveUser(TestDataProvider.buildBot());
+        enabledUser(userBot.getUserId());
+
+        final UserPutProfileDto putProfileDto = UserPutProfileDto.builder().name("Andrianov").build();
+        final UserProfileDto newProfile = webClient.put()
+            .uri(uriBuilder -> uriBuilder
+                .pathSegment("user", "profile")
+                .build())
+            .headers(headers -> headers.setBearerAuth(generateAccessToken(TestDataProvider.buildAuthBot())))
+            .bodyValue(putProfileDto)
+            .exchange()
+            .expectStatus().isEqualTo(200)
+            .expectBody(UserProfileDto.class)
+            .returnResult().getResponseBody();
+
+        assertThat(newProfile)
+            .isNotNull()
+            .extracting(UserProfileDto::getName, UserProfileDto::getCity)
+            .containsExactly(putProfileDto.getName(), userBot.getCity());
     }
 
     @Test

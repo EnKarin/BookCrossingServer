@@ -28,6 +28,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
@@ -110,18 +111,18 @@ public class UserService {
 
     @Transactional
     public UserProfileDto putUserInfo(final UserPutProfileDto userPutProfileDto, final String login) {
-        if (!userPutProfileDto.getNewPassword().equals(userPutProfileDto.getPasswordConfirm())) {
-            throw new PasswordsDontMatchException();
-        }
-        User user = userRepository.findByLogin(login).orElseThrow(UserNotFoundException::new);
-        if (bCryptPasswordEncoder.matches(userPutProfileDto.getOldPassword(), user.getPassword())) {
+        final User user = userRepository.findByLogin(login).orElseThrow(UserNotFoundException::new);
+        if (Objects.nonNull(userPutProfileDto.getName())) {
             user.setName(userPutProfileDto.getName());
-            user.setCity(userPutProfileDto.getCity());
-            user.setPassword(bCryptPasswordEncoder.encode(userPutProfileDto.getNewPassword()));
-            user = userRepository.save(user);
-            return UserProfileDto.fromUser(user);
         }
-        throw new InvalidPasswordException();
+        if (Objects.nonNull(userPutProfileDto.getCity())) {
+           user.setCity(userPutProfileDto.getCity());
+        }
+        if (Objects.nonNull(userPutProfileDto.getNewPassword())) {
+           checkAndUpdatePassword(user, userPutProfileDto);
+        }
+
+        return UserProfileDto.fromUser(user);
     }
 
     @Transactional
@@ -148,5 +149,16 @@ public class UserService {
             possibleLogin = UUID.randomUUID().toString();
         } while (userRepository.findByLogin(possibleLogin).isPresent());
         return possibleLogin;
+    }
+
+    private void checkAndUpdatePassword(final User user, final UserPutProfileDto userPutProfileDto) {
+        if (!userPutProfileDto.getNewPassword().equals(userPutProfileDto.getPasswordConfirm())) {
+            throw new PasswordsDontMatchException();
+        }
+        if (bCryptPasswordEncoder.matches(userPutProfileDto.getOldPassword(), user.getPassword())) {
+            user.setPassword(bCryptPasswordEncoder.encode(userPutProfileDto.getNewPassword()));
+        } else {
+            throw new InvalidPasswordException();
+        }
     }
 }
