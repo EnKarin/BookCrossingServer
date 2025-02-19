@@ -43,8 +43,10 @@ public class BookService {
         return BookModelDto.fromBook(bookRepository.save(book));
     }
 
-    public List<BookModelDto> findBookForOwner(final String login) {
+    public List<BookModelDto> findBookForOwner(final String login, final int pageNumber, final int pageSize) {
         return userRepository.findByLogin(login).orElseThrow().getBooks().stream()
+            .skip((long) pageNumber * pageSize)
+            .limit(pageSize)
             .map(BookModelDto::fromBook)
             .toList();
     }

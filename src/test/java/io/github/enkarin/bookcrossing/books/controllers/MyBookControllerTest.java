@@ -103,11 +103,9 @@ class MyBookControllerTest extends BookCrossingBaseTests {
         final List<BookModelDto> book = TestDataProvider.buildBooks().stream()
             .map(b -> bookService.saveBook(b, user.getLogin()))
             .toList();
-        checkDelete(generateAccessToken(TestDataProvider.buildAuthBot()),
-            book.get(0).getBookId(), 200);
-        assertThat(bookService.findBookForOwner(user.getLogin())).hasSize(2);
-        assertThat(jdbcTemplate.queryForObject("select exists(select * from bookcrossing.t_book where book_id=?)", Boolean.class,
-            book.get(0).getBookId())).isFalse();
+        checkDelete(generateAccessToken(TestDataProvider.buildAuthBot()), book.get(0).getBookId(), 200);
+        assertThat(bookService.findBookForOwner(user.getLogin(), 0, 2)).hasSize(2);
+        assertThat(jdbcTemplate.queryForObject("select exists(select * from bookcrossing.t_book where book_id=?)", Boolean.class, book.get(0).getBookId())).isFalse();
     }
 
     @Test
@@ -133,7 +131,11 @@ class MyBookControllerTest extends BookCrossingBaseTests {
 
     private WebTestClient.ResponseSpec checkGet(final String access) {
         return webClient.get()
-            .uri("/user/myBook")
+            .uri(uriBuilder -> uriBuilder
+                .pathSegment("user", "myBook")
+                .queryParam("pageNumber", 0)
+                .queryParam("pageSize", 10)
+                .build())
             .headers(headers -> headers.setBearerAuth(access))
             .exchange()
             .expectStatus().isEqualTo(200);

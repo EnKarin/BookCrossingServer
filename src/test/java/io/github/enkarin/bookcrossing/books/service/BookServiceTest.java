@@ -48,10 +48,28 @@ class BookServiceTest extends BookCrossingBaseTests {
         final int book1 = bookService.saveBook(books.get(1), users.get(1).getLogin()).getBookId();
         final int book2 = bookService.saveBook(books.get(2), users.get(1).getLogin()).getBookId();
 
-        assertThat(bookService.findBookForOwner(users.get(1).getLogin()))
+        assertThat(bookService.findBookForOwner(users.get(1).getLogin(), 0, 3))
             .hasSize(2)
             .containsExactlyInAnyOrder(TestDataProvider.buildDandelion(book1),
                 TestDataProvider.buildWolves(book2));
+    }
+
+
+    @Test
+    void findBookWithPaginationForOwnerShouldWork() {
+        final List<UserDto> users = TestDataProvider.buildUsers().stream()
+            .map(this::createAndSaveUser)
+            .toList();
+
+        final List<BookDto> books = TestDataProvider.buildBooks();
+
+        bookService.saveBook(books.get(0), users.get(0).getLogin());
+        final int book1 = bookService.saveBook(books.get(1), users.get(1).getLogin()).getBookId();
+        final int book2 = bookService.saveBook(books.get(2), users.get(1).getLogin()).getBookId();
+
+        assertThat(bookService.findBookForOwner(users.get(1).getLogin(), 0, 1))
+            .hasSize(1)
+            .containsAnyOf(TestDataProvider.buildDandelion(book1), TestDataProvider.buildWolves(book2));
     }
 
     @Test
@@ -62,7 +80,7 @@ class BookServiceTest extends BookCrossingBaseTests {
 
         TestDataProvider.buildBooks().forEach(b -> bookService.saveBook(b, users.get(0).getLogin()));
 
-        assertThat(bookService.findBookForOwner(users.get(1).getLogin())).isEmpty();
+        assertThat(bookService.findBookForOwner(users.get(1).getLogin(), 0, 10)).isEmpty();
     }
 
     @Test

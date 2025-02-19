@@ -79,8 +79,8 @@ public class MyBookController {
             content = {@Content(mediaType = Constant.MEDIA_TYPE, array = @ArraySchema(schema = @Schema(implementation = BookModelDto.class)))})}
     )
     @GetMapping
-    public ResponseEntity<BookModelDto[]> bookList(final Principal principal) {
-        return ResponseEntity.ok(bookService.findBookForOwner(principal.getName()).toArray(BookModelDto[]::new));
+    public ResponseEntity<List<BookModelDto>> bookList(@RequestParam final int pageNumber, @RequestParam final int pageSize, final Principal principal) {
+        return ResponseEntity.ok(bookService.findBookForOwner(principal.getName(), pageNumber, pageSize));
     }
 
     @Operation(
