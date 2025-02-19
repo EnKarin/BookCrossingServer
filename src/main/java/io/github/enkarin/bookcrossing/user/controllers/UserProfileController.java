@@ -118,8 +118,8 @@ public class UserProfileController {
             content = {@Content(mediaType = Constant.MEDIA_TYPE, array = @ArraySchema(schema = @Schema(implementation = UserPublicProfileDto.class)))})
     })
     @GetMapping("/users")
-    public ResponseEntity<Object[]> getAllProfile(@RequestParam final int zone) {
-        return ResponseEntity.ok(userService.findAllUsers(zone).toArray());
+    public ResponseEntity<List<UserPublicProfileDto>> getAllProfile(@RequestParam final int zone, @RequestParam final int pageNumber, @RequestParam final int pageSize) {
+        return ResponseEntity.ok(userService.findAllUsers(zone, pageNumber, pageSize));
     }
 
     @ResponseStatus(HttpStatus.PRECONDITION_FAILED)

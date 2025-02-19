@@ -93,7 +93,7 @@ class UserServiceTest extends BookCrossingBaseTests {
 
     @Test
     void findAllIsEmptyListTest() {
-        assertThat(userService.findAllUsers(GM_TIME_ZERO)).isEmpty();
+        assertThat(userService.findAllUsers(GM_TIME_ZERO, 0, 1)).isEmpty();
     }
 
     @Test
@@ -102,10 +102,29 @@ class UserServiceTest extends BookCrossingBaseTests {
             .map(this::createAndSaveUser)
             .toList();
 
-        final var foundUsers = userService.findAllUsers(GM_TIME_ZERO);
+        final var foundUsers = userService.findAllUsers(GM_TIME_ZERO, 0, 3);
         assertThat(foundUsers)
             .hasSize(3)
             .hasSameSizeAs(users)
+            .as("Rows should be sorted by user_id")
+            .isSortedAccordingTo(Comparator.comparing(UserPublicProfileDto::getUserId));
+
+        final var usersIterator = users.iterator();
+        final var foundIterator = foundUsers.iterator();
+        while (usersIterator.hasNext() && foundIterator.hasNext()) {
+            checkUserDTOAndUserPublicPublicProfileDTO(usersIterator.next(), foundIterator.next());
+        }
+    }
+
+    @Test
+    void findAllTestWithPagination() {
+        final List<UserDto> users = TestDataProvider.buildUsers().stream()
+            .map(this::createAndSaveUser)
+            .toList();
+
+        final var foundUsers = userService.findAllUsers(GM_TIME_ZERO, 0, 2);
+        assertThat(foundUsers)
+            .hasSize(2)
             .as("Rows should be sorted by user_id")
             .isSortedAccordingTo(Comparator.comparing(UserPublicProfileDto::getUserId));
 

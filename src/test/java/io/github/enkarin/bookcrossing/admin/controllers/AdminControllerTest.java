@@ -12,7 +12,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 
 import javax.annotation.Nonnull;
-
 import java.util.List;
 import java.util.Map;
 
@@ -30,6 +29,8 @@ class AdminControllerTest extends BookCrossingBaseTests {
             .uri(uriBuilder -> uriBuilder
                 .pathSegment("adm")
                 .queryParam("zone", 0)
+                .queryParam("pageNumber", 0)
+                .queryParam("pageSize", 10)
                 .build())
             .headers(this::setBearerAuth)
             .exchange()
@@ -47,6 +48,8 @@ class AdminControllerTest extends BookCrossingBaseTests {
             .uri(uriBuilder -> uriBuilder
                 .pathSegment("adm")
                 .queryParam("zone", 0)
+                .queryParam("pageNumber", 0)
+                .queryParam("pageSize", 10)
                 .build())
             .headers(this::setBearerAuth)
             .exchange()

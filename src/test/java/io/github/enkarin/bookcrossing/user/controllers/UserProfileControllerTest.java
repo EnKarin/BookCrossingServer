@@ -161,6 +161,8 @@ class UserProfileControllerTest extends BookCrossingBaseTests {
             .uri(uriBuilder -> uriBuilder
                 .pathSegment("user", "profile", "users")
                 .queryParam("zone", 0)
+                .queryParam("pageNumber", 0)
+                .queryParam("pageSize", 10)
                 .build())
             .headers(headers -> headers.setBearerAuth(generateAccessToken(TestDataProvider.buildAuthBot())))
             .exchange()

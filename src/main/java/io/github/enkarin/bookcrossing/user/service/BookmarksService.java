@@ -44,8 +44,10 @@ public class BookmarksService {
         throw new BookNotFoundException();
     }
 
-    public List<BookModelDto> getAll(final String login) {
+    public List<BookModelDto> getAll(final String login, final int pageNumber, final int pageSize) {
         return userRepository.findByLogin(login).orElseThrow().getBookmarks().stream()
+            .skip((long) pageNumber * pageSize)
+            .limit(pageSize)
             .map(BookModelDto::fromBook)
             .toList();
     }
