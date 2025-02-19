@@ -80,7 +80,7 @@ public class BookmarksController {
     }
     )
     @GetMapping
-    public ResponseEntity<List<BookModelDto>> getAll(final Principal principal) {
-        return ResponseEntity.ok(bookmarksService.getAll(principal.getName()));
+    public ResponseEntity<List<BookModelDto>> getAll(@RequestParam final int pageNumber, @RequestParam final int pageSize, final Principal principal) {
+        return ResponseEntity.ok(bookmarksService.getAll(principal.getName(), pageNumber, pageSize));
     }
 }

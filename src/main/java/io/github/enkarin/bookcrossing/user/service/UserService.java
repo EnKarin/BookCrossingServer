@@ -88,8 +88,8 @@ public class UserService {
         return UserProfileDto.fromUser(user);
     }
 
-    public List<UserPublicProfileDto> findAllUsers(final int zone) {
-        return userRepository.findByUserRolesOrderByUserId("ROLE_USER").stream()
+    public List<UserPublicProfileDto> findAllUsers(final int zone, final int pageNumber, final int pageSize) {
+        return userRepository.findByUserRolesOrderByUserId("ROLE_USER", pageNumber, pageSize).stream()
             .map(u -> UserPublicProfileDto.fromUser(u, zone))
             .toList();
     }

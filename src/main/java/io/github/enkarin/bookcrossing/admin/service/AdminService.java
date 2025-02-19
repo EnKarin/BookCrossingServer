@@ -38,8 +38,8 @@ public class AdminService {
         return user.isAccountNonLocked();
     }
 
-    public List<InfoUsersDto> findAllUsers(final int zone) {
-        return userRepository.findByUserRolesOrderByUserId("ROLE_USER").stream()
+    public List<InfoUsersDto> findAllUsers(final int zone, final int pageNumber, final int pageSize) {
+        return userRepository.findByUserRolesOrderByUserId("ROLE_USER", pageNumber, pageSize).stream()
             .map(u -> InfoUsersDto.fromUser(u, zone))
             .toList();
     }
