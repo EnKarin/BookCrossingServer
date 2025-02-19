@@ -8,7 +8,6 @@ import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 
 import javax.annotation.concurrent.Immutable;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 @SuperBuilder
@@ -19,16 +18,13 @@ import javax.validation.constraints.Size;
 public class UserPutProfileDto {
 
     @Schema(description = "Имя", example = "Alex")
-    @NotBlank(message = "3008")
     private final String name;
 
     @Schema(description = "Старый пароль", example = "123456")
-    @NotBlank(message = "3012")
     private final String oldPassword;
 
     @Schema(description = "Новый пароль", example = "123456s")
-    @NotBlank(message = "3009")
-    @Size(min = 6, message = "3010")
+    @Size(min = 8, message = "3010")
     private final String newPassword;
 
     @Schema(description = "Подвержение пароля", example = "123456s")
