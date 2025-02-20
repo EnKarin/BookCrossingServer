@@ -11,6 +11,7 @@ import io.github.enkarin.bookcrossing.user.dto.UserDto;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.springframework.data.domain.PageRequest;
 
 import java.util.List;
 import java.util.stream.Stream;
@@ -48,10 +49,28 @@ class BookServiceTest extends BookCrossingBaseTests {
         final int book1 = bookService.saveBook(books.get(1), users.get(1).getLogin()).getBookId();
         final int book2 = bookService.saveBook(books.get(2), users.get(1).getLogin()).getBookId();
 
-        assertThat(bookService.findBookForOwner(users.get(1).getLogin()))
+        assertThat(bookService.findBookForOwner(users.get(1).getLogin(), 0, 3))
             .hasSize(2)
             .containsExactlyInAnyOrder(TestDataProvider.buildDandelion(book1),
                 TestDataProvider.buildWolves(book2));
+    }
+
+
+    @Test
+    void findBookWithPaginationForOwnerShouldWork() {
+        final List<UserDto> users = TestDataProvider.buildUsers().stream()
+            .map(this::createAndSaveUser)
+            .toList();
+
+        final List<BookDto> books = TestDataProvider.buildBooks();
+
+        bookService.saveBook(books.get(0), users.get(0).getLogin());
+        final int book1 = bookService.saveBook(books.get(1), users.get(1).getLogin()).getBookId();
+        final int book2 = bookService.saveBook(books.get(2), users.get(1).getLogin()).getBookId();
+
+        assertThat(bookService.findBookForOwner(users.get(1).getLogin(), 0, 1))
+            .hasSize(1)
+            .containsAnyOf(TestDataProvider.buildDandelion(book1), TestDataProvider.buildWolves(book2));
     }
 
     @Test
@@ -62,7 +81,7 @@ class BookServiceTest extends BookCrossingBaseTests {
 
         TestDataProvider.buildBooks().forEach(b -> bookService.saveBook(b, users.get(0).getLogin()));
 
-        assertThat(bookService.findBookForOwner(users.get(1).getLogin())).isEmpty();
+        assertThat(bookService.findBookForOwner(users.get(1).getLogin(), 0, 10)).isEmpty();
     }
 
     @Test
@@ -80,11 +99,25 @@ class BookServiceTest extends BookCrossingBaseTests {
     void findByUserIdShouldWork() {
         final UserDto user = createAndSaveUser(TestDataProvider.buildBot());
         final int book = bookService.saveBook(TestDataProvider.buildDorian(), user.getLogin()).getBookId();
-        assertThat(bookService.findBookByOwnerId(String.valueOf(user.getUserId())))
+
+        assertThat(bookService.findBookByOwnerId(String.valueOf(user.getUserId()), PageRequest.of(0, 10)))
             .hasSize(1)
             .first()
             .extracting(BookModelDto::getBookId)
             .isEqualTo(book);
+    }
+
+    @Test
+    void findByUserIdWithPaginationShouldWork() {
+        final UserDto user = createAndSaveUser(TestDataProvider.buildBot());
+        bookService.saveBook(TestDataProvider.buildDorian(), user.getLogin());
+        final int secondBook = bookService.saveBook(TestDataProvider.buildDorian(), user.getLogin()).getBookId();
+
+        assertThat(bookService.findBookByOwnerId(String.valueOf(user.getUserId()), PageRequest.of(1, 1)))
+            .hasSize(1)
+            .first()
+            .extracting(BookModelDto::getBookId)
+            .isEqualTo(secondBook);
     }
 
     @Test
@@ -106,7 +139,7 @@ class BookServiceTest extends BookCrossingBaseTests {
         final int book3 = bookService.saveBook(TestDataProvider.buildDorian(), users.get(0).getLogin())
             .getBookId();
 
-        assertThat(bookService.filter(BookFiltersRequest.create(null, null, "author", null, null, 0)))
+        assertThat(bookService.filter(BookFiltersRequest.create(null, null, "author", null, null, 0, 0, 10)))
             .hasSize(2)
             .containsExactlyInAnyOrder(TestDataProvider.buildWolves(book2), TestDataProvider.buildDorian(book3));
     }
@@ -121,7 +154,8 @@ class BookServiceTest extends BookCrossingBaseTests {
         final int book2 = bookService.saveBook(TestDataProvider.buildWolves(), users.get(1).getLogin()).getBookId();
         bookService.saveBook(TestDataProvider.buildDorian(), users.get(0).getLogin());
 
-        assertThat(bookService.filter(BookFiltersRequest.create("Novosibirsk", "Wolves", "author", List.of(2), "publishing_house", 2000)))
+        assertThat(bookService.filter(BookFiltersRequest
+            .create("Novosibirsk", "Wolves", "author", List.of(2), "publishing_house", 2000, 0, 10)))
             .hasSize(1)
             .containsOnly(TestDataProvider.buildWolves(book2));
     }
@@ -136,9 +170,24 @@ class BookServiceTest extends BookCrossingBaseTests {
         final int book2 = bookService.saveBook(TestDataProvider.buildWolves(), users.get(1).getLogin()).getBookId();
         bookService.saveBook(TestDataProvider.buildDorian(), users.get(0).getLogin());
 
-        assertThat(bookService.filter(BookFiltersRequest.create(null, null, null, List.of(2, 3), null, 0)))
+        assertThat(bookService.filter(BookFiltersRequest.create(null, null, null, List.of(2, 3), null, 0, 0, 10)))
             .hasSize(2)
             .containsOnly(TestDataProvider.buildDandelion(book1), TestDataProvider.buildWolves(book2));
+    }
+
+    @Test
+    void filterWithPaginationShouldWorkWithListGenre() {
+        final List<UserDto> users = TestDataProvider.buildUsers().stream()
+            .map(this::createAndSaveUser)
+            .toList();
+
+        final int book1 = bookService.saveBook(TestDataProvider.buildDandelion(), users.get(0).getLogin()).getBookId();
+        bookService.saveBook(TestDataProvider.buildWolves(), users.get(1).getLogin());
+        bookService.saveBook(TestDataProvider.buildDorian(), users.get(0).getLogin());
+
+        assertThat(bookService.filter(BookFiltersRequest.create(null, null, null, List.of(2, 3), null, 0, 0, 1)))
+            .hasSize(1)
+            .containsOnly(TestDataProvider.buildDandelion(book1));
     }
 
     @ParameterizedTest
@@ -151,7 +200,8 @@ class BookServiceTest extends BookCrossingBaseTests {
             .build());
         bookService.saveBook(bookDto, user.getLogin());
 
-        assertThat(bookService.filter(BookFiltersRequest.create("Novosibirsk", "Wolves", "author", List.of(2), "publishing_house", 2000)))
+        assertThat(bookService.filter(BookFiltersRequest
+            .create("Novosibirsk", "Wolves", "author", List.of(2), "publishing_house", 2000, 0, 10)))
             .isEmpty();
     }
 
@@ -173,7 +223,8 @@ class BookServiceTest extends BookCrossingBaseTests {
 
         jdbcTemplate.update("update bookcrossing.t_user set account_non_locked = false where user_id = ?", user1.getUserId());
 
-        assertThat(bookService.filter(BookFiltersRequest.create(null, null, null, List.of(0), "publishing_house", 0)))
+        assertThat(bookService.filter(BookFiltersRequest
+            .create(null, null, null, List.of(0), "publishing_house", 0, 0, 10)))
             .isEmpty();
     }
 
@@ -198,7 +249,7 @@ class BookServiceTest extends BookCrossingBaseTests {
 
     @Test
     void findAllShouldWorkWithEmptyBookList() {
-        assertThat(bookService.findAll()).isEmpty();
+        assertThat(bookService.findAll(0, 10)).isEmpty();
     }
 
     @Test
@@ -211,9 +262,25 @@ class BookServiceTest extends BookCrossingBaseTests {
         final int book2 = bookService.saveBook(TestDataProvider.buildDandelion(), users.get(1).getLogin()).getBookId();
         final int book3 = bookService.saveBook(TestDataProvider.buildWolves(), users.get(1).getLogin()).getBookId();
 
-        assertThat(bookService.findAll())
+        assertThat(bookService.findAll(0, 10))
             .hasSize(3)
             .hasSameElementsAs(TestDataProvider.buildBookModels(book1, book2, book3));
+    }
+
+    @Test
+    void findAllWithPaginationShouldWork() {
+        final List<UserDto> users = TestDataProvider.buildUsers().stream()
+            .map(this::createAndSaveUser)
+            .toList();
+
+        final int book1 = bookService.saveBook(TestDataProvider.buildDorian(), users.get(0).getLogin()).getBookId();
+        bookService.saveBook(TestDataProvider.buildDandelion(), users.get(1).getLogin());
+        bookService.saveBook(TestDataProvider.buildWolves(), users.get(1).getLogin());
+
+        assertThat(bookService.findAll(0, 1))
+            .hasSize(1)
+            .extracting(BookModelDto::getBookId)
+            .containsOnly(book1);
     }
 
     @Test
@@ -226,7 +293,7 @@ class BookServiceTest extends BookCrossingBaseTests {
         final int book1 = bookService.saveBook(TestDataProvider.buildWolves(), users.get(1).getLogin()).getBookId();
         bookService.saveBook(TestDataProvider.buildDorian(), users.get(0).getLogin());
 
-        assertThat(bookService.findByTitleOrAuthor("Wolves"))
+        assertThat(bookService.findByTitleOrAuthor("Wolves", 0, 10))
             .hasSize(1)
             .containsOnly(TestDataProvider.buildWolves(book1));
     }
@@ -239,7 +306,7 @@ class BookServiceTest extends BookCrossingBaseTests {
 
         final int bookid = bookService.saveBook(TestDataProvider.buildDandelion(), users.get(0).getLogin()).getBookId();
 
-        assertThat(bookService.findByTitleOrAuthor("AUTHOR2"))
+        assertThat(bookService.findByTitleOrAuthor("AUTHOR2", 0, 10))
             .hasSize(1)
             .first()
             .isEqualTo(TestDataProvider.buildDandelion(bookid));
@@ -255,6 +322,6 @@ class BookServiceTest extends BookCrossingBaseTests {
         bookService.saveBook(TestDataProvider.buildWolves(), users.get(1).getLogin());
         bookService.saveBook(TestDataProvider.buildDorian(), users.get(0).getLogin());
 
-        assertThat(bookService.findByTitleOrAuthor("tit")).isEmpty();
+        assertThat(bookService.findByTitleOrAuthor("tit", 0, 10)).isEmpty();
     }
 }

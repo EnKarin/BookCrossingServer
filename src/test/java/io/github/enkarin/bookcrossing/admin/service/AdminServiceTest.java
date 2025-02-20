@@ -10,6 +10,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -52,7 +54,7 @@ class AdminServiceTest extends BookCrossingBaseTests {
         final List<UserDto> users = TestDataProvider.buildUsers().stream()
             .map(this::createAndSaveUser)
             .toList();
-        assertThat(adminService.findAllUsers(0))
+        assertThat(adminService.findAllUsers(0, 0, 5))
             .hasSize(3)
             .hasSameElementsAs(users.stream()
                 .map(u -> InfoUsersDto.fromUserDto(u, 0))
@@ -60,7 +62,18 @@ class AdminServiceTest extends BookCrossingBaseTests {
     }
 
     @Test
+    void findAllUsersWithPagination() {
+        final Set<InfoUsersDto> users = TestDataProvider.buildUsers().stream()
+            .map(this::createAndSaveUser)
+            .map(u -> InfoUsersDto.fromUserDto(u, 0))
+            .collect(Collectors.toSet());
+        assertThat(adminService.findAllUsers(0, 0, 2))
+            .hasSize(2)
+            .allMatch(users::contains);
+    }
+
+    @Test
     void findAllUsersEmpty() {
-        assertThat(adminService.findAllUsers(0)).isEmpty();
+        assertThat(adminService.findAllUsers(0, 0, 2)).isEmpty();
     }
 }

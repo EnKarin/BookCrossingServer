@@ -139,7 +139,7 @@ class AttachmentServiceTest extends BookCrossingBaseTests {
         attachmentService.deleteAttachment(book1, users.get(1).getLogin());
 
         assertThat(jdbcTemplate.queryForObject("select exists(select * from bookcrossing.t_attach where attach_id = ?)", Boolean.class, name)).isFalse();
-        assertThat(bookService.findAll()).hasSize(4);
+        assertThat(bookService.findAll(0, 5)).hasSize(4);
     }
 
     @Test

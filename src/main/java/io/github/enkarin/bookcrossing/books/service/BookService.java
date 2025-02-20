@@ -12,6 +12,7 @@ import io.github.enkarin.bookcrossing.exception.UserNotFoundException;
 import io.github.enkarin.bookcrossing.user.model.User;
 import io.github.enkarin.bookcrossing.user.repository.UserRepository;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -43,14 +44,16 @@ public class BookService {
         return BookModelDto.fromBook(bookRepository.save(book));
     }
 
-    public List<BookModelDto> findBookForOwner(final String login) {
+    public List<BookModelDto> findBookForOwner(final String login, final int pageNumber, final int pageSize) {
         return userRepository.findByLogin(login).orElseThrow().getBooks().stream()
+            .skip((long) pageNumber * pageSize)
+            .limit(pageSize)
             .map(BookModelDto::fromBook)
             .toList();
     }
 
-    public List<BookModelDto> findBookByOwnerId(final String userId) {
-        return bookRepository.findBooksByOwnerUserId(Integer.parseInt(userId)).stream()
+    public List<BookModelDto> findBookByOwnerId(final String userId, final Pageable pageable) {
+        return bookRepository.findBooksByOwnerUserId(Integer.parseInt(userId), pageable).stream()
             .map(BookModelDto::fromBook)
             .toList();
     }
@@ -97,29 +100,33 @@ public class BookService {
         }
         return books.stream()
             .filter(b -> b.getOwner().isAccountNonLocked())
+            .skip((long) request.getPageSize() * request.getPageNumber())
+            .limit(request.getPageSize())
             .map(BookModelDto::fromBook)
             .toList();
     }
 
-    public List<BookModelDto> findAll() {
+    public List<BookModelDto> findAll(final int pageNumber, final int pageSize) {
         return bookRepository.findAll().stream()
             .filter(b -> b.getOwner().isAccountNonLocked())
+            .skip((long) pageNumber * pageSize)
+            .limit(pageSize)
             .map(BookModelDto::fromBook)
             .toList();
     }
 
     @Transactional
     public void deleteBook(final int bookId) {
-        bookRepository.findById(bookId).ifPresentOrElse(
-            b -> bookRepository.deleteById(bookId),
-            () -> {
+        bookRepository.findById(bookId).ifPresentOrElse(b -> bookRepository.deleteById(bookId), () -> {
                 throw new BookNotFoundException();
             });
     }
 
-    public List<BookModelDto> findByTitleOrAuthor(final String field) {
+    public List<BookModelDto> findByTitleOrAuthor(final String field, final int pageNumber, final int pageSize) {
         return bookRepository.findBooksByTitleOrAuthorIgnoreCase(field).stream()
             .filter(b -> b.getOwner().isAccountNonLocked())
+            .skip((long) pageNumber * pageSize)
+            .limit(pageSize)
             .map(BookModelDto::fromBook)
             .toList();
     }

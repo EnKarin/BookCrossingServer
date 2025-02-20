@@ -122,7 +122,7 @@ class CorrespondenceControllerTest extends BookCrossingBaseTests {
         enabledUser(userBot.getUserId());
 
         execute(HttpMethod.POST, "", 400).expectBody()
-            .jsonPath("$.userId").isEqualTo("не должно быть пустым");
+            .jsonPath("$.errorList").isEqualTo("3013");
     }
 
     @Test
@@ -131,7 +131,7 @@ class CorrespondenceControllerTest extends BookCrossingBaseTests {
         enabledUser(userBot.getUserId());
 
         execute("", "123", 400).expectBody()
-            .jsonPath("$.firstUserId").isEqualTo("не должно быть пустым");
+            .jsonPath("$.errorList").isEqualTo("3014");
     }
 
     @Test
@@ -140,7 +140,7 @@ class CorrespondenceControllerTest extends BookCrossingBaseTests {
         enabledUser(userBot.getUserId());
 
         execute("12", "", 400).expectBody()
-            .jsonPath("$.secondUserId").isEqualTo("не должно быть пустым");
+            .jsonPath("$.errorList").isEqualTo("3015");
     }
 
     @Test
@@ -149,7 +149,7 @@ class CorrespondenceControllerTest extends BookCrossingBaseTests {
         enabledUser(userBot.getUserId());
 
         execute(HttpMethod.DELETE, "", 400).expectBody()
-            .jsonPath("$.userId").isEqualTo("не должно быть пустым");
+            .jsonPath("$.errorList").isEqualTo("3013");
     }
 
     @Test

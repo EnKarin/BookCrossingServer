@@ -1,8 +1,8 @@
 package io.github.enkarin.bookcrossing.user.controllers;
 
+import io.github.enkarin.bookcrossing.books.dto.BookModelDto;
 import io.github.enkarin.bookcrossing.constant.ErrorMessage;
 import io.github.enkarin.bookcrossing.support.BookCrossingBaseTests;
-import io.github.enkarin.bookcrossing.books.dto.BookModelDto;
 import io.github.enkarin.bookcrossing.support.TestDataProvider;
 import io.github.enkarin.bookcrossing.user.service.BookmarksService;
 import org.junit.jupiter.api.Test;
@@ -53,7 +53,7 @@ class BookmarksControllerTest extends BookCrossingBaseTests {
 
         execute(HttpMethod.DELETE, generateAccessToken(TestDataProvider.buildAuthBot()), bookId, 200);
 
-        assertThat(bookmarksService.getAll(user.getLogin())).isEmpty();
+        assertThat(bookmarksService.getAll(user.getLogin(), 0, 10)).isEmpty();
     }
 
     @Test
@@ -76,6 +76,8 @@ class BookmarksControllerTest extends BookCrossingBaseTests {
         final var response = webClient.get()
             .uri(uriBuilder -> uriBuilder
                 .pathSegment("user", "bookmarks")
+                .queryParam("pageNumber", 0)
+                .queryParam("pageSize", 10)
                 .build())
             .headers(headers -> headers.setBearerAuth(generateAccessToken(TestDataProvider.buildAuthBot())))
             .exchange()
@@ -86,6 +88,26 @@ class BookmarksControllerTest extends BookCrossingBaseTests {
             .hasSize(3)
             .usingRecursiveFieldByFieldElementComparatorIgnoringFields("bookId")
             .containsOnlyOnceElementsOf(TestDataProvider.buildBookModels(0, 0, 0));
+    }
+
+    @Test
+    void getAllWithPaginationShouldnWork() {
+        final var user = createAndSaveUser(TestDataProvider.buildBot());
+        enabledUser(user.getUserId());
+        final var books = createAndSaveBooks(user.getLogin());
+        books.forEach(b -> bookmarksService.saveBookmarks(b, user.getLogin()));
+        final var response = webClient.get()
+            .uri(uriBuilder -> uriBuilder
+                .pathSegment("user", "bookmarks")
+                .queryParam("pageNumber", 0)
+                .queryParam("pageSize", 1)
+                .build())
+            .headers(headers -> headers.setBearerAuth(generateAccessToken(TestDataProvider.buildAuthBot())))
+            .exchange()
+            .expectStatus().isEqualTo(200)
+            .expectBodyList(BookModelDto.class)
+            .returnResult().getResponseBody();
+        assertThat(response).hasSize(1);
     }
 
     private WebTestClient.ResponseSpec execute(final HttpMethod method, final String access, final int bookId, final int status) {

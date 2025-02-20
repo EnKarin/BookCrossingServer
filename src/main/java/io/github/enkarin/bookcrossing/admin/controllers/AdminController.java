@@ -47,8 +47,10 @@ public class AdminController {
             content = {@Content(mediaType = Constant.MEDIA_TYPE, array = @ArraySchema(schema = @Schema(implementation = InfoUsersDto.class)))})
     })
     @GetMapping
-    public ResponseEntity<List<InfoUsersDto>> userList(@RequestParam @Parameter(description = "Часовой пояс") final int zone) {
-        return ResponseEntity.ok(adminService.findAllUsers(zone));
+    public ResponseEntity<List<InfoUsersDto>> userList(@RequestParam @Parameter(description = "Часовой пояс") final int zone,
+                                                       @RequestParam final int pageNumber,
+                                                       @RequestParam final int pageSize) {
+        return ResponseEntity.ok(adminService.findAllUsers(zone, pageNumber, pageSize));
     }
 
     @Operation(

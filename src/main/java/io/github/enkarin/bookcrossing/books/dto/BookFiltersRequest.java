@@ -33,9 +33,15 @@ public class BookFiltersRequest {
     @Schema(description = "Год издания", example = "2004")
     private final int year;
 
+    @Schema(description = "Номер запрашиваемой страницы", example = "1")
+    private final int pageNumber;
+
+    @Schema(description = "Размер запрашиваемой страницы")
+    private final int pageSize;
+
     @JsonCreator
     public static BookFiltersRequest create(final String city, final String title, final String author,
-                                            final List<Integer> genre, final String publishingHouse, final int year) {
-        return new BookFiltersRequest(city, title, author, genre, publishingHouse, year);
+                                            final List<Integer> genre, final String publishingHouse, final int year, final int pageNumber, final int pageSize) {
+        return new BookFiltersRequest(city, title, author, genre, publishingHouse, year, pageNumber, pageSize);
     }
 }

@@ -16,6 +16,6 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     @Query(value = "select u.* from bookcrossing.t_user u " +
         "inner join bookcrossing.t_user_role ur on u.user_id = ur.user_id " +
         "inner join bookcrossing.t_role r on ur.role_id = r.role_id " +
-        "where r.name = ? order by u.user_id", nativeQuery = true)
-    List<User> findByUserRolesOrderByUserId(String roleName);
+        "where r.name = ?1 order by u.user_id offset ?2 * ?3 limit ?3", nativeQuery = true)
+    List<User> findByUserRolesOrderByUserId(String roleName, int pageNumber, int pageSize);
 }

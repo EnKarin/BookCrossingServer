@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -45,8 +46,8 @@ public class BookController {
             content = {@Content(mediaType = Constant.MEDIA_TYPE, array = @ArraySchema(schema = @Schema(implementation = BookModelDto.class)))})
     })
     @GetMapping("/all")
-    public ResponseEntity<List<BookModelDto>> books() {
-        return ResponseEntity.ok(bookService.findAll());
+    public ResponseEntity<List<BookModelDto>> books(@RequestParam final int pageNumber, @RequestParam final int pageSize) {
+        return ResponseEntity.ok(bookService.findAll(pageNumber, pageSize));
     }
 
     @Operation(
@@ -58,8 +59,10 @@ public class BookController {
             content = {@Content(mediaType = Constant.MEDIA_TYPE, array = @ArraySchema(schema = @Schema(implementation = BookModelDto.class)))})
     })
     @GetMapping("/by-user")
-    public ResponseEntity<List<BookModelDto>> booksByUser(@RequestParam(name = "id") @NotBlank(message = "не должно быть пустым") final String userId) {
-        return ResponseEntity.ok(bookService.findBookByOwnerId(userId));
+    public ResponseEntity<List<BookModelDto>> booksByUser(@RequestParam(name = "id") @NotBlank(message = "3013") final String userId,
+                                                          @RequestParam final int pageNumber,
+                                                          @RequestParam final int pageSize) {
+        return ResponseEntity.ok(bookService.findBookByOwnerId(userId, PageRequest.of(pageNumber, pageSize)));
     }
 
     @Operation(
@@ -89,8 +92,8 @@ public class BookController {
             content = {@Content(mediaType = Constant.MEDIA_TYPE, array = @ArraySchema(schema = @Schema(implementation = BookModelDto.class)))})
     })
     @GetMapping("/searchByTitle")
-    public ResponseEntity<List<BookModelDto>> searchByTitleOrAuthor(@RequestParam final String field) {
-        return ResponseEntity.ok(bookService.findByTitleOrAuthor(field));
+    public ResponseEntity<List<BookModelDto>> searchByTitleOrAuthor(@RequestParam final String field, @RequestParam final int pageNumber, @RequestParam final int pageSize) {
+        return ResponseEntity.ok(bookService.findByTitleOrAuthor(field,  pageNumber, pageSize));
     }
 
     @Operation(

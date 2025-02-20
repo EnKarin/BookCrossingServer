@@ -14,7 +14,6 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static io.github.enkarin.bookcrossing.utils.Util.createErrorMap;
 
@@ -41,11 +40,9 @@ public class AdviceController extends ResponseEntityExceptionHandler {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(ConstraintViolationException.class)
-    public Map<String, String> catchParameterValidationException(final ConstraintViolationException exception) {
-        return exception.getConstraintViolations().stream()
-            .collect(Collectors.toMap(constraintViolation -> {
-                final String path = constraintViolation.getPropertyPath().toString();
-                return path.substring(path.lastIndexOf('.') + 1);
-            }, ConstraintViolation::getMessage));
+    public Map<String, String[]> catchParameterValidationException(final ConstraintViolationException exception) {
+        return Map.of("errorList", exception.getConstraintViolations().stream()
+            .map(ConstraintViolation::getMessage)
+            .toArray(String[]::new));
     }
 }
