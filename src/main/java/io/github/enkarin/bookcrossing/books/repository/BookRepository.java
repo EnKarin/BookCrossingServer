@@ -1,6 +1,7 @@
 package io.github.enkarin.bookcrossing.books.repository;
 
 import io.github.enkarin.bookcrossing.books.model.Book;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -14,7 +15,7 @@ public interface BookRepository extends JpaRepository<Book, Integer> {
 
     Optional<Book> findBooksByOwnerLoginAndBookId(String login, int id);
 
-    List<Book> findBooksByOwnerUserId(int userId);
+    List<Book> findBooksByOwnerUserId(int userId, Pageable pageable);
 
     @Query(value = "SELECT * FROM bookcrossing.t_book WHERE lower(title) LIKE lower(concat('%', ?1,'%')) LIMIT 5", nativeQuery = true)
     List<Book> findBooksByPartOfNameOrAuthor(String partName);

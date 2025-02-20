@@ -26,7 +26,10 @@ class BookControllerTest extends BookCrossingBaseTests {
 
         final var booksId = createAndSaveBooks(user.getLogin());
         final var response = webClient.get()
-            .uri("/books/all")
+            .uri(uriBuilder -> uriBuilder.pathSegment("books", "all")
+                .queryParam("pageNumber", 0)
+                .queryParam("pageSize", 10)
+                .build())
             .exchange()
             .expectStatus().isEqualTo(200)
             .expectBodyList(BookModelDto.class)
@@ -39,7 +42,10 @@ class BookControllerTest extends BookCrossingBaseTests {
     @Test
     void booksShouldnWorkWithEmptyTableBook() {
         final var response = webClient.get()
-            .uri("/books/all")
+            .uri(uriBuilder -> uriBuilder.pathSegment("books", "all")
+                .queryParam("pageNumber", 0)
+                .queryParam("pageSize", 10)
+                .build())
             .exchange()
             .expectStatus().isEqualTo(200)
             .expectBodyList(BookModelDto.class)
@@ -96,6 +102,8 @@ class BookControllerTest extends BookCrossingBaseTests {
             .uri(uriBuilder -> uriBuilder
                 .pathSegment("books", "searchByTitle")
                 .queryParam("field", "Dandelion")
+                .queryParam("pageNumber", 0)
+                .queryParam("pageSize", 10)
                 .build())
             .exchange()
             .expectStatus().isEqualTo(200)
@@ -108,11 +116,38 @@ class BookControllerTest extends BookCrossingBaseTests {
     }
 
     @Test
+    void searchByTitleWithPagination() {
+        final var user = TestDataProvider.buildUsers().stream()
+            .map(this::createAndSaveUser)
+            .findAny()
+            .orElseThrow();
+        enabledUser(user.getUserId());
+        final var firstBookId = bookService.saveBook(TestDataProvider.buildDandelion(), user.getLogin()).getBookId();
+        bookService.saveBook(TestDataProvider.buildDandelion(), user.getLogin());
+        final var response = webClient.get()
+            .uri(uriBuilder -> uriBuilder
+                .pathSegment("books", "searchByTitle")
+                .queryParam("field", "Dandelion")
+                .queryParam("pageNumber", 0)
+                .queryParam("pageSize", 1)
+                .build())
+            .exchange()
+            .expectStatus().isEqualTo(200)
+            .expectBodyList(BookModelDto.class)
+            .returnResult().getResponseBody();
+        assertThat(response)
+            .hasSize(1)
+            .containsOnly(TestDataProvider.buildDandelion(firstBookId));
+    }
+
+    @Test
     void searchByTitleShouldnWorkWithoutBooks() {
         final var response = webClient.get()
             .uri(uriBuilder -> uriBuilder
                 .pathSegment("books", "searchByTitle")
                 .queryParam("field", "TestName") //books not contains in db
+                .queryParam("pageNumber", 0)
+                .queryParam("pageSize", 10)
                 .build())
             .exchange()
             .expectStatus().isEqualTo(200)
@@ -136,7 +171,8 @@ class BookControllerTest extends BookCrossingBaseTests {
             .method(HttpMethod.POST)
             .uri(uriBuilder -> uriBuilder.pathSegment("books", "searchWithFilters").build())
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(BookFiltersRequest.create("Novosibirsk", "Wolves", "author", List.of(2), "publishing_house", 2000))
+            .bodyValue(BookFiltersRequest
+                .create("Novosibirsk", "Wolves", "author", List.of(2), "publishing_house", 2000, 0, 10))
             .exchange()
             .expectStatus().isEqualTo(200)
             .expectBodyList(BookModelDto.class)
@@ -157,6 +193,8 @@ class BookControllerTest extends BookCrossingBaseTests {
             .uri(uriBuilder -> uriBuilder
                 .pathSegment("books", "by-user")
                 .queryParam("id", user.getUserId())
+                .queryParam("pageNumber", 0)
+                .queryParam("pageSize", 10)
                 .build())
             .exchange()
             .expectStatus().isEqualTo(200)
@@ -173,9 +211,11 @@ class BookControllerTest extends BookCrossingBaseTests {
             .uri(uriBuilder -> uriBuilder
                 .pathSegment("books", "by-user")
                 .queryParam("id", "  ")
+                .queryParam("pageNumber", 0)
+                .queryParam("pageSize", 10)
                 .build())
             .exchange()
             .expectStatus().isEqualTo(400)
-            .expectBody().jsonPath("$.userId").isEqualTo("не должно быть пустым");
+            .expectBody().jsonPath("$.errorList[0]").isEqualTo("3013");
     }
 }
