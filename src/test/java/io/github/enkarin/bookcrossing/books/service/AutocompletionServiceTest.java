@@ -46,6 +46,20 @@ class AutocompletionServiceTest extends BookCrossingBaseTests {
         assertThat(autocompletionService.autocompleteBookNameOrAuthor("author")).hasSize(5);
     }
 
+    @Test
+    void findAuthorsByTitleOrAuthorShouldWork() {
+        largeInitBook();
+
+        assertThat(autocompletionService.findAuthorNamesByTitleOrAuthor("an")).containsOnly("author", "author5", "author2");
+    }
+
+    @Test
+    void findAuthorNamesByTitleOrAuthorsShouldWorkWithBookNotFound() {
+        largeInitBook();
+
+        assertThat(autocompletionService.findAuthorNamesByTitleOrAuthor("tit")).isEmpty();
+    }
+
     private void largeInitBook() {
         final UserDto user = createAndSaveUser(TestDataProvider.buildBot());
         bookService.saveBook(TestDataProvider.buildDandelion(), user.getLogin());

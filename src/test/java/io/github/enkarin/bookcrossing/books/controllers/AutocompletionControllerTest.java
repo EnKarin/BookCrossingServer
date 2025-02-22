@@ -46,4 +46,35 @@ class AutocompletionControllerTest extends BookCrossingBaseTests {
             .returnResult().getResponseBody();
         assertThat(response).containsOnly("author2");
     }
+
+    @Test
+    void findAuthorsByTitleOfAuthorShouldWork() {
+        final var user = createAndSaveUser(TestDataProvider.buildAlex());
+        createAndSaveBooks(user.getLogin());
+
+        final var response = webClient
+            .get()
+            .uri(uriBuilder -> uriBuilder
+                .pathSegment("books", "autocompletion", "authors")
+                .queryParam("name", "d")
+                .build())
+            .exchange()
+            .expectStatus().isEqualTo(200)
+            .expectBody(String[].class)
+            .returnResult().getResponseBody();
+
+        assertThat(response).containsOnly("author", "author2");
+    }
+
+    @Test
+    void findAuthorsByTitleOfAuthor() {
+        webClient.get()
+            .uri(uriBuilder -> uriBuilder
+                .pathSegment("books", "autocompletion", "authors")
+                .queryParam("name", "  ")
+                .build())
+            .exchange()
+            .expectStatus().isEqualTo(400)
+            .expectBody().jsonPath("$.errorList[0]").isEqualTo("3008");
+    }
 }

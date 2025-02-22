@@ -5,6 +5,7 @@ import io.github.enkarin.bookcrossing.books.dto.BookModelDto;
 import io.github.enkarin.bookcrossing.books.service.BookService;
 import io.github.enkarin.bookcrossing.constant.Constant;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -89,11 +90,16 @@ public class BookController {
     )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Возвращает найденные книги",
-            content = {@Content(mediaType = Constant.MEDIA_TYPE, array = @ArraySchema(schema = @Schema(implementation = BookModelDto.class)))})
+            content = {@Content(mediaType = Constant.MEDIA_TYPE, array = @ArraySchema(schema = @Schema(implementation = BookModelDto.class)))}),
+        @ApiResponse(responseCode = "400", description = "Поле name не должно быть пустым",
+            content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(ref = "#/components/schemas/NewErrorBody"))})
     })
     @GetMapping("/searchByTitle")
-    public ResponseEntity<List<BookModelDto>> searchByTitleOrAuthor(@RequestParam final String field, @RequestParam final int pageNumber, @RequestParam final int pageSize) {
-        return ResponseEntity.ok(bookService.findByTitleOrAuthor(field,  pageNumber, pageSize));
+    public ResponseEntity<List<BookModelDto>> searchByTitleOrAuthor(
+        @RequestParam @NotBlank(message = "3008") @Parameter(description = "Полное называние книги или имя автора") final String name,
+        @RequestParam final int pageNumber,
+        @RequestParam final int pageSize) {
+        return ResponseEntity.ok(bookService.findByTitleOrAuthor(name, pageNumber, pageSize));
     }
 
     @Operation(
