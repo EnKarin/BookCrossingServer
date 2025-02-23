@@ -101,7 +101,7 @@ class BookControllerTest extends BookCrossingBaseTests {
         final var response = webClient.get()
             .uri(uriBuilder -> uriBuilder
                 .pathSegment("books", "searchByTitle")
-                .queryParam("field", "Dandelion")
+                .queryParam("name", "Dandelion")
                 .queryParam("pageNumber", 0)
                 .queryParam("pageSize", 10)
                 .build())
@@ -127,7 +127,7 @@ class BookControllerTest extends BookCrossingBaseTests {
         final var response = webClient.get()
             .uri(uriBuilder -> uriBuilder
                 .pathSegment("books", "searchByTitle")
-                .queryParam("field", "Dandelion")
+                .queryParam("name", "Dandelion")
                 .queryParam("pageNumber", 0)
                 .queryParam("pageSize", 1)
                 .build())
@@ -145,7 +145,7 @@ class BookControllerTest extends BookCrossingBaseTests {
         final var response = webClient.get()
             .uri(uriBuilder -> uriBuilder
                 .pathSegment("books", "searchByTitle")
-                .queryParam("field", "TestName") //books not contains in db
+                .queryParam("name", "TestName") //books not contains in db
                 .queryParam("pageNumber", 0)
                 .queryParam("pageSize", 10)
                 .build())
@@ -155,6 +155,20 @@ class BookControllerTest extends BookCrossingBaseTests {
             .returnResult().getResponseBody();
         assertThat(response)
             .isEmpty();
+    }
+
+    @Test
+    void searchByTitleWithEmptyNameMustReturn400() {
+        webClient.get()
+            .uri(uriBuilder -> uriBuilder
+                .pathSegment("books", "searchByTitle")
+                .queryParam("name", " ")
+                .queryParam("pageNumber", 0)
+                .queryParam("pageSize", 10)
+                .build())
+            .exchange()
+            .expectStatus().isEqualTo(400)
+            .expectBody().jsonPath("$.errorList[0]").isEqualTo("3008");
     }
 
     @Test

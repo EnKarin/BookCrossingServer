@@ -48,9 +48,9 @@ public enum ErrorMessage {
     ERROR_3010("3010", "password: Пароль должен состоять минимум из восьми символов", "password: The password must be at least eleven characters long"),
     ERROR_3011("3011", "email: Некорректный почтовый адрес", "email: Invalid email"),
     ERROR_3012("3012", "oldPassword: Пароль должен содержать хотя бы один видимый символ", "oldPassword: The password must consist of at least one visible character"),
-    ERROR_3013("3013", "userId: не должно быть пустым", "userId: must be not empty"),
-    ERROR_3014("3014", "firstUserId: не должно быть пустым", "firstUserId: must be not empty"),
-    ERROR_3015("3015", "secondUserId: не должно быть пустым", "secondUserId: must be not empty");
+    ERROR_3013("3013", "userId: Идентификатор не должно быть пустым", "userId: Identifier must be not empty"),
+    ERROR_3014("3014", "firstUserId: Идентификатор не должно быть пустым", "firstUserId: Identifier must be not empty"),
+    ERROR_3015("3015", "secondUserId: Идентификатор не должно быть пустым", "secondUserId: Identifier must be not empty");
 
     private final String code;
     private final String ru;

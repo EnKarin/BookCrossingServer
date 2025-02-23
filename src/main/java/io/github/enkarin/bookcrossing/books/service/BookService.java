@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 @Service
 @Transactional(readOnly = true)
@@ -98,8 +99,7 @@ public class BookService {
                 .filter(book -> book.getOwner().getCity().equalsIgnoreCase(request.getCity()))
                 .toList();
         }
-        return books.stream()
-            .filter(b -> b.getOwner().isAccountNonLocked())
+        return filterBookFromNonLockedOwner(books)
             .skip((long) request.getPageSize() * request.getPageNumber())
             .limit(request.getPageSize())
             .map(BookModelDto::fromBook)
@@ -107,8 +107,7 @@ public class BookService {
     }
 
     public List<BookModelDto> findAll(final int pageNumber, final int pageSize) {
-        return bookRepository.findAll().stream()
-            .filter(b -> b.getOwner().isAccountNonLocked())
+        return filterBookFromNonLockedOwner(bookRepository.findAll())
             .skip((long) pageNumber * pageSize)
             .limit(pageSize)
             .map(BookModelDto::fromBook)
@@ -123,11 +122,14 @@ public class BookService {
     }
 
     public List<BookModelDto> findByTitleOrAuthor(final String field, final int pageNumber, final int pageSize) {
-        return bookRepository.findBooksByTitleOrAuthorIgnoreCase(field).stream()
-            .filter(b -> b.getOwner().isAccountNonLocked())
+        return filterBookFromNonLockedOwner(bookRepository.findBooksByTitleOrAuthorIgnoreCase(field))
             .skip((long) pageNumber * pageSize)
             .limit(pageSize)
             .map(BookModelDto::fromBook)
             .toList();
+    }
+
+    private Stream<Book> filterBookFromNonLockedOwner(final List<Book> books) {
+        return books.stream().filter(b -> b.getOwner().isAccountNonLocked());
     }
 }

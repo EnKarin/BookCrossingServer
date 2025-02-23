@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -23,5 +24,15 @@ public class AutocompletionService {
             .map(Book::getAuthor)
             .toList());
         return result.subList(0, Math.min(result.size(), 5));
+    }
+
+    public Set<String> findAuthorNamesByTitleOrAuthor(final String partName) {
+        final Set<String> result = bookRepository.findBooksByPartOfNameOrAuthor(partName).stream()
+            .map(Book::getAuthor)
+            .collect(Collectors.toSet());
+        result.addAll(bookRepository.findBooksByPartOfAuthor(partName).stream()
+            .map(Book::getAuthor)
+            .toList());
+        return result;
     }
 }
