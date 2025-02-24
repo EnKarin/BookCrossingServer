@@ -33,8 +33,8 @@ public class TestDataProvider {
     }
 
     @Nonnull
-    public static List<BookModelDto> buildBookModels(final int id1, final int id2, final int id3) {
-        return List.of(buildDorian(id1), buildDandelion(id2), buildWolves(id3));
+    public static List<BookModelDto> buildBookModels(final int id1, final String ownerCityId1, final int id2, final String ownerCityId2, final int id3, final String ownerCityId3) {
+        return List.of(buildDorian(id1, ownerCityId1), buildDandelion(id2, ownerCityId2), buildWolves(id3, ownerCityId3));
     }
 
     @Nonnull
@@ -94,7 +94,7 @@ public class TestDataProvider {
     }
 
     @Nonnull
-    public static BookModelDto buildDorian(final int bookId) {
+    public static BookModelDto buildDorian(final int bookId, final String ownerCity) {
         final BookDto bookDto = buildDorian();
         return prepareBookModel()
             .bookId(bookId)
@@ -103,11 +103,12 @@ public class TestDataProvider {
             .genre(bookDto.getGenre())
             .year(bookDto.getYear())
             .author(bookDto.getAuthor())
+            .city(ownerCity)
             .build();
     }
 
     @Nonnull
-    public static BookModelDto buildDandelion(final int bookId) {
+    public static BookModelDto buildDandelion(final int bookId, final String ownerCity) {
         final BookDto bookDto = buildDandelion();
         return prepareBookModel()
             .bookId(bookId)
@@ -116,11 +117,12 @@ public class TestDataProvider {
             .genre(bookDto.getGenre())
             .year(bookDto.getYear())
             .author(bookDto.getAuthor())
+            .city(ownerCity)
             .build();
     }
 
     @Nonnull
-    public static BookModelDto buildWolves(final int bookId) {
+    public static BookModelDto buildWolves(final int bookId, final String ownerCity) {
         final BookDto bookDto = buildWolves();
         return prepareBookModel()
             .bookId(bookId)
@@ -129,6 +131,7 @@ public class TestDataProvider {
             .genre(bookDto.getGenre())
             .year(bookDto.getYear())
             .author(bookDto.getAuthor())
+            .city(ownerCity)
             .build();
     }
 

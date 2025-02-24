@@ -87,7 +87,7 @@ class BookmarksControllerTest extends BookCrossingBaseTests {
         assertThat(response)
             .hasSize(3)
             .usingRecursiveFieldByFieldElementComparatorIgnoringFields("bookId")
-            .containsOnlyOnceElementsOf(TestDataProvider.buildBookModels(0, 0, 0));
+            .containsOnlyOnceElementsOf(TestDataProvider.buildBookModels(0, user.getCity(), 0, user.getCity(), 0, user.getCity()));
     }
 
     @Test

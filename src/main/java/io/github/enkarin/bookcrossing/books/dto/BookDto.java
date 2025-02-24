@@ -36,9 +36,11 @@ public class BookDto {
     @Schema(description = "Год издания", example = "2004")
     protected final int year;
 
+    @Schema(description = "Город, в котором сейчас находится книга", example = "Новосибирск")
+    protected final String city;
+
     @JsonCreator
-    public static BookDto create(final String title, final String author, final int genre,
-                                 final String publishingHouse, final int year) {
-        return new BookDto(title, author, genre, publishingHouse, year);
+    public static BookDto create(final String title, final String author, final int genre, final String publishingHouse, final int year, final String city) {
+        return new BookDto(title, author, genre, publishingHouse, year, city);
     }
 }

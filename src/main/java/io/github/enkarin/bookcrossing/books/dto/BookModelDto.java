@@ -23,21 +23,32 @@ public class BookModelDto extends BookDto {
     private final Integer attachmentId;
 
     private BookModelDto(final BookDto bookDto, final int bookId, final AttachmentDto attachment) {
-        super(bookDto.title, bookDto.author, bookDto.genre, bookDto.publishingHouse, bookDto.year);
+        super(bookDto.title, bookDto.author, bookDto.genre, bookDto.publishingHouse, bookDto.year, bookDto.city);
         this.bookId = bookId;
         this.attachmentId = Optional.ofNullable(attachment).map(AttachmentDto::getAttachId).orElse(null);
     }
 
     @JsonCreator
-    private BookModelDto(final String title, final String author, final int genre, final String publishingHouse, final int year, final int bookId, final AttachmentDto attachment) {
-        super(title, author, genre, publishingHouse, year);
+    private BookModelDto(final String title,
+                         final String author,
+                         final int genre,
+                         final String publishingHouse,
+                         final int year,
+                         final int bookId,
+                         final AttachmentDto attachment,
+                         final String city) {
+        super(title, author, genre, publishingHouse, year, city);
         this.bookId = bookId;
         this.attachmentId = Optional.ofNullable(attachment).map(AttachmentDto::getAttachId).orElse(null);
     }
 
     public static BookModelDto fromBook(final Book book) {
-        return new BookModelDto(create(book.getTitle(), book.getAuthor(), book.getGenre().getId(),
-            book.getPublishingHouse(), book.getYear()),
+        return new BookModelDto(create(book.getTitle(),
+            book.getAuthor(),
+            book.getGenre().getId(),
+            book.getPublishingHouse(),
+            book.getYear(),
+            book.getOwner().getCity()),
             book.getBookId(),
             AttachmentDto.fromAttachment(book.getAttachment()));
     }

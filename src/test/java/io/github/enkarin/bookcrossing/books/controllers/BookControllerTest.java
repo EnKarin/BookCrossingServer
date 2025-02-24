@@ -36,7 +36,7 @@ class BookControllerTest extends BookCrossingBaseTests {
             .returnResult().getResponseBody();
         assertThat(response)
             .hasSize(3)
-            .isEqualTo(TestDataProvider.buildBookModels(booksId.get(0), booksId.get(1), booksId.get(2)));
+            .isEqualTo(TestDataProvider.buildBookModels(booksId.get(0), user.getCity(), booksId.get(1), user.getCity(), booksId.get(2), user.getCity()));
     }
 
     @Test
@@ -71,8 +71,7 @@ class BookControllerTest extends BookCrossingBaseTests {
             .expectStatus().isEqualTo(200)
             .expectBody(BookModelDto.class)
             .returnResult().getResponseBody();
-        assertThat(response)
-            .isEqualTo(TestDataProvider.buildDorian(bookId));
+        assertThat(response).isEqualTo(TestDataProvider.buildDorian(bookId, user.getCity()));
     }
 
     @Test
@@ -111,8 +110,7 @@ class BookControllerTest extends BookCrossingBaseTests {
             .returnResult().getResponseBody();
         assertThat(response)
             .hasSize(2)
-            .isEqualTo(List.of(TestDataProvider.buildDandelion(firstBookId),
-                TestDataProvider.buildDandelion(secondBookId)));
+            .isEqualTo(List.of(TestDataProvider.buildDandelion(firstBookId, user.getCity()), TestDataProvider.buildDandelion(secondBookId, user.getCity())));
     }
 
     @Test
@@ -137,7 +135,7 @@ class BookControllerTest extends BookCrossingBaseTests {
             .returnResult().getResponseBody();
         assertThat(response)
             .hasSize(1)
-            .containsOnly(TestDataProvider.buildDandelion(firstBookId));
+            .containsOnly(TestDataProvider.buildDandelion(firstBookId, user.getCity()));
     }
 
     @Test
@@ -194,7 +192,7 @@ class BookControllerTest extends BookCrossingBaseTests {
 
         assertThat(response)
             .hasSize(1)
-            .containsOnly(TestDataProvider.buildWolves(booksId.get(2)));
+            .containsOnly(TestDataProvider.buildWolves(booksId.get(2), "Novosibirsk"));
     }
 
     @Test

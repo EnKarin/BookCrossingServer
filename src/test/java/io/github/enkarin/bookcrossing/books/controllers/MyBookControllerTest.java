@@ -34,7 +34,7 @@ class MyBookControllerTest extends BookCrossingBaseTests {
             .returnResult().getResponseBody();
         assertThat(bookDto)
             .isNotNull()
-            .isEqualTo(TestDataProvider.buildDorian(bookDto.getBookId()));
+            .isEqualTo(TestDataProvider.buildDorian(bookDto.getBookId(), "Novosibirsk"));
     }
 
     @Test
@@ -79,8 +79,7 @@ class MyBookControllerTest extends BookCrossingBaseTests {
             .getResponseBody();
         assertThat(response)
             .hasSize(2)
-            .containsExactlyInAnyOrder(TestDataProvider.buildDandelion(book1),
-                TestDataProvider.buildWolves(book2));
+            .containsExactlyInAnyOrder(TestDataProvider.buildDandelion(book1, users.get(0).getCity()), TestDataProvider.buildWolves(book2, users.get(0).getCity()));
     }
 
     @Test

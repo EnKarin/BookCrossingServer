@@ -26,7 +26,7 @@ class BookServiceTest extends BookCrossingBaseTests {
         final UserDto user = createAndSaveUser(TestDataProvider.buildAlex());
         final BookModelDto book = bookService.saveBook(TestDataProvider.buildDorian(), user.getLogin());
         assertThat(book)
-            .isEqualTo(TestDataProvider.buildDorian(book.getBookId()));
+            .isEqualTo(TestDataProvider.buildDorian(book.getBookId(), user.getCity()));
     }
 
     @Test
@@ -51,8 +51,7 @@ class BookServiceTest extends BookCrossingBaseTests {
 
         assertThat(bookService.findBookForOwner(users.get(1).getLogin(), 0, 3))
             .hasSize(2)
-            .containsExactlyInAnyOrder(TestDataProvider.buildDandelion(book1),
-                TestDataProvider.buildWolves(book2));
+            .containsExactlyInAnyOrder(TestDataProvider.buildDandelion(book1, users.get(1).getCity()), TestDataProvider.buildWolves(book2, users.get(1).getCity()));
     }
 
 
@@ -70,7 +69,7 @@ class BookServiceTest extends BookCrossingBaseTests {
 
         assertThat(bookService.findBookForOwner(users.get(1).getLogin(), 0, 1))
             .hasSize(1)
-            .containsAnyOf(TestDataProvider.buildDandelion(book1), TestDataProvider.buildWolves(book2));
+            .containsAnyOf(TestDataProvider.buildDandelion(book1, users.get(1).getCity()), TestDataProvider.buildWolves(book2, users.get(1).getCity()));
     }
 
     @Test
@@ -92,7 +91,7 @@ class BookServiceTest extends BookCrossingBaseTests {
             .toList().get(0).getBookId();
         assertThat(bookService.findById(book))
             .usingRecursiveComparison()
-            .isEqualTo(TestDataProvider.buildDorian(book));
+            .isEqualTo(TestDataProvider.buildDorian(book, user.getCity()));
     }
 
     @Test
@@ -141,7 +140,7 @@ class BookServiceTest extends BookCrossingBaseTests {
 
         assertThat(bookService.filter(BookFiltersRequest.create(null, null, "author", null, null, 0, 0, 10)))
             .hasSize(2)
-            .containsExactlyInAnyOrder(TestDataProvider.buildWolves(book2), TestDataProvider.buildDorian(book3));
+            .containsExactlyInAnyOrder(TestDataProvider.buildWolves(book2, users.get(1).getCity()), TestDataProvider.buildDorian(book3, users.get(0).getCity()));
     }
 
     @Test
@@ -157,7 +156,7 @@ class BookServiceTest extends BookCrossingBaseTests {
         assertThat(bookService.filter(BookFiltersRequest
             .create("Novosibirsk", "Wolves", "author", List.of(2), "publishing_house", 2000, 0, 10)))
             .hasSize(1)
-            .containsOnly(TestDataProvider.buildWolves(book2));
+            .containsOnly(TestDataProvider.buildWolves(book2, users.get(1).getCity()));
     }
 
     @Test
@@ -172,7 +171,7 @@ class BookServiceTest extends BookCrossingBaseTests {
 
         assertThat(bookService.filter(BookFiltersRequest.create(null, null, null, List.of(2, 3), null, 0, 0, 10)))
             .hasSize(2)
-            .containsOnly(TestDataProvider.buildDandelion(book1), TestDataProvider.buildWolves(book2));
+            .containsOnly(TestDataProvider.buildDandelion(book1, users.get(0).getCity()), TestDataProvider.buildWolves(book2, users.get(1).getCity()));
     }
 
     @Test
@@ -187,7 +186,7 @@ class BookServiceTest extends BookCrossingBaseTests {
 
         assertThat(bookService.filter(BookFiltersRequest.create(null, null, null, List.of(2, 3), null, 0, 0, 1)))
             .hasSize(1)
-            .containsOnly(TestDataProvider.buildDandelion(book1));
+            .containsOnly(TestDataProvider.buildDandelion(book1, users.get(0).getCity()));
     }
 
     @ParameterizedTest
@@ -264,7 +263,7 @@ class BookServiceTest extends BookCrossingBaseTests {
 
         assertThat(bookService.findAll(0, 10))
             .hasSize(3)
-            .hasSameElementsAs(TestDataProvider.buildBookModels(book1, book2, book3));
+            .hasSameElementsAs(TestDataProvider.buildBookModels(book1, users.get(0).getCity(), book2, users.get(2).getCity(), book3, users.get(1).getCity()));
     }
 
     @Test
@@ -295,7 +294,7 @@ class BookServiceTest extends BookCrossingBaseTests {
 
         assertThat(bookService.findByTitleOrAuthor("Wolves", 0, 10))
             .hasSize(1)
-            .containsOnly(TestDataProvider.buildWolves(book1));
+            .containsOnly(TestDataProvider.buildWolves(book1, users.get(0).getCity()));
     }
 
     @Test
@@ -309,7 +308,7 @@ class BookServiceTest extends BookCrossingBaseTests {
         assertThat(bookService.findByTitleOrAuthor("AUTHOR2", 0, 10))
             .hasSize(1)
             .first()
-            .isEqualTo(TestDataProvider.buildDandelion(bookid));
+            .isEqualTo(TestDataProvider.buildDandelion(bookid, users.get(0).getCity()));
     }
 
     @Test
