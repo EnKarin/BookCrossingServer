@@ -3,9 +3,11 @@ package io.github.enkarin.bookcrossing.books.controllers;
 import io.github.enkarin.bookcrossing.books.dto.BookFiltersRequest;
 import io.github.enkarin.bookcrossing.books.dto.BookModelDto;
 import io.github.enkarin.bookcrossing.constant.ErrorMessage;
+import io.github.enkarin.bookcrossing.registration.dto.UserRegistrationDto;
 import io.github.enkarin.bookcrossing.support.BookCrossingBaseTests;
 import io.github.enkarin.bookcrossing.support.TestDataProvider;
 import io.github.enkarin.bookcrossing.user.dto.UserDto;
+import io.github.enkarin.bookcrossing.user.dto.UserPublicProfileDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
@@ -229,5 +231,37 @@ class BookControllerTest extends BookCrossingBaseTests {
             .exchange()
             .expectStatus().isEqualTo(400)
             .expectBody().jsonPath("$.errorList[0]").isEqualTo("3013");
+    }
+
+    @Test
+    void searchBookOwner() {
+        final UserRegistrationDto alex = TestDataProvider.buildAlex();
+        final var user = createAndSaveUser(alex);
+        final List<Integer> booksId = createAndSaveBooks(user.getLogin());
+
+        final var result = webClient.get()
+            .uri(uriBuilder -> uriBuilder.pathSegment("books", "owner")
+                .queryParam("bookId", booksId.get(0))
+                .queryParam("zoneId", 7)
+                .build())
+            .exchange()
+            .expectStatus().isOk()
+            .expectBody(UserPublicProfileDto.class).returnResult().getResponseBody();
+        assertThat(result).satisfies(r -> {
+            assertThat(r.getName()).isEqualTo(alex.getName());
+            assertThat(r.getCity()).isEqualTo(alex.getCity());
+        });
+    }
+
+    @Test
+    void searchNotExistsBook() {
+        webClient.get()
+            .uri(uriBuilder -> uriBuilder.pathSegment("books", "owner")
+                .queryParam("bookId", 110)
+                .queryParam("zoneId", 7)
+                .build())
+            .exchange()
+            .expectStatus().isNotFound()
+            .expectBody().jsonPath("$.error").isEqualTo("1004");
     }
 }

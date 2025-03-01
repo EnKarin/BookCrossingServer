@@ -4,6 +4,7 @@ import io.github.enkarin.bookcrossing.books.dto.BookFiltersRequest;
 import io.github.enkarin.bookcrossing.books.dto.BookModelDto;
 import io.github.enkarin.bookcrossing.books.service.BookService;
 import io.github.enkarin.bookcrossing.constant.Constant;
+import io.github.enkarin.bookcrossing.user.dto.UserPublicProfileDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -113,5 +114,16 @@ public class BookController {
     @PostMapping("/searchWithFilters")
     public ResponseEntity<List<BookModelDto>> searchWithFilters(@RequestBody final BookFiltersRequest filters) {
         return ResponseEntity.ok(bookService.filter(filters));
+    }
+
+    @Operation(summary = "Получение владельца книги", description = "Позволяет получить информацию о владельце книги по её идентификатору")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Возвращает найденные книги",
+            content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(implementation = UserPublicProfileDto.class))}),
+
+    })
+    @GetMapping("/owner")
+    public ResponseEntity<UserPublicProfileDto> searchBookOwner(@RequestParam final int bookId, @RequestParam final int zoneId) {
+        return ResponseEntity.ok(bookService.findBookOwner(bookId, zoneId));
     }
 }
