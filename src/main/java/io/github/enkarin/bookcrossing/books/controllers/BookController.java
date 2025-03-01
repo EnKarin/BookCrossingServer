@@ -120,7 +120,8 @@ public class BookController {
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Возвращает найденные книги",
             content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(implementation = UserPublicProfileDto.class))}),
-
+        @ApiResponse(responseCode = "404", description = "Книга с указанным bookId не найдена",
+            content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(ref = "#/components/schemas/NewErrorBody"))})
     })
     @GetMapping("/owner")
     public ResponseEntity<UserPublicProfileDto> searchBookOwner(@RequestParam final int bookId, @RequestParam final int zoneId) {
