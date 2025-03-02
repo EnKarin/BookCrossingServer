@@ -323,4 +323,12 @@ class BookServiceTest extends BookCrossingBaseTests {
 
         assertThat(bookService.findByTitleOrAuthor("tit", 0, 10)).isEmpty();
     }
+
+    @Test
+    void findBookOwner() {
+        final UserDto user = createAndSaveUser(TestDataProvider.buildAlex());
+        final int bookId = bookService.saveBook(TestDataProvider.buildDorian(), user.getLogin()).getBookId();
+
+        assertThat(Integer.parseInt(bookService.findBookOwner(bookId, 7).getUserId())).isEqualTo(user.getUserId());
+    }
 }

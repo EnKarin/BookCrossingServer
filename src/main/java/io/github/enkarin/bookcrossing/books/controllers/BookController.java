@@ -4,6 +4,7 @@ import io.github.enkarin.bookcrossing.books.dto.BookFiltersRequest;
 import io.github.enkarin.bookcrossing.books.dto.BookModelDto;
 import io.github.enkarin.bookcrossing.books.service.BookService;
 import io.github.enkarin.bookcrossing.constant.Constant;
+import io.github.enkarin.bookcrossing.user.dto.UserPublicProfileDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -73,7 +74,7 @@ public class BookController {
     @ApiResponses(value = {
         @ApiResponse(responseCode = "404", description = "Книга не найдена",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+                schema = @Schema(ref = "#/components/schemas/LogicErrorBody"))}),
         @ApiResponse(responseCode = "200", description = "Возвращает данные книги",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
                 schema = @Schema(implementation = BookModelDto.class))})
@@ -92,7 +93,7 @@ public class BookController {
         @ApiResponse(responseCode = "200", description = "Возвращает найденные книги",
             content = {@Content(mediaType = Constant.MEDIA_TYPE, array = @ArraySchema(schema = @Schema(implementation = BookModelDto.class)))}),
         @ApiResponse(responseCode = "400", description = "Поле name не должно быть пустым",
-            content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(ref = "#/components/schemas/NewErrorBody"))})
+            content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(ref = "#/components/schemas/ValidationErrorBody"))})
     })
     @GetMapping("/searchByTitle")
     public ResponseEntity<List<BookModelDto>> searchByTitleOrAuthor(
@@ -113,5 +114,17 @@ public class BookController {
     @PostMapping("/searchWithFilters")
     public ResponseEntity<List<BookModelDto>> searchWithFilters(@RequestBody final BookFiltersRequest filters) {
         return ResponseEntity.ok(bookService.filter(filters));
+    }
+
+    @Operation(summary = "Получение владельца книги", description = "Позволяет получить информацию о владельце книги по её идентификатору")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Возвращает найденные книги",
+            content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(implementation = UserPublicProfileDto.class))}),
+        @ApiResponse(responseCode = "404", description = "Книга с указанным bookId не найдена",
+            content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(ref = "#/components/schemas/LogicErrorBody"))})
+    })
+    @GetMapping("/owner")
+    public ResponseEntity<UserPublicProfileDto> searchBookOwner(@RequestParam final int bookId, @RequestParam final int zoneId) {
+        return ResponseEntity.ok(bookService.findBookOwner(bookId, zoneId));
     }
 }

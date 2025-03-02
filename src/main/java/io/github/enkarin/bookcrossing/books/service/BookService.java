@@ -9,6 +9,7 @@ import io.github.enkarin.bookcrossing.books.repository.GenreRepository;
 import io.github.enkarin.bookcrossing.exception.BookNotFoundException;
 import io.github.enkarin.bookcrossing.exception.GenreNotFoundException;
 import io.github.enkarin.bookcrossing.exception.UserNotFoundException;
+import io.github.enkarin.bookcrossing.user.dto.UserPublicProfileDto;
 import io.github.enkarin.bookcrossing.user.model.User;
 import io.github.enkarin.bookcrossing.user.repository.UserRepository;
 import org.modelmapper.ModelMapper;
@@ -127,6 +128,10 @@ public class BookService {
             .limit(pageSize)
             .map(BookModelDto::fromBook)
             .toList();
+    }
+
+    public UserPublicProfileDto findBookOwner(final int bookId, final int zoneId) {
+        return UserPublicProfileDto.fromUser(bookRepository.findById(bookId).orElseThrow(BookNotFoundException::new).getOwner(), zoneId);
     }
 
     private Stream<Book> filterBookFromNonLockedOwner(final List<Book> books) {

@@ -47,10 +47,10 @@ public class RefreshController {
     @ApiResponses(value = {
         @ApiResponse(responseCode = "410", description = "Токен истек",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+                schema = @Schema(ref = "#/components/schemas/LogicErrorBody"))}),
         @ApiResponse(responseCode = "404", description = "Токена не существует",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+                schema = @Schema(ref = "#/components/schemas/LogicErrorBody"))}),
         @ApiResponse(responseCode = "200", description = "Возвращает токены",
             content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(implementation = AuthResponse.class))}, headers = @Header(name = "Set-Cookie", description = "refresh token")
         )}

@@ -57,13 +57,13 @@ public class MessageController {
     @ApiResponses(value = {
         @ApiResponse(responseCode = "406", description = "Сообщение должно содержать хотя бы 1 видимый символ",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+                schema = @Schema(ref = "#/components/schemas/LogicErrorBody"))}),
         @ApiResponse(responseCode = "404", description = "Чата не существует",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+                schema = @Schema(ref = "#/components/schemas/LogicErrorBody"))}),
         @ApiResponse(responseCode = "403", description = "Нет доступа к чату",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+                schema = @Schema(ref = "#/components/schemas/LogicErrorBody"))}),
         @ApiResponse(responseCode = "201", description = "Сообщение отправлено",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
                 schema = @Schema(implementation = MessageDto.class))})
@@ -85,13 +85,13 @@ public class MessageController {
     @ApiResponses(value = {
         @ApiResponse(responseCode = "406", description = "Сообщение должно содержать хотя бы 1 видимый символ",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+                schema = @Schema(ref = "#/components/schemas/LogicErrorBody"))}),
         @ApiResponse(responseCode = "404", description = "Сообщение не найдено",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+                schema = @Schema(ref = "#/components/schemas/LogicErrorBody"))}),
         @ApiResponse(responseCode = "403", description = "Пользователь не является отправителем сообщения",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+                schema = @Schema(ref = "#/components/schemas/LogicErrorBody"))}),
         @ApiResponse(responseCode = "200", description = "Сообщение изменено",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
                 schema = @Schema(implementation = MessageDto.class))})
@@ -113,10 +113,10 @@ public class MessageController {
     @ApiResponses(value = {
         @ApiResponse(responseCode = "404", description = "Сообщение не найдено",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+                schema = @Schema(ref = "#/components/schemas/LogicErrorBody"))}),
         @ApiResponse(responseCode = "403", description = "Пользователь не является отправителем",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+                schema = @Schema(ref = "#/components/schemas/LogicErrorBody"))}),
         @ApiResponse(responseCode = "200", description = "Сообщение удалено")
     })
     @DeleteMapping
@@ -133,10 +133,10 @@ public class MessageController {
     @ApiResponses(value = {
         @ApiResponse(responseCode = "404", description = "Сообщение не найдено",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+                schema = @Schema(ref = "#/components/schemas/LogicErrorBody"))}),
         @ApiResponse(responseCode = "403", description = "Нет доступа к чату",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+                schema = @Schema(ref = "#/components/schemas/LogicErrorBody"))}),
         @ApiResponse(responseCode = "200", description = "Сообщение удалено")
     })
     @DeleteMapping("/deleteForMe")

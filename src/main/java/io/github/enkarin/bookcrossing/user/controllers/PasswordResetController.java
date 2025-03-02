@@ -48,7 +48,7 @@ public class PasswordResetController {
     @ApiResponses(value = {
         @ApiResponse(responseCode = "404", description = "Пользователь с таким email не найден",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+                schema = @Schema(ref = "#/components/schemas/LogicErrorBody"))}),
         @ApiResponse(responseCode = "200", description = "Отправляет ссылку на сброс пароля на почту")
     }
     )
@@ -65,17 +65,15 @@ public class PasswordResetController {
     @ApiResponses(value = {
         @ApiResponse(responseCode = "409", description = "Пароли не совпадают",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+                schema = @Schema(ref = "#/components/schemas/LogicErrorBody"))}),
         @ApiResponse(responseCode = "403", description = "Ссылка недействительна",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+                schema = @Schema(ref = "#/components/schemas/LogicErrorBody"))}),
         @ApiResponse(responseCode = "201", description = "Пароль успешно изменен")
     }
     )
     @PostMapping("/update")
-    public ResponseEntity<Void> updatePassword(@RequestParam final String token,
-                                               @Valid @RequestBody final UserPasswordDto userPasswordDto,
-                                               final BindingResult bindingResult) {
+    public ResponseEntity<Void> updatePassword(@RequestParam final String token, @Valid @RequestBody final UserPasswordDto userPasswordDto, final BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             throw new PasswordsDontMatchException();
         }
