@@ -54,7 +54,7 @@ public class MyBookController {
     )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "406", description = "Введены некорректные данные",
-            content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+            content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(ref = "#/components/schemas/ValidationErrorBody"))}),
         @ApiResponse(responseCode = "201", description = "Возвращает сохраненную книгу",
             content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(implementation = BookModelDto.class))})}
     )
@@ -89,7 +89,7 @@ public class MyBookController {
     )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "404", description = "Книга не найдена",
-            content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+            content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(ref = "#/components/schemas/LogicErrorBody"))}),
         @ApiResponse(responseCode = "200", description = "Удаляет книгу из бд")
     })
     @DeleteMapping

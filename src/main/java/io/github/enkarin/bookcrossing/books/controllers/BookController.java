@@ -74,7 +74,7 @@ public class BookController {
     @ApiResponses(value = {
         @ApiResponse(responseCode = "404", description = "Книга не найдена",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+                schema = @Schema(ref = "#/components/schemas/LogicErrorBody"))}),
         @ApiResponse(responseCode = "200", description = "Возвращает данные книги",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
                 schema = @Schema(implementation = BookModelDto.class))})
@@ -93,7 +93,7 @@ public class BookController {
         @ApiResponse(responseCode = "200", description = "Возвращает найденные книги",
             content = {@Content(mediaType = Constant.MEDIA_TYPE, array = @ArraySchema(schema = @Schema(implementation = BookModelDto.class)))}),
         @ApiResponse(responseCode = "400", description = "Поле name не должно быть пустым",
-            content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(ref = "#/components/schemas/NewErrorBody"))})
+            content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(ref = "#/components/schemas/ValidationErrorBody"))})
     })
     @GetMapping("/searchByTitle")
     public ResponseEntity<List<BookModelDto>> searchByTitleOrAuthor(
@@ -121,7 +121,7 @@ public class BookController {
         @ApiResponse(responseCode = "200", description = "Возвращает найденные книги",
             content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(implementation = UserPublicProfileDto.class))}),
         @ApiResponse(responseCode = "404", description = "Книга с указанным bookId не найдена",
-            content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(ref = "#/components/schemas/NewErrorBody"))})
+            content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(ref = "#/components/schemas/LogicErrorBody"))})
     })
     @GetMapping("/owner")
     public ResponseEntity<UserPublicProfileDto> searchBookOwner(@RequestParam final int bookId, @RequestParam final int zoneId) {

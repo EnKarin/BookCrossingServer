@@ -63,14 +63,13 @@ public class CorrespondenceController {
     )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "409", description = "Чат уже существует",
-            content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+            content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(ref = "#/components/schemas/LogicErrorBody"))}),
         @ApiResponse(responseCode = "406", description = "Нельзя создать чат с данным пользователем",
-            content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+            content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(ref = "#/components/schemas/LogicErrorBody"))}),
+        @ApiResponse(responseCode = "400", description = "Поле userId должно быть заполнено",
+            content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(ref = "#/components/schemas/ValidationErrorBody"))}),
         @ApiResponse(responseCode = "201", description = "Чат создан",
-            content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                schema = @Schema(implementation = UsersCorrKeyDto.class))})
+            content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(implementation = UsersCorrKeyDto.class))})
     })
     @Parameters({
         @Parameter(in = ParameterIn.HEADER, name = USER_ID, description = "Идентификатор пользователя")
@@ -87,7 +86,7 @@ public class CorrespondenceController {
     @ApiResponses(value = {
         @ApiResponse(responseCode = "404", description = "Чата не существует",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+                schema = @Schema(ref = "#/components/schemas/LogicErrorBody"))}),
         @ApiResponse(responseCode = "200", description = "Чат удален")
     }
     )
@@ -106,9 +105,9 @@ public class CorrespondenceController {
     )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "404", description = "Чата не существует",
-            content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+            content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(ref = "#/components/schemas/LogicErrorBody"))}),
         @ApiResponse(responseCode = "403", description = "Нет доступа к чату",
-            content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+            content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(ref = "#/components/schemas/LogicErrorBody"))}),
         @ApiResponse(responseCode = "200", description = "Возвращает список сообщений",
             content = {@Content(mediaType = Constant.MEDIA_TYPE, array = @ArraySchema(schema = @Schema(implementation = MessageDto.class)))})
     }

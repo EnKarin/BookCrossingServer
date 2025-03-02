@@ -60,7 +60,7 @@ public class UserProfileController {
     @ApiResponses(value = {
         @ApiResponse(responseCode = "404", description = "Пользователь не найден",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+                schema = @Schema(ref = "#/components/schemas/LogicErrorBody"))}),
         @ApiResponse(responseCode = "200", description = "Возвращает профиль пользователя")
     }
     )
@@ -78,25 +78,19 @@ public class UserProfileController {
         return ResponseEntity.ok(userService.findById(Integer.parseInt(userId), zone));
     }
 
-    @Operation(
-        summary = "Изменение данных пользователя",
-        description = "Возвращает обновленный профиль"
-    )
+    @Operation(summary = "Изменение данных пользователя", description = "Возвращает обновленный профиль")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "412", description = "Пароли не совпадают",
-            content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+            content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(ref = "#/components/schemas/LogicErrorBody"))}),
         @ApiResponse(responseCode = "409", description = "Неверный пароль",
-            content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+            content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(ref = "#/components/schemas/LogicErrorBody"))}),
         @ApiResponse(responseCode = "404", description = "Пользователь не найден",
-            content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+            content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(ref = "#/components/schemas/LogicErrorBody"))}),
+        @ApiResponse(responseCode = "406", description = "Обязательные поля запроса не были заполнены",
+            content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(ref = "#/components/schemas/ValidationErrorBody"))}),
         @ApiResponse(responseCode = "200", description = "Возвращает обновленный профиль пользователя",
-            content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                schema = @Schema(implementation = UserProfileDto.class))})
-    }
-    )
+            content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(implementation = UserProfileDto.class))})
+    })
     @PutMapping
     public ResponseEntity<UserProfileDto> putProfile(@Valid @RequestBody final UserPutProfileDto userPutProfileDto,
                                                      final BindingResult bindingResult,

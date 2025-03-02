@@ -60,11 +60,9 @@ public class AdminController {
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Отправляет на почту сообщение о блокировке"),
         @ApiResponse(responseCode = "406", description = "Пустой логин или комментарий",
-            content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+            content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(ref = "#/components/schemas/ValidationErrorBody"))}),
         @ApiResponse(responseCode = "404", description = "Пользователя с таким логином не существует",
-            content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                schema = @Schema(ref = "#/components/schemas/NewErrorBody"))})
+            content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(ref = "#/components/schemas/LogicErrorBody"))})
     })
     @PostMapping("/locked")
     public ResponseEntity<Void> lockedUser(@RequestBody @Valid final LockedUserDto lockedUserDto,
@@ -86,7 +84,7 @@ public class AdminController {
         @ApiResponse(responseCode = "200"),
         @ApiResponse(responseCode = "404", description = "Пользователя с таким логином не существует",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                schema = @Schema(ref = "#/components/schemas/NewErrorBody"))})
+                schema = @Schema(ref = "#/components/schemas/LogicErrorBody"))})
     })
     @PostMapping("/nonLocked")
     public ResponseEntity<Void> nonLockedUser(@RequestParam final String login) {

@@ -43,7 +43,7 @@ public class AutocompletionController {
         @ApiResponse(responseCode = "200", description = "Найденные по запросу авторы",
             content = {@Content(mediaType = Constant.MEDIA_TYPE, array = @ArraySchema(schema = @Schema(implementation = String.class)))}),
         @ApiResponse(responseCode = "400", description = "Поле name не должно быть пустым",
-            content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(ref = "#/components/schemas/NewErrorBody"))})})
+            content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(ref = "#/components/schemas/ValidationErrorBody"))})})
     @GetMapping("/authors")
     public ResponseEntity<Collection<String>> findAuthors(
         @RequestParam @NotBlank(message = "3008") @Parameter(description = "Частичное называние книги или имя автора") final String name) {

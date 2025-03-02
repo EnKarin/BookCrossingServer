@@ -53,10 +53,10 @@ public class AttachmentController {
     @ApiResponses(value = {
         @ApiResponse(responseCode = "415", description = "Некорректное вложение",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+                schema = @Schema(ref = "#/components/schemas/LogicErrorBody"))}),
         @ApiResponse(responseCode = "404", description = "Книги не существует",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+                schema = @Schema(ref = "#/components/schemas/LogicErrorBody"))}),
         @ApiResponse(responseCode = "201", description = "Вложение сохранено")
     })
     @PostMapping
@@ -68,9 +68,9 @@ public class AttachmentController {
     @Operation(summary = "Получение вложения", description = "Позволяет получить вложение по идентификатору и требуемому формату")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "400", description = "Запрошен некорректный формат изображения",
-            content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+            content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(ref = "#/components/schemas/LogicErrorBody"))}),
         @ApiResponse(responseCode = "404", description = "Вложения не существует",
-            content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+            content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(ref = "#/components/schemas/LogicErrorBody"))}),
         @ApiResponse(responseCode = "200", description = "Вложение отправлено", content = @Content(mediaType = Constant.JPG))
     })
     @GetMapping
@@ -89,7 +89,7 @@ public class AttachmentController {
     @ApiResponses(value = {
         @ApiResponse(responseCode = "404", description = "Вложения или книги не существует",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+                schema = @Schema(ref = "#/components/schemas/LogicErrorBody"))}),
         @ApiResponse(responseCode = "200", description = "Вложение удалено")
     })
     @DeleteMapping
