@@ -185,8 +185,33 @@ class BookControllerTest extends BookCrossingBaseTests {
             .method(HttpMethod.POST)
             .uri(uriBuilder -> uriBuilder.pathSegment("books", "searchWithFilters").build())
             .contentType(MediaType.APPLICATION_JSON)
-            .bodyValue(BookFiltersRequest
-                .create("Novosibirsk", "Wolves", "author", List.of(2), "publishing_house", 2000, 0, 10))
+            .bodyValue(BookFiltersRequest.create(null, "Novosibirsk", "Wolves", "author", List.of(2),
+                "publishing_house", 2000, 0, 10))
+            .exchange()
+            .expectStatus().isEqualTo(200)
+            .expectBodyList(BookModelDto.class)
+            .returnResult().getResponseBody();
+
+        assertThat(response)
+            .hasSize(1)
+            .containsOnly(TestDataProvider.buildWolves(booksId.get(2), "Novosibirsk"));
+    }
+
+    @Test
+    void searchWithFiltersShouldnWorkWithFieldAuthorOrTitle() {
+        final var user = TestDataProvider.buildUsers().stream()
+            .map(this::createAndSaveUser)
+            .map(UserDto::getLogin)
+            .findAny()
+            .orElseThrow();
+
+        final var booksId = createAndSaveBooks(user);
+
+        final var response = webClient
+            .method(HttpMethod.POST)
+            .uri(uriBuilder -> uriBuilder.pathSegment("books", "searchWithFilters").build())
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(BookFiltersRequest.create("Wolves", null, null, null, List.of(), null, 0, 0, 10))
             .exchange()
             .expectStatus().isEqualTo(200)
             .expectBodyList(BookModelDto.class)
