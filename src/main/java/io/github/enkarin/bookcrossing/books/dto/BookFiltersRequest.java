@@ -15,6 +15,9 @@ import java.util.List;
 @Schema(description = "Фильтры для книг")
 public class BookFiltersRequest {
 
+    @Schema(description = "Автор или название", example = "Портрет Дориана Грея")
+    private final String authorOrTitle;
+
     @Schema(description = "Город", example = "Новосибирск")
     private final String city;
 
@@ -40,8 +43,8 @@ public class BookFiltersRequest {
     private final int pageSize;
 
     @JsonCreator
-    public static BookFiltersRequest create(final String city, final String title, final String author,
-                                            final List<Integer> genre, final String publishingHouse, final int year, final int pageNumber, final int pageSize) {
-        return new BookFiltersRequest(city, title, author, genre, publishingHouse, year, pageNumber, pageSize);
+    public static BookFiltersRequest create(final String authorOrTitle, final String city, final String title, final String author, final List<Integer> genre,
+                                            final String publishingHouse, final int year, final int pageNumber, final int pageSize) {
+        return new BookFiltersRequest(authorOrTitle, city, title, author, genre, publishingHouse, year, pageNumber, pageSize);
     }
 }

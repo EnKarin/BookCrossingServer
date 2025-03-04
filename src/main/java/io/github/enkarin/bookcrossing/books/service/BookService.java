@@ -12,6 +12,7 @@ import io.github.enkarin.bookcrossing.exception.UserNotFoundException;
 import io.github.enkarin.bookcrossing.user.dto.UserPublicProfileDto;
 import io.github.enkarin.bookcrossing.user.model.User;
 import io.github.enkarin.bookcrossing.user.repository.UserRepository;
+import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -66,7 +67,9 @@ public class BookService {
     }
 
     public List<BookModelDto> filter(final BookFiltersRequest request) {
-        List<Book> books = bookRepository.findAll();
+        List<Book> books = StringUtils.isEmpty(request.getAuthorOrTitle()) ?
+            bookRepository.findAll() :
+            bookRepository.findBooksByTitleOrAuthorIgnoreCase(request.getAuthorOrTitle());
         if (!CollectionUtils.isEmpty(request.getGenre())) {
             books = books.stream()
                 .filter(book -> request.getGenre().contains(book.getGenre().getId()))
