@@ -28,7 +28,7 @@ class UserServiceTest extends BookCrossingBaseTests {
 
     @Test
     void saveUserCorrectUserTest() {
-        assertThat(userService.findById(createAndSaveUser(TestDataProvider.buildAlex()).getUserId(), GM_TIME_ZERO)).isNotNull();
+        assertThat(userService.findById(createAndSaveUser(TestDataProvider.buildAlex()).getUserId(), GM_TIME_ZERO).getAboutMe()).isEqualTo("Hi, I'm Alex");
     }
 
     @Test
@@ -154,7 +154,8 @@ class UserServiceTest extends BookCrossingBaseTests {
             "12345678",
             "87654321",
             "87654321",
-            "Moscow"
+            "Moscow",
+            "Mmmike!"
         );
 
         userService.putUserInfo(putProfile, user.getLogin());
@@ -172,7 +173,8 @@ class UserServiceTest extends BookCrossingBaseTests {
             "123456",
             "654321",
             "123456",
-            "Moscow"
+            "Moscow",
+            "Mmmike!"
         );
 
         assertThatThrownBy(() -> userService.putUserInfo(putProfile, user))
@@ -189,7 +191,8 @@ class UserServiceTest extends BookCrossingBaseTests {
             "wrong password",
             "654321",
             "654321",
-            "Moscow"
+            "Moscow",
+            "Mmmike!"
         );
 
         assertThatThrownBy(() -> userService.putUserInfo(putProfile, user))

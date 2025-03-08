@@ -140,6 +140,7 @@ public class UserService {
         user.setAccountNonLocked(true);
         user.setEnabled(false);
         user.setPassword(bCryptPasswordEncoder.encode(userRegistrationDTO.getPassword()));
+        user.setAboutMe(userRegistrationDTO.getAboutMe());
         return user;
     }
 

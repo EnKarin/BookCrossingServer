@@ -140,6 +140,7 @@ public class TestDataProvider {
         return prepareUser()
             .login("Bot")
             .email("k.test@mail.ru")
+            .aboutMe("Ya bot!")
             .build();
     }
 
@@ -148,6 +149,7 @@ public class TestDataProvider {
         return prepareUser()
             .login("Alex")
             .email("t.test@mail.ru")
+            .aboutMe("Hi, I'm Alex")
             .build();
     }
 
@@ -165,6 +167,7 @@ public class TestDataProvider {
         return prepareUser()
             .login("Max")
             .email("m.test@mail.ru")
+            .aboutMe("Hi! I'm Max")
             .build();
     }
 
@@ -220,6 +223,18 @@ public class TestDataProvider {
             .name("Tester")
             .city("Novosibirsk")
             .loginDate("0")
+            .aboutMe("Ya bot!")
+            .build();
+    }
+
+    @Nonnull
+    public static UserPublicProfileDto buildPublicProfileAlex(final int userId) {
+        return UserPublicProfileDto.builder()
+            .userId(Integer.toString(userId))
+            .name("Tester")
+            .city("Novosibirsk")
+            .loginDate("0")
+            .aboutMe("Hi, I'm Alex")
             .build();
     }
 
@@ -231,6 +246,7 @@ public class TestDataProvider {
             .email("k.test@mail.ru")
             .name("Tester")
             .city("Novosibirsk")
+            .aboutMe("Ya bot!")
             .build();
     }
 
@@ -252,6 +268,7 @@ public class TestDataProvider {
             .email("k.test@mail.ru")
             .name("Bott")
             .city("Moscow")
+            .aboutMe("Ya bot!")
             .build();
     }
 

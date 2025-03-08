@@ -43,9 +43,12 @@ public class UserRegistrationDto {
     @Schema(description = "Город", example = "Новосибирск")
     private final String city;
 
+    @Schema(description = "Информация о пользователе")
+    protected final String aboutMe;
+
     @JsonCreator
     public static UserRegistrationDto create(final String name, final String login, final String password,
-                                             final String passwordConfirm, final String email, final String city) {
-        return new UserRegistrationDto(name, login, password, passwordConfirm, email, city);
+                                             final String passwordConfirm, final String email, final String city, final String aboutMe) {
+        return new UserRegistrationDto(name, login, password, passwordConfirm, email, city, aboutMe);
     }
 }

@@ -1,0 +1,1 @@
+alter table bookcrossing.t_user add column about_me varchar(1000);

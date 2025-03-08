@@ -27,7 +27,8 @@ public class InfoUsersDto extends UserParentDto {
             userParentDto.getEmail(),
             userParentDto.getCity(),
             userParentDto.isAccountNonLocked(),
-            userParentDto.isEnabled());
+            userParentDto.isEnabled(),
+            userParentDto.getAboutMe());
         this.loginDate = loginDate;
     }
 
@@ -39,26 +40,25 @@ public class InfoUsersDto extends UserParentDto {
                          final String city,
                          final boolean accountNonLocked,
                          final boolean enabled,
-                         final String loginDate) {
-        super(userId, name, login, email, city, accountNonLocked, enabled);
+                         final String loginDate,
+                         final String aboutMe) {
+        super(userId, name, login, email, city, accountNonLocked, enabled, aboutMe);
         this.loginDate = loginDate;
     }
 
     public static InfoUsersDto fromUser(final User user, final int zone) {
         return new InfoUsersDto(create(user.getUserId(), user.getName(), user.getLogin(), user.getEmail(),
-            user.getCity(), user.isAccountNonLocked(), user.isEnabled()),
+            user.getCity(), user.isAccountNonLocked(), user.isEnabled(), user.getAboutMe()),
             loginDateToString(user.getLoginDate(), zone));
     }
 
     public static InfoUsersDto fromUserDto(final UserDto user, final int zone) {
         return new InfoUsersDto(create(user.getUserId(), user.getName(), user.getLogin(), user.getEmail(),
-            user.getCity(), user.isAccountNonLocked(), user.isEnabled()),
+            user.getCity(), user.isAccountNonLocked(), user.isEnabled(), user.getAboutMe()),
             loginDateToString(user.getLoginDate(), zone));
     }
 
     private static String loginDateToString(final long loginDate, final int zone) {
-        return loginDate == 0 ? "0" :
-            LocalDateTime.ofEpochSecond(loginDate, 0, ZoneOffset.ofHours(zone))
-                .toString();
+        return loginDate == 0 ? "0" : LocalDateTime.ofEpochSecond(loginDate, 0, ZoneOffset.ofHours(zone)).toString();
     }
 }

@@ -32,6 +32,7 @@ class RegistrationControllerTest extends BookCrossingBaseTests {
             .expectBody(UserDto.class)
             .returnResult().getResponseBody();
         assertThat(user).isNotNull();
+        assertThat(user.getAboutMe()).isEqualTo("Hi! I'm Max");
 
         trackUserId(user.getUserId());
 

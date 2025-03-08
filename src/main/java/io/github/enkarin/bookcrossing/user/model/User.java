@@ -49,6 +49,8 @@ public class User implements UserDetails {
 
     private long loginDate;
 
+    private String aboutMe;
+
     @ManyToMany
     @JoinTable(
         name = "t_user_role",

@@ -67,7 +67,7 @@ class UserProfileControllerTest extends BookCrossingBaseTests {
 
         assertThat(response)
             .isNotNull()
-            .isEqualTo(TestDataProvider.buildPublicProfileBot(userAlex));
+            .isEqualTo(TestDataProvider.buildPublicProfileAlex(userAlex));
     }
 
     @Test

@@ -33,9 +33,16 @@ public class UserPutProfileDto {
     @Schema(description = "Город", example = "Новосибирск")
     private final String city;
 
+    @Schema(description = "Информация о пользователе")
+    protected final String aboutMe;
+
     @JsonCreator
-    public static UserPutProfileDto create(final String name, final String oldPassword, final String newPassword,
-                                           final String passwordConfirm, final String city) {
-        return new UserPutProfileDto(name, oldPassword, newPassword, passwordConfirm, city);
+    public static UserPutProfileDto create(final String name,
+                                           final String oldPassword,
+                                           final String newPassword,
+                                           final String passwordConfirm,
+                                           final String city,
+                                           final String aboutMe) {
+        return new UserPutProfileDto(name, oldPassword, newPassword, passwordConfirm, city, aboutMe);
     }
 }
