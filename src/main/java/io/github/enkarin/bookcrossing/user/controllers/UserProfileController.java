@@ -134,7 +134,7 @@ public class UserProfileController {
             content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(ref = "#/components/schemas/LogicErrorBody"))})
     })
     @PostMapping("/avatar")
-    public ResponseEntity<Void> putAvatar(@ModelAttribute final MultipartFile avatar, Principal principal) throws IOException {
+    public ResponseEntity<Void> putAvatar(@ModelAttribute final MultipartFile avatar, final Principal principal) throws IOException {
         final String fileName = avatar.getOriginalFilename();
         if (fileName == null || fileName.isBlank()) {
             throw new BadRequestException(ErrorMessage.ERROR_3001.getCode());
@@ -155,7 +155,7 @@ public class UserProfileController {
             content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(ref = "#/components/schemas/LogicErrorBody"))})
     })
     @GetMapping("/avatar")
-    public void getAvatar(@RequestParam final int userId, final HttpServletResponse response) throws IOException {
+    public void findAvatar(@RequestParam final int userId, final HttpServletResponse response) throws IOException {
         final byte[] avatar = userService.getAvatar(userId);
         response.setContentType(MediaType.IMAGE_JPEG_VALUE);
         response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + userId + ".jpg\"");
