@@ -14,8 +14,14 @@ import io.github.enkarin.bookcrossing.user.dto.UserDto;
 import io.github.enkarin.bookcrossing.user.dto.UserProfileDto;
 import io.github.enkarin.bookcrossing.user.dto.UserPublicProfileDto;
 import io.github.enkarin.bookcrossing.user.dto.UserPutProfileDto;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.util.ResourceUtils;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.nio.file.Files;
 import java.util.Comparator;
 import java.util.List;
 
@@ -212,6 +218,18 @@ class UserServiceTest extends BookCrossingBaseTests {
         final UserRegistrationDto userRegistrationDto = TestDataProvider.buildMax();
         userRegistrationDto.setLogin("  ");
         assertThat(createAndSaveUser(userRegistrationDto)).satisfies(userDto -> checkEqual(userDto, userRegistrationDto));
+    }
+
+    @Test
+    @SneakyThrows
+    void putAvatar() {
+        final var userId = createAndSaveUser(TestDataProvider.buildAlex()).getUserId();
+        final File file = ResourceUtils.getFile("classpath:files/image.jpg");
+        final MultipartFile multipartFile = new MockMultipartFile(file.getName(), file.getName(), "image/jpg", Files.readAllBytes(file.toPath()));
+
+        userService.putAvatar(userId, multipartFile);
+
+        assertThat(userService.getAvatar(userId)).isNotNull();
     }
 
     private static void checkEqual(final UserDto userDto, final UserRegistrationDto userRegistrationDto) {

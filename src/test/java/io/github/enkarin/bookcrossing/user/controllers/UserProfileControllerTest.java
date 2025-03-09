@@ -6,9 +6,18 @@ import io.github.enkarin.bookcrossing.support.TestDataProvider;
 import io.github.enkarin.bookcrossing.user.dto.UserProfileDto;
 import io.github.enkarin.bookcrossing.user.dto.UserPublicProfileDto;
 import io.github.enkarin.bookcrossing.user.dto.UserPutProfileDto;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.MediaType;
+import org.springframework.http.client.MultipartBodyBuilder;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.util.ResourceUtils;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.Map;
 
@@ -178,6 +187,48 @@ class UserProfileControllerTest extends BookCrossingBaseTests {
                 .ignoringFields("books", "loginDate")
                 .isEqualTo(TestDataProvider.buildPublicProfileBot(user.getUserId()))
             );
+    }
+
+    @Test
+    @SneakyThrows
+    void putAvatar() {
+        final var user = createAndSaveUser(TestDataProvider.buildBot());
+        enabledUser(user.getUserId());
+        final File file = ResourceUtils.getFile("classpath:files/image.jpg");
+        final MultipartBodyBuilder multipartBodyBuilder = new MultipartBodyBuilder();
+        multipartBodyBuilder.part("file", new ByteArrayResource(Files.readAllBytes(file.toPath())), MediaType.TEXT_PLAIN).filename(file.getName());
+        multipartBodyBuilder.part("userId", user.getUserId());
+
+        webClient.post()
+            .uri(uriBuilder -> uriBuilder.pathSegment("user", "profile", "avatar").build())
+            .contentType(MediaType.MULTIPART_FORM_DATA)
+            .bodyValue(multipartBodyBuilder)
+            .headers(httpHeaders -> httpHeaders.setBearerAuth(generateAccessToken(TestDataProvider.buildAuthBot())))
+            .exchange()
+            .expectStatus().isEqualTo(201);
+
+        assertThat(userService.getAvatar(user.getUserId())).isNotNull();
+    }
+
+    @Test
+    @SneakyThrows
+    void getAvatar() {
+        final var user = createAndSaveUser(TestDataProvider.buildBot());
+        enabledUser(user.getUserId());
+        final File file = ResourceUtils.getFile("classpath:files/image.jpg");
+        final MultipartFile multipartFile = new MockMultipartFile(file.getName(), file.getName(), "image/jpg", Files.readAllBytes(file.toPath()));
+        userService.putAvatar(user.getUserId(), multipartFile);
+
+        final var avatar = webClient.get()
+            .uri(uriBuilder -> uriBuilder.pathSegment("user", "profile", "avatar")
+                .queryParam("userId", user.getUserId())
+                .build())
+            .headers(httpHeaders -> httpHeaders.setBearerAuth(generateAccessToken(TestDataProvider.buildAuthBot())))
+            .exchange()
+            .expectStatus().isEqualTo(201)
+            .expectBody().returnResult().getResponseBody();
+
+        assertThat(avatar).isNotNull();
     }
 
     private void assertThatReturnException(final UserPutProfileDto putProfileDto, final int status, final String message) {

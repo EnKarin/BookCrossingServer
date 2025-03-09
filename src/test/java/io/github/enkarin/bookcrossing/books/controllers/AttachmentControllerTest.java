@@ -54,6 +54,7 @@ class AttachmentControllerTest extends BookCrossingBaseTests {
             .bodyValue(multipartBodyBuilder.build())
             .exchange()
             .expectStatus().isEqualTo(201);
+
         assertThat(attachmentRepository.count()).isOne();
     }
 
@@ -63,13 +64,16 @@ class AttachmentControllerTest extends BookCrossingBaseTests {
         final int book1 = bookService.saveBook(TestDataProvider.buildWolves(), user.getLogin()).getBookId();
         final int attachmentId = createAttachment(book1);
 
-        webClient.get()
+        final var attachment = webClient.get()
             .uri(uriBuilder -> uriBuilder.pathSegment("user", "myBook", "attachment")
                 .queryParam("id", attachmentId)
                 .queryParam("format", "origin").build())
             .headers(headers -> headers.setBearerAuth(generateAccessToken(TestDataProvider.buildAuthBot())))
             .exchange()
-            .expectStatus().isEqualTo(200);
+            .expectStatus().isEqualTo(200)
+            .expectBody().returnResult().getResponseBody();
+
+        assertThat(attachment).isNotNull();
     }
 
     @Test

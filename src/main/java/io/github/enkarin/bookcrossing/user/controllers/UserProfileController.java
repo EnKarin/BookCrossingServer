@@ -5,6 +5,7 @@ import io.github.enkarin.bookcrossing.constant.ErrorMessage;
 import io.github.enkarin.bookcrossing.exception.BindingErrorsException;
 import io.github.enkarin.bookcrossing.exception.InvalidPasswordException;
 import io.github.enkarin.bookcrossing.exception.PasswordsDontMatchException;
+import io.github.enkarin.bookcrossing.user.dto.AvatarMultipartDto;
 import io.github.enkarin.bookcrossing.user.dto.UserProfileDto;
 import io.github.enkarin.bookcrossing.user.dto.UserPublicProfileDto;
 import io.github.enkarin.bookcrossing.user.dto.UserPutProfileDto;
@@ -20,11 +21,14 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -34,9 +38,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.io.IOException;
 import java.security.Principal;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import static io.github.enkarin.bookcrossing.utils.Util.createErrorMap;
@@ -114,6 +120,21 @@ public class UserProfileController {
     @GetMapping("/users")
     public ResponseEntity<List<UserPublicProfileDto>> getAllProfile(@RequestParam final int zone, @RequestParam final int pageNumber, @RequestParam final int pageSize) {
         return ResponseEntity.ok(userService.findAllUsers(zone, pageNumber, pageSize));
+    }
+
+    @PostMapping("/avatar")
+    public ResponseEntity<Void> putAvatar(@ModelAttribute final AvatarMultipartDto avatarMultipartDto) throws IOException {
+        final String fileName = avatarMultipartDto.getAvatar().getOriginalFilename();
+        if (fileName == null || fileName.isBlank()) {
+            throw new BadRequestException(ErrorMessage.ERROR_3001.getCode());
+        }
+        final String expansion = fileName.substring(fileName.indexOf('.') + 1).toLowerCase(Locale.ROOT);
+        if ("jpeg".equals(expansion) || "jpg".equals(expansion) || "png".equals(expansion) || "bmp".equals(expansion)) {
+            userService.putAvatar(avatarMultipartDto.getUserId(), avatarMultipartDto.getAvatar());
+        } else {
+            throw new BadRequestException(ErrorMessage.ERROR_3002.getCode());
+        }
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @ResponseStatus(HttpStatus.PRECONDITION_FAILED)

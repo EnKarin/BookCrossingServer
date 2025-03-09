@@ -12,6 +12,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -36,6 +37,12 @@ public class AdviceController extends ResponseEntityExceptionHandler {
     @ExceptionHandler(BindingErrorsException.class)
     public Map<String, List<String>> bindingExc(final BindingErrorsException exc) {
         return Map.of("errorList", exc.getErrors());
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(IOException.class)
+    public Map<String, String> incorrectInputFile(final IOException exception) {
+        return createErrorMap(ErrorMessage.ERROR_2008);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)

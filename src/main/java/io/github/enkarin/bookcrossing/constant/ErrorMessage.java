@@ -34,6 +34,7 @@ public enum ErrorMessage {
     ERROR_2005("2005", "Формат должен быть 'origin', 'list' или 'thumb'", "Format should be 'origin', 'list' or 'thumb'"),
     ERROR_2006("2006", "Локаль должна быть 'ru' или 'eng'", "Locale should be 'ru' or 'eng'"),
     ERROR_2007("2007", "Указанный жанр не найден", "Specified genre not found"),
+    ERROR_2008("2008", "Невозможно прочитать добавляемый файл", "The file being added cannot be read"),
 
     //validation ex
     ERROR_3001("3001", "Имя файла не должно быть пустым", "File name cannot be empty"),
