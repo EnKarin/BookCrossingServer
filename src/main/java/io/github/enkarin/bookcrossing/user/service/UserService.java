@@ -22,11 +22,15 @@ import io.github.enkarin.bookcrossing.user.dto.UserPutProfileDto;
 import io.github.enkarin.bookcrossing.user.model.User;
 import io.github.enkarin.bookcrossing.user.repository.RoleRepository;
 import io.github.enkarin.bookcrossing.user.repository.UserRepository;
+import io.github.enkarin.bookcrossing.utils.ImageCompressor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
+import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -128,6 +132,16 @@ public class UserService {
     @Transactional
     public void deleteUser(final int userId) {
         userRepository.deleteById(userId);
+    }
+
+    @Transactional
+    public void putAvatar(final int userId, final MultipartFile avatarData) throws IOException {
+        userRepository.findById(userId).orElseThrow(UserNotFoundException::new)
+            .setAvatar(ImageCompressor.compressImage(ImageIO.read(avatarData.getInputStream()), 150, 150));
+    }
+
+    public byte[] getAvatar(final int userId) {
+        return userRepository.findById(userId).orElseThrow(UserNotFoundException::new).getAvatar();
     }
 
     private User convertToUser(final UserRegistrationDto userRegistrationDTO) {

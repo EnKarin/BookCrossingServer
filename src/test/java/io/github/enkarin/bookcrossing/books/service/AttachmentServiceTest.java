@@ -82,7 +82,7 @@ class AttachmentServiceTest extends BookCrossingBaseTests {
 
         assertThat(attachmentService.saveAttachment(AttachmentMultipartDto.fromFile(book1.getBookId(), secondMultipartFile), users.get(1).getLogin()).getAttachmentId())
             .isEqualTo(firstAttachId);
-        assertThat(attachmentService.findAttachmentData(firstAttachId, "origin")).isEqualTo(secondMultipartFile.getBytes());
+        assertThat(attachmentService.findAttachmentData(firstAttachId, "origin").getData()).isEqualTo(secondMultipartFile.getBytes());
     }
 
     @Test
@@ -173,7 +173,7 @@ class AttachmentServiceTest extends BookCrossingBaseTests {
         final MultipartFile multipartFile = new MockMultipartFile(file.getName(), file.getName(), "image/jpg", Files.readAllBytes(file.toPath()));
         final int attachmentId = attachmentService.saveAttachment(AttachmentMultipartDto.fromFile(book1, multipartFile), users.get(1).getLogin()).getAttachmentId();
 
-        assertThat(attachmentService.findAttachmentData(attachmentId, "origin")).isEqualTo(multipartFile.getBytes());
+        assertThat(attachmentService.findAttachmentData(attachmentId, "origin").getData()).isEqualTo(multipartFile.getBytes());
     }
 
     @Test
@@ -187,7 +187,7 @@ class AttachmentServiceTest extends BookCrossingBaseTests {
         final MultipartFile multipartFile = new MockMultipartFile(file.getName(), file.getName(), "image/jpg", Files.readAllBytes(file.toPath()));
         final int attachmentId = attachmentService.saveAttachment(AttachmentMultipartDto.fromFile(book1, multipartFile), users.get(1).getLogin()).getAttachmentId();
 
-        assertThat(attachmentService.findAttachmentData(attachmentId, "list").length).isLessThan(multipartFile.getBytes().length);
+        assertThat(attachmentService.findAttachmentData(attachmentId, "list").getData().length).isLessThan(multipartFile.getBytes().length);
     }
 
     @Test
@@ -195,8 +195,8 @@ class AttachmentServiceTest extends BookCrossingBaseTests {
     void findThumbImageAttachment() {
         final int attachmentId = createAttachment();
 
-        assertThat(attachmentService.findAttachmentData(attachmentId, "thumb").length)
-            .isLessThan(attachmentService.findAttachmentData(attachmentId, "list").length);
+        assertThat(attachmentService.findAttachmentData(attachmentId, "thumb").getData().length)
+            .isLessThan(attachmentService.findAttachmentData(attachmentId, "list").getData().length);
     }
 
     @Test

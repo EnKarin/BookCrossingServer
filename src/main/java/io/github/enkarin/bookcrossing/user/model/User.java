@@ -3,15 +3,18 @@ package io.github.enkarin.bookcrossing.user.model;
 import io.github.enkarin.bookcrossing.books.model.Book;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.Type;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -50,6 +53,11 @@ public class User implements UserDetails {
     private long loginDate;
 
     private String aboutMe;
+
+    @Lob
+    @Type(type = "org.hibernate.type.BinaryType")
+    @Column(length = 1_048_576)
+    private byte[] avatar;
 
     @ManyToMany
     @JoinTable(

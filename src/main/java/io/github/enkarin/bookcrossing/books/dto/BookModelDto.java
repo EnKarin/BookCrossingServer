@@ -50,6 +50,6 @@ public class BookModelDto extends BookDto {
             book.getYear(),
             book.getOwner().getCity()),
             book.getBookId(),
-            AttachmentDto.fromAttachment(book.getAttachment()));
+            AttachmentDto.fromAttachment(book.getAttachment(), "origin"));
     }
 }

@@ -1,5 +1,6 @@
 package io.github.enkarin.bookcrossing.books.controllers;
 
+import io.github.enkarin.bookcrossing.books.dto.AttachmentDto;
 import io.github.enkarin.bookcrossing.books.dto.AttachmentMultipartDto;
 import io.github.enkarin.bookcrossing.books.exceptions.NoAccessToAttachmentException;
 import io.github.enkarin.bookcrossing.books.exceptions.UnsupportedFormatException;
@@ -15,7 +16,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -75,11 +78,16 @@ public class AttachmentController {
     })
     @GetMapping
     public void findAttachment(@RequestParam final int id, @RequestParam final String format, final HttpServletResponse response) throws IOException {
-        final byte[] image = attachmentService.findAttachmentData(id, format);
-        response.setContentType("image/jpeg");
-        response.setHeader("Content-Disposition", "inline; filename=\"" + id + ".jpg\"");
-        response.setContentLength(image.length);
-        FileCopyUtils.copy(new ByteArrayInputStream(image), response.getOutputStream());
+        final AttachmentDto attachmentData = attachmentService.findAttachmentData(id, format);
+        response.setContentType(switch (attachmentData.getExpansion()) {
+            case "jpg", "jpeg" -> MediaType.IMAGE_JPEG_VALUE;
+            case "png" -> MediaType.IMAGE_PNG_VALUE;
+            case "bmp" -> "image/bmp";
+            default -> throw new UnsupportedFormatException();
+        });
+        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + id + '.' + attachmentData.getExpansion() + '"');
+        response.setContentLength(attachmentData.getData().length);
+        FileCopyUtils.copy(new ByteArrayInputStream(attachmentData.getData()), response.getOutputStream());
     }
 
     @Operation(
