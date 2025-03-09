@@ -135,8 +135,8 @@ public class UserService {
     }
 
     @Transactional
-    public void putAvatar(final int userId, final MultipartFile avatarData) throws IOException {
-        userRepository.findById(userId).orElseThrow(UserNotFoundException::new)
+    public void putAvatar(final String login, final MultipartFile avatarData) throws IOException {
+        userRepository.findByLogin(login).orElseThrow(UserNotFoundException::new)
             .setAvatar(ImageCompressor.compressImage(ImageIO.read(avatarData.getInputStream()), 150, 150));
     }
 

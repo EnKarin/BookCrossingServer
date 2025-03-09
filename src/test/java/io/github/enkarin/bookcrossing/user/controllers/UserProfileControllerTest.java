@@ -196,13 +196,12 @@ class UserProfileControllerTest extends BookCrossingBaseTests {
         enabledUser(user.getUserId());
         final File file = ResourceUtils.getFile("classpath:files/image.jpg");
         final MultipartBodyBuilder multipartBodyBuilder = new MultipartBodyBuilder();
-        multipartBodyBuilder.part("file", new ByteArrayResource(Files.readAllBytes(file.toPath())), MediaType.TEXT_PLAIN).filename(file.getName());
-        multipartBodyBuilder.part("userId", user.getUserId());
+        multipartBodyBuilder.part("avatar", new ByteArrayResource(Files.readAllBytes(file.toPath())), MediaType.TEXT_PLAIN).filename(file.getName());
 
         webClient.post()
             .uri(uriBuilder -> uriBuilder.pathSegment("user", "profile", "avatar").build())
             .contentType(MediaType.MULTIPART_FORM_DATA)
-            .bodyValue(multipartBodyBuilder)
+            .bodyValue(multipartBodyBuilder.build())
             .headers(httpHeaders -> httpHeaders.setBearerAuth(generateAccessToken(TestDataProvider.buildAuthBot())))
             .exchange()
             .expectStatus().isEqualTo(201);
@@ -217,7 +216,7 @@ class UserProfileControllerTest extends BookCrossingBaseTests {
         enabledUser(user.getUserId());
         final File file = ResourceUtils.getFile("classpath:files/image.jpg");
         final MultipartFile multipartFile = new MockMultipartFile(file.getName(), file.getName(), "image/jpg", Files.readAllBytes(file.toPath()));
-        userService.putAvatar(user.getUserId(), multipartFile);
+        userService.putAvatar(user.getLogin(), multipartFile);
 
         final var avatar = webClient.get()
             .uri(uriBuilder -> uriBuilder.pathSegment("user", "profile", "avatar")
@@ -225,7 +224,7 @@ class UserProfileControllerTest extends BookCrossingBaseTests {
                 .build())
             .headers(httpHeaders -> httpHeaders.setBearerAuth(generateAccessToken(TestDataProvider.buildAuthBot())))
             .exchange()
-            .expectStatus().isEqualTo(201)
+            .expectStatus().isEqualTo(200)
             .expectBody().returnResult().getResponseBody();
 
         assertThat(avatar).isNotNull();

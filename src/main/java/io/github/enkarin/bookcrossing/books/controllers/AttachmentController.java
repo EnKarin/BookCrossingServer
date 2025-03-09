@@ -74,7 +74,8 @@ public class AttachmentController {
             content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(ref = "#/components/schemas/LogicErrorBody"))}),
         @ApiResponse(responseCode = "404", description = "Вложения не существует",
             content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(ref = "#/components/schemas/LogicErrorBody"))}),
-        @ApiResponse(responseCode = "200", description = "Вложение отправлено", content = @Content(mediaType = Constant.JPG))
+        @ApiResponse(responseCode = "200", description = "Вложение отправлено",
+            content = {@Content(mediaType = Constant.JPG), @Content(mediaType = Constant.BMP), @Content(mediaType = Constant.PNG)})
     })
     @GetMapping
     public void findAttachment(@RequestParam final int id, @RequestParam final String format, final HttpServletResponse response) throws IOException {

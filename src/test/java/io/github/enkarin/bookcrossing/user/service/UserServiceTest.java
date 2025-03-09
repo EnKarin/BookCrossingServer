@@ -223,13 +223,13 @@ class UserServiceTest extends BookCrossingBaseTests {
     @Test
     @SneakyThrows
     void putAvatar() {
-        final var userId = createAndSaveUser(TestDataProvider.buildAlex()).getUserId();
+        final var user = createAndSaveUser(TestDataProvider.buildAlex());
         final File file = ResourceUtils.getFile("classpath:files/image.jpg");
         final MultipartFile multipartFile = new MockMultipartFile(file.getName(), file.getName(), "image/jpg", Files.readAllBytes(file.toPath()));
 
-        userService.putAvatar(userId, multipartFile);
+        userService.putAvatar(user.getLogin(), multipartFile);
 
-        assertThat(userService.getAvatar(userId)).isNotNull();
+        assertThat(userService.getAvatar(user.getUserId())).isNotNull();
     }
 
     private static void checkEqual(final UserDto userDto, final UserRegistrationDto userRegistrationDto) {
