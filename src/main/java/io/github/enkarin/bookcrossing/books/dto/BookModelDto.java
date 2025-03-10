@@ -10,7 +10,7 @@ import lombok.experimental.SuperBuilder;
 import javax.annotation.concurrent.Immutable;
 import java.util.Optional;
 
-import static io.github.enkarin.bookcrossing.books.enums.FormatType.origin;
+import static io.github.enkarin.bookcrossing.books.enums.FormatType.ORIGIN;
 
 @Immutable
 @Getter
@@ -52,6 +52,6 @@ public class BookModelDto extends BookDto {
             book.getYear(),
             book.getOwner().getCity()),
             book.getBookId(),
-            AttachmentDto.fromAttachment(book.getAttachment(), origin));
+            AttachmentDto.fromAttachment(book.getAttachment(), ORIGIN));
     }
 }

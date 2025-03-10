@@ -67,7 +67,7 @@ class AttachmentControllerTest extends BookCrossingBaseTests {
         final var attachment = webClient.get()
             .uri(uriBuilder -> uriBuilder.pathSegment("user", "myBook", "attachment")
                 .queryParam("id", attachmentId)
-                .queryParam("format", "origin").build())
+                .queryParam("format", "ORIGIN").build())
             .headers(headers -> headers.setBearerAuth(generateAccessToken(TestDataProvider.buildAuthBot())))
             .exchange()
             .expectStatus().isEqualTo(200)

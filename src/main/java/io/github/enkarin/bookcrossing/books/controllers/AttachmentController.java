@@ -4,7 +4,6 @@ import io.github.enkarin.bookcrossing.books.dto.AttachmentDto;
 import io.github.enkarin.bookcrossing.books.dto.AttachmentMultipartDto;
 import io.github.enkarin.bookcrossing.books.enums.FormatType;
 import io.github.enkarin.bookcrossing.books.exceptions.NoAccessToAttachmentException;
-import io.github.enkarin.bookcrossing.books.exceptions.UnsupportedFormatException;
 import io.github.enkarin.bookcrossing.books.service.AttachmentService;
 import io.github.enkarin.bookcrossing.constant.Constant;
 import io.github.enkarin.bookcrossing.constant.ErrorMessage;
@@ -81,10 +80,9 @@ public class AttachmentController {
     public void findAttachment(@RequestParam final int id, @RequestParam final FormatType format, final HttpServletResponse response) throws IOException {
         final AttachmentDto attachmentData = attachmentService.findAttachmentData(id, format);
         response.setContentType(switch (attachmentData.getExpansion()) {
-            case "jpg", "jpeg" -> MediaType.IMAGE_JPEG_VALUE;
             case "png" -> MediaType.IMAGE_PNG_VALUE;
             case "bmp" -> "image/bmp";
-            default -> throw new UnsupportedFormatException();
+            default -> MediaType.IMAGE_JPEG_VALUE;
         });
         response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + id + '.' + attachmentData.getExpansion() + '"');
         response.setContentLength(attachmentData.getData().length);
@@ -111,12 +109,6 @@ public class AttachmentController {
     @ExceptionHandler(AttachmentNotFoundException.class)
     public Map<String, String> attachNotFound() {
         return createErrorMap(ErrorMessage.ERROR_1016);
-    }
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(UnsupportedFormatException.class)
-    public Map<String, String> formatNotFound() {
-        return createErrorMap(ErrorMessage.ERROR_2005);
     }
 
     @ResponseStatus(HttpStatus.FORBIDDEN)

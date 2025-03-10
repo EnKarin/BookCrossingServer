@@ -21,10 +21,10 @@ public class AttachmentDto {
     public static AttachmentDto fromAttachment(final Attachment attachment, final FormatType imageFormat) {
         return attachment == null ? null : new AttachmentDto(attachment.getAttachId(),
             switch (imageFormat) {
-                case origin -> attachment.getOriginalImage();
-                case list -> attachment.getListImage();
-                case thumb -> attachment.getThumbImage();
+                case ORIGIN -> attachment.getOriginalImage();
+                case LIST -> attachment.getListImage();
+                case THUMB -> attachment.getThumbImage();
             },
-            imageFormat == FormatType.origin ? attachment.getOriginalImageExpansion() : "jpg");
+            imageFormat == FormatType.ORIGIN ? attachment.getOriginalImageExpansion() : "jpg");
     }
 }
