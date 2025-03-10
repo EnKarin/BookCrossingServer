@@ -196,7 +196,7 @@ class UserProfileControllerTest extends BookCrossingBaseTests {
         enabledUser(user.getUserId());
         final File file = ResourceUtils.getFile("classpath:files/image.jpg");
         final MultipartBodyBuilder multipartBodyBuilder = new MultipartBodyBuilder();
-        multipartBodyBuilder.part("avatar", new ByteArrayResource(Files.readAllBytes(file.toPath())), MediaType.TEXT_PLAIN).filename(file.getName());
+        multipartBodyBuilder.part("avatar", new ByteArrayResource(Files.readAllBytes(file.toPath())), MediaType.IMAGE_JPEG).filename(file.getName());
 
         webClient.post()
             .uri(uriBuilder -> uriBuilder.pathSegment("user", "profile", "avatar").build())
@@ -207,6 +207,25 @@ class UserProfileControllerTest extends BookCrossingBaseTests {
             .expectStatus().isEqualTo(201);
 
         assertThat(userService.getAvatar(user.getUserId())).isNotNull();
+    }
+
+    @Test
+    @SneakyThrows
+    void putAvatarWithNotImageFileMustThrowException() {
+        final var user = createAndSaveUser(TestDataProvider.buildBot());
+        enabledUser(user.getUserId());
+        final File file = ResourceUtils.getFile("classpath:files/text.txt");
+        final MultipartBodyBuilder multipartBodyBuilder = new MultipartBodyBuilder();
+        multipartBodyBuilder.part("avatar", new ByteArrayResource(Files.readAllBytes(file.toPath())), MediaType.IMAGE_JPEG).filename(file.getName());
+
+        webClient.post()
+            .uri(uriBuilder -> uriBuilder.pathSegment("user", "profile", "avatar").build())
+            .contentType(MediaType.MULTIPART_FORM_DATA)
+            .bodyValue(multipartBodyBuilder.build())
+            .headers(httpHeaders -> httpHeaders.setBearerAuth(generateAccessToken(TestDataProvider.buildAuthBot())))
+            .exchange()
+            .expectStatus().isEqualTo(415)
+            .expectBody().jsonPath("$.error").isEqualTo("3002");
     }
 
     @Test

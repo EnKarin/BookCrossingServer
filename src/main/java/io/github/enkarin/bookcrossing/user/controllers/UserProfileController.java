@@ -5,6 +5,7 @@ import io.github.enkarin.bookcrossing.constant.ErrorMessage;
 import io.github.enkarin.bookcrossing.exception.BindingErrorsException;
 import io.github.enkarin.bookcrossing.exception.InvalidPasswordException;
 import io.github.enkarin.bookcrossing.exception.PasswordsDontMatchException;
+import io.github.enkarin.bookcrossing.exception.UnsupportedImageTypeException;
 import io.github.enkarin.bookcrossing.user.dto.UserProfileDto;
 import io.github.enkarin.bookcrossing.user.dto.UserPublicProfileDto;
 import io.github.enkarin.bookcrossing.user.dto.UserPutProfileDto;
@@ -20,7 +21,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -134,16 +134,16 @@ public class UserProfileController {
             content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(ref = "#/components/schemas/LogicErrorBody"))})
     })
     @PostMapping("/avatar")
-    public ResponseEntity<Void> putAvatar(@ModelAttribute final MultipartFile avatar, final Principal principal) throws IOException {
+    public ResponseEntity<Void> putAvatar(@ModelAttribute final MultipartFile avatar, final Principal principal) {
         final String fileName = avatar.getOriginalFilename();
         if (fileName == null || fileName.isBlank()) {
-            throw new BadRequestException(ErrorMessage.ERROR_3001.getCode());
+            throw new UnsupportedImageTypeException(ErrorMessage.ERROR_3001.getCode());
         }
         final String expansion = fileName.substring(fileName.indexOf('.') + 1).toLowerCase(Locale.ROOT);
         if ("jpeg".equals(expansion) || "jpg".equals(expansion) || "png".equals(expansion) || "bmp".equals(expansion)) {
             userService.putAvatar(principal.getName(), avatar);
         } else {
-            throw new BadRequestException(ErrorMessage.ERROR_3002.getCode());
+            throw new UnsupportedImageTypeException(ErrorMessage.ERROR_3002.getCode());
         }
         return new ResponseEntity<>(HttpStatus.CREATED);
     }

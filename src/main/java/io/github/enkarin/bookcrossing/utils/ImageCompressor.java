@@ -1,6 +1,6 @@
 package io.github.enkarin.bookcrossing.utils;
 
-import io.github.enkarin.bookcrossing.exception.BadRequestException;
+import io.github.enkarin.bookcrossing.exception.UnsupportedImageTypeException;
 import lombok.experimental.UtilityClass;
 import org.imgscalr.Scalr;
 import org.slf4j.Logger;
@@ -31,7 +31,7 @@ public class ImageCompressor {
             }
         } catch (IOException exception) {
             LOGGER.error(exception.getMessage(), exception);
-            throw new BadRequestException(exception.getMessage(), exception);
+            throw new UnsupportedImageTypeException(exception.getMessage(), exception);
         }
     }
 }

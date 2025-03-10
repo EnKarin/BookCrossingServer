@@ -10,8 +10,8 @@ import io.github.enkarin.bookcrossing.books.repository.AttachmentRepository;
 import io.github.enkarin.bookcrossing.books.repository.BookRepository;
 import io.github.enkarin.bookcrossing.constant.ErrorMessage;
 import io.github.enkarin.bookcrossing.exception.AttachmentNotFoundException;
-import io.github.enkarin.bookcrossing.exception.BadRequestException;
 import io.github.enkarin.bookcrossing.exception.BookNotFoundException;
+import io.github.enkarin.bookcrossing.exception.UnsupportedImageTypeException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,37 +36,41 @@ public class AttachmentService {
         return AttachmentDto.fromAttachment(attachRepository.findById(id).orElseThrow(AttachmentNotFoundException::new), imageFormat);
     }
 
-    public BookModelDto saveAttachment(final AttachmentMultipartDto attachmentMultipartDto, final String login) throws IOException {
+    public BookModelDto saveAttachment(final AttachmentMultipartDto attachmentMultipartDto, final String login) {
         final Book book = bookRepository.findBooksByOwnerLoginAndBookId(login, attachmentMultipartDto.getBookId()).orElseThrow(BookNotFoundException::new);
         final String fileName = attachmentMultipartDto.getFile().getOriginalFilename();
         if (fileName == null || fileName.isBlank()) {
-            throw new BadRequestException(ErrorMessage.ERROR_3001.getCode());
+            throw new UnsupportedImageTypeException(ErrorMessage.ERROR_3001.getCode());
         } else {
             final String expansion = fileName.substring(fileName.indexOf('.') + 1).toLowerCase(Locale.ROOT);
             if ("jpeg".equals(expansion) || "jpg".equals(expansion) || "png".equals(expansion) || "bmp".equals(expansion)) {
                 createOrUpdateAttachment(book, attachmentMultipartDto.getFile(), expansion);
                 return BookModelDto.fromBook(bookRepository.getReferenceById(book.getBookId()));
             } else {
-                throw new BadRequestException(ErrorMessage.ERROR_3002.getCode());
+                throw new UnsupportedImageTypeException(ErrorMessage.ERROR_3002.getCode());
             }
         }
     }
 
-    private void createOrUpdateAttachment(final Book book, final MultipartFile multipartFile, final String expansion) throws IOException {
-        final Attachment attachment;
-        if (nonNull(book.getAttachment())) {
-            attachment = book.getAttachment();
-        } else {
-            attachment = new Attachment();
-            attachment.setBook(book);
-            attachment.setOriginalImageExpansion(expansion);
-            book.setAttachment(attachment);
+    private void createOrUpdateAttachment(final Book book, final MultipartFile multipartFile, final String expansion) {
+        try {
+            final Attachment attachment;
+            if (nonNull(book.getAttachment())) {
+                attachment = book.getAttachment();
+            } else {
+                attachment = new Attachment();
+                attachment.setBook(book);
+                attachment.setOriginalImageExpansion(expansion);
+                book.setAttachment(attachment);
+            }
+            final BufferedImage image = ImageIO.read(multipartFile.getInputStream());
+            attachment.setOriginalImage(multipartFile.getBytes());
+            attachment.setListImage(compressImage(image, 200, 300));
+            attachment.setThumbImage(compressImage(image, 70, 70));
+            attachRepository.save(attachment);
+        } catch (IOException e) {
+            throw new UnsupportedImageTypeException(ErrorMessage.ERROR_2008.getCode(), e);
         }
-        final BufferedImage image = ImageIO.read(multipartFile.getInputStream());
-        attachment.setOriginalImage(multipartFile.getBytes());
-        attachment.setListImage(compressImage(image, 200, 300));
-        attachment.setThumbImage(compressImage(image, 70, 70));
-        attachRepository.save(attachment);
     }
 
     public void deleteAttachment(final int id, final String login) {

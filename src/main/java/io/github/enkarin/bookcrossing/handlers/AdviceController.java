@@ -3,6 +3,7 @@ package io.github.enkarin.bookcrossing.handlers;
 import io.github.enkarin.bookcrossing.constant.ErrorMessage;
 import io.github.enkarin.bookcrossing.exception.BindingErrorsException;
 import io.github.enkarin.bookcrossing.exception.BookNotFoundException;
+import io.github.enkarin.bookcrossing.exception.UnsupportedImageTypeException;
 import io.github.enkarin.bookcrossing.exception.UserNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -12,7 +13,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -39,10 +39,10 @@ public class AdviceController extends ResponseEntityExceptionHandler {
         return Map.of("errorList", exc.getErrors());
     }
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(IOException.class)
-    public Map<String, String> incorrectInputFile(final IOException exception) {
-        return createErrorMap(ErrorMessage.ERROR_2008);
+    @ResponseStatus(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
+    @ExceptionHandler(UnsupportedImageTypeException.class)
+    public Map<String, String> badRequest(final UnsupportedImageTypeException exc) {
+        return createErrorMap(exc.getMessage());
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)

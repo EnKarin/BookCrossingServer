@@ -1,5 +1,6 @@
 package io.github.enkarin.bookcrossing.user.service;
 
+import io.github.enkarin.bookcrossing.constant.ErrorMessage;
 import io.github.enkarin.bookcrossing.exception.AccountNotConfirmedException;
 import io.github.enkarin.bookcrossing.exception.EmailFailedException;
 import io.github.enkarin.bookcrossing.exception.InvalidPasswordException;
@@ -7,6 +8,7 @@ import io.github.enkarin.bookcrossing.exception.LockedAccountException;
 import io.github.enkarin.bookcrossing.exception.LoginFailedException;
 import io.github.enkarin.bookcrossing.exception.PasswordsDontMatchException;
 import io.github.enkarin.bookcrossing.exception.TokenNotFoundException;
+import io.github.enkarin.bookcrossing.exception.UnsupportedImageTypeException;
 import io.github.enkarin.bookcrossing.exception.UserNotFoundException;
 import io.github.enkarin.bookcrossing.mail.model.ActionMailUser;
 import io.github.enkarin.bookcrossing.mail.repository.ActionMailUserRepository;
@@ -120,10 +122,10 @@ public class UserService {
             user.setName(userPutProfileDto.getName());
         }
         if (Objects.nonNull(userPutProfileDto.getCity())) {
-           user.setCity(userPutProfileDto.getCity());
+            user.setCity(userPutProfileDto.getCity());
         }
         if (Objects.nonNull(userPutProfileDto.getNewPassword())) {
-           checkAndUpdatePassword(user, userPutProfileDto);
+            checkAndUpdatePassword(user, userPutProfileDto);
         }
 
         return UserProfileDto.fromUser(user);
@@ -135,9 +137,13 @@ public class UserService {
     }
 
     @Transactional
-    public void putAvatar(final String login, final MultipartFile avatarData) throws IOException {
-        userRepository.findByLogin(login).orElseThrow(UserNotFoundException::new)
-            .setAvatar(ImageCompressor.compressImage(ImageIO.read(avatarData.getInputStream()), 150, 150));
+    public void putAvatar(final String login, final MultipartFile avatarData) {
+        try {
+            userRepository.findByLogin(login).orElseThrow(UserNotFoundException::new)
+                .setAvatar(ImageCompressor.compressImage(ImageIO.read(avatarData.getInputStream()), 150, 150));
+        } catch (IOException e) {
+            throw new UnsupportedImageTypeException(ErrorMessage.ERROR_2008.getCode(), e);
+        }
     }
 
     public byte[] getAvatar(final int userId) {

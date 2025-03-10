@@ -8,7 +8,6 @@ import io.github.enkarin.bookcrossing.books.service.AttachmentService;
 import io.github.enkarin.bookcrossing.constant.Constant;
 import io.github.enkarin.bookcrossing.constant.ErrorMessage;
 import io.github.enkarin.bookcrossing.exception.AttachmentNotFoundException;
-import io.github.enkarin.bookcrossing.exception.BadRequestException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -63,7 +62,7 @@ public class AttachmentController {
         @ApiResponse(responseCode = "201", description = "Вложение сохранено")
     })
     @PostMapping
-    public ResponseEntity<Void> saveAttachment(@ModelAttribute final AttachmentMultipartDto attachmentMultipartDto, final Principal principal) throws IOException {
+    public ResponseEntity<Void> saveAttachment(@ModelAttribute final AttachmentMultipartDto attachmentMultipartDto, final Principal principal) {
         attachmentService.saveAttachment(attachmentMultipartDto, principal.getName());
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
@@ -105,12 +104,6 @@ public class AttachmentController {
     public ResponseEntity<Void> deleteAttachment(@RequestParam final int id, final Principal principal) {
         attachmentService.deleteAttachment(id, principal.getName());
         return ResponseEntity.ok().build();
-    }
-
-    @ResponseStatus(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
-    @ExceptionHandler(BadRequestException.class)
-    public Map<String, String> badRequest(final BadRequestException exc) {
-        return createErrorMap(exc.getMessage());
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)

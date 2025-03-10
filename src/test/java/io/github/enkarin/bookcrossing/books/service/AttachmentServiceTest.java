@@ -6,8 +6,8 @@ import io.github.enkarin.bookcrossing.books.exceptions.NoAccessToAttachmentExcep
 import io.github.enkarin.bookcrossing.books.exceptions.UnsupportedFormatException;
 import io.github.enkarin.bookcrossing.constant.ErrorMessage;
 import io.github.enkarin.bookcrossing.exception.AttachmentNotFoundException;
-import io.github.enkarin.bookcrossing.exception.BadRequestException;
 import io.github.enkarin.bookcrossing.exception.BookNotFoundException;
+import io.github.enkarin.bookcrossing.exception.UnsupportedImageTypeException;
 import io.github.enkarin.bookcrossing.support.BookCrossingBaseTests;
 import io.github.enkarin.bookcrossing.support.TestDataProvider;
 import io.github.enkarin.bookcrossing.user.dto.UserDto;
@@ -96,7 +96,7 @@ class AttachmentServiceTest extends BookCrossingBaseTests {
         final AttachmentMultipartDto dto = AttachmentMultipartDto.fromFile(book1, multipartFile);
         final var userLogin = users.get(1).getLogin();
         assertThatThrownBy(() -> attachmentService.saveAttachment(dto, userLogin))
-            .isInstanceOf(BadRequestException.class)
+            .isInstanceOf(UnsupportedImageTypeException.class)
             .hasMessage(ErrorMessage.ERROR_3002.getCode());
     }
 
@@ -122,7 +122,7 @@ class AttachmentServiceTest extends BookCrossingBaseTests {
         final AttachmentMultipartDto dto = AttachmentMultipartDto.fromFile(book1, multipartFile);
         final var userLogin = users.get(1).getLogin();
         assertThatThrownBy(() -> attachmentService.saveAttachment(dto, userLogin))
-            .isInstanceOf(BadRequestException.class)
+            .isInstanceOf(UnsupportedImageTypeException.class)
             .hasMessage(ErrorMessage.ERROR_3001.getCode());
     }
 
