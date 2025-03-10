@@ -2,12 +2,12 @@ package io.github.enkarin.bookcrossing.books.service;
 
 import io.github.enkarin.bookcrossing.books.dto.AttachmentMultipartDto;
 import io.github.enkarin.bookcrossing.books.dto.BookModelDto;
+import io.github.enkarin.bookcrossing.books.enums.FormatType;
 import io.github.enkarin.bookcrossing.books.exceptions.NoAccessToAttachmentException;
-import io.github.enkarin.bookcrossing.books.exceptions.UnsupportedFormatException;
 import io.github.enkarin.bookcrossing.constant.ErrorMessage;
 import io.github.enkarin.bookcrossing.exception.AttachmentNotFoundException;
-import io.github.enkarin.bookcrossing.exception.BadRequestException;
 import io.github.enkarin.bookcrossing.exception.BookNotFoundException;
+import io.github.enkarin.bookcrossing.exception.UnsupportedImageTypeException;
 import io.github.enkarin.bookcrossing.support.BookCrossingBaseTests;
 import io.github.enkarin.bookcrossing.support.TestDataProvider;
 import io.github.enkarin.bookcrossing.user.dto.UserDto;
@@ -82,7 +82,7 @@ class AttachmentServiceTest extends BookCrossingBaseTests {
 
         assertThat(attachmentService.saveAttachment(AttachmentMultipartDto.fromFile(book1.getBookId(), secondMultipartFile), users.get(1).getLogin()).getAttachmentId())
             .isEqualTo(firstAttachId);
-        assertThat(attachmentService.findAttachmentData(firstAttachId, "origin")).isEqualTo(secondMultipartFile.getBytes());
+        assertThat(attachmentService.findAttachmentData(firstAttachId, FormatType.ORIGIN).getData()).isEqualTo(secondMultipartFile.getBytes());
     }
 
     @Test
@@ -96,7 +96,7 @@ class AttachmentServiceTest extends BookCrossingBaseTests {
         final AttachmentMultipartDto dto = AttachmentMultipartDto.fromFile(book1, multipartFile);
         final var userLogin = users.get(1).getLogin();
         assertThatThrownBy(() -> attachmentService.saveAttachment(dto, userLogin))
-            .isInstanceOf(BadRequestException.class)
+            .isInstanceOf(UnsupportedImageTypeException.class)
             .hasMessage(ErrorMessage.ERROR_3002.getCode());
     }
 
@@ -122,7 +122,7 @@ class AttachmentServiceTest extends BookCrossingBaseTests {
         final AttachmentMultipartDto dto = AttachmentMultipartDto.fromFile(book1, multipartFile);
         final var userLogin = users.get(1).getLogin();
         assertThatThrownBy(() -> attachmentService.saveAttachment(dto, userLogin))
-            .isInstanceOf(BadRequestException.class)
+            .isInstanceOf(UnsupportedImageTypeException.class)
             .hasMessage(ErrorMessage.ERROR_3001.getCode());
     }
 
@@ -173,7 +173,7 @@ class AttachmentServiceTest extends BookCrossingBaseTests {
         final MultipartFile multipartFile = new MockMultipartFile(file.getName(), file.getName(), "image/jpg", Files.readAllBytes(file.toPath()));
         final int attachmentId = attachmentService.saveAttachment(AttachmentMultipartDto.fromFile(book1, multipartFile), users.get(1).getLogin()).getAttachmentId();
 
-        assertThat(attachmentService.findAttachmentData(attachmentId, "origin")).isEqualTo(multipartFile.getBytes());
+        assertThat(attachmentService.findAttachmentData(attachmentId, FormatType.ORIGIN).getData()).isEqualTo(multipartFile.getBytes());
     }
 
     @Test
@@ -187,7 +187,7 @@ class AttachmentServiceTest extends BookCrossingBaseTests {
         final MultipartFile multipartFile = new MockMultipartFile(file.getName(), file.getName(), "image/jpg", Files.readAllBytes(file.toPath()));
         final int attachmentId = attachmentService.saveAttachment(AttachmentMultipartDto.fromFile(book1, multipartFile), users.get(1).getLogin()).getAttachmentId();
 
-        assertThat(attachmentService.findAttachmentData(attachmentId, "list").length).isLessThan(multipartFile.getBytes().length);
+        assertThat(attachmentService.findAttachmentData(attachmentId, FormatType.LIST).getData().length).isLessThan(multipartFile.getBytes().length);
     }
 
     @Test
@@ -195,16 +195,8 @@ class AttachmentServiceTest extends BookCrossingBaseTests {
     void findThumbImageAttachment() {
         final int attachmentId = createAttachment();
 
-        assertThat(attachmentService.findAttachmentData(attachmentId, "thumb").length)
-            .isLessThan(attachmentService.findAttachmentData(attachmentId, "list").length);
-    }
-
-    @Test
-    @SneakyThrows
-    void findAttachmentWithUnexpectedFormatMustThrowException() {
-        final int attachmentId = createAttachment();
-
-        assertThatThrownBy(() -> attachmentService.findAttachmentData(attachmentId, "aboba")).isInstanceOf(UnsupportedFormatException.class);
+        assertThat(attachmentService.findAttachmentData(attachmentId, FormatType.THUMB).getData().length)
+            .isLessThan(attachmentService.findAttachmentData(attachmentId, FormatType.LIST).getData().length);
     }
 
     @Test
@@ -227,6 +219,6 @@ class AttachmentServiceTest extends BookCrossingBaseTests {
 
     @Test
     void findNotExistsAttachmentMustThrowException() {
-        assertThatThrownBy(() -> attachmentService.findAttachmentData(10, "origin")).isInstanceOf(AttachmentNotFoundException.class);
+        assertThatThrownBy(() -> attachmentService.findAttachmentData(10, FormatType.ORIGIN)).isInstanceOf(AttachmentNotFoundException.class);
     }
 }

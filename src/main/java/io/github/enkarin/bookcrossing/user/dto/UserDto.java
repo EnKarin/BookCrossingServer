@@ -19,7 +19,7 @@ public class UserDto extends UserParentDto {
     private final long loginDate;
 
     private UserDto(final UserParentDto user, final long loginDate) {
-        super(user.getUserId(), user.getName(), user.getLogin(), user.getEmail(), user.getCity(), user.isAccountNonLocked(), user.isEnabled());
+        super(user.getUserId(), user.getName(), user.getLogin(), user.getEmail(), user.getCity(), user.isAccountNonLocked(), user.isEnabled(), user.getAboutMe());
         this.loginDate = loginDate;
     }
 
@@ -31,13 +31,14 @@ public class UserDto extends UserParentDto {
                     final String city,
                     final boolean accountNonLocked,
                     final boolean enabled,
-                    final long loginDate) {
-        super(userId, name, login, email, city, accountNonLocked, enabled);
+                    final long loginDate,
+                    final String aboutMe) {
+        super(userId, name, login, email, city, accountNonLocked, enabled, aboutMe);
         this.loginDate = loginDate;
     }
 
     public static UserDto fromUser(final User user) {
         return new UserDto(create(user.getUserId(), user.getName(), user.getLogin(), user.getEmail(),
-            user.getCity(), user.isAccountNonLocked(), user.isEnabled()), user.getLoginDate());
+            user.getCity(), user.isAccountNonLocked(), user.isEnabled(), user.getAboutMe()), user.getLoginDate());
     }
 }

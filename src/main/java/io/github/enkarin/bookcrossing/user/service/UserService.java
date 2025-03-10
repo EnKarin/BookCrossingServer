@@ -1,5 +1,6 @@
 package io.github.enkarin.bookcrossing.user.service;
 
+import io.github.enkarin.bookcrossing.constant.ErrorMessage;
 import io.github.enkarin.bookcrossing.exception.AccountNotConfirmedException;
 import io.github.enkarin.bookcrossing.exception.EmailFailedException;
 import io.github.enkarin.bookcrossing.exception.InvalidPasswordException;
@@ -7,6 +8,7 @@ import io.github.enkarin.bookcrossing.exception.LockedAccountException;
 import io.github.enkarin.bookcrossing.exception.LoginFailedException;
 import io.github.enkarin.bookcrossing.exception.PasswordsDontMatchException;
 import io.github.enkarin.bookcrossing.exception.TokenNotFoundException;
+import io.github.enkarin.bookcrossing.exception.UnsupportedImageTypeException;
 import io.github.enkarin.bookcrossing.exception.UserNotFoundException;
 import io.github.enkarin.bookcrossing.mail.model.ActionMailUser;
 import io.github.enkarin.bookcrossing.mail.repository.ActionMailUserRepository;
@@ -22,11 +24,15 @@ import io.github.enkarin.bookcrossing.user.dto.UserPutProfileDto;
 import io.github.enkarin.bookcrossing.user.model.User;
 import io.github.enkarin.bookcrossing.user.repository.RoleRepository;
 import io.github.enkarin.bookcrossing.user.repository.UserRepository;
+import io.github.enkarin.bookcrossing.utils.ImageCompressor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
+import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -116,10 +122,10 @@ public class UserService {
             user.setName(userPutProfileDto.getName());
         }
         if (Objects.nonNull(userPutProfileDto.getCity())) {
-           user.setCity(userPutProfileDto.getCity());
+            user.setCity(userPutProfileDto.getCity());
         }
         if (Objects.nonNull(userPutProfileDto.getNewPassword())) {
-           checkAndUpdatePassword(user, userPutProfileDto);
+            checkAndUpdatePassword(user, userPutProfileDto);
         }
 
         return UserProfileDto.fromUser(user);
@@ -128,6 +134,20 @@ public class UserService {
     @Transactional
     public void deleteUser(final int userId) {
         userRepository.deleteById(userId);
+    }
+
+    @Transactional
+    public void putAvatar(final String login, final MultipartFile avatarData) {
+        try {
+            userRepository.findByLogin(login).orElseThrow(UserNotFoundException::new)
+                .setAvatar(ImageCompressor.compressImage(ImageIO.read(avatarData.getInputStream()), 150, 150));
+        } catch (IOException e) {
+            throw new UnsupportedImageTypeException(ErrorMessage.ERROR_2008.getCode(), e);
+        }
+    }
+
+    public byte[] getAvatar(final int userId) {
+        return userRepository.findById(userId).orElseThrow(UserNotFoundException::new).getAvatar();
     }
 
     private User convertToUser(final UserRegistrationDto userRegistrationDTO) {
@@ -140,6 +160,7 @@ public class UserService {
         user.setAccountNonLocked(true);
         user.setEnabled(false);
         user.setPassword(bCryptPasswordEncoder.encode(userRegistrationDTO.getPassword()));
+        user.setAboutMe(userRegistrationDTO.getAboutMe());
         return user;
     }
 

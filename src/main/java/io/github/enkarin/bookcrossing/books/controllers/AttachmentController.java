@@ -1,13 +1,13 @@
 package io.github.enkarin.bookcrossing.books.controllers;
 
+import io.github.enkarin.bookcrossing.books.dto.AttachmentDto;
 import io.github.enkarin.bookcrossing.books.dto.AttachmentMultipartDto;
+import io.github.enkarin.bookcrossing.books.enums.FormatType;
 import io.github.enkarin.bookcrossing.books.exceptions.NoAccessToAttachmentException;
-import io.github.enkarin.bookcrossing.books.exceptions.UnsupportedFormatException;
 import io.github.enkarin.bookcrossing.books.service.AttachmentService;
 import io.github.enkarin.bookcrossing.constant.Constant;
 import io.github.enkarin.bookcrossing.constant.ErrorMessage;
 import io.github.enkarin.bookcrossing.exception.AttachmentNotFoundException;
-import io.github.enkarin.bookcrossing.exception.BadRequestException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -15,7 +15,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -60,7 +62,7 @@ public class AttachmentController {
         @ApiResponse(responseCode = "201", description = "Вложение сохранено")
     })
     @PostMapping
-    public ResponseEntity<Void> saveAttachment(@ModelAttribute final AttachmentMultipartDto attachmentMultipartDto, final Principal principal) throws IOException {
+    public ResponseEntity<Void> saveAttachment(@ModelAttribute final AttachmentMultipartDto attachmentMultipartDto, final Principal principal) {
         attachmentService.saveAttachment(attachmentMultipartDto, principal.getName());
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
@@ -71,15 +73,20 @@ public class AttachmentController {
             content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(ref = "#/components/schemas/LogicErrorBody"))}),
         @ApiResponse(responseCode = "404", description = "Вложения не существует",
             content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(ref = "#/components/schemas/LogicErrorBody"))}),
-        @ApiResponse(responseCode = "200", description = "Вложение отправлено", content = @Content(mediaType = Constant.JPG))
+        @ApiResponse(responseCode = "200", description = "Вложение отправлено",
+            content = {@Content(mediaType = Constant.JPG), @Content(mediaType = Constant.BMP), @Content(mediaType = Constant.PNG)})
     })
     @GetMapping
-    public void findAttachment(@RequestParam final int id, @RequestParam final String format, final HttpServletResponse response) throws IOException {
-        final byte[] image = attachmentService.findAttachmentData(id, format);
-        response.setContentType("image/jpeg");
-        response.setHeader("Content-Disposition", "inline; filename=\"" + id + ".jpg\"");
-        response.setContentLength(image.length);
-        FileCopyUtils.copy(new ByteArrayInputStream(image), response.getOutputStream());
+    public void findAttachment(@RequestParam final int id, @RequestParam final FormatType format, final HttpServletResponse response) throws IOException {
+        final AttachmentDto attachmentData = attachmentService.findAttachmentData(id, format);
+        response.setContentType(switch (attachmentData.getExpansion()) {
+            case "png" -> MediaType.IMAGE_PNG_VALUE;
+            case "bmp" -> "image/bmp";
+            default -> MediaType.IMAGE_JPEG_VALUE;
+        });
+        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + id + '.' + attachmentData.getExpansion() + '"');
+        response.setContentLength(attachmentData.getData().length);
+        FileCopyUtils.copy(new ByteArrayInputStream(attachmentData.getData()), response.getOutputStream());
     }
 
     @Operation(
@@ -98,22 +105,10 @@ public class AttachmentController {
         return ResponseEntity.ok().build();
     }
 
-    @ResponseStatus(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
-    @ExceptionHandler(BadRequestException.class)
-    public Map<String, String> badRequest(final BadRequestException exc) {
-        return createErrorMap(exc.getMessage());
-    }
-
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(AttachmentNotFoundException.class)
     public Map<String, String> attachNotFound() {
         return createErrorMap(ErrorMessage.ERROR_1016);
-    }
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(UnsupportedFormatException.class)
-    public Map<String, String> formatNotFound() {
-        return createErrorMap(ErrorMessage.ERROR_2005);
     }
 
     @ResponseStatus(HttpStatus.FORBIDDEN)

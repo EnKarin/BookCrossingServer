@@ -44,7 +44,7 @@ public class Attachment implements Serializable {
 
     @Lob
     @Type(type = "org.hibernate.type.BinaryType")
-    @Column(length = 5_242_880)
+    @Column(length = 1_048_576)
     private byte[] listImage;
 
     @Lob
@@ -52,7 +52,8 @@ public class Attachment implements Serializable {
     @Column(length = 512_000)
     private byte[] thumbImage;
 
-    private String expansion;
+    @Column(name = "expansion")
+    private String originalImageExpansion;
 
     @Override
     public boolean equals(final Object obj) {

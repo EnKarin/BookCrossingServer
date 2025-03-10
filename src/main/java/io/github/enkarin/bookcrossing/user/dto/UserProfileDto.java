@@ -6,8 +6,10 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
+@ToString
 @Getter
 @EqualsAndHashCode
 @SuperBuilder
@@ -30,8 +32,10 @@ public class UserProfileDto {
     @Schema(description = "Почтовый адрес", example = "kar@mail.ru")
     private final String email;
 
+    @Schema(description = "Информация о пользователе")
+    protected final String aboutMe;
+
     public static UserProfileDto fromUser(final User user) {
-        return new UserProfileDto(user.getUserId(), user.getName(), user.getLogin(), user.getCity(),
-            user.getEmail());
+        return new UserProfileDto(user.getUserId(), user.getName(), user.getLogin(), user.getCity(), user.getEmail(), user.getAboutMe());
     }
 }

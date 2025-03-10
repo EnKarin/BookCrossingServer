@@ -14,8 +14,14 @@ import io.github.enkarin.bookcrossing.user.dto.UserDto;
 import io.github.enkarin.bookcrossing.user.dto.UserProfileDto;
 import io.github.enkarin.bookcrossing.user.dto.UserPublicProfileDto;
 import io.github.enkarin.bookcrossing.user.dto.UserPutProfileDto;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.util.ResourceUtils;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.nio.file.Files;
 import java.util.Comparator;
 import java.util.List;
 
@@ -28,7 +34,7 @@ class UserServiceTest extends BookCrossingBaseTests {
 
     @Test
     void saveUserCorrectUserTest() {
-        assertThat(userService.findById(createAndSaveUser(TestDataProvider.buildAlex()).getUserId(), GM_TIME_ZERO)).isNotNull();
+        assertThat(userService.findById(createAndSaveUser(TestDataProvider.buildAlex()).getUserId(), GM_TIME_ZERO).getAboutMe()).isEqualTo("Hi, I'm Alex");
     }
 
     @Test
@@ -154,7 +160,8 @@ class UserServiceTest extends BookCrossingBaseTests {
             "12345678",
             "87654321",
             "87654321",
-            "Moscow"
+            "Moscow",
+            "Mmmike!"
         );
 
         userService.putUserInfo(putProfile, user.getLogin());
@@ -172,7 +179,8 @@ class UserServiceTest extends BookCrossingBaseTests {
             "123456",
             "654321",
             "123456",
-            "Moscow"
+            "Moscow",
+            "Mmmike!"
         );
 
         assertThatThrownBy(() -> userService.putUserInfo(putProfile, user))
@@ -189,7 +197,8 @@ class UserServiceTest extends BookCrossingBaseTests {
             "wrong password",
             "654321",
             "654321",
-            "Moscow"
+            "Moscow",
+            "Mmmike!"
         );
 
         assertThatThrownBy(() -> userService.putUserInfo(putProfile, user))
@@ -209,6 +218,18 @@ class UserServiceTest extends BookCrossingBaseTests {
         final UserRegistrationDto userRegistrationDto = TestDataProvider.buildMax();
         userRegistrationDto.setLogin("  ");
         assertThat(createAndSaveUser(userRegistrationDto)).satisfies(userDto -> checkEqual(userDto, userRegistrationDto));
+    }
+
+    @Test
+    @SneakyThrows
+    void putAvatar() {
+        final var user = createAndSaveUser(TestDataProvider.buildAlex());
+        final File file = ResourceUtils.getFile("classpath:files/image.jpg");
+        final MultipartFile multipartFile = new MockMultipartFile(file.getName(), file.getName(), "image/jpg", Files.readAllBytes(file.toPath()));
+
+        userService.putAvatar(user.getLogin(), multipartFile);
+
+        assertThat(userService.getAvatar(user.getUserId())).isNotNull();
     }
 
     private static void checkEqual(final UserDto userDto, final UserRegistrationDto userRegistrationDto) {

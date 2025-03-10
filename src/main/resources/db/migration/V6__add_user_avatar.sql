@@ -1,0 +1,1 @@
+alter table bookcrossing.t_user add column avatar bytea;
