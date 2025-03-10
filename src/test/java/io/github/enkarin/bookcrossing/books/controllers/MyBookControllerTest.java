@@ -150,7 +150,6 @@ class MyBookControllerTest extends BookCrossingBaseTests {
         final var user = createAndSaveUser(alex);
         enabledUser(user.getUserId());
         final List<Integer> booksId = createAndSaveBooks(user.getLogin());
-        final BookModelDto bookModelDto = bookService.findById(booksId.get(0));
 
         final var result = webClient.put()
             .uri(uriBuilder -> uriBuilder.pathSegment("user", "myBook").build())
