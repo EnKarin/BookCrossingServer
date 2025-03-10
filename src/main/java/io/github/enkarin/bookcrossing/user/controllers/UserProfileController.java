@@ -155,12 +155,13 @@ public class UserProfileController {
             content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(ref = "#/components/schemas/LogicErrorBody"))})
     })
     @GetMapping("/avatar")
-    public void findAvatar(@RequestParam final int userId, final HttpServletResponse response) throws IOException {
+    public HttpServletResponse getAvatar(@RequestParam final int userId, final HttpServletResponse response) throws IOException {
         final byte[] avatar = userService.getAvatar(userId);
         response.setContentType(MediaType.IMAGE_JPEG_VALUE);
         response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + userId + ".jpg\"");
         response.setContentLength(avatar.length);
         FileCopyUtils.copy(new ByteArrayInputStream(avatar), response.getOutputStream());
+        return response;
     }
 
     @ResponseStatus(HttpStatus.PRECONDITION_FAILED)
