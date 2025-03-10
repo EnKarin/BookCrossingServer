@@ -2,6 +2,7 @@ package io.github.enkarin.bookcrossing.books.controllers;
 
 import io.github.enkarin.bookcrossing.books.dto.AttachmentDto;
 import io.github.enkarin.bookcrossing.books.dto.AttachmentMultipartDto;
+import io.github.enkarin.bookcrossing.books.enums.FormatType;
 import io.github.enkarin.bookcrossing.books.exceptions.NoAccessToAttachmentException;
 import io.github.enkarin.bookcrossing.books.exceptions.UnsupportedFormatException;
 import io.github.enkarin.bookcrossing.books.service.AttachmentService;
@@ -77,7 +78,7 @@ public class AttachmentController {
             content = {@Content(mediaType = Constant.JPG), @Content(mediaType = Constant.BMP), @Content(mediaType = Constant.PNG)})
     })
     @GetMapping
-    public void findAttachment(@RequestParam final int id, @RequestParam final String format, final HttpServletResponse response) throws IOException {
+    public void findAttachment(@RequestParam final int id, @RequestParam final FormatType format, final HttpServletResponse response) throws IOException {
         final AttachmentDto attachmentData = attachmentService.findAttachmentData(id, format);
         response.setContentType(switch (attachmentData.getExpansion()) {
             case "jpg", "jpeg" -> MediaType.IMAGE_JPEG_VALUE;

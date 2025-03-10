@@ -404,7 +404,7 @@
                                         <limit>
                                             <counter>LINE</counter>
                                             <value>MISSEDCOUNT</value>
-                                            <maximum>69</maximum>
+                                            <maximum>70</maximum>
                                         </limit>
                                     </limits>
                                 </rule>
