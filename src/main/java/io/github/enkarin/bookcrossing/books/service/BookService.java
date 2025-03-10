@@ -119,10 +119,10 @@ public class BookService {
     }
 
     @Transactional
-    public void deleteBook(final int bookId) {
-        bookRepository.findById(bookId).ifPresentOrElse(b -> bookRepository.deleteById(bookId), () -> {
-                throw new BookNotFoundException();
-            });
+    public void deleteBook(final String login, final int bookId) {
+        bookRepository.findBooksByOwnerLoginAndBookId(login, bookId).ifPresentOrElse(bookRepository::delete, () -> {
+            throw new BookNotFoundException();
+        });
     }
 
     public List<BookModelDto> findByTitleOrAuthor(final String field, final int pageNumber, final int pageSize) {
@@ -135,6 +135,42 @@ public class BookService {
 
     public UserPublicProfileDto findBookOwner(final int bookId, final int zoneId) {
         return UserPublicProfileDto.fromUser(bookRepository.findById(bookId).orElseThrow(BookNotFoundException::new).getOwner(), zoneId);
+    }
+
+    @Transactional
+    public void changeBookTitle(final String login, final int bookId, final String title) {
+        bookRepository.findBooksByOwnerLoginAndBookId(login, bookId).ifPresentOrElse(book -> book.setTitle(title), () -> {
+            throw new BookNotFoundException();
+        });
+    }
+
+    @Transactional
+    public void changeBookAuthor(final String login, final int bookId, final String author) {
+        bookRepository.findBooksByOwnerLoginAndBookId(login, bookId).ifPresentOrElse(book -> book.setAuthor(author), () -> {
+            throw new BookNotFoundException();
+        });
+    }
+
+    @Transactional
+    public void changeBookGenre(final String login, final int bookId, final int genre) {
+        bookRepository.findBooksByOwnerLoginAndBookId(login, bookId).ifPresentOrElse(book -> book.setGenre(genreRepository.findById(genre).orElseThrow(GenreNotFoundException::new)),
+            () -> {
+                throw new BookNotFoundException();
+            });
+    }
+
+    @Transactional
+    public void changeBookPublishingHouse(final String login, final int bookId, final String publishingHouse) {
+        bookRepository.findBooksByOwnerLoginAndBookId(login, bookId).ifPresentOrElse(book -> book.setPublishingHouse(publishingHouse), () -> {
+            throw new BookNotFoundException();
+        });
+    }
+
+    @Transactional
+    public void changeBookYear(final String login, final int bookId, final int year) {
+        bookRepository.findBooksByOwnerLoginAndBookId(login, bookId).ifPresentOrElse(book -> book.setYear(year), () -> {
+            throw new BookNotFoundException();
+        });
     }
 
     private Stream<Book> filterBookFromNonLockedOwner(final List<Book> books) {

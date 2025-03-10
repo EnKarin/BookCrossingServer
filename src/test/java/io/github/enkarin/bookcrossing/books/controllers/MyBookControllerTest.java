@@ -2,8 +2,10 @@ package io.github.enkarin.bookcrossing.books.controllers;
 
 import io.github.enkarin.bookcrossing.books.dto.BookDto;
 import io.github.enkarin.bookcrossing.books.dto.BookModelDto;
+import io.github.enkarin.bookcrossing.books.dto.ChangeBookDto;
 import io.github.enkarin.bookcrossing.books.service.BookService;
 import io.github.enkarin.bookcrossing.constant.ErrorMessage;
+import io.github.enkarin.bookcrossing.registration.dto.UserRegistrationDto;
 import io.github.enkarin.bookcrossing.support.BookCrossingBaseTests;
 import io.github.enkarin.bookcrossing.support.TestDataProvider;
 import io.github.enkarin.bookcrossing.user.dto.UserDto;
@@ -114,8 +116,69 @@ class MyBookControllerTest extends BookCrossingBaseTests {
         checkDelete(generateAccessToken(TestDataProvider.buildAuthBot()),
             Integer.MAX_VALUE, 404)
             .expectBody()
-            .jsonPath("$.error")
-            .isEqualTo(ErrorMessage.ERROR_1004.getCode());
+            .jsonPath("$.error").isEqualTo(ErrorMessage.ERROR_1004.getCode());
+    }
+
+    @Test
+    void putBook() {
+        final UserRegistrationDto alex = TestDataProvider.buildAlex();
+        final var user = createAndSaveUser(alex);
+        enabledUser(user.getUserId());
+        final List<Integer> booksId = createAndSaveBooks(user.getLogin());
+        final BookModelDto bookModelDto = bookService.findById(booksId.get(0));
+
+        final var result = webClient.put()
+            .uri(uriBuilder -> uriBuilder.pathSegment("user", "myBook").build())
+            .headers(headers -> headers.setBearerAuth(generateAccessToken(TestDataProvider.buildAuthAlex())))
+            .bodyValue(ChangeBookDto.builder().bookId(booksId.get(0)).year(-3645).author("Yog Sotott").build())
+            .exchange()
+            .expectStatus().isOk()
+            .expectBody(BookModelDto.class).returnResult().getResponseBody();
+
+        assertThat(result).satisfies(r -> {
+            assertThat(r.getGenre()).isEqualTo(bookModelDto.getGenre());
+            assertThat(r.getYear()).isEqualTo(-3645);
+            assertThat(r.getTitle()).isEqualTo(bookModelDto.getTitle());
+            assertThat(r.getPublishingHouse()).isEqualTo(bookModelDto.getPublishingHouse());
+            assertThat(r.getAuthor()).isEqualTo("Yog Sotott");
+        });
+    }
+
+    @Test
+    void putBookNotChangeRequiredFieldIfItEmpty() {
+        final UserRegistrationDto alex = TestDataProvider.buildAlex();
+        final var user = createAndSaveUser(alex);
+        enabledUser(user.getUserId());
+        final List<Integer> booksId = createAndSaveBooks(user.getLogin());
+        final BookModelDto bookModelDto = bookService.findById(booksId.get(0));
+
+        final var result = webClient.put()
+            .uri(uriBuilder -> uriBuilder.pathSegment("user", "myBook").build())
+            .headers(headers -> headers.setBearerAuth(generateAccessToken(TestDataProvider.buildAuthAlex())))
+            .bodyValue(ChangeBookDto.builder().bookId(booksId.get(0)).title(" ").author("").build())
+            .exchange()
+            .expectStatus().isOk()
+            .expectBody(BookModelDto.class).returnResult().getResponseBody();
+
+        assertThat(result).isEqualTo(bookModelDto);
+    }
+
+    @Test
+    void putBookFromOtherUser() {
+        final UserRegistrationDto alex = TestDataProvider.buildAlex();
+        final var user = createAndSaveUser(alex);
+        enabledUser(user.getUserId());
+        final UserDto bot = createAndSaveUser(TestDataProvider.buildBot());
+        enabledUser(bot.getUserId());
+        final List<Integer> booksId = createAndSaveBooks(user.getLogin());
+
+        webClient.put()
+            .uri(uriBuilder -> uriBuilder.pathSegment("user", "myBook").build())
+            .headers(headers -> headers.setBearerAuth(generateAccessToken(TestDataProvider.buildAuthBot())))
+            .bodyValue(ChangeBookDto.builder().bookId(booksId.get(0)).year(-3645).author("Yog Sotott").build())
+            .exchange()
+            .expectStatus().isNotFound()
+            .expectBody().jsonPath("$.error").isEqualTo(ErrorMessage.ERROR_1004.getCode());
     }
 
     private WebTestClient.ResponseSpec checkPost(final String access, final Object body, final int status) {
