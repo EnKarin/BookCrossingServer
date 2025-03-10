@@ -120,7 +120,7 @@ class MyBookControllerTest extends BookCrossingBaseTests {
     }
 
     @Test
-    void putBook() {
+    void partialPutBook() {
         final UserRegistrationDto alex = TestDataProvider.buildAlex();
         final var user = createAndSaveUser(alex);
         enabledUser(user.getUserId());
@@ -140,6 +140,31 @@ class MyBookControllerTest extends BookCrossingBaseTests {
             assertThat(r.getYear()).isEqualTo(-3645);
             assertThat(r.getTitle()).isEqualTo(bookModelDto.getTitle());
             assertThat(r.getPublishingHouse()).isEqualTo(bookModelDto.getPublishingHouse());
+            assertThat(r.getAuthor()).isEqualTo("Yog Sotott");
+        });
+    }
+
+    @Test
+    void fullPutBook() {
+        final UserRegistrationDto alex = TestDataProvider.buildAlex();
+        final var user = createAndSaveUser(alex);
+        enabledUser(user.getUserId());
+        final List<Integer> booksId = createAndSaveBooks(user.getLogin());
+        final BookModelDto bookModelDto = bookService.findById(booksId.get(0));
+
+        final var result = webClient.put()
+            .uri(uriBuilder -> uriBuilder.pathSegment("user", "myBook").build())
+            .headers(headers -> headers.setBearerAuth(generateAccessToken(TestDataProvider.buildAuthAlex())))
+            .bodyValue(ChangeBookDto.builder().bookId(booksId.get(0)).year(-3645).author("Yog Sotott").title("New name").genre(31).publishingHouse("New publish house").build())
+            .exchange()
+            .expectStatus().isOk()
+            .expectBody(BookModelDto.class).returnResult().getResponseBody();
+
+        assertThat(result).satisfies(r -> {
+            assertThat(r.getGenre()).isEqualTo(31);
+            assertThat(r.getYear()).isEqualTo(-3645);
+            assertThat(r.getTitle()).isEqualTo("New name");
+            assertThat(r.getPublishingHouse()).isEqualTo("New publish house");
             assertThat(r.getAuthor()).isEqualTo("Yog Sotott");
         });
     }
