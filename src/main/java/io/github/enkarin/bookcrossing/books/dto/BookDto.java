@@ -6,11 +6,13 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 import javax.annotation.concurrent.Immutable;
 import javax.validation.constraints.NotBlank;
 
+@ToString
 @Immutable
 @Getter
 @SuperBuilder
@@ -36,11 +38,8 @@ public class BookDto {
     @Schema(description = "Год издания", example = "2004")
     protected final int year;
 
-    @Schema(description = "Город, в котором сейчас находится книга", example = "Новосибирск")
-    protected final String city;
-
     @JsonCreator
-    public static BookDto create(final String title, final String author, final int genre, final String publishingHouse, final int year, final String city) {
-        return new BookDto(title, author, genre, publishingHouse, year, city);
+    public static BookDto create(final String title, final String author, final int genre, final String publishingHouse, final int year) {
+        return new BookDto(title, author, genre, publishingHouse, year);
     }
 }

@@ -5,6 +5,7 @@ import io.github.enkarin.bookcrossing.books.model.Book;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 import javax.annotation.concurrent.Immutable;
@@ -12,6 +13,7 @@ import java.util.Optional;
 
 import static io.github.enkarin.bookcrossing.books.enums.FormatType.ORIGIN;
 
+@ToString(callSuper = true)
 @Immutable
 @Getter
 @SuperBuilder
@@ -24,9 +26,13 @@ public class BookModelDto extends BookDto {
     @Schema(description = "Идентификатор вложения")
     private final Integer attachmentId;
 
-    private BookModelDto(final BookDto bookDto, final int bookId, final AttachmentDto attachment) {
-        super(bookDto.title, bookDto.author, bookDto.genre, bookDto.publishingHouse, bookDto.year, bookDto.city);
+    @Schema(description = "Город, в котором сейчас находится книга", example = "Новосибирск")
+    protected final String city;
+
+    private BookModelDto(final BookDto bookDto, final int bookId, final AttachmentDto attachment, final String city) {
+        super(bookDto.title, bookDto.author, bookDto.genre, bookDto.publishingHouse, bookDto.year);
         this.bookId = bookId;
+        this.city = city;
         this.attachmentId = Optional.ofNullable(attachment).map(AttachmentDto::getAttachId).orElse(null);
     }
 
@@ -39,8 +45,9 @@ public class BookModelDto extends BookDto {
                          final int bookId,
                          final AttachmentDto attachment,
                          final String city) {
-        super(title, author, genre, publishingHouse, year, city);
+        super(title, author, genre, publishingHouse, year);
         this.bookId = bookId;
+        this.city = city;
         this.attachmentId = Optional.ofNullable(attachment).map(AttachmentDto::getAttachId).orElse(null);
     }
 
@@ -49,9 +56,9 @@ public class BookModelDto extends BookDto {
             book.getAuthor(),
             book.getGenre().getId(),
             book.getPublishingHouse(),
-            book.getYear(),
-            book.getOwner().getCity()),
+            book.getYear()),
             book.getBookId(),
-            AttachmentDto.fromAttachment(book.getAttachment(), ORIGIN));
+            AttachmentDto.fromAttachment(book.getAttachment(), ORIGIN),
+            book.getOwner().getCity());
     }
 }

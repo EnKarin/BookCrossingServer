@@ -2,6 +2,7 @@ package io.github.enkarin.bookcrossing.books.controllers;
 
 import io.github.enkarin.bookcrossing.books.dto.BookDto;
 import io.github.enkarin.bookcrossing.books.dto.BookModelDto;
+import io.github.enkarin.bookcrossing.books.dto.ChangeBookDto;
 import io.github.enkarin.bookcrossing.books.service.BookService;
 import io.github.enkarin.bookcrossing.constant.Constant;
 import io.github.enkarin.bookcrossing.exception.BindingErrorsException;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -35,6 +37,7 @@ import java.util.Map;
 
 import static io.github.enkarin.bookcrossing.constant.ErrorMessage.ERROR_2007;
 import static io.github.enkarin.bookcrossing.utils.Util.createErrorMap;
+import static java.util.Objects.nonNull;
 
 @Tag(
     name = "Раздел работы с книгами",
@@ -83,6 +86,33 @@ public class MyBookController {
         return ResponseEntity.ok(bookService.findBookForOwner(principal.getName(), pageNumber, pageSize));
     }
 
+    @Operation(summary = "Редактирование книги", description = "Присваивает указанной книге текущего пользователя заполненные атрибуты запроса")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Книга с внесёнными изменениями",
+            content = {@Content(mediaType = Constant.MEDIA_TYPE, array = @ArraySchema(schema = @Schema(implementation = BookModelDto.class)))}),
+        @ApiResponse(responseCode = "404", description = "Указанная книга или жанр не найдены",
+            content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(ref = "#/components/schemas/LogicErrorBody"))})
+    })
+    @PutMapping
+    public ResponseEntity<BookModelDto> putBook(@RequestBody final ChangeBookDto bookDto, final Principal principal) {
+        if (nonNull(bookDto.getTitle()) && !bookDto.getTitle().isBlank()) {
+            bookService.changeBookTitle(principal.getName(), bookDto.getBookId(), bookDto.getTitle());
+        }
+        if (nonNull(bookDto.getGenre())) {
+            bookService.changeBookGenre(principal.getName(), bookDto.getBookId(), bookDto.getGenre());
+        }
+        if (nonNull(bookDto.getAuthor()) && !bookDto.getAuthor().isBlank()) {
+            bookService.changeBookAuthor(principal.getName(), bookDto.getBookId(), bookDto.getAuthor());
+        }
+        if (nonNull(bookDto.getPublishingHouse())) {
+            bookService.changeBookPublishingHouse(principal.getName(), bookDto.getBookId(), bookDto.getPublishingHouse());
+        }
+        if (nonNull(bookDto.getYear())) {
+            bookService.changeBookYear(principal.getName(), bookDto.getBookId(), bookDto.getYear());
+        }
+        return ResponseEntity.ok(bookService.findById(bookDto.getBookId()));
+    }
+
     @Operation(
         summary = "Удаление книги",
         description = "Позволяет удалить книгу по ее id"
@@ -93,11 +123,9 @@ public class MyBookController {
         @ApiResponse(responseCode = "200", description = "Удаляет книгу из бд")
     })
     @DeleteMapping
-    public ResponseEntity<Void> deleteBook(@RequestParam final int bookId) {
-        bookService.deleteBook(bookId);
-        return ResponseEntity
-            .status(HttpStatus.OK)
-            .build();
+    public ResponseEntity<Void> deleteBook(@RequestParam final int bookId, final Principal principal) {
+        bookService.deleteBook(principal.getName(), bookId);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @ExceptionHandler(GenreNotFoundException.class)

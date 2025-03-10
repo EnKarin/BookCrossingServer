@@ -4,6 +4,7 @@ import io.github.enkarin.bookcrossing.books.dto.BookDto;
 import io.github.enkarin.bookcrossing.books.dto.BookFiltersRequest;
 import io.github.enkarin.bookcrossing.books.dto.BookModelDto;
 import io.github.enkarin.bookcrossing.exception.BookNotFoundException;
+import io.github.enkarin.bookcrossing.exception.GenreNotFoundException;
 import io.github.enkarin.bookcrossing.exception.UserNotFoundException;
 import io.github.enkarin.bookcrossing.support.BookCrossingBaseTests;
 import io.github.enkarin.bookcrossing.support.TestDataProvider;
@@ -233,7 +234,7 @@ class BookServiceTest extends BookCrossingBaseTests {
 
         final BookModelDto book = bookService.saveBook(TestDataProvider.buildWolves(), user1.getLogin());
 
-        bookService.deleteBook(book.getBookId());
+        bookService.deleteBook(user1.getLogin(), book.getBookId());
         assertThat(jdbcTemplate.queryForObject("select exists(select * from bookcrossing.t_book where book_id = ?)",
             Boolean.class, book.getBookId()))
             .isFalse();
@@ -241,7 +242,20 @@ class BookServiceTest extends BookCrossingBaseTests {
 
     @Test
     void deleteBookShouldFailWithBookNotFound() {
-        assertThatThrownBy(() -> bookService.deleteBook(2))
+        final UserDto user1 = createAndSaveUser(TestDataProvider.buildBot());
+
+        assertThatThrownBy(() -> bookService.deleteBook(user1.getLogin(), 2))
+            .isInstanceOf(BookNotFoundException.class)
+            .hasMessage("Книга не найдена");
+    }
+
+    @Test
+    void deleteBookFromOtherUserMustThrowException() {
+        final UserDto user1 = createAndSaveUser(TestDataProvider.buildBot());
+        bookService.saveBook(TestDataProvider.buildDorian(), user1.getLogin());
+        final UserDto user2 = createAndSaveUser(TestDataProvider.buildAlex());
+
+        assertThatThrownBy(() -> bookService.deleteBook(user2.getLogin(), 2))
             .isInstanceOf(BookNotFoundException.class)
             .hasMessage("Книга не найдена");
     }
@@ -330,5 +344,108 @@ class BookServiceTest extends BookCrossingBaseTests {
         final int bookId = bookService.saveBook(TestDataProvider.buildDorian(), user.getLogin()).getBookId();
 
         assertThat(Integer.parseInt(bookService.findBookOwner(bookId, 7).getUserId())).isEqualTo(user.getUserId());
+    }
+
+    @Test
+    void putBookTitle() {
+        final UserDto user = createAndSaveUser(TestDataProvider.buildAlex());
+        final int bookId = bookService.saveBook(TestDataProvider.buildDorian(), user.getLogin()).getBookId();
+
+        bookService.changeBookTitle(user.getLogin(), bookId, "Redacted");
+
+        assertThat(bookService.findById(bookId).getTitle()).isEqualTo("Redacted");
+    }
+
+    @Test
+    void putBookTitleFromNotOwnerMustThrowException() {
+        final UserDto user = createAndSaveUser(TestDataProvider.buildAlex());
+        final UserDto max = createAndSaveUser(TestDataProvider.buildMax());
+        final int bookId = bookService.saveBook(TestDataProvider.buildDorian(), user.getLogin()).getBookId();
+
+        assertThatThrownBy(() -> bookService.changeBookTitle(max.getLogin(), bookId, "Redacted")).isInstanceOf(BookNotFoundException.class);
+    }
+
+    @Test
+    void putBookAuthor() {
+        final UserDto user = createAndSaveUser(TestDataProvider.buildAlex());
+        final int bookId = bookService.saveBook(TestDataProvider.buildDorian(), user.getLogin()).getBookId();
+
+        bookService.changeBookAuthor(user.getLogin(), bookId, "Redacted");
+
+        assertThat(bookService.findById(bookId).getAuthor()).isEqualTo("Redacted");
+    }
+
+    @Test
+    void putBookAuthorFromNotOwnerMustThrowException() {
+        final UserDto user = createAndSaveUser(TestDataProvider.buildAlex());
+        final UserDto max = createAndSaveUser(TestDataProvider.buildMax());
+        final int bookId = bookService.saveBook(TestDataProvider.buildDorian(), user.getLogin()).getBookId();
+
+        assertThatThrownBy(() -> bookService.changeBookAuthor(max.getLogin(), bookId, "Redacted")).isInstanceOf(BookNotFoundException.class);
+    }
+
+    @Test
+    void putBookPublishHouse() {
+        final UserDto user = createAndSaveUser(TestDataProvider.buildAlex());
+        final int bookId = bookService.saveBook(TestDataProvider.buildDorian(), user.getLogin()).getBookId();
+
+        bookService.changeBookPublishingHouse(user.getLogin(), bookId, "Redacted");
+
+        assertThat(bookService.findById(bookId).getPublishingHouse()).isEqualTo("Redacted");
+    }
+
+    @Test
+    void putBookPublishHouseFromNotOwnerMustThrowException() {
+        final UserDto user = createAndSaveUser(TestDataProvider.buildAlex());
+        final UserDto max = createAndSaveUser(TestDataProvider.buildMax());
+        final int bookId = bookService.saveBook(TestDataProvider.buildDorian(), user.getLogin()).getBookId();
+
+        assertThatThrownBy(() -> bookService.changeBookPublishingHouse(max.getLogin(), bookId, "Redacted")).isInstanceOf(BookNotFoundException.class);
+    }
+
+    @Test
+    void putBookYear() {
+        final UserDto user = createAndSaveUser(TestDataProvider.buildAlex());
+        final int bookId = bookService.saveBook(TestDataProvider.buildDorian(), user.getLogin()).getBookId();
+
+        bookService.changeBookYear(user.getLogin(), bookId, 100);
+
+        assertThat(bookService.findById(bookId).getYear()).isEqualTo(100);
+    }
+
+    @Test
+    void putBookYearFromNotOwnerMustThrowException() {
+        final UserDto user = createAndSaveUser(TestDataProvider.buildAlex());
+        final UserDto max = createAndSaveUser(TestDataProvider.buildMax());
+        final int bookId = bookService.saveBook(TestDataProvider.buildDorian(), user.getLogin()).getBookId();
+
+        assertThatThrownBy(() -> bookService.changeBookYear(max.getLogin(), bookId, 200)).isInstanceOf(BookNotFoundException.class);
+    }
+
+    @Test
+    void putBookGenre() {
+        final UserDto user = createAndSaveUser(TestDataProvider.buildAlex());
+        final int bookId = bookService.saveBook(TestDataProvider.buildDorian(), user.getLogin()).getBookId();
+
+        bookService.changeBookGenre(user.getLogin(), bookId, 10);
+
+        assertThat(bookService.findById(bookId).getGenre()).isEqualTo(10);
+    }
+
+    @Test
+    void putBookGenreFromNotOwnerMustThrowException() {
+        final UserDto user = createAndSaveUser(TestDataProvider.buildAlex());
+        final UserDto max = createAndSaveUser(TestDataProvider.buildMax());
+        final int bookId = bookService.saveBook(TestDataProvider.buildDorian(), user.getLogin()).getBookId();
+
+        assertThatThrownBy(() -> bookService.changeBookGenre(max.getLogin(), bookId, 20)).isInstanceOf(BookNotFoundException.class);
+    }
+
+    @Test
+    void putBookIncorrectGenreMushThrowException() {
+        final UserDto user = createAndSaveUser(TestDataProvider.buildAlex());
+        final int bookId = bookService.saveBook(TestDataProvider.buildDorian(), user.getLogin()).getBookId();
+
+        assertThatThrownBy(() -> bookService.changeBookGenre(user.getLogin(), bookId, 500)).isInstanceOf(GenreNotFoundException.class);
     }
 }
