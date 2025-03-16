@@ -8,7 +8,6 @@ import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 
 import javax.annotation.concurrent.Immutable;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 @SuperBuilder
@@ -19,16 +18,13 @@ import javax.validation.constraints.Size;
 public class UserPutProfileDto {
 
     @Schema(description = "Имя", example = "Alex")
-    @NotBlank(message = "name: Имя должно содержать хотя бы один видимый символ")
     private final String name;
 
     @Schema(description = "Старый пароль", example = "123456")
-    @NotBlank(message = "password: Пароль должен содержать хотя бы один видимый символ")
     private final String oldPassword;
 
     @Schema(description = "Новый пароль", example = "123456s")
-    @NotBlank(message = "password: Пароль должен содержать хотя бы один видимый символ")
-    @Size(min = 6, message = "Пароль должен содержать больше 6 символов")
+    @Size(min = 8, message = "3010")
     private final String newPassword;
 
     @Schema(description = "Подвержение пароля", example = "123456s")
@@ -37,9 +33,16 @@ public class UserPutProfileDto {
     @Schema(description = "Город", example = "Новосибирск")
     private final String city;
 
+    @Schema(description = "Информация о пользователе")
+    protected final String aboutMe;
+
     @JsonCreator
-    public static UserPutProfileDto create(final String name, final String oldPassword, final String newPassword,
-                                              final String passwordConfirm, final String city) {
-        return new UserPutProfileDto(name, oldPassword, newPassword, passwordConfirm, city);
+    public static UserPutProfileDto create(final String name,
+                                           final String oldPassword,
+                                           final String newPassword,
+                                           final String passwordConfirm,
+                                           final String city,
+                                           final String aboutMe) {
+        return new UserPutProfileDto(name, oldPassword, newPassword, passwordConfirm, city, aboutMe);
     }
 }

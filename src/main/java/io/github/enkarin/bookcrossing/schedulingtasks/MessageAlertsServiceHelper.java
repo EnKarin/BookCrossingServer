@@ -18,13 +18,13 @@ public class MessageAlertsServiceHelper {
 
     public List<Message> findUnreadMessages() {
         return messageRepository.findAll().stream()
-                .filter(Predicate.not(Message::isDeclaim))
-                .filter(Predicate.not(Message::isAlertSent))
-                .filter(m -> m.getCorrespondence().getUsersCorrKey().getFirstUser().isAccountNonLocked())
-                .filter(m -> m.getCorrespondence().getUsersCorrKey().getSecondUser().isAccountNonLocked())
-                .filter(m -> m.getCorrespondence().getUsersCorrKey().getFirstUser().isEnabled())
-                .filter(m -> m.getCorrespondence().getUsersCorrKey().getSecondUser().isEnabled())
-                .toList();
+            .filter(Predicate.not(Message::isDeclaim))
+            .filter(Predicate.not(Message::isAlertSent))
+            .filter(m -> m.getCorrespondence().getUsersCorrKey().getFirstUser().isAccountNonLocked())
+            .filter(m -> m.getCorrespondence().getUsersCorrKey().getSecondUser().isAccountNonLocked())
+            .filter(m -> m.getCorrespondence().getUsersCorrKey().getFirstUser().isEnabled())
+            .filter(m -> m.getCorrespondence().getUsersCorrKey().getSecondUser().isEnabled())
+            .toList();
     }
 
     @Transactional

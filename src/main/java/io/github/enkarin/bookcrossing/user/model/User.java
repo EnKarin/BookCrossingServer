@@ -3,16 +3,18 @@ package io.github.enkarin.bookcrossing.user.model;
 import io.github.enkarin.bookcrossing.books.model.Book;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.Type;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -50,22 +52,29 @@ public class User implements UserDetails {
 
     private long loginDate;
 
+    private String aboutMe;
+
+    @Lob
+    @Type(type = "org.hibernate.type.BinaryType")
+    @Column(length = 1_048_576)
+    private byte[] avatar;
+
     @ManyToMany
     @JoinTable(
-            name = "t_user_role",
-            joinColumns = { @JoinColumn(name = "user_id")},
-            inverseJoinColumns = { @JoinColumn(name = "role_id")}
+        name = "t_user_role",
+        joinColumns = {@JoinColumn(name = "user_id")},
+        inverseJoinColumns = {@JoinColumn(name = "role_id")}
     )
     private Set<Role> userRoles;
 
-    @OneToMany(mappedBy = "owner", fetch = FetchType.EAGER, orphanRemoval = true)
+    @OneToMany(mappedBy = "owner", orphanRemoval = true)
     private Set<Book> books;
 
     @ManyToMany
     @JoinTable(
-            name = "t_bookmarks",
-            joinColumns = {@JoinColumn(name = "user_id")},
-            inverseJoinColumns = {@JoinColumn(name = "book_id")}
+        name = "t_bookmarks",
+        joinColumns = {@JoinColumn(name = "user_id")},
+        inverseJoinColumns = {@JoinColumn(name = "book_id")}
     )
     private Set<Book> bookmarks;
 

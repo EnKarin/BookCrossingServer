@@ -1,5 +1,6 @@
 package io.github.enkarin.bookcrossing.chat.controllers;
 
+import io.github.enkarin.bookcrossing.constant.ErrorMessage;
 import io.github.enkarin.bookcrossing.support.BookCrossingBaseTests;
 import io.github.enkarin.bookcrossing.chat.dto.MessageDto;
 import io.github.enkarin.bookcrossing.chat.dto.MessagePutRequest;
@@ -32,14 +33,14 @@ class MessageControllerTest extends BookCrossingBaseTests {
         final var key = correspondenceService.createChat(userBot.getUserId(), userAlex.getLogin());
 
         final var response = execute(HttpMethod.POST, TestDataProvider.buildMessageRequest(key), 200)
-                .expectBody(MessageDto.class)
-                .returnResult().getResponseBody();
+            .expectBody(MessageDto.class)
+            .returnResult().getResponseBody();
 
         assertThat(response)
-                .isNotNull()
-                .usingRecursiveComparison()
-                .ignoringFields("messageId", "departureDate") //Temporary date ignore
-                .isEqualTo(TestDataProvider.buildMessageDto(userBot.getUserId(), Long.MAX_VALUE, ""));
+            .isNotNull()
+            .usingRecursiveComparison()
+            .ignoringFields("messageId", "departureDate") //Temporary date ignore
+            .isEqualTo(TestDataProvider.buildMessageDto(userBot.getUserId(), Long.MAX_VALUE, ""));
     }
 
     @Test
@@ -50,11 +51,11 @@ class MessageControllerTest extends BookCrossingBaseTests {
         enabledUser(userAlexId);
 
         execute(HttpMethod.POST, TestDataProvider.buildMessageRequest(UsersCorrKeyDto.builder()
-                .firstUserId(userBotId)
-                .secondUserId(userAlexId)
-                .build()), 404)
-                .expectBody()
-                .jsonPath("$.correspondence").isEqualTo("Чата не существует");
+            .firstUserId(userBotId)
+            .secondUserId(userAlexId)
+            .build()), 404)
+            .expectBody()
+            .jsonPath("$.error").isEqualTo(ErrorMessage.ERROR_1009.getCode());
     }
 
     @Test
@@ -67,8 +68,8 @@ class MessageControllerTest extends BookCrossingBaseTests {
         final var key = correspondenceService.createChat(userAlex.getUserId(), userAlex.getLogin());
 
         execute(HttpMethod.POST, MessageRequest.builder().usersCorrKeyDto(key).build(), 406)
-                .expectBody()
-                .jsonPath("$.message").isEqualTo("Сообщение не может быть пустым");
+            .expectBody()
+            .jsonPath("$.error").isEqualTo(ErrorMessage.ERROR_1013.getCode());
     }
 
     @Test
@@ -81,8 +82,8 @@ class MessageControllerTest extends BookCrossingBaseTests {
         final var key = correspondenceService.createChat(userAlex.getUserId(), userAlex.getLogin());
 
         execute(HttpMethod.POST, TestDataProvider.buildMessageRequest(key), 403)
-                .expectBody()
-                .jsonPath("$.correspondence").isEqualTo("Нет доступа к чату");
+            .expectBody()
+            .jsonPath("$.error").isEqualTo(ErrorMessage.ERROR_1012.getCode());
     }
 
     @Test
@@ -96,13 +97,13 @@ class MessageControllerTest extends BookCrossingBaseTests {
         final var messageId = messageService.sendMessage(TestDataProvider.buildMessageRequest(key), userBot.getLogin()).getMessageId();
 
         final var response = execute(HttpMethod.PUT, TestDataProvider.buildMessagePutRequest(messageId), 200)
-                .expectBody(MessageDto.class)
-                .returnResult().getResponseBody();
+            .expectBody(MessageDto.class)
+            .returnResult().getResponseBody();
 
         assertThat(response)
-                .isNotNull()
-                .extracting(MessageDto::getText)
-                .isEqualTo("New");
+            .isNotNull()
+            .extracting(MessageDto::getText)
+            .isEqualTo("New");
     }
 
     @Test
@@ -116,8 +117,8 @@ class MessageControllerTest extends BookCrossingBaseTests {
         final var messageId = messageService.sendMessage(TestDataProvider.buildMessageRequest(key), userBot.getLogin()).getMessageId();
 
         execute(HttpMethod.PUT, MessagePutRequest.builder().messageId(messageId).build(), 406)
-                .expectBody()
-                .jsonPath("$.message").isEqualTo("Сообщение не может быть пустым");
+            .expectBody()
+            .jsonPath("$.error").isEqualTo(ErrorMessage.ERROR_1013.getCode());
     }
 
     @Test
@@ -126,8 +127,8 @@ class MessageControllerTest extends BookCrossingBaseTests {
         enabledUser(userBot.getUserId());
 
         execute(HttpMethod.PUT, TestDataProvider.buildMessagePutRequest(Long.MAX_VALUE), 404)
-                .expectBody()
-                .jsonPath("$.message").isEqualTo("Сообщения не существует");
+            .expectBody()
+            .jsonPath("$.error").isEqualTo(ErrorMessage.ERROR_1014.getCode());
     }
 
     @Test
@@ -141,8 +142,8 @@ class MessageControllerTest extends BookCrossingBaseTests {
         final var messageId = messageService.sendMessage(TestDataProvider.buildMessageRequest(key), userAlex.getLogin()).getMessageId();
 
         execute(HttpMethod.PUT, TestDataProvider.buildMessagePutRequest(messageId), 403)
-                .expectBody()
-                .jsonPath("$.correspondence").isEqualTo("Пользователь не является отправителем");
+            .expectBody()
+            .jsonPath("$.error").isEqualTo(ErrorMessage.ERROR_1015.getCode());
     }
 
     @Test
@@ -158,9 +159,9 @@ class MessageControllerTest extends BookCrossingBaseTests {
         execute(messageId, 200);
 
         assertThat(correspondenceService.getChat(key.getFirstUserId(), key.getSecondUserId(), 0, userBot.getLogin()))
-                .isEmpty();
+            .isEmpty();
         assertThat(correspondenceService.getChat(key.getFirstUserId(), key.getSecondUserId(), 0, userAlex.getLogin()))
-                .isEmpty();
+            .isEmpty();
     }
 
     @Test
@@ -174,8 +175,8 @@ class MessageControllerTest extends BookCrossingBaseTests {
         final var messageId = messageService.sendMessage(TestDataProvider.buildMessageRequest(key), userAlex.getLogin()).getMessageId();
 
         execute(messageId, 403)
-                .expectBody()
-                .jsonPath("$.correspondence").isEqualTo("Пользователь не является отправителем");
+            .expectBody()
+            .jsonPath("$.error").isEqualTo(ErrorMessage.ERROR_1015.getCode());
     }
 
     @Test
@@ -184,8 +185,8 @@ class MessageControllerTest extends BookCrossingBaseTests {
         enabledUser(userBot.getUserId());
 
         execute(Long.MAX_VALUE, 404)
-                .expectBody()
-                .jsonPath("$.message").isEqualTo("Сообщения не существует");
+            .expectBody()
+            .jsonPath("$.error").isEqualTo(ErrorMessage.ERROR_1014.getCode());
     }
 
     @Test
@@ -201,9 +202,9 @@ class MessageControllerTest extends BookCrossingBaseTests {
         executeDeleteForMe(messageId, generateAccessToken(TestDataProvider.buildAuthBot()), 200);
 
         assertThat(correspondenceService.getChat(key.getFirstUserId(), key.getSecondUserId(), 0, userBot.getLogin()))
-                .isEmpty();
+            .isEmpty();
         assertThat(correspondenceService.getChat(key.getFirstUserId(), key.getSecondUserId(), 0, userAlex.getLogin()))
-                .hasSize(1);
+            .hasSize(1);
     }
 
     @Test
@@ -219,9 +220,9 @@ class MessageControllerTest extends BookCrossingBaseTests {
         executeDeleteForMe(messageId, generateAccessToken(TestDataProvider.buildAuthAlex()), 200);
 
         assertThat(correspondenceService.getChat(key.getFirstUserId(), key.getSecondUserId(), 0, userBot.getLogin()))
-                .hasSize(1);
+            .hasSize(1);
         assertThat(correspondenceService.getChat(key.getFirstUserId(), key.getSecondUserId(), 0, userAlex.getLogin()))
-                .isEmpty();
+            .isEmpty();
     }
 
     @Test
@@ -230,8 +231,8 @@ class MessageControllerTest extends BookCrossingBaseTests {
         enabledUser(userBot.getUserId());
 
         executeDeleteForMe(Long.MAX_VALUE, generateAccessToken(TestDataProvider.buildAuthBot()), 404)
-                .expectBody()
-                .jsonPath("$.message").isEqualTo("Сообщения не существует");
+            .expectBody()
+            .jsonPath("$.error").isEqualTo(ErrorMessage.ERROR_1014.getCode());
     }
 
     @Test
@@ -245,40 +246,40 @@ class MessageControllerTest extends BookCrossingBaseTests {
         final var messageId = messageService.sendMessage(TestDataProvider.buildMessageRequest(key), userAlex.getLogin()).getMessageId();
 
         executeDeleteForMe(messageId, generateAccessToken(TestDataProvider.buildAuthBot()), 403)
-                .expectBody()
-                .jsonPath("$.correspondence").isEqualTo("Нет доступа к чату");
+            .expectBody()
+            .jsonPath("$.error").isEqualTo(ErrorMessage.ERROR_1012.getCode());
     }
 
     private WebTestClient.ResponseSpec execute(final HttpMethod method, final Object body, final int status) {
         return webClient.method(method)
-                .uri(uriBuilder -> uriBuilder
-                        .pathSegment("user", "correspondence", "message")
-                        .build())
-                .headers(headers -> headers.setBearerAuth(generateAccessToken(TestDataProvider.buildAuthBot())))
-                .bodyValue(body)
-                .exchange()
-                .expectStatus().isEqualTo(status);
+            .uri(uriBuilder -> uriBuilder
+                .pathSegment("user", "correspondence", "message")
+                .build())
+            .headers(headers -> headers.setBearerAuth(generateAccessToken(TestDataProvider.buildAuthBot())))
+            .bodyValue(body)
+            .exchange()
+            .expectStatus().isEqualTo(status);
     }
 
     private WebTestClient.ResponseSpec execute(final long messageId, final int status) {
         return webClient.delete()
-                .uri(uriBuilder -> uriBuilder
-                        .pathSegment("user", "correspondence", "message")
-                        .queryParam("messageId", messageId)
-                        .build())
-                .headers(headers -> headers.setBearerAuth(generateAccessToken(TestDataProvider.buildAuthBot())))
-                .exchange()
-                .expectStatus().isEqualTo(status);
+            .uri(uriBuilder -> uriBuilder
+                .pathSegment("user", "correspondence", "message")
+                .queryParam("messageId", messageId)
+                .build())
+            .headers(headers -> headers.setBearerAuth(generateAccessToken(TestDataProvider.buildAuthBot())))
+            .exchange()
+            .expectStatus().isEqualTo(status);
     }
 
     private WebTestClient.ResponseSpec executeDeleteForMe(final long messageId, final String token, final int status) {
         return webClient.delete()
-                .uri(uriBuilder -> uriBuilder
-                        .pathSegment("user", "correspondence", "message", "deleteForMe")
-                        .queryParam("messageId", messageId)
-                        .build())
-                .headers(headers -> headers.setBearerAuth(token))
-                .exchange()
-                .expectStatus().isEqualTo(status);
+            .uri(uriBuilder -> uriBuilder
+                .pathSegment("user", "correspondence", "message", "deleteForMe")
+                .queryParam("messageId", messageId)
+                .build())
+            .headers(headers -> headers.setBearerAuth(token))
+            .exchange()
+            .expectStatus().isEqualTo(status);
     }
 }

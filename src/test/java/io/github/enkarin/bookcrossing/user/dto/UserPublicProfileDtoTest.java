@@ -20,18 +20,15 @@ class UserPublicProfileDtoTest {
 
         final UserPublicProfileDto userProfileDto = UserPublicProfileDto.fromUser(user, 3);
         assertThat(userProfileDto)
-                .isNotNull()
-                .satisfies(u -> {
-                    assertThat(u.getUserId())
-                            .isEqualTo(Integer.MAX_VALUE);
-                    assertThat(u.getName())
-                            .isEqualTo("name");
-                    assertThat(u.getLoginDate())
-                            .isEqualTo("0");
-                    assertThat(u.getBooks())
-                            .hasSize(1)
-                            .isUnmodifiable();
-                });
+            .isNotNull()
+            .satisfies(u -> {
+                assertThat(Integer.parseInt(u.getUserId()))
+                    .isEqualTo(Integer.MAX_VALUE);
+                assertThat(u.getName())
+                    .isEqualTo("name");
+                assertThat(u.getLoginDate())
+                    .isEqualTo("0");
+            });
     }
 
     @Test
@@ -44,17 +41,14 @@ class UserPublicProfileDtoTest {
 
         final UserPublicProfileDto userProfileDto = UserPublicProfileDto.fromUser(user, 3);
         assertThat(userProfileDto)
-                .isNotNull()
-                .satisfies(u -> {
-                    assertThat(u.getUserId())
-                            .isEqualTo(Integer.MAX_VALUE);
-                    assertThat(u.getName())
-                            .isEqualTo("name");
-                    assertThat(u.getLoginDate())
-                            .isEqualTo("1970-01-02T13:19:27");
-                    assertThat(u.getBooks())
-                            .hasSize(1)
-                            .isUnmodifiable();
-                });
+            .isNotNull()
+            .satisfies(u -> {
+                assertThat(Integer.parseInt(u.getUserId()))
+                    .isEqualTo(Integer.MAX_VALUE);
+                assertThat(u.getName())
+                    .isEqualTo("name");
+                assertThat(u.getLoginDate())
+                    .isEqualTo("1970-01-02T13:19:27");
+            });
     }
 }

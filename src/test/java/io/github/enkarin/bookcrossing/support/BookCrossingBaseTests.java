@@ -42,8 +42,8 @@ public abstract class BookCrossingBaseTests {
 
     @RegisterExtension
     protected static final GreenMailExtension GREEN_MAIL = new GreenMailExtension(ServerSetupTest.SMTP)
-            .withConfiguration(GreenMailConfiguration.aConfig().withDisabledAuthentication())
-            .withPerMethodLifecycle(false);
+        .withConfiguration(GreenMailConfiguration.aConfig().withDisabledAuthentication())
+        .withPerMethodLifecycle(false);
 
     @AfterEach
     void delete() {
@@ -72,8 +72,8 @@ public abstract class BookCrossingBaseTests {
 
     protected List<Integer> createAndSaveBooks(final String user) {
         return TestDataProvider.buildBooks().stream()
-                .map(b -> bookService.saveBook(b, user))
-                .map(BookModelDto::getBookId)
-                .toList();
+            .map(b -> bookService.saveBook(b, user))
+            .map(BookModelDto::getBookId)
+            .toList();
     }
 }

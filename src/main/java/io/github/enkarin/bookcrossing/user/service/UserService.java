@@ -1,5 +1,6 @@
 package io.github.enkarin.bookcrossing.user.service;
 
+import io.github.enkarin.bookcrossing.constant.ErrorMessage;
 import io.github.enkarin.bookcrossing.exception.AccountNotConfirmedException;
 import io.github.enkarin.bookcrossing.exception.EmailFailedException;
 import io.github.enkarin.bookcrossing.exception.InvalidPasswordException;
@@ -7,6 +8,7 @@ import io.github.enkarin.bookcrossing.exception.LockedAccountException;
 import io.github.enkarin.bookcrossing.exception.LoginFailedException;
 import io.github.enkarin.bookcrossing.exception.PasswordsDontMatchException;
 import io.github.enkarin.bookcrossing.exception.TokenNotFoundException;
+import io.github.enkarin.bookcrossing.exception.UnsupportedImageTypeException;
 import io.github.enkarin.bookcrossing.exception.UserNotFoundException;
 import io.github.enkarin.bookcrossing.mail.model.ActionMailUser;
 import io.github.enkarin.bookcrossing.mail.repository.ActionMailUserRepository;
@@ -19,23 +21,29 @@ import io.github.enkarin.bookcrossing.user.dto.UserDto;
 import io.github.enkarin.bookcrossing.user.dto.UserProfileDto;
 import io.github.enkarin.bookcrossing.user.dto.UserPublicProfileDto;
 import io.github.enkarin.bookcrossing.user.dto.UserPutProfileDto;
-import io.github.enkarin.bookcrossing.user.model.Role;
 import io.github.enkarin.bookcrossing.user.model.User;
 import io.github.enkarin.bookcrossing.user.repository.RoleRepository;
 import io.github.enkarin.bookcrossing.user.repository.UserRepository;
+import io.github.enkarin.bookcrossing.utils.ImageCompressor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
+import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
+import java.util.UUID;
+
+import static java.util.Objects.isNull;
 
 @RequiredArgsConstructor
 @Service
 @Transactional(readOnly = true)
 public class UserService {
-
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final ActionMailUserRepository confirmationMailUserRepository;
@@ -47,6 +55,9 @@ public class UserService {
     public UserDto saveUser(final UserRegistrationDto userRegistrationDTO) {
         if (!userRegistrationDTO.getPassword().equals(userRegistrationDTO.getPasswordConfirm())) {
             throw new PasswordsDontMatchException();
+        }
+        if (isNull(userRegistrationDTO.getLogin()) || userRegistrationDTO.getLogin().isBlank()) {
+            userRegistrationDTO.setLogin(generateLogin());
         }
         if (userRepository.findByLogin(userRegistrationDTO.getLogin()).isPresent()) {
             throw new LoginFailedException();
@@ -62,7 +73,7 @@ public class UserService {
     @Transactional
     public AuthResponse confirmMail(final String token) {
         final ActionMailUser confirmationMailUser = confirmationMailUserRepository.findById(token)
-                .orElseThrow(TokenNotFoundException::new);
+            .orElseThrow(TokenNotFoundException::new);
         final User user = confirmationMailUser.getUser();
         user.setEnabled(true);
         confirmationMailUserRepository.delete(confirmationMailUser);
@@ -76,7 +87,7 @@ public class UserService {
 
     public UserPublicProfileDto findById(final int userId, final int zone) {
         return UserPublicProfileDto.fromUser(userRepository.findById(userId)
-                .orElseThrow(UserNotFoundException::new), zone);
+            .orElseThrow(UserNotFoundException::new), zone);
     }
 
     public UserProfileDto getProfile(final String login) {
@@ -84,21 +95,18 @@ public class UserService {
         return UserProfileDto.fromUser(user);
     }
 
-    public List<UserPublicProfileDto> findAllUsers(final int zone) {
-        // TODO Performance! Too many sql queries. Should retrieve all data within single select query
-        final Role role = roleRepository.getRoleByName("ROLE_USER");
-        return userRepository.findByUserRolesOrderByUserId(role).stream()
-                .map(u -> UserPublicProfileDto.fromUser(u, zone))
-                .toList();
+    public List<UserPublicProfileDto> findAllUsers(final int zone, final int pageNumber, final int pageSize) {
+        return userRepository.findByUserRolesOrderByUserId("ROLE_USER", pageNumber, pageSize).stream()
+            .map(u -> UserPublicProfileDto.fromUser(u, zone))
+            .toList();
     }
 
     public AuthResponse findByLoginAndPassword(final LoginRequest login) {
-        final User user = userRepository.findByLogin(login.getLogin())
-                .orElseThrow(UserNotFoundException::new);
+        final User user = userRepository.findByLogin(login.getLogin()).orElseGet(() -> userRepository.findByEmail(login.getLogin()).orElseThrow(UserNotFoundException::new));
         if (bCryptPasswordEncoder.matches(login.getPassword(), user.getPassword())) {
             if (user.isEnabled()) {
                 if (user.isAccountNonLocked()) {
-                    return refreshService.createTokens(login.getLogin());
+                    return refreshService.createTokens(user.getLogin());
                 }
                 throw new LockedAccountException();
             }
@@ -109,23 +117,37 @@ public class UserService {
 
     @Transactional
     public UserProfileDto putUserInfo(final UserPutProfileDto userPutProfileDto, final String login) {
-        if (!userPutProfileDto.getNewPassword().equals(userPutProfileDto.getPasswordConfirm())) {
-            throw new PasswordsDontMatchException();
-        }
-        User user = userRepository.findByLogin(login).orElseThrow(UserNotFoundException::new);
-        if (bCryptPasswordEncoder.matches(userPutProfileDto.getOldPassword(), user.getPassword())) {
+        final User user = userRepository.findByLogin(login).orElseThrow(UserNotFoundException::new);
+        if (Objects.nonNull(userPutProfileDto.getName())) {
             user.setName(userPutProfileDto.getName());
-            user.setCity(userPutProfileDto.getCity());
-            user.setPassword(bCryptPasswordEncoder.encode(userPutProfileDto.getNewPassword()));
-            user = userRepository.save(user);
-            return UserProfileDto.fromUser(user);
         }
-        throw new InvalidPasswordException();
+        if (Objects.nonNull(userPutProfileDto.getCity())) {
+            user.setCity(userPutProfileDto.getCity());
+        }
+        if (Objects.nonNull(userPutProfileDto.getNewPassword())) {
+            checkAndUpdatePassword(user, userPutProfileDto);
+        }
+
+        return UserProfileDto.fromUser(user);
     }
 
     @Transactional
     public void deleteUser(final int userId) {
         userRepository.deleteById(userId);
+    }
+
+    @Transactional
+    public void putAvatar(final String login, final MultipartFile avatarData) {
+        try {
+            userRepository.findByLogin(login).orElseThrow(UserNotFoundException::new)
+                .setAvatar(ImageCompressor.compressImage(ImageIO.read(avatarData.getInputStream()), 150, 150));
+        } catch (IOException e) {
+            throw new UnsupportedImageTypeException(ErrorMessage.ERROR_2008.getCode(), e);
+        }
+    }
+
+    public byte[] getAvatar(final int userId) {
+        return userRepository.findById(userId).orElseThrow(UserNotFoundException::new).getAvatar();
     }
 
     private User convertToUser(final UserRegistrationDto userRegistrationDTO) {
@@ -138,6 +160,26 @@ public class UserService {
         user.setAccountNonLocked(true);
         user.setEnabled(false);
         user.setPassword(bCryptPasswordEncoder.encode(userRegistrationDTO.getPassword()));
+        user.setAboutMe(userRegistrationDTO.getAboutMe());
         return user;
+    }
+
+    private String generateLogin() {
+        String possibleLogin;
+        do {
+            possibleLogin = UUID.randomUUID().toString();
+        } while (userRepository.findByLogin(possibleLogin).isPresent());
+        return possibleLogin;
+    }
+
+    private void checkAndUpdatePassword(final User user, final UserPutProfileDto userPutProfileDto) {
+        if (!userPutProfileDto.getNewPassword().equals(userPutProfileDto.getPasswordConfirm())) {
+            throw new PasswordsDontMatchException();
+        }
+        if (bCryptPasswordEncoder.matches(userPutProfileDto.getOldPassword(), user.getPassword())) {
+            user.setPassword(bCryptPasswordEncoder.encode(userPutProfileDto.getNewPassword()));
+        } else {
+            throw new InvalidPasswordException();
+        }
     }
 }

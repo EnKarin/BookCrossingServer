@@ -27,30 +27,30 @@ class IndexesMaintenanceTest extends BookCrossingBaseTests {
     @Test
     void checkPostgresVersion() {
         assertThat(jdbcTemplate.queryForObject("select version();", String.class))
-                .startsWith("PostgreSQL 16.4");
+            .startsWith("PostgreSQL 16.4");
     }
 
     @Test
     void databaseStructureCheckForBookCrossingSchema() {
         assertThat(checks)
-                .hasSameSizeAs(Diagnostic.values());
+            .hasSameSizeAs(Diagnostic.values());
 
         checks.stream()
-                .filter(DatabaseCheckOnHost::isStatic)
-                .forEach(check -> {
-                    final ListAssert<? extends DbObject> checkAssert = assertThat(check.check(PG_CONTEXT, SkipFlywayTablesPredicate.of(PG_CONTEXT)))
-                            .as(check.getDiagnostic().name());
+            .filter(DatabaseCheckOnHost::isStatic)
+            .forEach(check -> {
+                final ListAssert<? extends DbObject> checkAssert = assertThat(check.check(PG_CONTEXT, SkipFlywayTablesPredicate.of(PG_CONTEXT)))
+                    .as(check.getDiagnostic().name());
 
-                    if (check.getDiagnostic() == Diagnostic.COLUMNS_WITHOUT_DESCRIPTION) {
-                        checkAssert.hasSize(43);
-                    } else if (check.getDiagnostic() == Diagnostic.TABLES_NOT_LINKED_TO_OTHERS) {
-                        checkAssert
-                                .asInstanceOf(list(Table.class))
-                                .hasSize(1)
-                                .containsExactly(Table.of(PG_CONTEXT.enrichWithSchema("t_refresh"), 0L));
-                    } else {
-                        checkAssert.isEmpty();
-                    }
-                });
+                if (check.getDiagnostic() == Diagnostic.COLUMNS_WITHOUT_DESCRIPTION) {
+                    checkAssert.hasSize(50);
+                } else if (check.getDiagnostic() == Diagnostic.TABLES_NOT_LINKED_TO_OTHERS) {
+                    checkAssert
+                        .asInstanceOf(list(Table.class))
+                        .hasSize(1)
+                        .containsExactly(Table.of(PG_CONTEXT.enrichWithSchema("t_refresh"), 0L));
+                } else {
+                    checkAssert.isEmpty();
+                }
+            });
     }
 }

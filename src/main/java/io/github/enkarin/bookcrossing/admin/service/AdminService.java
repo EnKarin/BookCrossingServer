@@ -4,9 +4,7 @@ import io.github.enkarin.bookcrossing.admin.dto.InfoUsersDto;
 import io.github.enkarin.bookcrossing.admin.dto.LockedUserDto;
 import io.github.enkarin.bookcrossing.exception.UserNotFoundException;
 import io.github.enkarin.bookcrossing.mail.service.MailService;
-import io.github.enkarin.bookcrossing.user.model.Role;
 import io.github.enkarin.bookcrossing.user.model.User;
-import io.github.enkarin.bookcrossing.user.repository.RoleRepository;
 import io.github.enkarin.bookcrossing.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,15 +16,13 @@ import java.util.List;
 @Service
 @Transactional(readOnly = true)
 public class AdminService {
-
     private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
     private final MailService mailService;
 
     @Transactional
     public boolean lockedUser(final LockedUserDto lockedUserDto) {
         User user = userRepository.findByLogin(lockedUserDto.getLogin())
-                .orElseThrow(UserNotFoundException::new);
+            .orElseThrow(UserNotFoundException::new);
         user.setAccountNonLocked(false);
         user = userRepository.save(user);
         mailService.sendBlockingMessage(user, lockedUserDto.getComment());
@@ -42,10 +38,9 @@ public class AdminService {
         return user.isAccountNonLocked();
     }
 
-    public List<InfoUsersDto> findAllUsers(final int zone) {
-        final Role role = roleRepository.getRoleByName("ROLE_USER");
-        return userRepository.findByUserRolesOrderByUserId(role).stream()
-                .map(u -> InfoUsersDto.fromUser(u, zone))
-                .toList();
+    public List<InfoUsersDto> findAllUsers(final int zone, final int pageNumber, final int pageSize) {
+        return userRepository.findByUserRolesOrderByUserId("ROLE_USER", pageNumber, pageSize).stream()
+            .map(u -> InfoUsersDto.fromUser(u, zone))
+            .toList();
     }
 }

@@ -10,6 +10,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -29,8 +31,8 @@ class AdminServiceTest extends BookCrossingBaseTests {
     void lockedUserException() {
         final LockedUserDto dto = LockedUserDto.create("Test", "Заблокировано");
         assertThatThrownBy(() -> adminService.lockedUser(dto))
-                .isInstanceOf(UserNotFoundException.class)
-                .hasMessage("Пользователь не найден");
+            .isInstanceOf(UserNotFoundException.class)
+            .hasMessage("Пользователь не найден");
     }
 
     @Test
@@ -43,24 +45,35 @@ class AdminServiceTest extends BookCrossingBaseTests {
     @Test
     void nonLockedUserException() {
         assertThatThrownBy(() -> adminService.nonLockedUser("Test"))
-                .isInstanceOf(UserNotFoundException.class)
-                .hasMessage("Пользователь не найден");
+            .isInstanceOf(UserNotFoundException.class)
+            .hasMessage("Пользователь не найден");
     }
 
     @Test
     void findAllUsers() {
         final List<UserDto> users = TestDataProvider.buildUsers().stream()
-                .map(this::createAndSaveUser)
-                .toList();
-        assertThat(adminService.findAllUsers(0))
-                .hasSize(3)
-                .hasSameElementsAs(users.stream()
-                        .map(u -> InfoUsersDto.fromUserDto(u, 0))
-                        .toList());
+            .map(this::createAndSaveUser)
+            .toList();
+        assertThat(adminService.findAllUsers(0, 0, 5))
+            .hasSize(3)
+            .hasSameElementsAs(users.stream()
+                .map(u -> InfoUsersDto.fromUserDto(u, 0))
+                .toList());
+    }
+
+    @Test
+    void findAllUsersWithPagination() {
+        final Set<InfoUsersDto> users = TestDataProvider.buildUsers().stream()
+            .map(this::createAndSaveUser)
+            .map(u -> InfoUsersDto.fromUserDto(u, 0))
+            .collect(Collectors.toSet());
+        assertThat(adminService.findAllUsers(0, 0, 2))
+            .hasSize(2)
+            .allMatch(users::contains);
     }
 
     @Test
     void findAllUsersEmpty() {
-        assertThat(adminService.findAllUsers(0)).isEmpty();
+        assertThat(adminService.findAllUsers(0, 0, 2)).isEmpty();
     }
 }

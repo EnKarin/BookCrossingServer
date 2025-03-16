@@ -1,6 +1,7 @@
 package io.github.enkarin.bookcrossing.registration.controllers;
 
 import io.github.enkarin.bookcrossing.constant.Constant;
+import io.github.enkarin.bookcrossing.constant.ErrorMessage;
 import io.github.enkarin.bookcrossing.exception.AccountNotConfirmedException;
 import io.github.enkarin.bookcrossing.exception.BindingErrorsException;
 import io.github.enkarin.bookcrossing.exception.EmailFailedException;
@@ -15,12 +16,14 @@ import io.github.enkarin.bookcrossing.registration.dto.UserRegistrationDto;
 import io.github.enkarin.bookcrossing.user.dto.UserDto;
 import io.github.enkarin.bookcrossing.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.headers.Header;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -37,35 +40,32 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import static io.github.enkarin.bookcrossing.utils.CookieConfigurator.configureRefreshTokenCookie;
+import static io.github.enkarin.bookcrossing.utils.Util.createErrorMap;
+
 @Tag(
-        name = "Регистрация и авторизация пользователей",
-        description = "Позволяет регистрироваться новым пользователям и выдает токен при аутентификации"
+    name = "Регистрация и авторизация пользователей",
+    description = "Позволяет регистрироваться новым пользователям и выдает токен при аутентификации"
 )
 @RestController
 @RequiredArgsConstructor
 public class RegistrationController {
-
     private final UserService userService;
 
     @Operation(
-            summary = "Регистрация пользователя",
-            description = "Возвращает токены, если пользователь успешно зарегистрирован"
+        summary = "Регистрация пользователя",
+        description = "Возвращает токены, если пользователь успешно зарегистрирован"
     )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "409", description = "Пароли не совпадают",
-            content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+            content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(ref = "#/components/schemas/LogicErrorBody"))}),
         @ApiResponse(responseCode = "409", description = "Пользователь с таким логином или почтой уже существует",
-            content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+            content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(ref = "#/components/schemas/LogicErrorBody"))}),
         @ApiResponse(responseCode = "406", description = "Введены некорректные данные",
-            content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+            content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(ref = "#/components/schemas/ValidationErrorBody"))}),
         @ApiResponse(responseCode = "201", description = "Отправляет ссылку для подтверждения на почту",
-            content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(implementation = UserDto.class))})
-    }
-    )
+            content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(implementation = UserDto.class))})
+    })
     @PostMapping("/registration")
     public ResponseEntity<UserDto> registerUser(@Valid @RequestBody final UserRegistrationDto userForm,
                                                 final BindingResult bindingResult) {
@@ -78,83 +78,83 @@ public class RegistrationController {
     }
 
     @Operation(
-            summary = "Авторизация пользователя",
-            description = "Возвращает токены"
+        summary = "Авторизация пользователя",
+        description = "Возвращает токены"
     )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "404", description = "Некорректный логин или пароль",
-            content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+            content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(ref = "#/components/schemas/LogicErrorBody"))}),
         @ApiResponse(responseCode = "403", description = "Аккаунт не подтвержден или заблокирован",
-            content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+            content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(ref = "#/components/schemas/LogicErrorBody"))}),
         @ApiResponse(responseCode = "200", description = "Возвращает токены",
-            content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(implementation = AuthResponse.class))}
-            )}
+            content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(implementation = AuthResponse.class))}, headers = @Header(name = "Set-Cookie", description = "refresh token")
+        )}
     )
     @PostMapping("/auth")
     public ResponseEntity<AuthResponse> auth(@RequestBody final LoginRequest request) {
-        return ResponseEntity.ok(userService.findByLoginAndPassword(request));
+        final AuthResponse auth = userService.findByLoginAndPassword(request);
+        return ResponseEntity.ok()
+            .header(HttpHeaders.SET_COOKIE, configureRefreshTokenCookie(auth.getRefreshToken()))
+            .body(auth);
     }
 
     @Operation(
-            summary = "Подтвержение почты",
-            description = "Изменяет стату аккаунта на подтвержденный"
+        summary = "Подтвержение почты",
+        description = "Изменяет стату аккаунта на подтвержденный"
     )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "404", description = "Токена не существует",
-            content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+            content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(ref = "#/components/schemas/LogicErrorBody"))}),
         @ApiResponse(responseCode = "200", description = "Подтверждает почту для аккаунта и возвращает токены",
-            content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(implementation = AuthResponse.class))})
-    }
-    )
+            content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(implementation = AuthResponse.class))}, headers = @Header(name = "Set-Cookie", description = "refresh token"))
+    })
     @GetMapping("/registration/confirmation")
     public ResponseEntity<AuthResponse> mailConfirm(@RequestParam final String token) {
-        return ResponseEntity.ok(userService.confirmMail(token));
+        final AuthResponse auth = userService.confirmMail(token);
+        return ResponseEntity.ok()
+            .header(HttpHeaders.SET_COOKIE, configureRefreshTokenCookie(auth.getRefreshToken()))
+            .body(auth);
     }
 
     @ResponseStatus(HttpStatus.CONFLICT)
     @ExceptionHandler(PasswordsDontMatchException.class)
-    public Map<String, String> passwordConflict(final PasswordsDontMatchException exc) {
-        return Map.of("password", exc.getMessage());
+    public Map<String, String> passwordConflict() {
+        return createErrorMap(ErrorMessage.ERROR_1000);
     }
 
     @ResponseStatus(HttpStatus.CONFLICT)
     @ExceptionHandler(LoginFailedException.class)
-    public Map<String, String> loginFailed(final LoginFailedException exc) {
-        return Map.of("login", exc.getMessage());
+    public Map<String, String> loginFailed() {
+        return createErrorMap(ErrorMessage.ERROR_1002);
     }
 
     @ResponseStatus(HttpStatus.CONFLICT)
     @ExceptionHandler(EmailFailedException.class)
-    public Map<String, String> emailFailed(final EmailFailedException exc) {
-        return Map.of("email", exc.getMessage());
+    public Map<String, String> emailFailed() {
+        return createErrorMap(ErrorMessage.ERROR_1006);
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(TokenNotFoundException.class)
-    public Map<String, String> tokenInvalid(final TokenNotFoundException exc) {
-        return Map.of("token", exc.getMessage());
+    public Map<String, String> tokenInvalid() {
+        return createErrorMap(ErrorMessage.ERROR_2004);
     }
 
     @ResponseStatus(HttpStatus.FORBIDDEN)
     @ExceptionHandler(LockedAccountException.class)
-    public Map<String, String> lockedUser(final LockedAccountException exc) {
-        return Map.of("user", exc.getMessage());
+    public Map<String, String> lockedUser() {
+        return createErrorMap(ErrorMessage.ERROR_1001);
     }
 
     @ResponseStatus(HttpStatus.FORBIDDEN)
     @ExceptionHandler(AccountNotConfirmedException.class)
-    public Map<String, String> notConfirmedUser(final AccountNotConfirmedException exc) {
-        return Map.of("user", exc.getMessage());
+    public Map<String, String> notConfirmedUser() {
+        return createErrorMap(ErrorMessage.ERROR_1005);
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(InvalidPasswordException.class)
     public Map<String, String> passwordInvalid() {
-        return Map.of("user", "Пользователь не найден");
+        return createErrorMap(ErrorMessage.ERROR_1007);
     }
 }

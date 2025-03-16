@@ -7,12 +7,16 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import javax.annotation.concurrent.Immutable;
+import java.util.List;
 
 @Immutable
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
 @Schema(description = "Фильтры для книг")
 public class BookFiltersRequest {
+
+    @Schema(description = "Автор или название", example = "Портрет Дориана Грея")
+    private final String authorOrTitle;
 
     @Schema(description = "Город", example = "Новосибирск")
     private final String city;
@@ -23,8 +27,8 @@ public class BookFiltersRequest {
     @Schema(description = "Автор", example = "Оскар Уайльд")
     private final String author;
 
-    @Schema(description = "Жанр", example = "Классическая проза")
-    private final String genre;
+    @Schema(description = "Идентификатор жанра", example = "22")
+    private final List<Integer> genre;
 
     @Schema(description = "Издательство", example = "АСТ")
     private final String publishingHouse;
@@ -32,9 +36,15 @@ public class BookFiltersRequest {
     @Schema(description = "Год издания", example = "2004")
     private final int year;
 
+    @Schema(description = "Номер запрашиваемой страницы", example = "1")
+    private final int pageNumber;
+
+    @Schema(description = "Размер запрашиваемой страницы")
+    private final int pageSize;
+
     @JsonCreator
-    public static BookFiltersRequest create(final String city, final String title, final String author,
-                                            final String genre, final String publishingHouse, final int year) {
-        return new BookFiltersRequest(city, title, author, genre, publishingHouse, year);
+    public static BookFiltersRequest create(final String authorOrTitle, final String city, final String title, final String author, final List<Integer> genre,
+                                            final String publishingHouse, final int year, final int pageNumber, final int pageSize) {
+        return new BookFiltersRequest(authorOrTitle, city, title, author, genre, publishingHouse, year, pageNumber, pageSize);
     }
 }

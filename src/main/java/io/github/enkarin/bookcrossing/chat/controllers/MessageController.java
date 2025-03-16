@@ -5,6 +5,7 @@ import io.github.enkarin.bookcrossing.chat.dto.MessagePutRequest;
 import io.github.enkarin.bookcrossing.chat.dto.MessageRequest;
 import io.github.enkarin.bookcrossing.chat.service.MessageService;
 import io.github.enkarin.bookcrossing.constant.Constant;
+import io.github.enkarin.bookcrossing.constant.ErrorMessage;
 import io.github.enkarin.bookcrossing.exception.ChatNotFoundException;
 import io.github.enkarin.bookcrossing.exception.MessageContentException;
 import io.github.enkarin.bookcrossing.exception.MessageNotFountException;
@@ -34,9 +35,11 @@ import javax.validation.Valid;
 import java.security.Principal;
 import java.util.Map;
 
+import static io.github.enkarin.bookcrossing.utils.Util.createErrorMap;
+
 @Tag(
-        name = "Сообщения",
-        description = "Позволяет отправлять сообщения в чаты"
+    name = "Сообщения",
+    description = "Позволяет отправлять сообщения в чаты"
 )
 @RequiredArgsConstructor
 @RestController
@@ -48,22 +51,22 @@ public class MessageController {
     private static final String CORRESPONDENCE = "correspondence";
 
     @Operation(
-            summary = "Отправка сообщения",
-            description = "Позволяет отправить сообщение в чат"
+        summary = "Отправка сообщения",
+        description = "Позволяет отправить сообщение в чат"
     )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "406", description = "Сообщение должно содержать хотя бы 1 видимый символ",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+                schema = @Schema(ref = "#/components/schemas/LogicErrorBody"))}),
         @ApiResponse(responseCode = "404", description = "Чата не существует",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+                schema = @Schema(ref = "#/components/schemas/LogicErrorBody"))}),
         @ApiResponse(responseCode = "403", description = "Нет доступа к чату",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+                schema = @Schema(ref = "#/components/schemas/LogicErrorBody"))}),
         @ApiResponse(responseCode = "201", description = "Сообщение отправлено",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(implementation = MessageDto.class))})
+                schema = @Schema(implementation = MessageDto.class))})
     })
     @PostMapping
     public ResponseEntity<MessageDto> sendMessage(@Valid @RequestBody final MessageRequest messageRequest,
@@ -76,27 +79,27 @@ public class MessageController {
     }
 
     @Operation(
-            summary = "Редактирование сообщения",
-            description = "Позволяет изменить сообщение в чате"
+        summary = "Редактирование сообщения",
+        description = "Позволяет изменить сообщение в чате"
     )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "406", description = "Сообщение должно содержать хотя бы 1 видимый символ",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+                schema = @Schema(ref = "#/components/schemas/LogicErrorBody"))}),
         @ApiResponse(responseCode = "404", description = "Сообщение не найдено",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+                schema = @Schema(ref = "#/components/schemas/LogicErrorBody"))}),
         @ApiResponse(responseCode = "403", description = "Пользователь не является отправителем сообщения",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+                schema = @Schema(ref = "#/components/schemas/LogicErrorBody"))}),
         @ApiResponse(responseCode = "200", description = "Сообщение изменено",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(implementation = MessageDto.class))})
+                schema = @Schema(implementation = MessageDto.class))})
     })
     @PutMapping
     public ResponseEntity<MessageDto> putMessage(@Valid @RequestBody final MessagePutRequest messageRequest,
-                                        final BindingResult bindingResult,
-                                        final Principal principal) {
+                                                 final BindingResult bindingResult,
+                                                 final Principal principal) {
         if (bindingResult.hasErrors()) {
             throw new MessageContentException();
         }
@@ -104,72 +107,72 @@ public class MessageController {
     }
 
     @Operation(
-            summary = "Удаление сообщения у всех",
-            description = "Позволяет удалить сообщение из чата"
+        summary = "Удаление сообщения у всех",
+        description = "Позволяет удалить сообщение из чата"
     )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "404", description = "Сообщение не найдено",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+                schema = @Schema(ref = "#/components/schemas/LogicErrorBody"))}),
         @ApiResponse(responseCode = "403", description = "Пользователь не является отправителем",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+                schema = @Schema(ref = "#/components/schemas/LogicErrorBody"))}),
         @ApiResponse(responseCode = "200", description = "Сообщение удалено")
     })
     @DeleteMapping
     public ResponseEntity<Void> deleteForEveryoneMessage(@RequestParam final long messageId,
-                                           final Principal principal) {
+                                                         final Principal principal) {
         messageService.deleteForEveryoneMessage(messageId, principal.getName());
         return ResponseEntity.ok().build();
     }
 
     @Operation(
-            summary = "Удаление сообщения у себя",
-            description = "Позволяет удалить сообщение из чата"
+        summary = "Удаление сообщения у себя",
+        description = "Позволяет удалить сообщение из чата"
     )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "404", description = "Сообщение не найдено",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+                schema = @Schema(ref = "#/components/schemas/LogicErrorBody"))}),
         @ApiResponse(responseCode = "403", description = "Нет доступа к чату",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+                schema = @Schema(ref = "#/components/schemas/LogicErrorBody"))}),
         @ApiResponse(responseCode = "200", description = "Сообщение удалено")
     })
     @DeleteMapping("/deleteForMe")
     public ResponseEntity<Void> deleteForMeMessage(@RequestParam final long messageId,
-                                           final Principal principal) {
+                                                   final Principal principal) {
         messageService.deleteForMeMessage(messageId, principal.getName());
         return ResponseEntity.ok().build();
     }
 
     @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
     @ExceptionHandler(MessageContentException.class)
-    public Map<String, String> content(final MessageContentException exc) {
-        return Map.of("message", exc.getMessage());
+    public Map<String, String> content() {
+        return createErrorMap(ErrorMessage.ERROR_1013);
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(ChatNotFoundException.class)
-    public Map<String, String> chatNotFound(final ChatNotFoundException exc) {
-        return Map.of(CORRESPONDENCE, exc.getMessage());
+    public Map<String, String> chatNotFound() {
+        return createErrorMap(ErrorMessage.ERROR_1009);
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(MessageNotFountException.class)
-    public Map<String, String> messageNotFound(final MessageNotFountException exc) {
-        return Map.of("message", exc.getMessage());
+    public Map<String, String> messageNotFound() {
+        return createErrorMap(ErrorMessage.ERROR_1014);
     }
 
     @ResponseStatus(HttpStatus.FORBIDDEN)
     @ExceptionHandler(NoAccessToChatException.class)
-    public Map<String, String> noAccess(final NoAccessToChatException exc) {
-        return Map.of(CORRESPONDENCE, exc.getMessage());
+    public Map<String, String> noAccess() {
+        return createErrorMap(ErrorMessage.ERROR_1012);
     }
 
     @ResponseStatus(HttpStatus.FORBIDDEN)
     @ExceptionHandler(UserIsNotSenderException.class)
-    public Map<String, String> noSender(final UserIsNotSenderException exc) {
-        return Map.of(CORRESPONDENCE, exc.getMessage());
+    public Map<String, String> noSender() {
+        return createErrorMap(ErrorMessage.ERROR_1015);
     }
 }

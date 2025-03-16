@@ -4,11 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -35,10 +37,23 @@ public class Attachment implements Serializable {
     @JoinColumn(name = "attach_id")
     private Book book;
 
-    @Column(length = 3_145_728)
-    private byte[] data;
+    @Lob
+    @Type(type = "org.hibernate.type.BinaryType")
+    @Column(length = 5_242_880, name = "data")
+    private byte[] originalImage;
 
-    private String expansion;
+    @Lob
+    @Type(type = "org.hibernate.type.BinaryType")
+    @Column(length = 1_048_576)
+    private byte[] listImage;
+
+    @Lob
+    @Type(type = "org.hibernate.type.BinaryType")
+    @Column(length = 512_000)
+    private byte[] thumbImage;
+
+    @Column(name = "expansion")
+    private String originalImageExpansion;
 
     @Override
     public boolean equals(final Object obj) {

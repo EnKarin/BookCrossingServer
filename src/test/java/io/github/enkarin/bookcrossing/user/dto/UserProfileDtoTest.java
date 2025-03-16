@@ -20,13 +20,10 @@ class UserProfileDtoTest {
 
         final UserProfileDto userProfileDto = UserProfileDto.fromUser(user);
         assertThat(userProfileDto)
-                .isNotNull()
-                .extracting(UserProfileDto::getLogin)
-                .isEqualTo("test");
+            .isNotNull()
+            .extracting(UserProfileDto::getLogin)
+            .isEqualTo("test");
         assertThat(userProfileDto.getUserId())
-                .isEqualTo(Integer.MAX_VALUE);
-        assertThat(userProfileDto.getBooks())
-                .hasSize(1)
-                .isUnmodifiable();
+            .isEqualTo(Integer.MAX_VALUE);
     }
 }

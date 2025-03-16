@@ -20,7 +20,7 @@ public class MessagePutRequest {
     private final long messageId;
 
     @Schema(description = "Текст сообщения")
-    @NotBlank(message = "message: Сообщение должно состоять хотя бы из одного видимого символа")
+    @NotBlank(message = "3007")
     private final String text;
 
     @JsonCreator

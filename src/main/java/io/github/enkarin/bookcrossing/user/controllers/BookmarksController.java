@@ -5,6 +5,7 @@ import io.github.enkarin.bookcrossing.constant.Constant;
 import io.github.enkarin.bookcrossing.user.service.BookmarksService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -24,8 +25,8 @@ import java.security.Principal;
 import java.util.List;
 
 @Tag(
-        name = "Работа с закладками",
-        description = "Позволяет добавлять, удалять и просматривать закладки"
+    name = "Работа с закладками",
+    description = "Позволяет добавлять, удалять и просматривать закладки"
 )
 @RequiredArgsConstructor
 @RestController
@@ -35,55 +36,51 @@ public class BookmarksController {
     private final BookmarksService bookmarksService;
 
     @Operation(
-            summary = "Добавление в закладки",
-            description = "Позволяет сохранить книгу в закладки"
+        summary = "Добавление в закладки",
+        description = "Позволяет сохранить книгу в закладки"
     )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "404", description = "Книга с заданным Id не найдена",
-            content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+            content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(ref = "#/components/schemas/LogicErrorBody"))}),
         @ApiResponse(responseCode = "201", description = "Возвращает список закладок",
-            content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(implementation = BookModelDto[].class))})
-        }
+            content = {@Content(mediaType = Constant.MEDIA_TYPE, array = @ArraySchema(schema = @Schema(implementation = BookModelDto.class)))})
+    }
     )
     @PostMapping
     public ResponseEntity<List<BookModelDto>> saveBookmarks(@RequestParam @Parameter(description = "Идентификатор книги") final int bookId, final Principal principal) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(bookmarksService.saveBookmarks(bookId, principal.getName()));
+            .body(bookmarksService.saveBookmarks(bookId, principal.getName()));
     }
 
     @Operation(
-            summary = "Удаление из закладок",
-            description = "Позволяет удалить книгу из закладок"
+        summary = "Удаление из закладок",
+        description = "Позволяет удалить книгу из закладок"
     )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "404", description = "Книга с заданным Id не найдена",
             content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(ref = "#/components/schemas/NewErrorBody"))}),
+                schema = @Schema(ref = "#/components/schemas/LogicErrorBody"))}),
         @ApiResponse(responseCode = "200", description = "Книга удалена")
-        }
+    }
     )
     @DeleteMapping
-    public ResponseEntity<Void> deleteBookmarks(@RequestParam @Parameter(description = "Идентификатор книги")
-                                                 final int bookId,
-                                           final Principal principal) {
+    public ResponseEntity<Void> deleteBookmarks(@RequestParam @Parameter(description = "Идентификатор книги") final int bookId,
+                                                final Principal principal) {
         bookmarksService.deleteBookmarks(bookId, principal.getName());
         return ResponseEntity.ok().build();
     }
 
     @Operation(
-            summary = "Получение списка закладок",
-            description = "Позволяет получить все закладки пользователя"
+        summary = "Получение списка закладок",
+        description = "Позволяет получить все закладки пользователя"
     )
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Возвращает список закладок",
-            content = {@Content(mediaType = Constant.MEDIA_TYPE,
-                    schema = @Schema(implementation = BookModelDto[].class))})
-        }
+            content = {@Content(mediaType = Constant.MEDIA_TYPE, array = @ArraySchema(schema = @Schema(implementation = BookModelDto.class)))})
+    }
     )
     @GetMapping
-    public ResponseEntity<List<BookModelDto>> getAll(final Principal principal) {
-        return ResponseEntity.ok(bookmarksService.getAll(principal.getName()));
+    public ResponseEntity<List<BookModelDto>> getAll(@RequestParam final int pageNumber, @RequestParam final int pageSize, final Principal principal) {
+        return ResponseEntity.ok(bookmarksService.getAll(principal.getName(), pageNumber, pageSize));
     }
 }

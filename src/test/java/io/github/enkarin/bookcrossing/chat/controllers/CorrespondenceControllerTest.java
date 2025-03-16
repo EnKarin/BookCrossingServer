@@ -2,13 +2,16 @@ package io.github.enkarin.bookcrossing.chat.controllers;
 
 import io.github.enkarin.bookcrossing.admin.dto.LockedUserDto;
 import io.github.enkarin.bookcrossing.admin.service.AdminService;
-import io.github.enkarin.bookcrossing.support.BookCrossingBaseTests;
+import io.github.enkarin.bookcrossing.chat.dto.ChatInfo;
 import io.github.enkarin.bookcrossing.chat.dto.MessageDto;
 import io.github.enkarin.bookcrossing.chat.dto.MessageRequest;
 import io.github.enkarin.bookcrossing.chat.dto.UsersCorrKeyDto;
 import io.github.enkarin.bookcrossing.chat.service.CorrespondenceService;
 import io.github.enkarin.bookcrossing.chat.service.MessageService;
+import io.github.enkarin.bookcrossing.constant.ErrorMessage;
+import io.github.enkarin.bookcrossing.support.BookCrossingBaseTests;
 import io.github.enkarin.bookcrossing.support.TestDataProvider;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
@@ -37,15 +40,15 @@ class CorrespondenceControllerTest extends BookCrossingBaseTests {
         enabledUser(userAlexId);
 
         final var response = execute(HttpMethod.POST, userAlexId, 201)
-                .expectBody(UsersCorrKeyDto.class)
-                .returnResult().getResponseBody();
+            .expectBody(UsersCorrKeyDto.class)
+            .returnResult().getResponseBody();
 
         assertThat(response)
-                .isNotNull()
-                .isEqualTo(UsersCorrKeyDto.builder()
-                        .firstUserId(userBotId)
-                        .secondUserId(userAlexId)
-                        .build());
+            .isNotNull()
+            .isEqualTo(UsersCorrKeyDto.builder()
+                .firstUserId(userBotId)
+                .secondUserId(userAlexId)
+                .build());
     }
 
     @Test
@@ -54,9 +57,9 @@ class CorrespondenceControllerTest extends BookCrossingBaseTests {
         enabledUser(userBotId);
 
         execute(HttpMethod.POST, Integer.MAX_VALUE, 404)
-                .expectBody()
-                .jsonPath("$.user")
-                .isEqualTo("Пользователь не найден");
+            .expectBody()
+            .jsonPath("$.error")
+            .isEqualTo(ErrorMessage.ERROR_1003.getCode());
     }
 
     @Test
@@ -66,9 +69,9 @@ class CorrespondenceControllerTest extends BookCrossingBaseTests {
         final var userAlexId = createAndSaveUser(TestDataProvider.buildAlex()).getUserId();
 
         execute(HttpMethod.POST, userAlexId, 406)
-                .expectBody()
-                .jsonPath("$.user")
-                .isEqualTo("С выбранным пользователем нельзя создать чат");
+            .expectBody()
+            .jsonPath("$.error")
+            .isEqualTo(ErrorMessage.ERROR_1011.getCode());
     }
 
     @Test
@@ -80,9 +83,9 @@ class CorrespondenceControllerTest extends BookCrossingBaseTests {
         adminService.lockedUser(LockedUserDto.create(userAlex.getLogin(), "Заблокировано"));
 
         execute(HttpMethod.POST, userAlex.getUserId(), 406)
-                .expectBody()
-                .jsonPath("$.user")
-                .isEqualTo("С выбранным пользователем нельзя создать чат");
+            .expectBody()
+            .jsonPath("$.error")
+            .isEqualTo(ErrorMessage.ERROR_1011.getCode());
     }
 
     @Test
@@ -93,9 +96,9 @@ class CorrespondenceControllerTest extends BookCrossingBaseTests {
         adminService.lockedUser(LockedUserDto.create(userAlex.getLogin(), "Заблокировано"));
 
         execute(HttpMethod.POST, userAlex.getUserId(), 406)
-                .expectBody()
-                .jsonPath("$.user")
-                .isEqualTo("С выбранным пользователем нельзя создать чат");
+            .expectBody()
+            .jsonPath("$.error")
+            .isEqualTo(ErrorMessage.ERROR_1011.getCode());
     }
 
     @Test
@@ -108,9 +111,45 @@ class CorrespondenceControllerTest extends BookCrossingBaseTests {
         correspondenceService.createChat(userAlexId, userBot.getLogin());
 
         execute(HttpMethod.POST, userAlexId, 409)
-                .expectBody()
-                .jsonPath("$.correspondence")
-                .isEqualTo("Чат с пользователем уже существует");
+            .expectBody()
+            .jsonPath("$.error")
+            .isEqualTo(ErrorMessage.ERROR_1010.getCode());
+    }
+
+    @Test
+    void createCorrespondenceWithoutUserIdShouldReturn400() {
+        final var userBot = createAndSaveUser(TestDataProvider.buildBot());
+        enabledUser(userBot.getUserId());
+
+        execute(HttpMethod.POST, "", 400).expectBody()
+            .jsonPath("$.errorList").isEqualTo("3013");
+    }
+
+    @Test
+    void getCorrespondenceWithoutFirstUserIdShouldReturn400() {
+        final var userBot = createAndSaveUser(TestDataProvider.buildBot());
+        enabledUser(userBot.getUserId());
+
+        execute("", "123", 400).expectBody()
+            .jsonPath("$.errorList").isEqualTo("3014");
+    }
+
+    @Test
+    void getCorrespondenceWithoutSecondUserIdShouldReturn400() {
+        final var userBot = createAndSaveUser(TestDataProvider.buildBot());
+        enabledUser(userBot.getUserId());
+
+        execute("12", "", 400).expectBody()
+            .jsonPath("$.errorList").isEqualTo("3015");
+    }
+
+    @Test
+    void deleteCorrespondenceWithoutUserIdShouldReturn400() {
+        final var userBot = createAndSaveUser(TestDataProvider.buildBot());
+        enabledUser(userBot.getUserId());
+
+        execute(HttpMethod.DELETE, "", 400).expectBody()
+            .jsonPath("$.errorList").isEqualTo("3013");
     }
 
     @Test
@@ -119,9 +158,9 @@ class CorrespondenceControllerTest extends BookCrossingBaseTests {
         enabledUser(userBotId);
 
         execute(HttpMethod.DELETE, Integer.MAX_VALUE, 404)
-                .expectBody()
-                .jsonPath("$.user")
-                .isEqualTo("Пользователь не найден");
+            .expectBody()
+            .jsonPath("$.error")
+            .isEqualTo(ErrorMessage.ERROR_1003.getCode());
     }
 
     @Test
@@ -132,9 +171,9 @@ class CorrespondenceControllerTest extends BookCrossingBaseTests {
         enabledUser(userAlexId);
 
         execute(HttpMethod.DELETE, userAlexId, 404)
-                .expectBody()
-                .jsonPath("$.correspondence")
-                .isEqualTo("Чата не существует");
+            .expectBody()
+            .jsonPath("$.error")
+            .isEqualTo(ErrorMessage.ERROR_1009.getCode());
     }
 
     @Test
@@ -148,7 +187,7 @@ class CorrespondenceControllerTest extends BookCrossingBaseTests {
         execute(HttpMethod.DELETE, userAlexId, 200);
 
         assertThat(jdbcTemplate.queryForObject("select exists(select * from bookcrossing.t_correspondence where first_user_id=?)", Boolean.class, userBot.getUserId()))
-                .isFalse();
+            .isFalse();
     }
 
     @Test
@@ -160,12 +199,12 @@ class CorrespondenceControllerTest extends BookCrossingBaseTests {
         correspondenceService.createChat(userAlexId, userBot.getLogin());
 
         final var response = execute(userBot.getUserId(), userAlexId, 200)
-                .expectBodyList(MessageDto.class)
-                .returnResult().getResponseBody();
+            .expectBodyList(MessageDto.class)
+            .returnResult().getResponseBody();
 
         assertThat(response)
-                .isNotNull()
-                .isEmpty();
+            .isNotNull()
+            .isEmpty();
     }
 
     @Test
@@ -178,12 +217,12 @@ class CorrespondenceControllerTest extends BookCrossingBaseTests {
         final var message = messageService.sendMessage(MessageRequest.create(key, "Hi"), userBot.getLogin());
 
         final var response = execute(userBot.getUserId(), userAlexId, 200)
-                .expectBodyList(MessageDto.class)
-                .returnResult().getResponseBody();
+            .expectBodyList(MessageDto.class)
+            .returnResult().getResponseBody();
 
         assertThat(response)
-                .isNotNull()
-                .containsOnly(TestDataProvider.buildMessageDto(userBot.getUserId(), message.getMessageId(), message.getDepartureDate()));
+            .isNotNull()
+            .containsOnly(TestDataProvider.buildMessageDto(userBot.getUserId(), message.getMessageId(), message.getDepartureDate()));
     }
 
     @Test
@@ -196,23 +235,23 @@ class CorrespondenceControllerTest extends BookCrossingBaseTests {
         final var message = messageService.sendMessage(MessageRequest.create(key, "Hi"), userBot.getLogin());
 
         final var response = webClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .pathSegment("user", "correspondence")
-                        .queryParam("zone", 0)
-                        .build())
-                .headers(headers -> {
-                    headers.setBearerAuth(generateAccessToken(TestDataProvider.buildAuthBot()));
-                    headers.set(FIRST_USER_ID, String.valueOf(userBot.getUserId()));
-                    headers.set(SECOND_USER_ID, String.valueOf(userAlexId));
-                })
-                .exchange()
-                .expectStatus().isEqualTo(200)
-                .expectBodyList(MessageDto.class)
-                .returnResult().getResponseBody();
+            .uri(uriBuilder -> uriBuilder
+                .pathSegment("user", "correspondence")
+                .queryParam("zone", 0)
+                .build())
+            .headers(headers -> {
+                headers.setBearerAuth(generateAccessToken(TestDataProvider.buildAuthBot()));
+                headers.set(FIRST_USER_ID, String.valueOf(userBot.getUserId()));
+                headers.set(SECOND_USER_ID, String.valueOf(userAlexId));
+            })
+            .exchange()
+            .expectStatus().isEqualTo(200)
+            .expectBodyList(MessageDto.class)
+            .returnResult().getResponseBody();
 
         assertThat(response)
-                .isNotNull()
-                .containsOnly(TestDataProvider.buildMessageDto(userBot.getUserId(), message.getMessageId(), message.getDepartureDate()));
+            .isNotNull()
+            .containsOnly(TestDataProvider.buildMessageDto(userBot.getUserId(), message.getMessageId(), message.getDepartureDate()));
     }
 
     @Test
@@ -224,9 +263,9 @@ class CorrespondenceControllerTest extends BookCrossingBaseTests {
         correspondenceService.createChat(userAlex.getUserId(), userAlex.getLogin());
 
         execute(userAlex.getUserId(), userAlex.getUserId(), 403)
-                .expectBody()
-                .jsonPath("$.correspondence")
-                .isEqualTo("Нет доступа к чату");
+            .expectBody()
+            .jsonPath("$.error")
+            .isEqualTo(ErrorMessage.ERROR_1012.getCode());
     }
 
     @Test
@@ -235,8 +274,9 @@ class CorrespondenceControllerTest extends BookCrossingBaseTests {
         enabledUser(userBotId);
 
         execute(Integer.MAX_VALUE, userBotId, 404)
-                .expectBody()
-                .jsonPath("$.user").isEqualTo("Пользователь не найден");
+            .expectBody()
+            .jsonPath("$.error")
+            .isEqualTo(ErrorMessage.ERROR_1003.getCode());
     }
 
     @Test
@@ -245,8 +285,9 @@ class CorrespondenceControllerTest extends BookCrossingBaseTests {
         enabledUser(userBotId);
 
         execute(userBotId, Integer.MAX_VALUE, 404)
-                .expectBody()
-                .jsonPath("$.user").isEqualTo("Пользователь не найден");
+            .expectBody()
+            .jsonPath("$.error")
+            .isEqualTo(ErrorMessage.ERROR_1003.getCode());
     }
 
     @Test
@@ -257,35 +298,83 @@ class CorrespondenceControllerTest extends BookCrossingBaseTests {
         enabledUser(userAlexId);
 
         execute(userBotId, userAlexId, 404)
-                .expectBody()
-                .jsonPath("$.correspondence").isEqualTo("Чата не существует");
+            .expectBody()
+            .jsonPath("$.error")
+            .isEqualTo(ErrorMessage.ERROR_1009.getCode());
+    }
+
+    @Test
+    @SneakyThrows
+    void findAllChats() {
+        final var userAlex = createAndSaveUser(TestDataProvider.buildAlex());
+        enabledUser(userAlex.getUserId());
+        final var userBot = createAndSaveUser(TestDataProvider.buildBot());
+        enabledUser(userBot.getUserId());
+        correspondenceService.createChat(userAlex.getUserId(), userBot.getLogin());
+        messageService.sendMessage(MessageRequest.create(UsersCorrKeyDto.fromFirstAndSecondId(userAlex.getUserId(), userBot.getUserId()), "Hello"), userBot.getLogin());
+        Thread.sleep(1000);
+        messageService.sendMessage(MessageRequest.create(UsersCorrKeyDto.fromFirstAndSecondId(userAlex.getUserId(), userBot.getUserId()), "))"), userBot.getLogin());
+        final var secondBot = createAndSaveUser(TestDataProvider.prepareUser().login("secondUser").email("secondUser@mail.ru").build());
+        enabledUser(secondBot.getUserId());
+        correspondenceService.createChat(userAlex.getUserId(), secondBot.getLogin());
+        messageService.sendMessage(MessageRequest.create(UsersCorrKeyDto.fromFirstAndSecondId(userAlex.getUserId(), secondBot.getUserId()), "Hi"), secondBot.getLogin());
+        final var thirdBot = createAndSaveUser(TestDataProvider.buildMax());
+        enabledUser(thirdBot.getUserId());
+        correspondenceService.createChat(userAlex.getUserId(), thirdBot.getLogin());
+        messageService.sendMessage(MessageRequest.create(UsersCorrKeyDto.fromFirstAndSecondId(userAlex.getUserId(), thirdBot.getUserId()), "QQQ"), thirdBot.getLogin());
+        Thread.sleep(1000);
+        messageService.sendMessage(MessageRequest.create(UsersCorrKeyDto.fromFirstAndSecondId(userAlex.getUserId(), thirdBot.getUserId()), "Q"), thirdBot.getLogin());
+
+        final var response = webClient.get()
+            .uri(uriBuilder -> uriBuilder
+                .pathSegment("user", "correspondence", "all")
+                .queryParam("pageNumber", 0)
+                .queryParam("pageSize", 3)
+                .build())
+            .headers(headers -> headers.setBearerAuth(generateAccessToken(TestDataProvider.buildAuthAlex())))
+            .exchange()
+            .expectStatus().isEqualTo(200)
+            .expectBodyList(ChatInfo.class)
+            .returnResult().getResponseBody();
+        assertThat(response).containsOnly(
+            new ChatInfo(userBot.getName(), "))", userBot.getUserId(), userBot.getUserId(), 2),
+            new ChatInfo(secondBot.getName(), "Hi", secondBot.getUserId(), secondBot.getUserId(), 1),
+            new ChatInfo(thirdBot.getName(), "Q", thirdBot.getUserId(), thirdBot.getUserId(), 2));
     }
 
     private WebTestClient.ResponseSpec execute(final HttpMethod httpMethod, final int userId, final int status) {
+        return execute(httpMethod, Integer.toString(userId), status);
+    }
+
+    private WebTestClient.ResponseSpec execute(final HttpMethod httpMethod, final String userId, final int status) {
         return webClient.method(httpMethod)
-                .uri(uriBuilder -> uriBuilder
-                        .pathSegment("user", "correspondence")
-                        .build())
-                .headers(headers -> {
-                    headers.setBearerAuth(generateAccessToken(TestDataProvider.buildAuthBot()));
-                    headers.set(USER_ID, String.valueOf(userId));
-                })
-                .exchange()
-                .expectStatus().isEqualTo(status);
+            .uri(uriBuilder -> uriBuilder
+                .pathSegment("user", "correspondence")
+                .build())
+            .headers(headers -> {
+                headers.setBearerAuth(generateAccessToken(TestDataProvider.buildAuthBot()));
+                headers.set(USER_ID, userId);
+            })
+            .exchange()
+            .expectStatus().isEqualTo(status);
     }
 
     private WebTestClient.ResponseSpec execute(final int firstUserId, final int secondUserId, final int status) {
+        return execute(Integer.toString(firstUserId), Integer.toString(secondUserId), status);
+    }
+
+    private WebTestClient.ResponseSpec execute(final String firstUserId, final String secondUserId, final int status) {
         return webClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .pathSegment("user", "correspondence")
-                        .queryParam("zone", 0)
-                        .build())
-                .headers(headers -> {
-                    headers.setBearerAuth(generateAccessToken(TestDataProvider.buildAuthBot()));
-                    headers.set(FIRST_USER_ID, String.valueOf(firstUserId));
-                    headers.set(SECOND_USER_ID, String.valueOf(secondUserId));
-                })
-                .exchange()
-                .expectStatus().isEqualTo(status);
+            .uri(uriBuilder -> uriBuilder
+                .pathSegment("user", "correspondence")
+                .queryParam("zone", 0)
+                .build())
+            .headers(headers -> {
+                headers.setBearerAuth(generateAccessToken(TestDataProvider.buildAuthBot()));
+                headers.set(FIRST_USER_ID, firstUserId);
+                headers.set(SECOND_USER_ID, secondUserId);
+            })
+            .exchange()
+            .expectStatus().isEqualTo(status);
     }
 }

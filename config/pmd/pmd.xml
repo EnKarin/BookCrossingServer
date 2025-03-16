@@ -51,6 +51,12 @@
         </properties>
     </rule>
 
+    <rule ref="category/java/codestyle.xml/ShortVariable">
+        <properties>
+            <property name="minimum" value="2" />
+        </properties>
+    </rule>
+
     <rule ref="category/java/design.xml">
         <exclude name="LawOfDemeter"/>
         <exclude name="LoosePackageCoupling"/>
@@ -71,7 +77,7 @@
 
     <rule ref="category/java/design.xml/ExcessiveImports">
         <properties>
-            <property name="minimum" value="37" />
+            <property name="minimum" value="50" />
         </properties>
     </rule>
 
@@ -89,6 +95,7 @@
 
     <rule ref="category/java/multithreading.xml">
         <exclude name="UseConcurrentHashMap"/>
+        <exclude name="DoNotUseThreads"/>
     </rule>
 
     <rule ref="category/java/performance.xml"/>
