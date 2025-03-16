@@ -111,7 +111,7 @@ public class MyBookController {
             bookService.changeBookYear(principal.getName(), bookDto.getBookId(), bookDto.getYear());
         }
         if (nonNull(bookDto.getStatus())) {
-            bookService.changeBooStatus(principal.getName(), bookDto.getBookId(), bookDto.getStatus());
+            bookService.changeBookStatus(principal.getName(), bookDto.getBookId(), bookDto.getStatus());
         }
         return ResponseEntity.ok(bookService.findById(bookDto.getBookId()));
     }
