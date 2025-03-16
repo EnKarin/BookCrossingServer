@@ -421,7 +421,7 @@ class BookServiceTest extends BookCrossingBaseTests {
 
         bookService.changeBookStatus(user.getLogin(), bookId, Status.GIVES);
 
-        assertThat(bookService.findById(bookId).getYear()).isEqualTo(Status.GIVES);
+        assertThat(bookService.findById(bookId).getStatus()).isEqualTo(Status.GIVES);
     }
 
     @Test
