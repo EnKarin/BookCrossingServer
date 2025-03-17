@@ -3,6 +3,7 @@ package io.github.enkarin.bookcrossing.books.service;
 import io.github.enkarin.bookcrossing.books.dto.BookDto;
 import io.github.enkarin.bookcrossing.books.dto.BookFiltersRequest;
 import io.github.enkarin.bookcrossing.books.dto.BookModelDto;
+import io.github.enkarin.bookcrossing.books.enums.Status;
 import io.github.enkarin.bookcrossing.exception.BookNotFoundException;
 import io.github.enkarin.bookcrossing.exception.GenreNotFoundException;
 import io.github.enkarin.bookcrossing.exception.UserNotFoundException;
@@ -411,6 +412,16 @@ class BookServiceTest extends BookCrossingBaseTests {
         bookService.changeBookYear(user.getLogin(), bookId, 100);
 
         assertThat(bookService.findById(bookId).getYear()).isEqualTo(100);
+    }
+
+    @Test
+    void putBookStatus() {
+        final UserDto user = createAndSaveUser(TestDataProvider.buildAlex());
+        final int bookId = bookService.saveBook(TestDataProvider.buildDorian(), user.getLogin()).getBookId();
+
+        bookService.changeBookStatus(user.getLogin(), bookId, Status.EXCHANGES_RU);
+
+        assertThat(bookService.findById(bookId).getStatus()).isEqualTo(Status.EXCHANGES_RU);
     }
 
     @Test

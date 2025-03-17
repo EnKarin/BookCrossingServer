@@ -1,0 +1,1 @@
+ALTER TABLE t_book ADD COLUMN status VARCHAR(32);

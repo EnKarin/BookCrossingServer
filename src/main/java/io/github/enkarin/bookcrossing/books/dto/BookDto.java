@@ -1,6 +1,7 @@
 package io.github.enkarin.bookcrossing.books.dto;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import io.github.enkarin.bookcrossing.books.enums.Status;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -38,8 +39,11 @@ public class BookDto {
     @Schema(description = "Год издания", example = "2004")
     protected final int year;
 
+    @Schema(description = "Статус", example = "Отдает")
+    protected final Status status;
+
     @JsonCreator
-    public static BookDto create(final String title, final String author, final int genre, final String publishingHouse, final int year) {
-        return new BookDto(title, author, genre, publishingHouse, year);
+    public static BookDto create(final String title, final String author, final int genre, final String publishingHouse, final int year, final Status status) {
+        return new BookDto(title, author, genre, publishingHouse, year, status);
     }
 }

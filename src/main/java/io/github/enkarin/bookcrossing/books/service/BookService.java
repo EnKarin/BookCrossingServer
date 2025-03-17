@@ -3,6 +3,7 @@ package io.github.enkarin.bookcrossing.books.service;
 import io.github.enkarin.bookcrossing.books.dto.BookDto;
 import io.github.enkarin.bookcrossing.books.dto.BookFiltersRequest;
 import io.github.enkarin.bookcrossing.books.dto.BookModelDto;
+import io.github.enkarin.bookcrossing.books.enums.Status;
 import io.github.enkarin.bookcrossing.books.model.Book;
 import io.github.enkarin.bookcrossing.books.repository.BookRepository;
 import io.github.enkarin.bookcrossing.books.repository.GenreRepository;
@@ -169,6 +170,13 @@ public class BookService {
     @Transactional
     public void changeBookYear(final String login, final int bookId, final int year) {
         bookRepository.findBooksByOwnerLoginAndBookId(login, bookId).ifPresentOrElse(book -> book.setYear(year), () -> {
+            throw new BookNotFoundException();
+        });
+    }
+
+    @Transactional
+    public void changeBookStatus(final String login, final int bookId, final Status status) {
+        bookRepository.findBooksByOwnerLoginAndBookId(login, bookId).ifPresentOrElse(book -> book.setStatus(status), () -> {
             throw new BookNotFoundException();
         });
     }

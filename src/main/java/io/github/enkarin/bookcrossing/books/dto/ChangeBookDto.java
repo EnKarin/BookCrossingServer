@@ -1,5 +1,6 @@
 package io.github.enkarin.bookcrossing.books.dto;
 
+import io.github.enkarin.bookcrossing.books.enums.Status;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -29,4 +30,7 @@ public class ChangeBookDto {
 
     @Schema(description = "Год издания", example = "2004")
     private Integer year;
+
+    @Schema(description = "Статус", example = "Отдает")
+    private Status status;
 }
