@@ -16,7 +16,6 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -88,9 +87,9 @@ class MyBookControllerTest extends BookCrossingBaseTests {
 
     @Test
     void getStatusesTest() {
-        UserDto user = createAndSaveUser(TestDataProvider.buildBot());
+        final UserDto user = createAndSaveUser(TestDataProvider.buildBot());
         enabledUser(user.getUserId());
-        String accessToken = generateAccessToken(TestDataProvider.buildAuthBot());
+        final String accessToken = generateAccessToken(TestDataProvider.buildAuthBot());
 
         webClient.get()
             .uri("/user/myBook/status")
