@@ -3,6 +3,7 @@ package io.github.enkarin.bookcrossing.books.controllers;
 import io.github.enkarin.bookcrossing.books.dto.BookDto;
 import io.github.enkarin.bookcrossing.books.dto.BookModelDto;
 import io.github.enkarin.bookcrossing.books.dto.ChangeBookDto;
+import io.github.enkarin.bookcrossing.books.enums.Status;
 import io.github.enkarin.bookcrossing.books.service.BookService;
 import io.github.enkarin.bookcrossing.constant.ErrorMessage;
 import io.github.enkarin.bookcrossing.registration.dto.UserRegistrationDto;
@@ -15,6 +16,7 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -82,6 +84,22 @@ class MyBookControllerTest extends BookCrossingBaseTests {
         assertThat(response)
             .hasSize(2)
             .containsExactlyInAnyOrder(TestDataProvider.buildDandelion(book1, users.get(0).getCity()), TestDataProvider.buildWolves(book2, users.get(0).getCity()));
+    }
+
+    @Test
+    void getStatusesTest() {
+        UserDto user = createAndSaveUser(TestDataProvider.buildBot());
+        enabledUser(user.getUserId());
+        String accessToken = generateAccessToken(TestDataProvider.buildAuthBot());
+
+        webClient.get()
+            .uri("/user/myBook/status")
+            .headers(headers -> headers.setBearerAuth(accessToken))
+            .exchange()
+            .expectStatus().isOk()
+            .expectBodyList(Status.class)
+            .hasSize(Status.values().length)
+            .contains(Status.values());
     }
 
     @Test
