@@ -120,13 +120,12 @@ public class MyBookController {
 
 
     @Operation(
-        summary = "Статус книги",
-        description = "Позволяет получить статус книги"
+        summary = "Получение списка статусов книги",
+        description = "Возвращает список всех возможных статусов книги"
     )
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "404", description = "Книга или статус не найден",
-            content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(ref = "#/components/schemas/LogicErrorBody"))}),
-        @ApiResponse(responseCode = "200", description = "Статус книги")
+        @ApiResponse(responseCode = "200", description = "Список всех статусов книги",
+            content = {@Content(mediaType = Constant.MEDIA_TYPE, array = @ArraySchema(schema = @Schema(implementation = Status.class)))})
     })
     @GetMapping("/status")
     public ResponseEntity<List<Status>> getStatuses() {
