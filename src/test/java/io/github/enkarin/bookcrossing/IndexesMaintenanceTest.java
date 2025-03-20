@@ -42,7 +42,7 @@ class IndexesMaintenanceTest extends BookCrossingBaseTests {
                     .as(check.getDiagnostic().name());
 
                 if (check.getDiagnostic() == Diagnostic.COLUMNS_WITHOUT_DESCRIPTION) {
-                    checkAssert.hasSize(50);
+                    checkAssert.hasSize(51);
                 } else if (check.getDiagnostic() == Diagnostic.TABLES_NOT_LINKED_TO_OTHERS) {
                     checkAssert
                         .asInstanceOf(list(Table.class))

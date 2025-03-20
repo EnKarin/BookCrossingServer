@@ -3,6 +3,7 @@ package io.github.enkarin.bookcrossing.books.controllers;
 import io.github.enkarin.bookcrossing.books.dto.BookDto;
 import io.github.enkarin.bookcrossing.books.dto.BookModelDto;
 import io.github.enkarin.bookcrossing.books.dto.ChangeBookDto;
+import io.github.enkarin.bookcrossing.books.enums.Status;
 import io.github.enkarin.bookcrossing.books.service.BookService;
 import io.github.enkarin.bookcrossing.constant.Constant;
 import io.github.enkarin.bookcrossing.exception.BindingErrorsException;
@@ -31,6 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.security.Principal;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -114,6 +116,21 @@ public class MyBookController {
             bookService.changeBookStatus(principal.getName(), bookDto.getBookId(), bookDto.getStatus());
         }
         return ResponseEntity.ok(bookService.findById(bookDto.getBookId()));
+    }
+
+
+    @Operation(
+        summary = "Статус книги",
+        description = "Позволяет получить статус книги"
+    )
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "404", description = "Книга или статус не найден",
+            content = {@Content(mediaType = Constant.MEDIA_TYPE, schema = @Schema(ref = "#/components/schemas/LogicErrorBody"))}),
+        @ApiResponse(responseCode = "200", description = "Статус книги")
+    })
+    @GetMapping("/status")
+    public ResponseEntity<List<Status>> getStatuses() {
+        return ResponseEntity.ok(Arrays.stream(Status.values()).toList());
     }
 
     @Operation(

@@ -1,9 +1,17 @@
 package io.github.enkarin.bookcrossing.books.enums;
 
-//@Enumerated(EnumType.STRING)
-public enum Status {
-    GIVE_RU("Отдает"), GIVE_ENG("Gives away"), EXCHANGES_RU("Отдает"), EXCHANGES_ENG("Exchanges");
+import lombok.Getter;
 
-    Status(String s) {
+@Getter
+public enum Status {
+    GIVE("Отдает", "Gives away"), EXCHANGES("Отдает", "Exchanges");
+
+    private final String ru;
+
+    private final String en;
+
+    Status(final String ru, final String en) {
+        this.ru = ru;
+        this.en = en;
     }
 }

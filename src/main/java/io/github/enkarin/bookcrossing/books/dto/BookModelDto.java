@@ -30,7 +30,7 @@ public class BookModelDto extends BookDto {
     @Schema(description = "Город, в котором сейчас находится книга", example = "Новосибирск")
     protected final String city;
 
-    private BookModelDto(final BookDto bookDto, final int bookId, final AttachmentDto attachment, final String city, final Status status) {
+    private BookModelDto(final BookDto bookDto, final int bookId, final AttachmentDto attachment, final String city) {
         super(bookDto.title, bookDto.author, bookDto.genre, bookDto.publishingHouse, bookDto.year, bookDto.status);
         this.bookId = bookId;
         this.city = city;
@@ -63,8 +63,7 @@ public class BookModelDto extends BookDto {
                 book.getStatus()),
                 book.getBookId(),
                 AttachmentDto.fromAttachment(book.getAttachment(), ORIGIN),
-                book.getOwner().getCity(),
-                book.getStatus()
+                book.getOwner().getCity()
         );
     }
 }
