@@ -37,7 +37,7 @@ public class AttachmentService {
         return AttachmentDto.fromAttachment(attachRepository.findById(id).orElseThrow(AttachmentNotFoundException::new), imageFormat);
     }
 
-    public BookModelDto saveAttachment(final AttachmentMultipartDto attachmentMultipartDto, final String login) {
+    public BookModelDto saveTitleAttachment(final AttachmentMultipartDto attachmentMultipartDto, final String login) {
         final Book book = bookRepository.findBooksByOwnerLoginAndBookId(login, attachmentMultipartDto.getBookId()).orElseThrow(BookNotFoundException::new);
         final String fileName = attachmentMultipartDto.getFile().getOriginalFilename();
         if (fileName == null || fileName.isBlank()) {
@@ -45,7 +45,7 @@ public class AttachmentService {
         } else {
             final String expansion = fileName.substring(fileName.indexOf('.') + 1).toLowerCase(Locale.ROOT);
             if ("jpeg".equals(expansion) || "jpg".equals(expansion) || "png".equals(expansion) || "bmp".equals(expansion)) {
-                createOrUpdateAttachment(book, attachmentMultipartDto.getFile(), expansion);
+                createOrUpdateTitleAttachment(book, attachmentMultipartDto.getFile(), expansion);
                 return BookModelDto.fromBook(bookRepository.getReferenceById(book.getBookId()));
             } else {
                 throw new UnsupportedImageTypeException(ErrorMessage.ERROR_3002.getCode());
@@ -53,7 +53,7 @@ public class AttachmentService {
         }
     }
 
-    private void createOrUpdateAttachment(final Book book, final MultipartFile multipartFile, final String expansion) {
+    private void createOrUpdateTitleAttachment(final Book book, final MultipartFile multipartFile, final String expansion) {
         try {
             final Attachment attachment;
             if (nonNull(book.getAttachment())) {
