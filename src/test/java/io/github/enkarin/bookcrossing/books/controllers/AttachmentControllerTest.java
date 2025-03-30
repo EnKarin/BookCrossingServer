@@ -12,6 +12,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.MultipartBodyBuilder;
 import org.springframework.mock.web.MockMultipartFile;
@@ -62,7 +63,7 @@ class AttachmentControllerTest extends BookCrossingBaseTests {
     @SneakyThrows
     void findAttachment() {
         final int book1 = bookService.saveBook(TestDataProvider.buildWolves(), user.getLogin()).getBookId();
-        final int attachmentId = createAttachment(book1);
+        final int attachmentId = createJpgAttachment(book1);
 
         final var attachment = webClient.get()
             .uri(uriBuilder -> uriBuilder.pathSegment("user", "myBook", "attachment")
@@ -78,9 +79,60 @@ class AttachmentControllerTest extends BookCrossingBaseTests {
 
     @Test
     @SneakyThrows
+    void findBmpAttachment() {
+        final int book1 = bookService.saveBook(TestDataProvider.buildWolves(), user.getLogin()).getBookId();
+        final int attachmentId = createBmpAttachment(book1);
+
+        final var attachment = webClient.get()
+            .uri(uriBuilder -> uriBuilder.pathSegment("user", "myBook", "attachment")
+                .queryParam("id", attachmentId)
+                .queryParam("format", "ORIGIN").build())
+            .headers(headers -> headers.setBearerAuth(generateAccessToken(TestDataProvider.buildAuthBot())))
+            .exchange()
+            .expectStatus().isEqualTo(200)
+            .expectHeader().valueMatches(HttpHeaders.CONTENT_DISPOSITION, ".*\\.bmp\"$")
+            .expectBody().returnResult().getResponseBody();
+
+        assertThat(attachment).isNotNull();
+    }
+
+    @Test
+    @SneakyThrows
+    void findPngAttachment() {
+        final int book1 = bookService.saveBook(TestDataProvider.buildWolves(), user.getLogin()).getBookId();
+        final int attachmentId = createPngAttachment(book1);
+
+        final var attachment = webClient.get()
+            .uri(uriBuilder -> uriBuilder.pathSegment("user", "myBook", "attachment")
+                .queryParam("id", attachmentId)
+                .queryParam("format", "ORIGIN").build())
+            .headers(headers -> headers.setBearerAuth(generateAccessToken(TestDataProvider.buildAuthBot())))
+            .exchange()
+            .expectStatus().isEqualTo(200)
+            .expectHeader().valueMatches(HttpHeaders.CONTENT_DISPOSITION, ".*\\.png\"$")
+            .expectBody().returnResult().getResponseBody();
+
+        assertThat(attachment).isNotNull();
+    }
+
+    @Test
+    @SneakyThrows
+    void findNotExistsAttachmentMustReturnNotFoundResponse() {
+        webClient.get()
+            .uri(uriBuilder -> uriBuilder.pathSegment("user", "myBook", "attachment")
+                .queryParam("id", 11)
+                .queryParam("format", "ORIGIN").build())
+            .headers(headers -> headers.setBearerAuth(generateAccessToken(TestDataProvider.buildAuthBot())))
+            .exchange()
+            .expectStatus().isEqualTo(404)
+            .expectBody().jsonPath("$.error", "1016");
+    }
+
+    @Test
+    @SneakyThrows
     void deleteAttachment() {
         final int book1 = bookService.saveBook(TestDataProvider.buildWolves(), user.getLogin()).getBookId();
-        final int attachmentId = createAttachment(book1);
+        final int attachmentId = createJpgAttachment(book1);
 
         webClient.delete()
             .uri(uriBuilder -> uriBuilder.pathSegment("user", "myBook", "attachment")
@@ -97,7 +149,7 @@ class AttachmentControllerTest extends BookCrossingBaseTests {
     @SneakyThrows
     void deleteAttachmentFromOtherUser() {
         final int book1 = bookService.saveBook(TestDataProvider.buildWolves(), user.getLogin()).getBookId();
-        final int attachmentId = createAttachment(book1);
+        final int attachmentId = createJpgAttachment(book1);
         final UserDto alex = createAndSaveUser(TestDataProvider.buildAlex());
         enabledUser(alex.getUserId());
 
@@ -112,8 +164,19 @@ class AttachmentControllerTest extends BookCrossingBaseTests {
         assertThat(attachmentRepository.findAll()).extracting(Attachment::getAttachId).containsOnly(attachmentId);
     }
 
-    private int createAttachment(final int bookId) throws IOException {
-        final File file = ResourceUtils.getFile("classpath:files/image.jpg");
+    private int createJpgAttachment(final int bookId) throws IOException {
+        return createAttachment(bookId, ResourceUtils.getFile("classpath:files/image.jpg"));
+    }
+
+    private int createBmpAttachment(final int bookId) throws IOException {
+        return createAttachment(bookId, ResourceUtils.getFile("classpath:files/black.bmp"));
+    }
+
+    private int createPngAttachment(final int bookId) throws IOException {
+        return createAttachment(bookId, ResourceUtils.getFile("classpath:files/antelope.png"));
+    }
+
+    private int createAttachment(final int bookId, final File file) throws IOException {
         final MultipartFile multipartFile = new MockMultipartFile(file.getName(), file.getName(), "image/jpg", Files.readAllBytes(file.toPath()));
         return attachmentService.saveAttachment(AttachmentMultipartDto.fromFile(bookId, multipartFile), user.getLogin()).getAttachmentId();
     }
