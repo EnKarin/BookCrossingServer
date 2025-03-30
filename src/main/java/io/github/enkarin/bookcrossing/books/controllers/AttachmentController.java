@@ -63,7 +63,7 @@ public class AttachmentController {
     })
     @PostMapping
     public ResponseEntity<Void> saveAttachment(@ModelAttribute final AttachmentMultipartDto attachmentMultipartDto, final Principal principal) {
-        attachmentService.saveAttachment(attachmentMultipartDto, principal.getName());
+        attachmentService.saveTitleAttachment(attachmentMultipartDto, principal.getName());
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
