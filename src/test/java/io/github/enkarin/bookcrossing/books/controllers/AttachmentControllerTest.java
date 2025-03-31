@@ -115,6 +115,6 @@ class AttachmentControllerTest extends BookCrossingBaseTests {
     private int createAttachment(final int bookId) throws IOException {
         final File file = ResourceUtils.getFile("classpath:files/image.jpg");
         final MultipartFile multipartFile = new MockMultipartFile(file.getName(), file.getName(), "image/jpg", Files.readAllBytes(file.toPath()));
-        return attachmentService.saveTitleAttachment(AttachmentMultipartDto.fromFile(bookId, multipartFile), user.getLogin()).getAttachmentId();
+        return attachmentService.saveTitleAttachment(AttachmentMultipartDto.fromFile(bookId, multipartFile), user.getLogin()).getTitleAttachmentId();
     }
 }

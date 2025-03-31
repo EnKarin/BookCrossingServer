@@ -54,7 +54,7 @@ class AttachmentServiceTest extends BookCrossingBaseTests {
 
         final File file = ResourceUtils.getFile(fileName);
         final MultipartFile multipartFile = new MockMultipartFile(file.getName(), file.getName(), contentType, Files.readAllBytes(file.toPath()));
-        assertThat(attachmentService.saveTitleAttachment(AttachmentMultipartDto.fromFile(book1.getBookId(), multipartFile), users.get(1).getLogin()).getAttachmentId())
+        assertThat(attachmentService.saveTitleAttachment(AttachmentMultipartDto.fromFile(book1.getBookId(), multipartFile), users.get(1).getLogin()).getTitleAttachmentId())
             .isEqualTo(book1.getBookId());
     }
 
@@ -75,12 +75,12 @@ class AttachmentServiceTest extends BookCrossingBaseTests {
         bookService.saveBook(TestDataProvider.buildDorian(), users.get(0).getLogin());
         final File file = ResourceUtils.getFile("classpath:files/image.jpg");
         final MultipartFile multipartFile = new MockMultipartFile(file.getName(), file.getName(), "image/jpg", Files.readAllBytes(file.toPath()));
-        final var firstAttachId = attachmentService.saveTitleAttachment(AttachmentMultipartDto.fromFile(book1.getBookId(), multipartFile), users.get(1).getLogin()).getAttachmentId();
+        final var firstAttachId = attachmentService.saveTitleAttachment(AttachmentMultipartDto.fromFile(book1.getBookId(), multipartFile), users.get(1).getLogin()).getTitleAttachmentId();
         final File secondFile = ResourceUtils.getFile("classpath:files/nature.jpeg");
         final MultipartFile secondMultipartFile =
             new MockMultipartFile(secondFile.getName(), secondFile.getName(), "nature/jpeg", Files.readAllBytes(secondFile.toPath()));
 
-        assertThat(attachmentService.saveTitleAttachment(AttachmentMultipartDto.fromFile(book1.getBookId(), secondMultipartFile), users.get(1).getLogin()).getAttachmentId())
+        assertThat(attachmentService.saveTitleAttachment(AttachmentMultipartDto.fromFile(book1.getBookId(), secondMultipartFile), users.get(1).getLogin()).getTitleAttachmentId())
             .isEqualTo(firstAttachId);
         assertThat(attachmentService.findAttachmentData(firstAttachId, FormatType.ORIGIN).getData()).isEqualTo(secondMultipartFile.getBytes());
     }
@@ -134,7 +134,7 @@ class AttachmentServiceTest extends BookCrossingBaseTests {
         bookService.saveBook(TestDataProvider.buildDorian(), users.get(0).getLogin());
         final File file = ResourceUtils.getFile("classpath:files/image.jpg");
         final MultipartFile multipartFile = new MockMultipartFile(file.getName(), file.getName(), "image/jpg", Files.readAllBytes(file.toPath()));
-        final int name = attachmentService.saveTitleAttachment(AttachmentMultipartDto.fromFile(book1, multipartFile), users.get(1).getLogin()).getAttachmentId();
+        final int name = attachmentService.saveTitleAttachment(AttachmentMultipartDto.fromFile(book1, multipartFile), users.get(1).getLogin()).getTitleAttachmentId();
 
         attachmentService.deleteAttachment(book1, users.get(1).getLogin());
 
@@ -171,7 +171,7 @@ class AttachmentServiceTest extends BookCrossingBaseTests {
         bookService.saveBook(TestDataProvider.buildDorian(), users.get(0).getLogin());
         final File file = ResourceUtils.getFile("classpath:files/image.jpg");
         final MultipartFile multipartFile = new MockMultipartFile(file.getName(), file.getName(), "image/jpg", Files.readAllBytes(file.toPath()));
-        final int attachmentId = attachmentService.saveTitleAttachment(AttachmentMultipartDto.fromFile(book1, multipartFile), users.get(1).getLogin()).getAttachmentId();
+        final int attachmentId = attachmentService.saveTitleAttachment(AttachmentMultipartDto.fromFile(book1, multipartFile), users.get(1).getLogin()).getTitleAttachmentId();
 
         assertThat(attachmentService.findAttachmentData(attachmentId, FormatType.ORIGIN).getData()).isEqualTo(multipartFile.getBytes());
     }
@@ -185,7 +185,7 @@ class AttachmentServiceTest extends BookCrossingBaseTests {
         bookService.saveBook(TestDataProvider.buildDorian(), users.get(0).getLogin());
         final File file = ResourceUtils.getFile("classpath:files/image.jpg");
         final MultipartFile multipartFile = new MockMultipartFile(file.getName(), file.getName(), "image/jpg", Files.readAllBytes(file.toPath()));
-        final int attachmentId = attachmentService.saveTitleAttachment(AttachmentMultipartDto.fromFile(book1, multipartFile), users.get(1).getLogin()).getAttachmentId();
+        final int attachmentId = attachmentService.saveTitleAttachment(AttachmentMultipartDto.fromFile(book1, multipartFile), users.get(1).getLogin()).getTitleAttachmentId();
 
         assertThat(attachmentService.findAttachmentData(attachmentId, FormatType.LIST).getData().length).isLessThan(multipartFile.getBytes().length);
     }
@@ -214,7 +214,7 @@ class AttachmentServiceTest extends BookCrossingBaseTests {
         bookService.saveBook(TestDataProvider.buildDorian(), users.get(0).getLogin());
         final File file = ResourceUtils.getFile("classpath:files/image.jpg");
         final MultipartFile multipartFile = new MockMultipartFile(file.getName(), file.getName(), "image/jpg", Files.readAllBytes(file.toPath()));
-        return attachmentService.saveTitleAttachment(AttachmentMultipartDto.fromFile(book1, multipartFile), users.get(1).getLogin()).getAttachmentId();
+        return attachmentService.saveTitleAttachment(AttachmentMultipartDto.fromFile(book1, multipartFile), users.get(1).getLogin()).getTitleAttachmentId();
     }
 
     @Test
