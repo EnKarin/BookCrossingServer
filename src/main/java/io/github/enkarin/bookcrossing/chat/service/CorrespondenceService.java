@@ -62,15 +62,12 @@ public class CorrespondenceService {
 
     public List<MessageDto> getChat(final int firstUserId, final int secondUserId, final int zone, final String login) {
         final User user = userRepository.findByLogin(login).orElseThrow();
-        final User fUser = userRepository.findById(firstUserId)
-            .orElseThrow(UserNotFoundException::new);
-        final User sUser = userRepository.findById(secondUserId)
-            .orElseThrow(UserNotFoundException::new);
+        final User fUser = userRepository.findById(firstUserId).orElseThrow(UserNotFoundException::new);
+        final User sUser = userRepository.findById(secondUserId).orElseThrow(UserNotFoundException::new);
         final UsersCorrKey usersCorrKey = new UsersCorrKey();
         usersCorrKey.setFirstUser(fUser);
         usersCorrKey.setSecondUser(sUser);
-        final Correspondence correspondence = correspondenceRepository.findById(usersCorrKey)
-            .orElseThrow(ChatNotFoundException::new);
+        final Correspondence correspondence = correspondenceRepository.findById(usersCorrKey).orElseThrow(ChatNotFoundException::new);
         if (user.equals(fUser)) {
             return correspondenceServiceHelper.getMessages(Message::isShownFirstUser, correspondence, zone, user);
         } else if (user.equals(sUser)) {
