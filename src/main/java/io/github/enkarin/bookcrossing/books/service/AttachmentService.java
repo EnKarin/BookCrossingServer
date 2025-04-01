@@ -27,7 +27,7 @@ import static io.github.enkarin.bookcrossing.utils.ImageCompressor.compressImage
 
 @RequiredArgsConstructor
 @Service
-@Transactional
+@Transactional(readOnly = true)
 public class AttachmentService {
     private final AttachmentRepository attachRepository;
     private final BookRepository bookRepository;
@@ -36,16 +36,18 @@ public class AttachmentService {
         return AttachmentDto.fromAttachment(attachRepository.findById(id).orElseThrow(AttachmentNotFoundException::new), imageFormat);
     }
 
+    @Transactional
     public BookModelDto saveTitleAttachment(final AttachmentMultipartDto attachmentMultipartDto, final String login) {
         final Book book = bookRepository.findBooksByOwnerLoginAndBookId(login, attachmentMultipartDto.getBookId()).orElseThrow(BookNotFoundException::new);
         book.setTitleAttachment(saveAttachment(book, attachmentMultipartDto));
-        return BookModelDto.fromBook(bookRepository.save(book));
+        return BookModelDto.fromBook(book);
     }
 
+    @Transactional
     public BookModelDto saveAdditionalAttachment(final AttachmentMultipartDto attachmentMultipartDto, final String login) {
         final Book book = bookRepository.findBooksByOwnerLoginAndBookId(login, attachmentMultipartDto.getBookId()).orElseThrow(BookNotFoundException::new);
         saveAttachment(book, attachmentMultipartDto);
-        return BookModelDto.fromBook(bookRepository.save(book));
+        return BookModelDto.fromBook(book);
     }
 
     private Attachment saveAttachment(final Book book, final AttachmentMultipartDto attachmentMultipartDto) {
@@ -65,6 +67,7 @@ public class AttachmentService {
     private Attachment createOrUpdateAttachment(final Book book, final MultipartFile multipartFile, final String expansion) {
         try {
             final Attachment attachment = new Attachment();
+            book.getAttachments().add(attachment);
             attachment.setBook(book);
             attachment.setOriginalImageExpansion(expansion);
             final BufferedImage image = ImageIO.read(multipartFile.getInputStream());
@@ -77,9 +80,14 @@ public class AttachmentService {
         }
     }
 
+    @Transactional
     public void deleteAttachment(final int id, final String login) {
         final Attachment attachment = attachRepository.findById(id).orElseThrow(AttachmentNotFoundException::new);
-        if (attachment.getBook().getOwner().getLogin().equals(login)) {
+        final Book book = attachment.getBook();
+        if (book.getOwner().getLogin().equals(login)) {
+            if (attachment.equals(book.getTitleAttachment())) {
+                book.setTitleAttachment(null);
+            }
             attachRepository.delete(attachment);
         } else {
             throw new NoAccessToAttachmentException();

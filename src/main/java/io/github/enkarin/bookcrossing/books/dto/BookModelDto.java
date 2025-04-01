@@ -13,8 +13,6 @@ import javax.annotation.concurrent.Immutable;
 import java.util.List;
 import java.util.Optional;
 
-import static java.util.Objects.isNull;
-
 @ToString(callSuper = true)
 @Immutable
 @Getter
@@ -29,7 +27,7 @@ public class BookModelDto extends BookDto {
     private final Integer titleAttachmentId;
 
     @Schema(description = "Идентификаторы дополнительных вложений")
-    private List<Integer> additionalAttachmentIdList;
+    private final List<Integer> additionalAttachmentIdList;
 
     @Schema(description = "Город, в котором сейчас находится книга", example = "Новосибирск")
     protected final String city;
@@ -67,9 +65,9 @@ public class BookModelDto extends BookDto {
             book.getPublishingHouse(),
             book.getYear()),
             book.getBookId(),
-            titleAttachmentId.orElse(isNull(book.getAttachments()) || book.getAttachments().isEmpty() ? null : book.getAttachments().get(0).getAttachId()),
+            titleAttachmentId.orElse(book.getAttachments().isEmpty() ? null : book.getAttachments().get(0).getAttachId()),
             titleAttachmentId.map(integer -> book.getAttachments().stream().map(Attachment::getAttachId).filter(id -> !id.equals(integer)).toList())
-                .orElseGet(() -> isNull(book.getAttachments())? List.of(): book.getAttachments().stream().map(Attachment::getAttachId).toList()),
+                .orElseGet(() -> book.getAttachments().stream().map(Attachment::getAttachId).toList()),
             book.getOwner().getCity());
     }
 }

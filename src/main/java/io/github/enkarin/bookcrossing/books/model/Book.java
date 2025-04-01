@@ -18,6 +18,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -56,7 +57,7 @@ public class Book implements Serializable {
     private Attachment titleAttachment;
 
     @OneToMany(mappedBy = "book", orphanRemoval = true)
-    private List<Attachment> attachments;
+    private List<Attachment> attachments = new LinkedList<>();
 
     @ManyToMany(mappedBy = "bookmarks")
     private Set<User> usersBookmarks;
