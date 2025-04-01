@@ -81,7 +81,7 @@ class AttachmentServiceTest extends BookCrossingBaseTests {
             new MockMultipartFile(secondFile.getName(), secondFile.getName(), "nature/jpeg", Files.readAllBytes(secondFile.toPath()));
 
         assertThat(attachmentService.saveTitleAttachment(AttachmentMultipartDto.fromFile(book1.getBookId(), secondMultipartFile), users.get(1).getLogin()).getTitleAttachmentId())
-            .isEqualTo(firstAttachId);
+            .isNotEqualTo(firstAttachId);
         assertThat(attachmentService.findAttachmentData(firstAttachId, FormatType.ORIGIN).getData()).isEqualTo(secondMultipartFile.getBytes());
     }
 
@@ -174,6 +174,39 @@ class AttachmentServiceTest extends BookCrossingBaseTests {
         final int attachmentId = attachmentService.saveTitleAttachment(AttachmentMultipartDto.fromFile(book1, multipartFile), users.get(1).getLogin()).getTitleAttachmentId();
 
         assertThat(attachmentService.findAttachmentData(attachmentId, FormatType.ORIGIN).getData()).isEqualTo(multipartFile.getBytes());
+    }
+
+    @Test
+    @SneakyThrows
+    void saveAdditionalAttachmentAfterTitleAttachment() {
+        final BookModelDto book1 =  bookService.saveBook(TestDataProvider.buildWolves(), users.get(1).getLogin());
+        final File file = ResourceUtils.getFile("classpath:files/image.jpg");
+        final MultipartFile multipartFile = new MockMultipartFile(file.getName(), file.getName(), "image/jpg", Files.readAllBytes(file.toPath()));
+        final var firstAttachId = attachmentService.saveTitleAttachment(AttachmentMultipartDto.fromFile(book1.getBookId(), multipartFile), users.get(1).getLogin())
+            .getTitleAttachmentId();
+        final File secondFile = ResourceUtils.getFile("classpath:files/nature.jpeg");
+        final MultipartFile secondMultipartFile =
+            new MockMultipartFile(secondFile.getName(), secondFile.getName(), "nature/jpeg", Files.readAllBytes(secondFile.toPath()));
+
+        assertThat(attachmentService.saveAdditionalAttachment(AttachmentMultipartDto.fromFile(book1.getBookId(), secondMultipartFile), users.get(1).getLogin()))
+            .satisfies(bookModelDto -> {
+                assertThat(bookModelDto.getTitleAttachmentId()).isEqualTo(firstAttachId);
+                assertThat(bookModelDto.getAdditionalAttachmentIdList()).hasSize(1).doesNotContain(firstAttachId);
+            });
+    }
+
+    @Test
+    @SneakyThrows
+    void saveAdditionalAttachmentWithoutTitleAttachment() {
+        final BookModelDto book1 =  bookService.saveBook(TestDataProvider.buildWolves(), users.get(1).getLogin());
+        final File file = ResourceUtils.getFile("classpath:files/image.jpg");
+        final MultipartFile multipartFile = new MockMultipartFile(file.getName(), file.getName(), "image/jpg", Files.readAllBytes(file.toPath()));
+
+        assertThat(attachmentService.saveAdditionalAttachment(AttachmentMultipartDto.fromFile(book1.getBookId(), multipartFile), users.get(1).getLogin()))
+            .satisfies(bookModelDto -> {
+                assertThat(bookModelDto.getTitleAttachmentId()).isEqualTo(bookModelDto.getAdditionalAttachmentIdList().get(0));
+                assertThat(bookModelDto.getAdditionalAttachmentIdList()).hasSize(1);
+            });
     }
 
     @Test

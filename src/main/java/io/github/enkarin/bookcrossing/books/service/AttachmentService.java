@@ -39,13 +39,13 @@ public class AttachmentService {
     public BookModelDto saveTitleAttachment(final AttachmentMultipartDto attachmentMultipartDto, final String login) {
         final Book book = bookRepository.findBooksByOwnerLoginAndBookId(login, attachmentMultipartDto.getBookId()).orElseThrow(BookNotFoundException::new);
         book.setTitleAttachment(saveAttachment(book, attachmentMultipartDto));
-        return BookModelDto.fromBook(book);
+        return BookModelDto.fromBook(bookRepository.save(book));
     }
 
     public BookModelDto saveAdditionalAttachment(final AttachmentMultipartDto attachmentMultipartDto, final String login) {
         final Book book = bookRepository.findBooksByOwnerLoginAndBookId(login, attachmentMultipartDto.getBookId()).orElseThrow(BookNotFoundException::new);
         saveAttachment(book, attachmentMultipartDto);
-        return BookModelDto.fromBook(book);
+        return BookModelDto.fromBook(bookRepository.save(book));
     }
 
     private Attachment saveAttachment(final Book book, final AttachmentMultipartDto attachmentMultipartDto) {

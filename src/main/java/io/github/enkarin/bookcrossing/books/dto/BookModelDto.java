@@ -13,6 +13,8 @@ import javax.annotation.concurrent.Immutable;
 import java.util.List;
 import java.util.Optional;
 
+import static java.util.Objects.isNull;
+
 @ToString(callSuper = true)
 @Immutable
 @Getter
@@ -65,9 +67,9 @@ public class BookModelDto extends BookDto {
             book.getPublishingHouse(),
             book.getYear()),
             book.getBookId(),
-            titleAttachmentId.orElse(book.getAttachments().isEmpty()? null: book.getAttachments().get(0).getAttachId()),
+            titleAttachmentId.orElse(isNull(book.getAttachments()) || book.getAttachments().isEmpty() ? null : book.getAttachments().get(0).getAttachId()),
             titleAttachmentId.map(integer -> book.getAttachments().stream().map(Attachment::getAttachId).filter(id -> !id.equals(integer)).toList())
-                .orElseGet(() -> book.getAttachments().stream().map(Attachment::getAttachId).toList()),
+                .orElseGet(() -> isNull(book.getAttachments())? List.of(): book.getAttachments().stream().map(Attachment::getAttachId).toList()),
             book.getOwner().getCity());
     }
 }
