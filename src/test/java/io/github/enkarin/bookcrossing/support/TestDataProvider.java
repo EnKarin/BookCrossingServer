@@ -105,6 +105,7 @@ public class TestDataProvider {
             .year(bookDto.getYear())
             .author(bookDto.getAuthor())
             .city(ownerCity)
+            .statusId(2)
             .build();
     }
 
@@ -119,6 +120,7 @@ public class TestDataProvider {
             .year(bookDto.getYear())
             .author(bookDto.getAuthor())
             .city(ownerCity)
+            .statusId(2)
             .build();
     }
 
@@ -133,6 +135,7 @@ public class TestDataProvider {
             .year(bookDto.getYear())
             .author(bookDto.getAuthor())
             .city(ownerCity)
+            .statusId(2)
             .build();
     }
 
