@@ -3,8 +3,6 @@ package io.github.enkarin.bookcrossing.books.enums;
 import io.github.enkarin.bookcrossing.books.exceptions.StatusNotFoundException;
 import lombok.Getter;
 
-import javax.validation.constraints.NotBlank;
-
 @Getter
 public enum Status {
     GIVE(1, "Отдает", "Gives away"),

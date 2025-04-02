@@ -1,6 +1,5 @@
 package io.github.enkarin.bookcrossing.books.dto;
 
-import io.github.enkarin.bookcrossing.books.enums.Status;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
