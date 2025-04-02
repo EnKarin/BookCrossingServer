@@ -175,8 +175,8 @@ public class BookService {
     }
 
     @Transactional
-    public void changeBookStatus(final String login, final int bookId, final Status status) {
-        bookRepository.findBooksByOwnerLoginAndBookId(login, bookId).ifPresentOrElse(book -> book.setStatus(status), () -> {
+    public void changeBookStatus(final String login, final int bookId, final int statusId) {
+        bookRepository.findBooksByOwnerLoginAndBookId(login, bookId).ifPresentOrElse(book -> book.setStatus(Status.getById(statusId)), () -> {
             throw new BookNotFoundException();
         });
     }

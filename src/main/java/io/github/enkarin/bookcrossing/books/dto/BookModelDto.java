@@ -31,7 +31,7 @@ public class BookModelDto extends BookDto {
     protected final String city;
 
     private BookModelDto(final BookDto bookDto, final int bookId, final AttachmentDto attachment, final String city) {
-        super(bookDto.title, bookDto.author, bookDto.genre, bookDto.publishingHouse, bookDto.year, bookDto.status);
+        super(bookDto.title, bookDto.author, bookDto.genre, bookDto.publishingHouse, bookDto.year, bookDto.statusId);
         this.bookId = bookId;
         this.city = city;
         this.attachmentId = Optional.ofNullable(attachment).map(AttachmentDto::getAttachId).orElse(null);
@@ -44,10 +44,10 @@ public class BookModelDto extends BookDto {
                          final String publishingHouse,
                          final int year,
                          final int bookId,
-                         final Status status,
+                         final int statusId,
                          final AttachmentDto attachment,
                          final String city) {
-        super(title, author, genre, publishingHouse, year, status);
+        super(title, author, genre, publishingHouse, year, statusId);
         this.bookId = bookId;
         this.city = city;
         this.attachmentId = Optional.ofNullable(attachment).map(AttachmentDto::getAttachId).orElse(null);
@@ -60,7 +60,7 @@ public class BookModelDto extends BookDto {
                 book.getGenre().getId(),
                 book.getPublishingHouse(),
                 book.getYear(),
-                book.getStatus()),
+                Status.EXCHANGES.getId()),
                 book.getBookId(),
                 AttachmentDto.fromAttachment(book.getAttachment(), ORIGIN),
                 book.getOwner().getCity()

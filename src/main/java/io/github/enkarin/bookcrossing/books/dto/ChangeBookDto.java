@@ -32,5 +32,5 @@ public class ChangeBookDto {
     private Integer year;
 
     @Schema(description = "Статус", example = "Отдает")
-    private Status status;
+    private Integer statusId;
 }

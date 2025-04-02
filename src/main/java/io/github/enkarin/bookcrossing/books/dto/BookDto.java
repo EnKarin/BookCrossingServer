@@ -39,11 +39,11 @@ public class BookDto {
     @Schema(description = "Год издания", example = "2004")
     protected final int year;
 
-    @Schema(description = "Статус", example = "Отдает")
-    protected final Status status;
+    @Schema(description = "id статуса", example = "1")
+    protected final int statusId;
 
     @JsonCreator
-    public static BookDto create(final String title, final String author, final int genre, final String publishingHouse, final int year, final Status status) {
-        return new BookDto(title, author, genre, publishingHouse, year, status);
+    public static BookDto create(final String title, final String author, final int genre, final String publishingHouse, final int year, final int statusId) {
+        return new BookDto(title, author, genre, publishingHouse, year, statusId);
     }
 }

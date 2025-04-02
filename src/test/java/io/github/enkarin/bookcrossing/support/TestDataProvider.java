@@ -71,6 +71,7 @@ public class TestDataProvider {
             .title("Dorian")
             .genre(0)
             .year(2000)
+            .statusId(1)
             .build();
     }
 

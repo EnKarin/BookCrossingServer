@@ -419,9 +419,9 @@ class BookServiceTest extends BookCrossingBaseTests {
         final UserDto user = createAndSaveUser(TestDataProvider.buildAlex());
         final int bookId = bookService.saveBook(TestDataProvider.buildDorian(), user.getLogin()).getBookId();
 
-        bookService.changeBookStatus(user.getLogin(), bookId, Status.EXCHANGES);
+        bookService.changeBookStatus(user.getLogin(), bookId, Status.EXCHANGES.getId());
 
-        assertThat(bookService.findById(bookId).getStatus()).isEqualTo(Status.EXCHANGES);
+        assertThat(bookService.findById(bookId).getStatusId()).isEqualTo(Status.EXCHANGES.getId());
     }
 
     @Test
