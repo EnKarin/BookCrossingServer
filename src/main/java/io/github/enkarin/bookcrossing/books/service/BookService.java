@@ -154,7 +154,8 @@ public class BookService {
 
     @Transactional
     public void changeBookGenre(final String login, final int bookId, final int genre) {
-        bookRepository.findBooksByOwnerLoginAndBookId(login, bookId).ifPresentOrElse(book -> book.setGenre(genreRepository.findById(genre).orElseThrow(GenreNotFoundException::new)),
+        bookRepository.findBooksByOwnerLoginAndBookId(login, bookId)
+            .ifPresentOrElse(book -> book.setGenre(genreRepository.findById(genre).orElseThrow(GenreNotFoundException::new)),
             () -> {
                 throw new BookNotFoundException();
             });

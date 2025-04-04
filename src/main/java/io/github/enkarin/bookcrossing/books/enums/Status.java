@@ -8,7 +8,7 @@ public enum Status {
     GIVE(1, "Отдает", "Gives away"),
     EXCHANGES(2, "Отдает", "Exchanges");
 
-    private final Integer id;
+    private final int id;
     private final String ru;
     private final String en;
 
@@ -18,8 +18,8 @@ public enum Status {
         this.en = en;
     }
 
-    public static Status getById(int id) {
-        for (Status status : Status.values()) {
+    public static Status getById(final int id) {
+        for (final Status status : values()) {
             if (status.id == id) {
                 return status;
             }
