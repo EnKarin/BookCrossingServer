@@ -1,6 +1,7 @@
 package io.github.enkarin.bookcrossing.books.controllers;
 
 import io.github.enkarin.bookcrossing.books.dto.AttachmentMultipartDto;
+import io.github.enkarin.bookcrossing.books.dto.BookModelDto;
 import io.github.enkarin.bookcrossing.books.model.Attachment;
 import io.github.enkarin.bookcrossing.books.repository.AttachmentRepository;
 import io.github.enkarin.bookcrossing.books.service.AttachmentService;
@@ -49,7 +50,7 @@ class AttachmentControllerTest extends BookCrossingBaseTests {
         multipartBodyBuilder.part("bookId", booksId.get(0));
 
         webClient.post()
-            .uri(uriBuilder -> uriBuilder.pathSegment("user", "myBook", "attachment").build())
+            .uri(uriBuilder -> uriBuilder.pathSegment("user", "myBook", "attachment", "title").build())
             .contentType(MediaType.MULTIPART_FORM_DATA)
             .headers(headers -> headers.setBearerAuth(generateAccessToken(TestDataProvider.buildAuthBot())))
             .bodyValue(multipartBodyBuilder.build())
@@ -57,6 +58,59 @@ class AttachmentControllerTest extends BookCrossingBaseTests {
             .expectStatus().isEqualTo(201);
 
         assertThat(attachmentRepository.count()).isOne();
+    }
+
+    @Test
+    @SneakyThrows
+    void saveSingleAdditionalAttachment() {
+        final var booksId = createAndSaveBooks(user.getLogin());
+        final File file = ResourceUtils.getFile("classpath:files/image.jpg");
+        final MultipartBodyBuilder multipartBodyBuilder = new MultipartBodyBuilder();
+        multipartBodyBuilder.part("file", new ByteArrayResource(Files.readAllBytes(file.toPath())), MediaType.TEXT_PLAIN).filename(file.getName());
+        multipartBodyBuilder.part("bookId", booksId.get(0));
+
+        final BookModelDto bookModelDto = webClient.post()
+            .uri(uriBuilder -> uriBuilder.pathSegment("user", "myBook", "attachment", "additional").build())
+            .contentType(MediaType.MULTIPART_FORM_DATA)
+            .headers(headers -> headers.setBearerAuth(generateAccessToken(TestDataProvider.buildAuthBot())))
+            .bodyValue(multipartBodyBuilder.build())
+            .exchange()
+            .expectStatus().isEqualTo(201)
+            .expectBody(BookModelDto.class).returnResult().getResponseBody();
+
+        assertThat(attachmentRepository.count()).isOne();
+        assertThat(bookModelDto).satisfies(book -> {
+            assertThat(book.getTitleAttachmentId()).isNotNull();
+            assertThat(book.getAdditionalAttachmentIdList()).isEmpty();
+        });
+    }
+
+    @Test
+    @SneakyThrows
+    void saveAdditionalAttachmentAfterTitleAttachment() {
+        final var booksId = createAndSaveBooks(user.getLogin());
+        final File file = ResourceUtils.getFile("classpath:files/image.jpg");
+        final MultipartFile multipartFile = new MockMultipartFile(file.getName(), file.getName(), "image/jpg", Files.readAllBytes(file.toPath()));
+        final File secondFile = ResourceUtils.getFile("classpath:files/nature.jpeg");
+        final MultipartBodyBuilder multipartBodyBuilder = new MultipartBodyBuilder();
+        multipartBodyBuilder.part("file", new ByteArrayResource(Files.readAllBytes(secondFile.toPath())), MediaType.TEXT_PLAIN).filename(secondFile.getName());
+        multipartBodyBuilder.part("bookId", booksId.get(0));
+        final int titleAttachmentId = attachmentService.saveTitleAttachment(AttachmentMultipartDto.fromFile(booksId.get(0), multipartFile), user.getLogin()).getTitleAttachmentId();
+
+        final BookModelDto bookModelDto = webClient.post()
+            .uri(uriBuilder -> uriBuilder.pathSegment("user", "myBook", "attachment", "additional").build())
+            .contentType(MediaType.MULTIPART_FORM_DATA)
+            .headers(headers -> headers.setBearerAuth(generateAccessToken(TestDataProvider.buildAuthBot())))
+            .bodyValue(multipartBodyBuilder.build())
+            .exchange()
+            .expectStatus().isEqualTo(201)
+            .expectBody(BookModelDto.class).returnResult().getResponseBody();
+
+        assertThat(attachmentRepository.count()).isEqualTo(2);
+        assertThat(bookModelDto).satisfies(book -> {
+            assertThat(book.getTitleAttachmentId()).isEqualTo(titleAttachmentId);
+            assertThat(book.getAdditionalAttachmentIdList()).hasSize(1).doesNotContain(titleAttachmentId);
+        });
     }
 
     @Test

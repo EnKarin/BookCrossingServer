@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.util.Locale;
 
 import static io.github.enkarin.bookcrossing.utils.ImageCompressor.compressImage;
+import static java.util.Objects.isNull;
 
 @RequiredArgsConstructor
 @Service
@@ -46,7 +47,9 @@ public class AttachmentService {
     @Transactional
     public BookModelDto saveAdditionalAttachment(final AttachmentMultipartDto attachmentMultipartDto, final String login) {
         final Book book = bookRepository.findBooksByOwnerLoginAndBookId(login, attachmentMultipartDto.getBookId()).orElseThrow(BookNotFoundException::new);
-        saveAttachment(book, attachmentMultipartDto);
+        if (isNull(book.getTitleAttachment())) {
+            book.setTitleAttachment(saveAttachment(book, attachmentMultipartDto));
+        }
         return BookModelDto.fromBook(book);
     }
 

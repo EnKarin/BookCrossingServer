@@ -78,7 +78,7 @@ class AttachmentServiceTest extends BookCrossingBaseTests {
         final var firstAttachId = attachmentService.saveTitleAttachment(AttachmentMultipartDto.fromFile(book1.getBookId(), multipartFile), users.get(1).getLogin()).getTitleAttachmentId();
         final File secondFile = ResourceUtils.getFile("classpath:files/nature.jpeg");
         final MultipartFile secondMultipartFile =
-            new MockMultipartFile(secondFile.getName(), secondFile.getName(), "nature/jpeg", Files.readAllBytes(secondFile.toPath()));
+            new MockMultipartFile(secondFile.getName(), secondFile.getName(), "image/jpg", Files.readAllBytes(secondFile.toPath()));
 
         assertThat(attachmentService.saveTitleAttachment(AttachmentMultipartDto.fromFile(book1.getBookId(), secondMultipartFile), users.get(1).getLogin()).getTitleAttachmentId())
             .isNotEqualTo(firstAttachId);

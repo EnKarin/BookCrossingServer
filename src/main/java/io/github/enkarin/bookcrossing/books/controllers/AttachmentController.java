@@ -61,8 +61,8 @@ public class AttachmentController {
                 schema = @Schema(ref = "#/components/schemas/LogicErrorBody"))}),
         @ApiResponse(responseCode = "201", description = "Вложение сохранено")
     })
-    @PostMapping
-    public ResponseEntity<Void> saveAttachment(@ModelAttribute final AttachmentMultipartDto attachmentMultipartDto, final Principal principal) {
+    @PostMapping("/title")
+    public ResponseEntity<Void> saveTitleAttachment(@ModelAttribute final AttachmentMultipartDto attachmentMultipartDto, final Principal principal) {
         attachmentService.saveTitleAttachment(attachmentMultipartDto, principal.getName());
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
