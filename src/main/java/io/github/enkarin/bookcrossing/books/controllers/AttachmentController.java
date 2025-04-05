@@ -49,7 +49,7 @@ public class AttachmentController {
     private final AttachmentService attachmentService;
 
     @Operation(
-        summary = "Отправка вложения",
+        summary = "Сохранение титульного вложения",
         description = "Позволяет сохранить фотографию книги"
     )
     @ApiResponses(value = {
@@ -64,6 +64,25 @@ public class AttachmentController {
     @PostMapping("/title")
     public ResponseEntity<Void> saveTitleAttachment(@ModelAttribute final AttachmentMultipartDto attachmentMultipartDto, final Principal principal) {
         attachmentService.saveTitleAttachment(attachmentMultipartDto, principal.getName());
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @Operation(
+        summary = "Сохранение дополнительного вложения",
+        description = "Позволяет сохранить фотографию книги, не являющейся титульной"
+    )
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "415", description = "Некорректное вложение",
+            content = {@Content(mediaType = Constant.MEDIA_TYPE,
+                schema = @Schema(ref = "#/components/schemas/LogicErrorBody"))}),
+        @ApiResponse(responseCode = "404", description = "Книги не существует",
+            content = {@Content(mediaType = Constant.MEDIA_TYPE,
+                schema = @Schema(ref = "#/components/schemas/LogicErrorBody"))}),
+        @ApiResponse(responseCode = "201", description = "Вложение сохранено")
+    })
+    @PostMapping("/additional")
+    public ResponseEntity<Void> saveAdditionalAttachment(@ModelAttribute final AttachmentMultipartDto attachmentMultipartDto, final Principal principal) {
+        attachmentService.saveAdditionalAttachment(attachmentMultipartDto, principal.getName());
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 

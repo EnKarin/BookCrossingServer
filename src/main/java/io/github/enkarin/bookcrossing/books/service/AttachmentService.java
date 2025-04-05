@@ -69,15 +69,16 @@ public class AttachmentService {
 
     private Attachment createOrUpdateAttachment(final Book book, final MultipartFile multipartFile, final String expansion) {
         try {
-            final Attachment attachment = new Attachment();
-            book.getAttachments().add(attachment);
+            Attachment attachment = new Attachment();
             attachment.setBook(book);
             attachment.setOriginalImageExpansion(expansion);
             final BufferedImage image = ImageIO.read(multipartFile.getInputStream());
             attachment.setOriginalImage(multipartFile.getBytes());
             attachment.setListImage(compressImage(image, 200, 300));
             attachment.setThumbImage(compressImage(image, 70, 70));
-            return attachRepository.save(attachment);
+            attachment = attachRepository.save(attachment);
+            book.getAttachments().add(attachment);
+            return attachment;
         } catch (IOException e) {
             throw new UnsupportedImageTypeException(ErrorMessage.ERROR_2008.getCode(), e);
         }

@@ -11,6 +11,7 @@ import lombok.experimental.SuperBuilder;
 
 import javax.annotation.concurrent.Immutable;
 import java.util.List;
+import java.util.Optional;
 
 @ToString(callSuper = true)
 @Immutable
@@ -57,15 +58,15 @@ public class BookModelDto extends BookDto {
     }
 
     public static BookModelDto fromBook(final Book book) {
-        final int titleAttachmentId = book.getTitleAttachment().getAttachId();
+        final Optional<Integer> titleAttachmentId = Optional.ofNullable(book.getTitleAttachment()).map(Attachment::getAttachId);
         return new BookModelDto(create(book.getTitle(),
             book.getAuthor(),
             book.getGenre().getId(),
             book.getPublishingHouse(),
             book.getYear()),
             book.getBookId(),
-            titleAttachmentId,
-            book.getAttachments().stream().map(Attachment::getAttachId).filter(id -> !id.equals(titleAttachmentId)).toList(),
+            titleAttachmentId.orElse(null),
+            titleAttachmentId.map(titleId -> book.getAttachments().stream().map(Attachment::getAttachId).filter(id -> !id.equals(titleId)).toList()).orElse(List.of()),
             book.getOwner().getCity());
     }
 }

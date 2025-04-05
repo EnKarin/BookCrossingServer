@@ -202,15 +202,14 @@ class AttachmentServiceTest extends BookCrossingBaseTests {
         final File file = ResourceUtils.getFile("classpath:files/image.jpg");
         final MultipartFile multipartFile = new MockMultipartFile(file.getName(), file.getName(), "image/jpg", Files.readAllBytes(file.toPath()));
 
-        final BookModelDto additionalAttachment = attachmentService
+        final BookModelDto bookWithAdditionalAttachment = attachmentService
             .saveAdditionalAttachment(AttachmentMultipartDto.fromFile(book1.getBookId(), multipartFile), users.get(1).getLogin());
 
-        assertThat(additionalAttachment).satisfies(bookModelDto -> {
-                assertThat(bookModelDto.getAdditionalAttachmentIdList()).hasSize(1);
-                assertThat(bookModelDto.getTitleAttachmentId()).isEqualTo(bookModelDto.getAdditionalAttachmentIdList().get(0));
+        assertThat(bookWithAdditionalAttachment).satisfies(bookModelDto -> {
+                assertThat(bookModelDto.getAdditionalAttachmentIdList()).isEmpty();
+                assertThat(bookModelDto.getTitleAttachmentId()).isNotNull();
             });
-        assertThat(bookService.findById(book1.getBookId()).getAdditionalAttachmentIdList())
-            .containsOnly(additionalAttachment.getTitleAttachmentId());
+        assertThat(bookService.findById(book1.getBookId()).getTitleAttachmentId()).isEqualTo(bookWithAdditionalAttachment.getTitleAttachmentId());
     }
 
     @Test
