@@ -425,6 +425,18 @@ class BookServiceTest extends BookCrossingBaseTests {
     }
 
     @Test
+    void changeBookStatusShouldThrowBookNotFoundExceptionWhenNotOwner() {
+        final UserDto owner = createAndSaveUser(TestDataProvider.buildAlex());
+        final UserDto notOwner = createAndSaveUser(TestDataProvider.buildMax());
+        final int bookId = bookService.saveBook(TestDataProvider.buildDorian(), owner.getLogin()).getBookId();
+        final int statusId = Status.EXCHANGES.getId();
+
+        assertThatThrownBy(() -> bookService.changeBookStatus(notOwner.getLogin(), bookId, statusId))
+            .isInstanceOf(BookNotFoundException.class)
+            .hasMessage("Книга не найдена");
+    }
+
+    @Test
     void putBookYearFromNotOwnerMustThrowException() {
         final UserDto user = createAndSaveUser(TestDataProvider.buildAlex());
         final UserDto max = createAndSaveUser(TestDataProvider.buildMax());
