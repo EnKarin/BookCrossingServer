@@ -8,11 +8,11 @@ import org.hibernate.annotations.Type;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
-import javax.persistence.MapsId;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.io.Serial;
 import java.io.Serializable;
@@ -30,11 +30,11 @@ public class Attachment implements Serializable {
     private static final long serialVersionUID = 4600249981575739954L;
 
     @Id
+    @GeneratedValue
     private int attachId;
 
-    @MapsId
-    @OneToOne
-    @JoinColumn(name = "attach_id")
+    @ManyToOne
+    @JoinColumn(name = "book_id")
     private Book book;
 
     @Lob

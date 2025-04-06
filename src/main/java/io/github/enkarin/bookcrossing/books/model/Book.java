@@ -5,17 +5,21 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -48,8 +52,12 @@ public class Book implements Serializable {
     @JoinColumn(name = "owner_book")
     private User owner;
 
-    @OneToOne(mappedBy = "book", orphanRemoval = true)
-    private Attachment attachment;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "title_attachment")
+    private Attachment titleAttachment;
+
+    @OneToMany(mappedBy = "book", orphanRemoval = true)
+    private List<Attachment> attachments = new LinkedList<>();
 
     @ManyToMany(mappedBy = "bookmarks")
     private Set<User> usersBookmarks;
