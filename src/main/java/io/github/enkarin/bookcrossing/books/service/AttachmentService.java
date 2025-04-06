@@ -2,7 +2,6 @@ package io.github.enkarin.bookcrossing.books.service;
 
 import io.github.enkarin.bookcrossing.books.dto.AttachmentDto;
 import io.github.enkarin.bookcrossing.books.dto.AttachmentMultipartDto;
-import io.github.enkarin.bookcrossing.books.dto.BookModelDto;
 import io.github.enkarin.bookcrossing.books.enums.FormatType;
 import io.github.enkarin.bookcrossing.books.exceptions.NoAccessToAttachmentException;
 import io.github.enkarin.bookcrossing.books.model.Attachment;
@@ -38,20 +37,18 @@ public class AttachmentService {
     }
 
     @Transactional
-    public BookModelDto saveTitleAttachment(final AttachmentMultipartDto attachmentMultipartDto, final String login) {
+    public void saveTitleAttachment(final AttachmentMultipartDto attachmentMultipartDto, final String login) {
         final Book book = bookRepository.findBooksByOwnerLoginAndBookId(login, attachmentMultipartDto.getBookId()).orElseThrow(BookNotFoundException::new);
         book.setTitleAttachment(saveAttachment(book, attachmentMultipartDto));
-        return BookModelDto.fromBook(book);
     }
 
     @Transactional
-    public BookModelDto saveAdditionalAttachment(final AttachmentMultipartDto attachmentMultipartDto, final String login) {
+    public void saveAdditionalAttachment(final AttachmentMultipartDto attachmentMultipartDto, final String login) {
         final Book book = bookRepository.findBooksByOwnerLoginAndBookId(login, attachmentMultipartDto.getBookId()).orElseThrow(BookNotFoundException::new);
         final Attachment attachment = saveAttachment(book, attachmentMultipartDto);
         if (isNull(book.getTitleAttachment())) {
             book.setTitleAttachment(attachment);
         }
-        return BookModelDto.fromBook(book);
     }
 
     private Attachment saveAttachment(final Book book, final AttachmentMultipartDto attachmentMultipartDto) {
@@ -70,16 +67,14 @@ public class AttachmentService {
 
     private Attachment createOrUpdateAttachment(final Book book, final MultipartFile multipartFile, final String expansion) {
         try {
-            Attachment attachment = new Attachment();
+            final Attachment attachment = new Attachment();
             attachment.setBook(book);
             attachment.setOriginalImageExpansion(expansion);
             final BufferedImage image = ImageIO.read(multipartFile.getInputStream());
             attachment.setOriginalImage(multipartFile.getBytes());
             attachment.setListImage(compressImage(image, 200, 300));
             attachment.setThumbImage(compressImage(image, 70, 70));
-            attachment = attachRepository.save(attachment);
-            book.getAttachments().add(attachment);
-            return attachment;
+            return attachRepository.save(attachment);
         } catch (IOException e) {
             throw new UnsupportedImageTypeException(ErrorMessage.ERROR_2008.getCode(), e);
         }
