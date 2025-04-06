@@ -47,8 +47,9 @@ public class AttachmentService {
     @Transactional
     public BookModelDto saveAdditionalAttachment(final AttachmentMultipartDto attachmentMultipartDto, final String login) {
         final Book book = bookRepository.findBooksByOwnerLoginAndBookId(login, attachmentMultipartDto.getBookId()).orElseThrow(BookNotFoundException::new);
+        final Attachment attachment = saveAttachment(book, attachmentMultipartDto);
         if (isNull(book.getTitleAttachment())) {
-            book.setTitleAttachment(saveAttachment(book, attachmentMultipartDto));
+            book.setTitleAttachment(attachment);
         }
         return BookModelDto.fromBook(book);
     }

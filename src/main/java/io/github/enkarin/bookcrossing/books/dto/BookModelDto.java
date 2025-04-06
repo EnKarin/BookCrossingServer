@@ -66,7 +66,8 @@ public class BookModelDto extends BookDto {
             book.getYear()),
             book.getBookId(),
             titleAttachmentId.orElse(null),
-            titleAttachmentId.map(titleId -> book.getAttachments().stream().map(Attachment::getAttachId).filter(id -> !id.equals(titleId)).toList()).orElse(List.of()),
+            titleAttachmentId.map(titleId -> book.getAttachments().stream().map(Attachment::getAttachId).filter(id -> !id.equals(titleId)).toList())
+                .orElseGet(() -> book.getAttachments().stream().map(Attachment::getAttachId).toList()),
             book.getOwner().getCity());
     }
 }
