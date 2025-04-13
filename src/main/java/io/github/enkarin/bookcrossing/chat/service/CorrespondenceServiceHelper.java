@@ -30,7 +30,7 @@ public class CorrespondenceServiceHelper {
         final var response = messages.stream()
             .filter(rules)
             .map(m -> MessageDto.fromMessageAndZone(m, zone))
-            .sorted(Comparator.comparing(MessageDto::getDepartureDate))
+            .sorted(Comparator.comparing(MessageDto::getDepartureDate).reversed())
             .skip((long) pageNumber * pageSize)
             .limit(pageSize)
             .toList();
