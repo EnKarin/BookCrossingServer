@@ -1,13 +1,13 @@
 package io.github.enkarin.bookcrossing.chat.controllers;
 
-import io.github.enkarin.bookcrossing.constant.ErrorMessage;
-import io.github.enkarin.bookcrossing.support.BookCrossingBaseTests;
 import io.github.enkarin.bookcrossing.chat.dto.MessageDto;
 import io.github.enkarin.bookcrossing.chat.dto.MessagePutRequest;
 import io.github.enkarin.bookcrossing.chat.dto.MessageRequest;
 import io.github.enkarin.bookcrossing.chat.dto.UsersCorrKeyDto;
 import io.github.enkarin.bookcrossing.chat.service.CorrespondenceService;
 import io.github.enkarin.bookcrossing.chat.service.MessageService;
+import io.github.enkarin.bookcrossing.constant.ErrorMessage;
+import io.github.enkarin.bookcrossing.support.BookCrossingBaseTests;
 import io.github.enkarin.bookcrossing.support.TestDataProvider;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -158,10 +158,8 @@ class MessageControllerTest extends BookCrossingBaseTests {
 
         execute(messageId, 200);
 
-        assertThat(correspondenceService.getChat(key.getFirstUserId(), key.getSecondUserId(), 0, userBot.getLogin()))
-            .isEmpty();
-        assertThat(correspondenceService.getChat(key.getFirstUserId(), key.getSecondUserId(), 0, userAlex.getLogin()))
-            .isEmpty();
+        assertThat(correspondenceService.getChat(key.getFirstUserId(), key.getSecondUserId(), 0, 10, 0, userBot.getLogin())).isEmpty();
+        assertThat(correspondenceService.getChat(key.getFirstUserId(), key.getSecondUserId(), 0, 10, 0, userAlex.getLogin())).isEmpty();
     }
 
     @Test
@@ -201,10 +199,8 @@ class MessageControllerTest extends BookCrossingBaseTests {
 
         executeDeleteForMe(messageId, generateAccessToken(TestDataProvider.buildAuthBot()), 200);
 
-        assertThat(correspondenceService.getChat(key.getFirstUserId(), key.getSecondUserId(), 0, userBot.getLogin()))
-            .isEmpty();
-        assertThat(correspondenceService.getChat(key.getFirstUserId(), key.getSecondUserId(), 0, userAlex.getLogin()))
-            .hasSize(1);
+        assertThat(correspondenceService.getChat(key.getFirstUserId(), key.getSecondUserId(), 0, 10, 0, userBot.getLogin())).isEmpty();
+        assertThat(correspondenceService.getChat(key.getFirstUserId(), key.getSecondUserId(), 0, 10, 0, userAlex.getLogin())).hasSize(1);
     }
 
     @Test
@@ -219,10 +215,8 @@ class MessageControllerTest extends BookCrossingBaseTests {
 
         executeDeleteForMe(messageId, generateAccessToken(TestDataProvider.buildAuthAlex()), 200);
 
-        assertThat(correspondenceService.getChat(key.getFirstUserId(), key.getSecondUserId(), 0, userBot.getLogin()))
-            .hasSize(1);
-        assertThat(correspondenceService.getChat(key.getFirstUserId(), key.getSecondUserId(), 0, userAlex.getLogin()))
-            .isEmpty();
+        assertThat(correspondenceService.getChat(key.getFirstUserId(), key.getSecondUserId(), 0, 10, 0, userBot.getLogin())).hasSize(1);
+        assertThat(correspondenceService.getChat(key.getFirstUserId(), key.getSecondUserId(), 0, 10, 0, userAlex.getLogin())).isEmpty();
     }
 
     @Test

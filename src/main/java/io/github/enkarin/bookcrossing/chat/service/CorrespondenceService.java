@@ -60,7 +60,7 @@ public class CorrespondenceService {
         correspondenceRepository.delete(correspondence);
     }
 
-    public List<MessageDto> getChat(final int firstUserId, final int secondUserId, final int zone, final String login) {
+    public List<MessageDto> getChat(final int firstUserId, final int secondUserId, final int pageNumber, final int pageSize, final int zone, final String login) {
         final User user = userRepository.findByLogin(login).orElseThrow();
         final User fUser = userRepository.findById(firstUserId).orElseThrow(UserNotFoundException::new);
         final User sUser = userRepository.findById(secondUserId).orElseThrow(UserNotFoundException::new);
@@ -69,9 +69,9 @@ public class CorrespondenceService {
         usersCorrKey.setSecondUser(sUser);
         final Correspondence correspondence = correspondenceRepository.findById(usersCorrKey).orElseThrow(ChatNotFoundException::new);
         if (user.equals(fUser)) {
-            return correspondenceServiceHelper.getMessages(Message::isShownFirstUser, correspondence, zone, user);
+            return correspondenceServiceHelper.getMessages(Message::isShownFirstUser, correspondence, pageNumber, pageSize, zone, user);
         } else if (user.equals(sUser)) {
-            return correspondenceServiceHelper.getMessages(Message::isShownSecondUser, correspondence, zone, user);
+            return correspondenceServiceHelper.getMessages(Message::isShownSecondUser, correspondence, pageNumber, pageSize, zone, user);
         }
         throw new NoAccessToChatException();
     }
