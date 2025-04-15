@@ -1,7 +1,6 @@
 package io.github.enkarin.bookcrossing.books.dto;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import io.github.enkarin.bookcrossing.books.enums.Status;
 import io.github.enkarin.bookcrossing.books.model.Book;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.EqualsAndHashCode;

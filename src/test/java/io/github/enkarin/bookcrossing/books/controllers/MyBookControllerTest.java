@@ -97,8 +97,8 @@ class MyBookControllerTest extends BookCrossingBaseTests {
             .exchange()
             .expectStatus().isOk()
             .expectBodyList(Status.class)
-            .hasSize(2)
-            .contains(Status.GIVE, Status.EXCHANGES);
+            .hasSize(2) // явно указываем ожидаемое количество статусов
+            .contains(Status.GIVE, Status.EXCHANGES); // явно перечисляем ожидаемые статусы
     }
 
     @Test

@@ -45,6 +45,7 @@ public class BookService {
         final Book book = modelMapper.map(bookDTO, Book.class);
         book.setOwner(user);
         book.setGenre(genreRepository.findById(bookDTO.getGenre()).orElseThrow(GenreNotFoundException::new));
+        book.setStatus(bookDTO.getStatusId() == 0 ? Status.EXCHANGES : Status.getById(bookDTO.getStatusId()));
         return BookModelDto.fromBook(bookRepository.save(book));
     }
 

@@ -71,7 +71,7 @@ public class TestDataProvider {
             .title("Dorian")
             .genre(0)
             .year(2000)
-            .statusId(1)
+            .statusId(2)
             .build();
     }
 
@@ -82,6 +82,7 @@ public class TestDataProvider {
             .genre(3)
             .author("author2")
             .year(2020)
+            .statusId(2)
             .build();
     }
 
@@ -91,6 +92,7 @@ public class TestDataProvider {
             .title("Wolves")
             .genre(2)
             .year(2000)
+            .statusId(2)
             .build();
     }
 
