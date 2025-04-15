@@ -1,6 +1,7 @@
 package io.github.enkarin.bookcrossing.books.enums;
 
 import io.github.enkarin.bookcrossing.books.exceptions.StatusNotFoundException;
+import io.github.enkarin.bookcrossing.constant.ErrorMessage;
 import lombok.Getter;
 
 @Getter

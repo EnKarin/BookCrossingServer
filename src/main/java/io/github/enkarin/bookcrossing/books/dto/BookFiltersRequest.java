@@ -45,6 +45,6 @@ public class BookFiltersRequest {
     @JsonCreator
     public static BookFiltersRequest create(final String authorOrTitle, final String city, final String title, final String author, final List<Integer> genre,
                                             final String publishingHouse, final int year, final int pageNumber, final int pageSize) {
-        return new BookFiltersRequest(authorOrTitle, city, title, author, genre, publishingHouse, year, pageNumber, pageSize);
+             return new BookFiltersRequest(authorOrTitle, city, title, author, genre, publishingHouse, year, pageNumber, pageSize);
     }
 }

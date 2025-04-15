@@ -97,8 +97,8 @@ class MyBookControllerTest extends BookCrossingBaseTests {
             .exchange()
             .expectStatus().isOk()
             .expectBodyList(Status.class)
-            .hasSize(Status.values().length)
-            .contains(Status.values());
+            .hasSize(2)
+            .contains(Status.GIVE, Status.EXCHANGES);
     }
 
     @Test

@@ -60,7 +60,7 @@ public class BookModelDto extends BookDto {
                 book.getGenre().getId(),
                 book.getPublishingHouse(),
                 book.getYear(),
-                Status.EXCHANGES.getId()),
+                book.getStatus().getId()),
                 book.getBookId(),
                 AttachmentDto.fromAttachment(book.getAttachment(), ORIGIN),
                 book.getOwner().getCity()
