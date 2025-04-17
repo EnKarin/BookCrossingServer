@@ -37,6 +37,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.constraints.NotBlank;
 import java.security.Principal;
+import java.util.List;
 import java.util.Map;
 
 import static io.github.enkarin.bookcrossing.utils.Util.createErrorMap;
@@ -117,11 +118,13 @@ public class CorrespondenceController {
         @Parameter(in = ParameterIn.HEADER, name = FIRST_USER_ID, description = "Идентификатор первого пользователя"),
         @Parameter(in = ParameterIn.HEADER, name = SECOND_USER_ID, description = "Идентификатор второго пользователя")
     })
-    public ResponseEntity<Object[]> getCorrespondence(@RequestHeader(FIRST_USER_ID) @NotBlank(message = "3014") final String firstUserId,
-                                                      @RequestHeader(SECOND_USER_ID) @NotBlank(message = "3015") final String secondUserId,
-                                                      @RequestParam final int zone,
-                                                      final Principal principal) {
-        return ResponseEntity.ok(correspondenceService.getChat(Integer.parseInt(firstUserId), Integer.parseInt(secondUserId), zone, principal.getName()).toArray());
+    public ResponseEntity<List<MessageDto>> getCorrespondence(@RequestHeader(FIRST_USER_ID) @NotBlank(message = "3014") final String firstUserId,
+                                                              @RequestHeader(SECOND_USER_ID) @NotBlank(message = "3015") final String secondUserId,
+                                                              @RequestParam final int pageNumber,
+                                                              @RequestParam final int pageSize,
+                                                              @RequestParam final int zone,
+                                                              final Principal principal) {
+        return ResponseEntity.ok(correspondenceService.getChat(Integer.parseInt(firstUserId), Integer.parseInt(secondUserId), pageNumber, pageSize, zone, principal.getName()));
     }
 
     @Operation(summary = "Поиск всех чатов пользователя", description = "Позволяет получить краткую информацию о всех чатах пользователя")

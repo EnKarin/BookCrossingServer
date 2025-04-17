@@ -17,17 +17,22 @@ import java.util.function.Predicate;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class CorrespondenceServiceHelper {
-
     private final MessageRepository messageRepository;
 
     @Transactional
-    public List<MessageDto> getMessages(final Predicate<Message> rules, final Correspondence correspondence,
-                                        final int zone, final User user) {
+    public List<MessageDto> getMessages(final Predicate<Message> rules,
+                                        final Correspondence correspondence,
+                                        final int pageNumber,
+                                        final int pageSize,
+                                        final int zone,
+                                        final User user) {
         final var messages = correspondence.getMessage();
         final var response = messages.stream()
             .filter(rules)
             .map(m -> MessageDto.fromMessageAndZone(m, zone))
-            .sorted(Comparator.comparing(MessageDto::getDepartureDate))
+            .sorted(Comparator.comparing(MessageDto::getDepartureDate).reversed())
+            .skip((long) pageNumber * pageSize)
+            .limit(pageSize)
             .toList();
         messages.stream()
             .filter(m -> !user.equals(m.getSender()))

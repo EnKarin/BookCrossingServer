@@ -238,6 +238,8 @@ class CorrespondenceControllerTest extends BookCrossingBaseTests {
             .uri(uriBuilder -> uriBuilder
                 .pathSegment("user", "correspondence")
                 .queryParam("zone", 0)
+                .queryParam("pageNumber", 0)
+                .queryParam("pageSize", 20)
                 .build())
             .headers(headers -> {
                 headers.setBearerAuth(generateAccessToken(TestDataProvider.buildAuthBot()));
@@ -252,6 +254,46 @@ class CorrespondenceControllerTest extends BookCrossingBaseTests {
         assertThat(response)
             .isNotNull()
             .containsOnly(TestDataProvider.buildMessageDto(userBot.getUserId(), message.getMessageId(), message.getDepartureDate()));
+    }
+
+    @Test
+    @SneakyThrows
+    void getCorrespondenceShouldWorkWithSecondUserMessageWithPagination() {
+        final var userBot = createAndSaveUser(TestDataProvider.buildBot());
+        enabledUser(userBot.getUserId());
+        final var userAlexId = createAndSaveUser(TestDataProvider.buildAlex()).getUserId();
+        enabledUser(userAlexId);
+        final var key = correspondenceService.createChat(userAlexId, userBot.getLogin());
+        messageService.sendMessage(MessageRequest.create(key, "Hi"), userBot.getLogin());
+        Thread.sleep(1000);
+        messageService.sendMessage(MessageRequest.create(key, "Hi1"), userBot.getLogin());
+        Thread.sleep(1000);
+        messageService.sendMessage(MessageRequest.create(key, "Hi2"), userBot.getLogin());
+        Thread.sleep(1000);
+        messageService.sendMessage(MessageRequest.create(key, "Hi3"), userBot.getLogin());
+
+        final var response = webClient.get()
+            .uri(uriBuilder -> uriBuilder
+                .pathSegment("user", "correspondence")
+                .queryParam("zone", 0)
+                .queryParam("pageNumber", 0)
+                .queryParam("pageSize", 2)
+                .build())
+            .headers(headers -> {
+                headers.setBearerAuth(generateAccessToken(TestDataProvider.buildAuthBot()));
+                headers.set(FIRST_USER_ID, String.valueOf(userBot.getUserId()));
+                headers.set(SECOND_USER_ID, String.valueOf(userAlexId));
+            })
+            .exchange()
+            .expectStatus().isEqualTo(200)
+            .expectBodyList(MessageDto.class)
+            .returnResult().getResponseBody();
+
+        assertThat(response).satisfies(messagesDto -> {
+            assertThat(messagesDto).extracting(MessageDto::isDeclaim).containsOnly(false);
+            assertThat(messagesDto).extracting(MessageDto::getText).containsOnly("Hi3", "Hi2");
+            assertThat(messagesDto).extracting(MessageDto::getSender).containsOnly(userBot.getUserId());
+        });
     }
 
     @Test
@@ -368,6 +410,8 @@ class CorrespondenceControllerTest extends BookCrossingBaseTests {
             .uri(uriBuilder -> uriBuilder
                 .pathSegment("user", "correspondence")
                 .queryParam("zone", 0)
+                .queryParam("pageNumber", 0)
+                .queryParam("pageSize", 10)
                 .build())
             .headers(headers -> {
                 headers.setBearerAuth(generateAccessToken(TestDataProvider.buildAuthBot()));

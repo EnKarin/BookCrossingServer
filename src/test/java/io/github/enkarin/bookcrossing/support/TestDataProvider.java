@@ -55,7 +55,7 @@ public class TestDataProvider {
 
     @Nonnull
     public static BookModelDto.BookModelDtoBuilder<?, ?> prepareBookModel() {
-        return BookModelDto.builder().attachmentId(null);
+        return BookModelDto.builder().titleAttachmentId(null);
     }
 
     @Nonnull
@@ -108,6 +108,7 @@ public class TestDataProvider {
             .author(bookDto.getAuthor())
             .city(ownerCity)
             .statusId(2)
+            .additionalAttachmentIdList(List.of())
             .build();
     }
 
@@ -123,6 +124,7 @@ public class TestDataProvider {
             .author(bookDto.getAuthor())
             .city(ownerCity)
             .statusId(2)
+            .additionalAttachmentIdList(List.of())
             .build();
     }
 
@@ -138,6 +140,7 @@ public class TestDataProvider {
             .author(bookDto.getAuthor())
             .city(ownerCity)
             .statusId(2)
+            .additionalAttachmentIdList(List.of())
             .build();
     }
 
