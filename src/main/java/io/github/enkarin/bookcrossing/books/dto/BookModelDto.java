@@ -59,17 +59,6 @@ public class BookModelDto extends BookDto {
     }
 
     public static BookModelDto fromBook(final Book book) {
-        return new BookModelDto(create(
-                book.getTitle(),
-                book.getAuthor(),
-                book.getGenre().getId(),
-                book.getPublishingHouse(),
-                book.getYear(),
-                book.getStatus().getId()),
-                book.getBookId(),
-                AttachmentDto.fromAttachment(book.getAttachment(), ORIGIN),
-                book.getOwner().getCity()
-        );
         final Optional<Integer> titleAttachmentId = Optional.ofNullable(book.getTitleAttachment()).map(Attachment::getAttachId);
         return new BookModelDto(create(book.getTitle(),
             book.getAuthor(),
