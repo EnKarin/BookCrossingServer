@@ -32,7 +32,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.security.Principal;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -118,7 +117,6 @@ public class MyBookController {
         return ResponseEntity.ok(bookService.findById(bookDto.getBookId()));
     }
 
-
     @Operation(
         summary = "Получение списка статусов книги",
         description = "Возвращает список всех возможных статусов книги"
@@ -129,7 +127,7 @@ public class MyBookController {
     })
     @GetMapping("/status")
     public ResponseEntity<List<Status>> getStatuses() {
-        return ResponseEntity.ok(Arrays.stream(Status.values()).toList());
+        return ResponseEntity.ok(List.of(Status.values()));
     }
 
     @Operation(

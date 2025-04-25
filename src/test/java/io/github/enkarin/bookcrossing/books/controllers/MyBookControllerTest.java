@@ -96,9 +96,14 @@ class MyBookControllerTest extends BookCrossingBaseTests {
             .headers(headers -> headers.setBearerAuth(accessToken))
             .exchange()
             .expectStatus().isOk()
-            .expectBodyList(Status.class)
-            .hasSize(2) // явно указываем ожидаемое количество статусов
-            .contains(Status.GIVE, Status.EXCHANGES); // явно перечисляем ожидаемые статусы
+            .expectBody()
+            .jsonPath("$.[1].id").isEqualTo(Status.EXCHANGES.getId())
+            .jsonPath("$.[1].ru").isEqualTo(Status.EXCHANGES.getRu())
+            .jsonPath("$.[1].en").isEqualTo(Status.EXCHANGES.getEn())
+            .jsonPath("$.[0].id").isEqualTo(Status.GIVE.getId())
+            .jsonPath("$.[0].ru").isEqualTo(Status.GIVE.getRu())
+            .jsonPath("$.[0].en").isEqualTo(Status.GIVE.getEn());
+
     }
 
     @Test

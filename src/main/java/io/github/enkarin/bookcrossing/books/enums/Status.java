@@ -1,9 +1,11 @@
 package io.github.enkarin.bookcrossing.books.enums;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.github.enkarin.bookcrossing.books.exceptions.StatusNotFoundException;
 import lombok.Getter;
 
 @Getter
+@JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum Status {
     GIVE(1, "Отдает", "Gives away"),
     EXCHANGES(2, "Отдает", "Exchanges");
