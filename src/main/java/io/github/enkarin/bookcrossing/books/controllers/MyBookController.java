@@ -3,6 +3,7 @@ package io.github.enkarin.bookcrossing.books.controllers;
 import io.github.enkarin.bookcrossing.books.dto.BookDto;
 import io.github.enkarin.bookcrossing.books.dto.BookModelDto;
 import io.github.enkarin.bookcrossing.books.dto.ChangeBookDto;
+import io.github.enkarin.bookcrossing.books.enums.Status;
 import io.github.enkarin.bookcrossing.books.service.BookService;
 import io.github.enkarin.bookcrossing.constant.Constant;
 import io.github.enkarin.bookcrossing.exception.BindingErrorsException;
@@ -110,7 +111,23 @@ public class MyBookController {
         if (nonNull(bookDto.getYear())) {
             bookService.changeBookYear(principal.getName(), bookDto.getBookId(), bookDto.getYear());
         }
+        if (nonNull(bookDto.getStatusId())) {
+            bookService.changeBookStatus(principal.getName(), bookDto.getBookId(), bookDto.getStatusId());
+        }
         return ResponseEntity.ok(bookService.findById(bookDto.getBookId()));
+    }
+
+    @Operation(
+        summary = "Получение списка статусов книги",
+        description = "Возвращает список всех возможных статусов книги"
+    )
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Список всех статусов книги",
+            content = {@Content(mediaType = Constant.MEDIA_TYPE, array = @ArraySchema(schema = @Schema(implementation = Status.class)))})
+    })
+    @GetMapping("/status")
+    public ResponseEntity<List<Status>> getStatuses() {
+        return ResponseEntity.ok(List.of(Status.values()));
     }
 
     @Operation(

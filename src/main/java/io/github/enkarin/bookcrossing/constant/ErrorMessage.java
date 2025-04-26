@@ -26,6 +26,7 @@ public enum ErrorMessage {
     ERROR_1014("1014", "Сообщения не существует", "Message not exist"),
     ERROR_1015("1015", "Пользователь не является отправителем", "User is not the sender"),
     ERROR_1016("1016", "Вложение не найдено", "Attachment not found"),
+    ERROR_1017("1017", "Статус не был найден", "Status not found"),
 
     //tech ex
     ERROR_2002("2002", "Токен обновления истек", "Refresh token has expired"),

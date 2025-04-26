@@ -3,6 +3,7 @@ package io.github.enkarin.bookcrossing.books.service;
 import io.github.enkarin.bookcrossing.books.dto.BookDto;
 import io.github.enkarin.bookcrossing.books.dto.BookFiltersRequest;
 import io.github.enkarin.bookcrossing.books.dto.BookModelDto;
+import io.github.enkarin.bookcrossing.books.enums.Status;
 import io.github.enkarin.bookcrossing.books.model.Book;
 import io.github.enkarin.bookcrossing.books.repository.BookRepository;
 import io.github.enkarin.bookcrossing.books.repository.GenreRepository;
@@ -44,6 +45,7 @@ public class BookService {
         final Book book = modelMapper.map(bookDTO, Book.class);
         book.setOwner(user);
         book.setGenre(genreRepository.findById(bookDTO.getGenre()).orElseThrow(GenreNotFoundException::new));
+        book.setStatus(bookDTO.getStatusId() == 0 ? Status.EXCHANGES : Status.getById(bookDTO.getStatusId()));
         return BookModelDto.fromBook(bookRepository.save(book));
     }
 
@@ -153,7 +155,8 @@ public class BookService {
 
     @Transactional
     public void changeBookGenre(final String login, final int bookId, final int genre) {
-        bookRepository.findBooksByOwnerLoginAndBookId(login, bookId).ifPresentOrElse(book -> book.setGenre(genreRepository.findById(genre).orElseThrow(GenreNotFoundException::new)),
+        bookRepository.findBooksByOwnerLoginAndBookId(login, bookId)
+            .ifPresentOrElse(book -> book.setGenre(genreRepository.findById(genre).orElseThrow(GenreNotFoundException::new)),
             () -> {
                 throw new BookNotFoundException();
             });
@@ -169,6 +172,13 @@ public class BookService {
     @Transactional
     public void changeBookYear(final String login, final int bookId, final int year) {
         bookRepository.findBooksByOwnerLoginAndBookId(login, bookId).ifPresentOrElse(book -> book.setYear(year), () -> {
+            throw new BookNotFoundException();
+        });
+    }
+
+    @Transactional
+    public void changeBookStatus(final String login, final int bookId, final int statusId) {
+        bookRepository.findBooksByOwnerLoginAndBookId(login, bookId).ifPresentOrElse(book -> book.setStatus(Status.getById(statusId)), () -> {
             throw new BookNotFoundException();
         });
     }

@@ -33,7 +33,7 @@ public class BookModelDto extends BookDto {
     protected final String city;
 
     private BookModelDto(final BookDto bookDto, final int bookId, final Integer titleAttachment, final List<Integer> additionalAttachmentIdList, final String city) {
-        super(bookDto.title, bookDto.author, bookDto.genre, bookDto.publishingHouse, bookDto.year);
+        super(bookDto.title, bookDto.author, bookDto.genre, bookDto.publishingHouse, bookDto.year, bookDto.statusId);
         this.bookId = bookId;
         this.city = city;
         this.titleAttachmentId = titleAttachment;
@@ -47,10 +47,11 @@ public class BookModelDto extends BookDto {
                          final String publishingHouse,
                          final int year,
                          final int bookId,
+                         final int statusId,
                          final Integer attachment,
                          final List<Integer> additionalAttachmentIdList,
                          final String city) {
-        super(title, author, genre, publishingHouse, year);
+        super(title, author, genre, publishingHouse, year, statusId);
         this.bookId = bookId;
         this.city = city;
         this.titleAttachmentId = attachment;
@@ -63,7 +64,8 @@ public class BookModelDto extends BookDto {
             book.getAuthor(),
             book.getGenre().getId(),
             book.getPublishingHouse(),
-            book.getYear()),
+            book.getYear(),
+            book.getStatus().getId()),
             book.getBookId(),
             titleAttachmentId.orElse(null),
             titleAttachmentId.map(titleId -> book.getAttachments().stream().map(Attachment::getAttachId).filter(id -> !id.equals(titleId)).toList())

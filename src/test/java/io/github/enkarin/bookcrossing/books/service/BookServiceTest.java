@@ -3,6 +3,7 @@ package io.github.enkarin.bookcrossing.books.service;
 import io.github.enkarin.bookcrossing.books.dto.BookDto;
 import io.github.enkarin.bookcrossing.books.dto.BookFiltersRequest;
 import io.github.enkarin.bookcrossing.books.dto.BookModelDto;
+import io.github.enkarin.bookcrossing.books.enums.Status;
 import io.github.enkarin.bookcrossing.exception.BookNotFoundException;
 import io.github.enkarin.bookcrossing.exception.GenreNotFoundException;
 import io.github.enkarin.bookcrossing.exception.UserNotFoundException;
@@ -411,6 +412,28 @@ class BookServiceTest extends BookCrossingBaseTests {
         bookService.changeBookYear(user.getLogin(), bookId, 100);
 
         assertThat(bookService.findById(bookId).getYear()).isEqualTo(100);
+    }
+
+    @Test
+    void putBookStatus() {
+        final UserDto user = createAndSaveUser(TestDataProvider.buildAlex());
+        final int bookId = bookService.saveBook(TestDataProvider.buildDorian(), user.getLogin()).getBookId();
+
+        bookService.changeBookStatus(user.getLogin(), bookId, Status.EXCHANGES.getId());
+
+        assertThat(bookService.findById(bookId).getStatusId()).isEqualTo(Status.EXCHANGES.getId());
+    }
+
+    @Test
+    void changeBookStatusShouldThrowBookNotFoundExceptionWhenNotOwner() {
+        final UserDto owner = createAndSaveUser(TestDataProvider.buildAlex());
+        final UserDto notOwner = createAndSaveUser(TestDataProvider.buildMax());
+        final int bookId = bookService.saveBook(TestDataProvider.buildDorian(), owner.getLogin()).getBookId();
+        final int statusId = Status.EXCHANGES.getId();
+
+        assertThatThrownBy(() -> bookService.changeBookStatus(notOwner.getLogin(), bookId, statusId))
+            .isInstanceOf(BookNotFoundException.class)
+            .hasMessage("Книга не найдена");
     }
 
     @Test

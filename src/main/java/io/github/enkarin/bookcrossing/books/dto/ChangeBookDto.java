@@ -29,4 +29,7 @@ public class ChangeBookDto {
 
     @Schema(description = "Год издания", example = "2004")
     private Integer year;
+
+    @Schema(description = "Статус", example = "Отдает")
+    private Integer statusId;
 }

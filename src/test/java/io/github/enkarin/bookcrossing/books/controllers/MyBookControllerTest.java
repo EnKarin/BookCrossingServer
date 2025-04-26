@@ -3,6 +3,7 @@ package io.github.enkarin.bookcrossing.books.controllers;
 import io.github.enkarin.bookcrossing.books.dto.BookDto;
 import io.github.enkarin.bookcrossing.books.dto.BookModelDto;
 import io.github.enkarin.bookcrossing.books.dto.ChangeBookDto;
+import io.github.enkarin.bookcrossing.books.enums.Status;
 import io.github.enkarin.bookcrossing.books.service.BookService;
 import io.github.enkarin.bookcrossing.constant.ErrorMessage;
 import io.github.enkarin.bookcrossing.registration.dto.UserRegistrationDto;
@@ -85,6 +86,27 @@ class MyBookControllerTest extends BookCrossingBaseTests {
     }
 
     @Test
+    void getStatusesTest() {
+        final UserDto user = createAndSaveUser(TestDataProvider.buildBot());
+        enabledUser(user.getUserId());
+        final String accessToken = generateAccessToken(TestDataProvider.buildAuthBot());
+
+        webClient.get()
+            .uri("/user/myBook/status")
+            .headers(headers -> headers.setBearerAuth(accessToken))
+            .exchange()
+            .expectStatus().isOk()
+            .expectBody()
+            .jsonPath("$.[1].id").isEqualTo(Status.EXCHANGES.getId())
+            .jsonPath("$.[1].ru").isEqualTo(Status.EXCHANGES.getRu())
+            .jsonPath("$.[1].en").isEqualTo(Status.EXCHANGES.getEn())
+            .jsonPath("$.[0].id").isEqualTo(Status.GIVE.getId())
+            .jsonPath("$.[0].ru").isEqualTo(Status.GIVE.getRu())
+            .jsonPath("$.[0].en").isEqualTo(Status.GIVE.getEn());
+
+    }
+
+    @Test
     void bookEmptyListTest() {
         final List<UserDto> users = TestDataProvider.buildUsers().stream()
             .map(this::createAndSaveUser)
@@ -152,9 +174,17 @@ class MyBookControllerTest extends BookCrossingBaseTests {
         final List<Integer> booksId = createAndSaveBooks(user.getLogin());
 
         final var result = webClient.put()
-            .uri(uriBuilder -> uriBuilder.pathSegment("user", "myBook").build())
+            .uri("/user/myBook")
             .headers(headers -> headers.setBearerAuth(generateAccessToken(TestDataProvider.buildAuthAlex())))
-            .bodyValue(ChangeBookDto.builder().bookId(booksId.get(0)).year(-3645).author("Yog Sotott").title("New name").genre(31).publishingHouse("New publish house").build())
+            .bodyValue(ChangeBookDto.builder()
+                .bookId(booksId.get(0))
+                .year(-3645)
+                .author("Yog Sotott")
+                .title("New name")
+                .genre(31)
+                .publishingHouse("New publish house")
+                .statusId(Status.EXCHANGES.getId())
+                .build())
             .exchange()
             .expectStatus().isOk()
             .expectBody(BookModelDto.class).returnResult().getResponseBody();
@@ -165,6 +195,7 @@ class MyBookControllerTest extends BookCrossingBaseTests {
             assertThat(r.getTitle()).isEqualTo("New name");
             assertThat(r.getPublishingHouse()).isEqualTo("New publish house");
             assertThat(r.getAuthor()).isEqualTo("Yog Sotott");
+            assertThat(r.getStatusId()).isEqualTo(Status.EXCHANGES.getId());
         });
     }
 
