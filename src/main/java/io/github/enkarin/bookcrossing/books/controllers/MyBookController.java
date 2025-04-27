@@ -38,13 +38,8 @@ import java.util.Map;
 
 import static io.github.enkarin.bookcrossing.constant.ErrorMessage.ERROR_2007;
 import static io.github.enkarin.bookcrossing.utils.Util.createErrorMap;
-import static java.util.Objects.nonNull;
 
-@Tag(
-    name = "Раздел работы с книгами",
-    description = "Позволяет пользователю управлять своими книгами"
-)
-
+@Tag(name = "Раздел работы с книгами", description = "Позволяет пользователю управлять своими книгами")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/user/myBook")
@@ -96,25 +91,7 @@ public class MyBookController {
     })
     @PutMapping
     public ResponseEntity<BookModelDto> putBook(@RequestBody final ChangeBookDto bookDto, final Principal principal) {
-        if (nonNull(bookDto.getTitle()) && !bookDto.getTitle().isBlank()) {
-            bookService.changeBookTitle(principal.getName(), bookDto.getBookId(), bookDto.getTitle());
-        }
-        if (nonNull(bookDto.getGenre())) {
-            bookService.changeBookGenre(principal.getName(), bookDto.getBookId(), bookDto.getGenre());
-        }
-        if (nonNull(bookDto.getAuthor()) && !bookDto.getAuthor().isBlank()) {
-            bookService.changeBookAuthor(principal.getName(), bookDto.getBookId(), bookDto.getAuthor());
-        }
-        if (nonNull(bookDto.getPublishingHouse())) {
-            bookService.changeBookPublishingHouse(principal.getName(), bookDto.getBookId(), bookDto.getPublishingHouse());
-        }
-        if (nonNull(bookDto.getYear())) {
-            bookService.changeBookYear(principal.getName(), bookDto.getBookId(), bookDto.getYear());
-        }
-        if (nonNull(bookDto.getStatusId())) {
-            bookService.changeBookStatus(principal.getName(), bookDto.getBookId(), bookDto.getStatusId());
-        }
-        return ResponseEntity.ok(bookService.findById(bookDto.getBookId()));
+        return ResponseEntity.ok(bookService.changeBook(principal.getName(), bookDto));
     }
 
     @Operation(
