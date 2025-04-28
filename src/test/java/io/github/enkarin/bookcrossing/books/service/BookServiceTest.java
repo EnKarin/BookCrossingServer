@@ -3,6 +3,7 @@ package io.github.enkarin.bookcrossing.books.service;
 import io.github.enkarin.bookcrossing.books.dto.BookDto;
 import io.github.enkarin.bookcrossing.books.dto.BookFiltersRequest;
 import io.github.enkarin.bookcrossing.books.dto.BookModelDto;
+import io.github.enkarin.bookcrossing.books.dto.ChangeBookDto;
 import io.github.enkarin.bookcrossing.books.enums.Status;
 import io.github.enkarin.bookcrossing.exception.BookNotFoundException;
 import io.github.enkarin.bookcrossing.exception.GenreNotFoundException;
@@ -348,127 +349,147 @@ class BookServiceTest extends BookCrossingBaseTests {
     }
 
     @Test
-    void putBookTitle() {
+    void changeBookShouldUpdateTitle() {
         final UserDto user = createAndSaveUser(TestDataProvider.buildAlex());
         final int bookId = bookService.saveBook(TestDataProvider.buildDorian(), user.getLogin()).getBookId();
+        final ChangeBookDto changes = ChangeBookDto.builder()
+            .bookId(bookId)
+            .title("New Title")
+            .build();
 
-        bookService.changeBookTitle(user.getLogin(), bookId, "Redacted");
+        final BookModelDto updatedBook = bookService.changeBook(user.getLogin(), changes);
 
-        assertThat(bookService.findById(bookId).getTitle()).isEqualTo("Redacted");
+        assertThat(updatedBook.getTitle()).isEqualTo("New Title");
     }
 
     @Test
-    void putBookTitleFromNotOwnerMustThrowException() {
+    void changeBookShouldUpdateAuthor() {
         final UserDto user = createAndSaveUser(TestDataProvider.buildAlex());
-        final UserDto max = createAndSaveUser(TestDataProvider.buildMax());
         final int bookId = bookService.saveBook(TestDataProvider.buildDorian(), user.getLogin()).getBookId();
+        final ChangeBookDto changes = ChangeBookDto.builder()
+            .bookId(bookId)
+            .author("New Author")
+            .build();
 
-        assertThatThrownBy(() -> bookService.changeBookTitle(max.getLogin(), bookId, "Redacted")).isInstanceOf(BookNotFoundException.class);
+        final BookModelDto updatedBook = bookService.changeBook(user.getLogin(), changes);
+
+        assertThat(updatedBook.getAuthor()).isEqualTo("New Author");
     }
 
     @Test
-    void putBookAuthor() {
+    void changeBookShouldUpdateGenre() {
         final UserDto user = createAndSaveUser(TestDataProvider.buildAlex());
         final int bookId = bookService.saveBook(TestDataProvider.buildDorian(), user.getLogin()).getBookId();
+        final ChangeBookDto changes = ChangeBookDto.builder()
+            .bookId(bookId)
+            .genre(10)
+            .build();
 
-        bookService.changeBookAuthor(user.getLogin(), bookId, "Redacted");
+        final BookModelDto updatedBook = bookService.changeBook(user.getLogin(), changes);
 
-        assertThat(bookService.findById(bookId).getAuthor()).isEqualTo("Redacted");
+        assertThat(updatedBook.getGenre()).isEqualTo(10);
     }
 
     @Test
-    void putBookAuthorFromNotOwnerMustThrowException() {
+    void changeBookShouldUpdatePublishingHouse() {
         final UserDto user = createAndSaveUser(TestDataProvider.buildAlex());
-        final UserDto max = createAndSaveUser(TestDataProvider.buildMax());
         final int bookId = bookService.saveBook(TestDataProvider.buildDorian(), user.getLogin()).getBookId();
+        final ChangeBookDto changes = ChangeBookDto.builder()
+            .bookId(bookId)
+            .publishingHouse("New Publishing")
+            .build();
 
-        assertThatThrownBy(() -> bookService.changeBookAuthor(max.getLogin(), bookId, "Redacted")).isInstanceOf(BookNotFoundException.class);
+        final BookModelDto updatedBook = bookService.changeBook(user.getLogin(), changes);
+
+        assertThat(updatedBook.getPublishingHouse()).isEqualTo("New Publishing");
     }
 
     @Test
-    void putBookPublishHouse() {
+    void changeBookShouldUpdateYear() {
         final UserDto user = createAndSaveUser(TestDataProvider.buildAlex());
         final int bookId = bookService.saveBook(TestDataProvider.buildDorian(), user.getLogin()).getBookId();
+        final ChangeBookDto changes = ChangeBookDto.builder()
+            .bookId(bookId)
+            .year(2025)
+            .build();
 
-        bookService.changeBookPublishingHouse(user.getLogin(), bookId, "Redacted");
+        final BookModelDto updatedBook = bookService.changeBook(user.getLogin(), changes);
 
-        assertThat(bookService.findById(bookId).getPublishingHouse()).isEqualTo("Redacted");
+        assertThat(updatedBook.getYear()).isEqualTo(2025);
     }
 
     @Test
-    void putBookPublishHouseFromNotOwnerMustThrowException() {
+    void changeBookShouldUpdateStatus() {
         final UserDto user = createAndSaveUser(TestDataProvider.buildAlex());
-        final UserDto max = createAndSaveUser(TestDataProvider.buildMax());
         final int bookId = bookService.saveBook(TestDataProvider.buildDorian(), user.getLogin()).getBookId();
+        final ChangeBookDto changes = ChangeBookDto.builder()
+            .bookId(bookId)
+            .statusId(Status.EXCHANGES.getId())
+            .build();
 
-        assertThatThrownBy(() -> bookService.changeBookPublishingHouse(max.getLogin(), bookId, "Redacted")).isInstanceOf(BookNotFoundException.class);
+        final BookModelDto updatedBook = bookService.changeBook(user.getLogin(), changes);
+
+        assertThat(updatedBook.getStatusId()).isEqualTo(Status.EXCHANGES.getId());
     }
 
     @Test
-    void putBookYear() {
-        final UserDto user = createAndSaveUser(TestDataProvider.buildAlex());
-        final int bookId = bookService.saveBook(TestDataProvider.buildDorian(), user.getLogin()).getBookId();
-
-        bookService.changeBookYear(user.getLogin(), bookId, 100);
-
-        assertThat(bookService.findById(bookId).getYear()).isEqualTo(100);
-    }
-
-    @Test
-    void putBookStatus() {
-        final UserDto user = createAndSaveUser(TestDataProvider.buildAlex());
-        final int bookId = bookService.saveBook(TestDataProvider.buildDorian(), user.getLogin()).getBookId();
-
-        bookService.changeBookStatus(user.getLogin(), bookId, Status.EXCHANGES.getId());
-
-        assertThat(bookService.findById(bookId).getStatusId()).isEqualTo(Status.EXCHANGES.getId());
-    }
-
-    @Test
-    void changeBookStatusShouldThrowBookNotFoundExceptionWhenNotOwner() {
+    void changeBookFromNotOwnerMustThrowException() {
         final UserDto owner = createAndSaveUser(TestDataProvider.buildAlex());
         final UserDto notOwner = createAndSaveUser(TestDataProvider.buildMax());
         final int bookId = bookService.saveBook(TestDataProvider.buildDorian(), owner.getLogin()).getBookId();
-        final int statusId = Status.EXCHANGES.getId();
+        final ChangeBookDto changes = ChangeBookDto.builder()
+            .bookId(bookId)
+            .title("New Title")
+            .build();
 
-        assertThatThrownBy(() -> bookService.changeBookStatus(notOwner.getLogin(), bookId, statusId))
+        assertThatThrownBy(() -> bookService.changeBook(notOwner.getLogin(), changes))
             .isInstanceOf(BookNotFoundException.class)
             .hasMessage("Книга не найдена");
     }
 
     @Test
-    void putBookYearFromNotOwnerMustThrowException() {
+    void changeBookWithInvalidGenreMustThrowException() {
         final UserDto user = createAndSaveUser(TestDataProvider.buildAlex());
-        final UserDto max = createAndSaveUser(TestDataProvider.buildMax());
         final int bookId = bookService.saveBook(TestDataProvider.buildDorian(), user.getLogin()).getBookId();
+        final ChangeBookDto changes = ChangeBookDto.builder()
+            .bookId(bookId)
+            .genre(999)
+            .build();
 
-        assertThatThrownBy(() -> bookService.changeBookYear(max.getLogin(), bookId, 200)).isInstanceOf(BookNotFoundException.class);
+        assertThatThrownBy(() -> bookService.changeBook(user.getLogin(), changes)).isInstanceOf(GenreNotFoundException.class);
     }
 
     @Test
-    void putBookGenre() {
+    void changeBookShouldIgnoreNullFields() {
         final UserDto user = createAndSaveUser(TestDataProvider.buildAlex());
         final int bookId = bookService.saveBook(TestDataProvider.buildDorian(), user.getLogin()).getBookId();
+        final BookModelDto originalBook = bookService.findById(bookId);
 
-        bookService.changeBookGenre(user.getLogin(), bookId, 10);
+        final ChangeBookDto changes = ChangeBookDto.builder()
+            .bookId(bookId)
+            .title(null)
+            .author(null)
+            .build();
 
-        assertThat(bookService.findById(bookId).getGenre()).isEqualTo(10);
+        final BookModelDto updatedBook = bookService.changeBook(user.getLogin(), changes);
+        assertThat(updatedBook.getTitle()).isEqualTo(originalBook.getTitle());
+        assertThat(updatedBook.getAuthor()).isEqualTo(originalBook.getAuthor());
     }
 
     @Test
-    void putBookGenreFromNotOwnerMustThrowException() {
-        final UserDto user = createAndSaveUser(TestDataProvider.buildAlex());
-        final UserDto max = createAndSaveUser(TestDataProvider.buildMax());
-        final int bookId = bookService.saveBook(TestDataProvider.buildDorian(), user.getLogin()).getBookId();
-
-        assertThatThrownBy(() -> bookService.changeBookGenre(max.getLogin(), bookId, 20)).isInstanceOf(BookNotFoundException.class);
-    }
-
-    @Test
-    void putBookIncorrectGenreMushThrowException() {
+    void changeBookShouldIgnoreBlankStrings() {
         final UserDto user = createAndSaveUser(TestDataProvider.buildAlex());
         final int bookId = bookService.saveBook(TestDataProvider.buildDorian(), user.getLogin()).getBookId();
+        final BookModelDto originalBook = bookService.findById(bookId);
 
-        assertThatThrownBy(() -> bookService.changeBookGenre(user.getLogin(), bookId, 500)).isInstanceOf(GenreNotFoundException.class);
+        final ChangeBookDto changes = ChangeBookDto.builder()
+            .bookId(bookId)
+            .title(" ")
+            .author("")
+            .build();
+
+        final BookModelDto updatedBook = bookService.changeBook(user.getLogin(), changes);
+        assertThat(updatedBook.getTitle()).isEqualTo(originalBook.getTitle());
+        assertThat(updatedBook.getAuthor()).isEqualTo(originalBook.getAuthor());
     }
 }

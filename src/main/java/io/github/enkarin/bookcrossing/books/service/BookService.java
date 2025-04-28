@@ -3,6 +3,7 @@ package io.github.enkarin.bookcrossing.books.service;
 import io.github.enkarin.bookcrossing.books.dto.BookDto;
 import io.github.enkarin.bookcrossing.books.dto.BookFiltersRequest;
 import io.github.enkarin.bookcrossing.books.dto.BookModelDto;
+import io.github.enkarin.bookcrossing.books.dto.ChangeBookDto;
 import io.github.enkarin.bookcrossing.books.enums.Status;
 import io.github.enkarin.bookcrossing.books.model.Book;
 import io.github.enkarin.bookcrossing.books.repository.BookRepository;
@@ -22,6 +23,8 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 import java.util.stream.Stream;
+
+import static java.util.Objects.nonNull;
 
 @Service
 @Transactional(readOnly = true)
@@ -140,47 +143,28 @@ public class BookService {
     }
 
     @Transactional
-    public void changeBookTitle(final String login, final int bookId, final String title) {
-        bookRepository.findBooksByOwnerLoginAndBookId(login, bookId).ifPresentOrElse(book -> book.setTitle(title), () -> {
-            throw new BookNotFoundException();
-        });
-    }
-
-    @Transactional
-    public void changeBookAuthor(final String login, final int bookId, final String author) {
-        bookRepository.findBooksByOwnerLoginAndBookId(login, bookId).ifPresentOrElse(book -> book.setAuthor(author), () -> {
-            throw new BookNotFoundException();
-        });
-    }
-
-    @Transactional
-    public void changeBookGenre(final String login, final int bookId, final int genre) {
-        bookRepository.findBooksByOwnerLoginAndBookId(login, bookId)
-            .ifPresentOrElse(book -> book.setGenre(genreRepository.findById(genre).orElseThrow(GenreNotFoundException::new)),
-            () -> {
-                throw new BookNotFoundException();
-            });
-    }
-
-    @Transactional
-    public void changeBookPublishingHouse(final String login, final int bookId, final String publishingHouse) {
-        bookRepository.findBooksByOwnerLoginAndBookId(login, bookId).ifPresentOrElse(book -> book.setPublishingHouse(publishingHouse), () -> {
-            throw new BookNotFoundException();
-        });
-    }
-
-    @Transactional
-    public void changeBookYear(final String login, final int bookId, final int year) {
-        bookRepository.findBooksByOwnerLoginAndBookId(login, bookId).ifPresentOrElse(book -> book.setYear(year), () -> {
-            throw new BookNotFoundException();
-        });
-    }
-
-    @Transactional
-    public void changeBookStatus(final String login, final int bookId, final int statusId) {
-        bookRepository.findBooksByOwnerLoginAndBookId(login, bookId).ifPresentOrElse(book -> book.setStatus(Status.getById(statusId)), () -> {
-            throw new BookNotFoundException();
-        });
+    public BookModelDto changeBook(final String login, final ChangeBookDto bookDto) {
+        final Book book = bookRepository.findBooksByOwnerLoginAndBookId(login, bookDto.getBookId()).orElseThrow(BookNotFoundException::new);
+        if (nonNull(bookDto.getTitle()) && !bookDto.getTitle().isBlank()) {
+            book.setTitle(bookDto.getTitle());
+        }
+        if (nonNull(bookDto.getAuthor()) && !bookDto.getAuthor().isBlank()) {
+            book.setAuthor(bookDto.getAuthor());
+        }
+        if (nonNull(bookDto.getGenre())) {
+            book.setGenre(genreRepository.findById(bookDto.getGenre())
+                .orElseThrow(GenreNotFoundException::new));
+        }
+        if (nonNull(bookDto.getPublishingHouse())) {
+            book.setPublishingHouse(bookDto.getPublishingHouse());
+        }
+        if (nonNull(bookDto.getYear())) {
+            book.setYear(bookDto.getYear());
+        }
+        if (nonNull(bookDto.getStatusId())) {
+            book.setStatus(Status.getById(bookDto.getStatusId()));
+        }
+        return BookModelDto.fromBook(book);
     }
 
     private Stream<Book> filterBookFromNonLockedOwner(final List<Book> books) {
