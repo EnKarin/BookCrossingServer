@@ -3,8 +3,10 @@ package io.github.enkarin.bookcrossing;
 import io.github.enkarin.bookcrossing.support.BookCrossingBaseTests;
 import io.github.mfvanek.pg.core.checks.common.DatabaseCheckOnHost;
 import io.github.mfvanek.pg.core.checks.common.Diagnostic;
+import io.github.mfvanek.pg.model.column.Column;
 import io.github.mfvanek.pg.model.context.PgContext;
 import io.github.mfvanek.pg.model.dbobject.DbObject;
+import io.github.mfvanek.pg.model.index.IndexWithColumns;
 import io.github.mfvanek.pg.model.predicates.SkipFlywayTablesPredicate;
 import io.github.mfvanek.pg.model.table.Table;
 import org.assertj.core.api.ListAssert;
@@ -41,15 +43,23 @@ class IndexesMaintenanceTest extends BookCrossingBaseTests {
                     final ListAssert<? extends DbObject> checkAssert = assertThat(check.check(PG_CONTEXT, SkipFlywayTablesPredicate.of(PG_CONTEXT)))
                             .as(check.getDiagnostic().name());
 
-                    if (check.getDiagnostic() == Diagnostic.COLUMNS_WITHOUT_DESCRIPTION) {
-                        checkAssert.hasSize(43);
-                    } else if (check.getDiagnostic() == Diagnostic.TABLES_NOT_LINKED_TO_OTHERS) {
-                        checkAssert
+                    switch (check.getDiagnostic()) {
+                        case COLUMNS_WITH_FIXED_LENGTH_VARCHAR -> checkAssert.hasSize(15);
+                        case COLUMNS_WITHOUT_DESCRIPTION -> checkAssert.hasSize(43);
+                        case TABLES_NOT_LINKED_TO_OTHERS -> checkAssert
                                 .asInstanceOf(list(Table.class))
                                 .hasSize(1)
-                                .containsExactly(Table.of(PG_CONTEXT.enrichWithSchema("t_refresh"), 0L));
-                    } else {
-                        checkAssert.isEmpty();
+                                .containsExactly(Table.of(PG_CONTEXT, "t_refresh"));
+                        case PRIMARY_KEYS_THAT_MOST_LIKELY_NATURAL_KEYS -> checkAssert
+                                .asInstanceOf(list(IndexWithColumns.class))
+                                .hasSize(2)
+                                .containsExactly(
+                                        IndexWithColumns.ofSingle(PG_CONTEXT, "t_action_mail_user", "t_action_mail_user_pkey", 0L,
+                                                Column.ofNotNull(PG_CONTEXT, "t_action_mail_user", "confirmation_mail")),
+                                        IndexWithColumns.ofSingle(PG_CONTEXT, "t_refresh", "t_refresh_pkey", 0L,
+                                                Column.ofNotNull(PG_CONTEXT, "t_refresh", "refresh_id"))
+                                );
+                        default -> checkAssert.isEmpty();
                     }
                 });
     }
