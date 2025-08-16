@@ -21,6 +21,7 @@ public class JwtProvider {
     @Value("$(jwt.secret)")
     private String jwtSecret;
 
+    @SuppressWarnings("PMD.ReplaceJavaUtilDate") // TODO FIXME
     public String generateToken(final String login) {
         final Date date = Date.from(timeSettings.dateTimeNow().plusMinutes(15).toInstant(timeSettings.offset()));
         return Jwts.builder()
