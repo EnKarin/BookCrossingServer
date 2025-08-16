@@ -28,6 +28,7 @@ public class Attachment implements Serializable {
     private static final long serialVersionUID = 4600249981575739954L;
 
     @Id
+    @Column(name = "attach_id", nullable = false)
     private int attachId;
 
     @MapsId

@@ -27,10 +27,9 @@ public class Correspondence {
         if (this == obj) {
             return true;
         }
-        if (!(obj instanceof Correspondence)) {
+        if (!(obj instanceof Correspondence correspondence)) {
             return false;
         }
-        final Correspondence correspondence = (Correspondence) obj;
         return Objects.equals(usersCorrKey, correspondence.usersCorrKey);
     }
 
