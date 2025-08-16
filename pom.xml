@@ -22,7 +22,7 @@
         <pitest.maven.version>1.20.1</pitest.maven.version>
         <pitest.junit5.version>1.2.3</pitest.junit5.version>
         <stryker.reporter.version>0.3.6</stryker.reporter.version>
-        <pmd.version>7.6.0</pmd.version>
+        <pmd.version>7.16.0</pmd.version>
     </properties>
 
     <dependencyManagement>
@@ -182,7 +182,7 @@
         <dependency>
             <groupId>com.icegreen</groupId>
             <artifactId>greenmail-junit5</artifactId>
-            <version>1.6.14</version>
+            <version>1.6.15</version>
             <scope>test</scope>
         </dependency>
         <dependency>
