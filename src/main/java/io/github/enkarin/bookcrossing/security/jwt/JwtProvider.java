@@ -18,7 +18,7 @@ import java.util.Date;
 public class JwtProvider {
     private final TimeSettings timeSettings;
 
-    @Value("$(jwt.secret)")
+    @Value("${jwt.secret}")
     private String jwtSecret;
 
     @SuppressWarnings("PMD.ReplaceJavaUtilDate") // TODO FIXME
@@ -27,13 +27,16 @@ public class JwtProvider {
         return Jwts.builder()
                 .setSubject(login)
                 .setExpiration(date)
-                .signWith(SignatureAlgorithm.HS512, jwtSecret)
+                .signWith(SignatureAlgorithm.HS256, jwtSecret)
                 .compact();
     }
 
     public boolean validateToken(final String token) {
         try {
-            Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token);
+            Jwts.parser()
+                    .setSigningKey(jwtSecret)
+                    .build()
+                    .parseSignedClaims(token);
             return true;
         } catch (ExpiredJwtException expEx) {
             log.error("Token expired");
@@ -44,7 +47,11 @@ public class JwtProvider {
     }
 
     public String getLoginFromToken(final String token) {
-        final Claims claims = Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody();
+        final Claims claims = Jwts.parser()
+                .setSigningKey(jwtSecret)
+                .build()
+                .parseSignedClaims(token)
+                .getBody();
         return claims.getSubject();
     }
 }
