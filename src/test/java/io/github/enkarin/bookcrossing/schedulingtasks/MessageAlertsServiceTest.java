@@ -47,7 +47,7 @@ class MessageAlertsServiceTest extends BookCrossingBaseTests {
                 .extracting(Message::isAlertSent)
                 .isEqualTo(true);
         assertThat(output)
-                .contains(String.format("Sending alert for userId %d", userAlex.getUserId()));
+                .contains("Sending alert for userId %d".formatted(userAlex.getUserId()));
     }
 
     @Test
@@ -67,7 +67,7 @@ class MessageAlertsServiceTest extends BookCrossingBaseTests {
                 .extracting(Message::isAlertSent)
                 .isEqualTo(true);
         assertThat(output)
-                .contains(String.format("Sending alert for userId %d", userAlex.getUserId()));
+                .contains("Sending alert for userId %d".formatted(userAlex.getUserId()));
     }
 
     @Test
@@ -102,7 +102,7 @@ class MessageAlertsServiceTest extends BookCrossingBaseTests {
         messageAlertsService.sendAlerts();
 
         assertThat(output)
-                .doesNotContain(String.format("Sending alert for userId %d", userAlex.getUserId()));
+                .doesNotContain("Sending alert for userId %d".formatted(userAlex.getUserId()));
     }
 
     @Test
@@ -121,7 +121,7 @@ class MessageAlertsServiceTest extends BookCrossingBaseTests {
         messageAlertsService.sendAlerts();
 
         assertThat(output)
-                .doesNotContain(String.format("Sending alert for userId %d", userAlex.getUserId()));
+                .doesNotContain("Sending alert for userId %d".formatted(userAlex.getUserId()));
     }
 
     @Test
@@ -140,7 +140,7 @@ class MessageAlertsServiceTest extends BookCrossingBaseTests {
         messageAlertsService.sendAlerts();
 
         assertThat(output)
-                .doesNotContain(String.format("Sending alert for userId %d", userAlex.getUserId()));
+                .doesNotContain("Sending alert for userId %d".formatted(userAlex.getUserId()));
     }
 
     private long createChatAndMessage(final UserDto userBot, final UserDto userAlex) {
