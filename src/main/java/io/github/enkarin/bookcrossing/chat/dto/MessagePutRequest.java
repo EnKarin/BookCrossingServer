@@ -8,7 +8,7 @@ import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 
 import javax.annotation.concurrent.Immutable;
-import javax.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotBlank;
 
 @Immutable
 @SuperBuilder

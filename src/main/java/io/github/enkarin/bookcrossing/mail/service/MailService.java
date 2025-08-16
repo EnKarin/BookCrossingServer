@@ -13,7 +13,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Nonnull;
+import jakarta.annotation.Nonnull;
 import java.util.UUID;
 
 @Service
@@ -42,7 +42,7 @@ public class MailService {
         final var message = prepareMailMessage(user.getEmail());
         message.setSubject("Подтверждение регистрации BookCrossing");
         message.setText("Перейдите по ссылке, чтобы подтвердить создание аккаунта: " +
-                String.format("https://localhost:%s/registration/confirmation?token=%s", port, token));
+                "https://localhost:%s/registration/confirmation?token=%s".formatted(port, token));
         emailSender.send(message);
     }
 
@@ -59,7 +59,7 @@ public class MailService {
         final var message = prepareMailMessage(email);
         message.setSubject("Сброс пароля BookCrossing");
         message.setText("Перейдите по ссылке, чтобы сменить пароль: " +
-                String.format("https://localhost:%s/reset/update?token=%s", port, token));
+                "https://localhost:%s/reset/update?token=%s".formatted(port, token));
         emailSender.send(message);
     }
 
@@ -80,7 +80,7 @@ public class MailService {
     public void sendAlertsMessage(final User user, final int count) {
         final var message = prepareMailMessage(user.getEmail());
         message.setSubject("Непрочитанные сообщения");
-        message.setText(String.format("В вашем аккаунте есть непрочитанные сообщения: %s", count));
+        message.setText("В вашем аккаунте есть непрочитанные сообщения: %s".formatted(count));
         emailSender.send(message);
     }
 

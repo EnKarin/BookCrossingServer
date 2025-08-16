@@ -2,15 +2,15 @@ package io.github.enkarin.bookcrossing.mail.model;
 
 import io.github.enkarin.bookcrossing.mail.enums.ApproveType;
 import io.github.enkarin.bookcrossing.user.model.User;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
-
-import javax.persistence.Entity;
-import javax.persistence.Enumerated;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
 
 @Entity
 @Getter
@@ -19,6 +19,7 @@ import javax.persistence.Table;
 public class ActionMailUser {
 
     @Id
+    @Column(name = "confirmation_mail", nullable = false)
     private String confirmationMail;
 
     @ManyToOne(optional = false)
@@ -26,5 +27,6 @@ public class ActionMailUser {
     private User user;
 
     @Enumerated
+    @Column(name = "type")
     private ApproveType type;
 }

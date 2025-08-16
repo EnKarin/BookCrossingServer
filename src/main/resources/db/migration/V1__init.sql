@@ -1,6 +1,8 @@
 create schema if not exists bookcrossing;
 
-create sequence if not exists bookcrossing.hibernate_sequence start 1 increment 1;
+create sequence if not exists bookcrossing.t_book_seq start 1 increment 1;
+create sequence if not exists bookcrossing.t_messages_seq start 1 increment 1;
+create sequence if not exists bookcrossing.t_user_seq start 1 increment 1;
 
 create table if not exists bookcrossing.t_action_mail_user (
     confirmation_mail varchar(255) not null,

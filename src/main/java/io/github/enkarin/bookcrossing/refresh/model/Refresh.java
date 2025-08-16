@@ -1,12 +1,12 @@
 package io.github.enkarin.bookcrossing.refresh.model;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
 import java.util.Objects;
 
 @Entity
@@ -16,8 +16,10 @@ import java.util.Objects;
 public class Refresh {
 
     @Id
+    @Column(name = "refresh_id", nullable = false)
     private String refreshId;
 
+    @Column(name = "date", nullable = false)
     private long date;
 
     @Column(name = "r_user")
@@ -28,10 +30,9 @@ public class Refresh {
         if (this == obj) {
             return true;
         }
-        if (!(obj instanceof Refresh)) {
+        if (!(obj instanceof Refresh refreshObj)) {
             return false;
         }
-        final Refresh refreshObj = (Refresh) obj;
         return Objects.equals(refreshId, refreshObj.refreshId);
     }
 

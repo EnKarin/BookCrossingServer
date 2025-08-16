@@ -1,21 +1,23 @@
 package io.github.enkarin.bookcrossing.user.model;
 
 import io.github.enkarin.bookcrossing.books.model.Book;
+import jakarta.persistence.Column;
+import jakarta.persistence.SequenceGenerator;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import java.io.Serial;
 import java.util.Collection;
 import java.util.Objects;
@@ -31,7 +33,9 @@ public class User implements UserDetails {
     private static final long serialVersionUID = -6289855612211696141L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "t_user_gen")
+    @SequenceGenerator(name = "t_user_gen", sequenceName = "t_user_seq", allocationSize = 1)
+    @Column(name = "user_id", nullable = false)
     private int userId;
 
     private String name;
@@ -44,10 +48,13 @@ public class User implements UserDetails {
 
     private String city;
 
+    @Column(name = "account_non_locked", nullable = false)
     private boolean accountNonLocked;
 
+    @Column(name = "enabled", nullable = false)
     private boolean enabled;
 
+    @Column(name = "login_date", nullable = false)
     private long loginDate;
 
     @ManyToMany
