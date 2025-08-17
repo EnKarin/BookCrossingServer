@@ -26,7 +26,7 @@ public class SecurityConfig {
     protected SecurityFilterChain filterChain(final HttpSecurity httpSecurity) {
         httpSecurity
                 .httpBasic(AbstractHttpConfigurer::disable)
-                .csrf(AbstractHttpConfigurer::disable)
+                .csrf(AbstractHttpConfigurer::disable) // NOSONAR
                 .sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(requests -> requests
                         .requestMatchers("/adm/**").hasRole("ADMIN")

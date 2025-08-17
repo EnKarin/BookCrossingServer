@@ -23,13 +23,8 @@ class RoleTest {
         final Role role2 = new Role();
 
         assertThat(role1)
-                .isEqualTo(role1);
-
-        //noinspection AssertBetweenInconvertibleTypes
-        assertThat(role1)
-                .isNotEqualTo(new User());
-
-        assertThat(role1)
+                .isEqualTo(role1)
+                .isNotEqualTo(new User())
                 .isEqualTo(role2)
                 .hasSameHashCodeAs(role2);
 

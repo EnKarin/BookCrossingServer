@@ -11,12 +11,9 @@ class AttachmentTest {
         final Attachment first = new Attachment();
         final Attachment second = new Attachment();
 
-        //noinspection AssertBetweenInconvertibleTypes
         assertThat(first)
                 .isEqualTo(first)
-                .isNotEqualTo(new Book());
-
-        assertThat(first)
+                .isNotEqualTo(new Book())
                 .isEqualTo(second)
                 .hasSameHashCodeAs(second);
 
