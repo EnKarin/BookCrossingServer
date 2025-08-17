@@ -28,6 +28,7 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
+                <!-- TODO try to remove -->
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
                 <version>3.5.4</version>
@@ -125,12 +126,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
-
-        <!--        <dependency>-->
-        <!--            <groupId>jakarta.el</groupId>-->
-        <!--            <artifactId>jakarta.el-api</artifactId>-->
-        <!--            <version>6.0.1</version>-->
-        <!--        </dependency>-->
 
         <dependency>
             <groupId>org.springdoc</groupId>
@@ -266,7 +261,7 @@
                                     <version>[3.8,)</version>
                                 </requireMavenVersion>
                                 <requireJavaVersion>
-                                    <version>[17,)</version>
+                                    <version>[21,)</version>
                                 </requireJavaVersion>
                             </rules>
                         </configuration>
@@ -417,12 +412,12 @@
                                         <limit>
                                             <counter>INSTRUCTION</counter>
                                             <value>COVEREDRATIO</value>
-                                            <minimum>0.92</minimum>
+                                            <minimum>0.93</minimum>
                                         </limit>
                                         <limit>
                                             <counter>BRANCH</counter>
                                             <value>COVEREDRATIO</value>
-                                            <minimum>0.8</minimum>
+                                            <minimum>0.81</minimum>
                                         </limit>
                                         <limit>
                                             <counter>CLASS</counter>
@@ -432,12 +427,12 @@
                                         <limit>
                                             <counter>METHOD</counter>
                                             <value>MISSEDCOUNT</value>
-                                            <maximum>23</maximum>
+                                            <maximum>20</maximum>
                                         </limit>
                                         <limit>
                                             <counter>LINE</counter>
                                             <value>MISSEDCOUNT</value>
-                                            <maximum>56</maximum>
+                                            <maximum>44</maximum>
                                         </limit>
                                     </limits>
                                 </rule>

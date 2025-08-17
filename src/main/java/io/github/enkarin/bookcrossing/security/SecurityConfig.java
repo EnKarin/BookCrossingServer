@@ -32,7 +32,7 @@ public class SecurityConfig {
                         .requestMatchers("/adm/**").hasRole("ADMIN")
                         .requestMatchers("/user/**").hasRole("USER")
                         .requestMatchers("/books/**").permitAll()
-                        .requestMatchers("/register", "/auth", "/refresh").permitAll())
+                        .requestMatchers("/registration", "/registration/confirmation", "/auth", "/refresh", "/reset/**").permitAll())
                 .exceptionHandling(handling -> handling.authenticationEntryPoint(handler))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
         return httpSecurity.build();
