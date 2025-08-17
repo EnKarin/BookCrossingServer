@@ -121,6 +121,7 @@ class AttachmentServiceTest extends BookCrossingBaseTests {
                 "image/jpg", Files.readAllBytes(file.toPath()));
         final int name = attachmentService.saveAttachment(AttachmentMultipartDto.fromFile(book1, multipartFile),
                 users.get(1).getLogin()).getAttachment().getAttachId();
+
         attachmentService.deleteAttachment(book1, users.get(1).getLogin());
         assertThat(jdbcTemplate.queryForObject("select exists(select * from bookcrossing.t_attach where attach_id = ?)",
                 Boolean.class, name))

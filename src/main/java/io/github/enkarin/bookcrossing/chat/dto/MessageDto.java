@@ -6,12 +6,14 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
+import lombok.extern.jackson.Jacksonized;
 
 import javax.annotation.concurrent.Immutable;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
 @SuperBuilder
+@Jacksonized
 @EqualsAndHashCode
 @Immutable
 @Getter

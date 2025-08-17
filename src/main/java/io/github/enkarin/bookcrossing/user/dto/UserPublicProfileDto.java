@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
+import lombok.extern.jackson.Jacksonized;
 
 import javax.annotation.concurrent.Immutable;
 import java.time.LocalDateTime;
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 
 @Immutable
 @SuperBuilder
+@Jacksonized
 @EqualsAndHashCode
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)

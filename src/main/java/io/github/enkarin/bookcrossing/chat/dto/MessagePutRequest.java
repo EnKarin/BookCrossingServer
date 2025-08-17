@@ -9,9 +9,11 @@ import lombok.experimental.SuperBuilder;
 
 import javax.annotation.concurrent.Immutable;
 import jakarta.validation.constraints.NotBlank;
+import lombok.extern.jackson.Jacksonized;
 
 @Immutable
 @SuperBuilder
+@Jacksonized
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class MessagePutRequest {

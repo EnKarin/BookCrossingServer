@@ -13,8 +13,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import static org.springframework.security.config.Customizer.withDefaults;
-
 @RequiredArgsConstructor
 @Configuration
 @EnableWebSecurity
@@ -27,7 +25,6 @@ public class SecurityConfig {
     @Bean
     protected SecurityFilterChain filterChain(final HttpSecurity httpSecurity) {
         httpSecurity
-                .redirectToHttps(withDefaults())
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
