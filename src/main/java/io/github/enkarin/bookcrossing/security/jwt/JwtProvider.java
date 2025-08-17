@@ -25,21 +25,17 @@ public class JwtProvider {
     @SuppressWarnings("PMD.ReplaceJavaUtilDate") // TODO FIXME
     public String generateToken(final String login) {
         final Date date = Date.from(timeSettings.dateTimeNow().plusMinutes(15).toInstant(timeSettings.offset()));
-        final byte[] keyBytes = Decoders.BASE64.decode(jwtSecretBase64);
-        final SecretKey key = Keys.hmacShaKeyFor(keyBytes);
         return Jwts.builder()
                 .subject(login)
                 .expiration(date)
-                .signWith(key)
+                .signWith(prepareKey())
                 .compact();
     }
 
     public boolean validateToken(final String token) {
         try {
-            final byte[] keyBytes = Decoders.BASE64.decode(jwtSecretBase64);
-            final SecretKey key = Keys.hmacShaKeyFor(keyBytes);
             Jwts.parser()
-                    .verifyWith(key)
+                    .verifyWith(prepareKey())
                     .build()
                     .parseSignedClaims(token);
             return true;
@@ -52,13 +48,16 @@ public class JwtProvider {
     }
 
     public String getLoginFromToken(final String token) {
-        final byte[] keyBytes = Decoders.BASE64.decode(jwtSecretBase64);
-        final SecretKey key = Keys.hmacShaKeyFor(keyBytes);
         return Jwts.parser()
-                .verifyWith(key)
+                .verifyWith(prepareKey())
                 .build()
                 .parseSignedClaims(token)
                 .getPayload()
                 .getSubject();
+    }
+
+    private SecretKey prepareKey() {
+        final byte[] keyBytes = Decoders.BASE64.decode(jwtSecretBase64);
+        return Keys.hmacShaKeyFor(keyBytes);
     }
 }
