@@ -10,7 +10,7 @@
 [![Mutation testing badge](https://img.shields.io/endpoint?style=plastic&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2FEnKarin%2FBookCrossingServer%2Fmaster)](https://dashboard.stryker-mutator.io/reports/github.com/EnKarin/BookCrossingServer/master)
 
 ### Requirements
-1. Java 17 and above
+1. Java 21 and above
 2. Maven
 3. PostgreSQL
 

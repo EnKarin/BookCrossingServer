@@ -18,7 +18,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.InstanceOfAssertFactories.list;
 
-class IndexesMaintenanceTest extends BookCrossingBaseTests {
+class DatabaseStructureStaticAnalysisTest extends BookCrossingBaseTests {
 
     private static final String SCHEMA_NAME = "bookcrossing";
     private static final PgContext PG_CONTEXT = PgContext.of(SCHEMA_NAME);
@@ -29,7 +29,7 @@ class IndexesMaintenanceTest extends BookCrossingBaseTests {
     @Test
     void checkPostgresVersion() {
         assertThat(jdbcTemplate.queryForObject("select version();", String.class))
-                .startsWith("PostgreSQL 16.4");
+                .startsWith("PostgreSQL 17.6");
     }
 
     @Test

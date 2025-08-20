@@ -11,7 +11,6 @@ import io.github.enkarin.bookcrossing.user.dto.UserDto;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 import java.util.stream.Stream;
@@ -20,9 +19,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class BookServiceTest extends BookCrossingBaseTests {
-
-    @Autowired
-    private BookService bookService;
 
     @Test
     void saveBookShouldWork() {
@@ -74,7 +70,7 @@ class BookServiceTest extends BookCrossingBaseTests {
         final UserDto user = createAndSaveUser(TestDataProvider.buildBot());
         final int book = TestDataProvider.buildBooks().stream()
                 .map(b -> bookService.saveBook(b, user.getLogin()))
-                        .toList().get(0).getBookId();
+                .toList().get(0).getBookId();
         assertThat(bookService.findById(book))
                 .usingRecursiveComparison()
                 .isEqualTo(TestDataProvider.buildDorian(book));
@@ -112,7 +108,7 @@ class BookServiceTest extends BookCrossingBaseTests {
                 .toList();
 
         bookService.saveBook(TestDataProvider.buildDandelion(), users.get(0).getLogin());
-        final int book2 =  bookService.saveBook(TestDataProvider.buildWolves(), users.get(1).getLogin()).getBookId();
+        final int book2 = bookService.saveBook(TestDataProvider.buildWolves(), users.get(1).getLogin()).getBookId();
         bookService.saveBook(TestDataProvider.buildDorian(), users.get(0).getLogin());
 
         assertThat(bookService.filter(BookFiltersRequest.create("Novosibirsk", "Wolves",
@@ -138,11 +134,11 @@ class BookServiceTest extends BookCrossingBaseTests {
 
     static Stream<BookDto> provideFilter() {
         return Stream.of(
-            BookDto.builder().genre("story").title("Wolves").build(),
-            BookDto.builder().genre("story").author("author").title("Wolves").build(),
-            BookDto.builder().genre("story").author("author").publishingHouse("publishing_house").title("Wolves").build(),
-            BookDto.builder().genre("story").author("author").publishingHouse("publishing_house").year(2000).title("Wolves").build(),
-            BookDto.builder().genre("story").author("author").publishingHouse("publishing_house").year(2000).title("Wolves").build()
+                BookDto.builder().genre("story").title("Wolves").build(),
+                BookDto.builder().genre("story").author("author").title("Wolves").build(),
+                BookDto.builder().genre("story").author("author").publishingHouse("publishing_house").title("Wolves").build(),
+                BookDto.builder().genre("story").author("author").publishingHouse("publishing_house").year(2000).title("Wolves").build(),
+                BookDto.builder().genre("story").author("author").publishingHouse("publishing_house").year(2000).title("Wolves").build()
         );
     }
 
@@ -167,7 +163,7 @@ class BookServiceTest extends BookCrossingBaseTests {
 
         bookService.deleteBook(book.getBookId());
         assertThat(jdbcTemplate.queryForObject("select exists(select * from bookcrossing.t_book where book_id = ?)",
-                        Boolean.class, book.getBookId()))
+                Boolean.class, book.getBookId()))
                 .isFalse();
     }
 
@@ -205,7 +201,7 @@ class BookServiceTest extends BookCrossingBaseTests {
                 .toList();
 
         bookService.saveBook(TestDataProvider.buildDandelion(), users.get(0).getLogin());
-        final int book1 =  bookService.saveBook(TestDataProvider.buildWolves(), users.get(1).getLogin()).getBookId();
+        final int book1 = bookService.saveBook(TestDataProvider.buildWolves(), users.get(1).getLogin()).getBookId();
         bookService.saveBook(TestDataProvider.buildDorian(), users.get(0).getLogin());
 
         assertThat(bookService.findByTitle("Wolves"))

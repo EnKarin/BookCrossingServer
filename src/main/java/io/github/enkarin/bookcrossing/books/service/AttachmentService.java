@@ -16,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.Locale;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -46,6 +45,7 @@ public class AttachmentService {
                 attachment.setExpansion(expansion);
                 book.setAttachment(attachment);
                 attachRepository.save(attachment);
+                bookRepository.save(book);
                 return BookModelDto.fromBook(bookRepository.getReferenceById(book.getBookId()));
             } else {
                 throw new BadRequestException("Недопустимый формат файла");
@@ -58,8 +58,12 @@ public class AttachmentService {
                 .filter(b -> b.getBookId() == bookId)
                 .findFirst()
                 .orElseThrow(BookNotFoundException::new);
-        Optional.ofNullable(book.getAttachment())
-                .orElseThrow(AttachmentNotFoundException::new);
-        attachRepository.deleteById(book.getAttachment().getAttachId());
+        if (book.getAttachment() == null) {
+            throw new AttachmentNotFoundException();
+        }
+        final Attachment attach = book.getAttachment();
+        book.setAttachment(null); // to break the link between book and attachment!
+        attachRepository.delete(attach);
+        bookRepository.save(book);
     }
 }

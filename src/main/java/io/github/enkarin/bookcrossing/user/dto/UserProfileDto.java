@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
+import lombok.extern.jackson.Jacksonized;
 
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -15,6 +16,7 @@ import java.util.stream.Collectors;
 @Getter
 @EqualsAndHashCode
 @SuperBuilder
+@Jacksonized
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Schema(description = "Данные пользователя для внутреннего пользования")
 public class UserProfileDto {

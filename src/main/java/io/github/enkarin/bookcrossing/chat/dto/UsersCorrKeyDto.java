@@ -8,10 +8,12 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
+import lombok.extern.jackson.Jacksonized;
 
 import javax.annotation.concurrent.Immutable;
 
 @SuperBuilder
+@Jacksonized
 @EqualsAndHashCode
 @Immutable
 @Getter

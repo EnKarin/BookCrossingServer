@@ -3,6 +3,7 @@ package io.github.enkarin.bookcrossing.registration.dto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 import javax.annotation.concurrent.Immutable;
@@ -10,6 +11,7 @@ import javax.annotation.concurrent.Immutable;
 @Immutable
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
+@EqualsAndHashCode
 public class AuthResponse {
 
     @Schema(description = "Токен доступа", example = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJUZXN0IiwiZXhwIjoxNjQwNzk3MjAwfQ")

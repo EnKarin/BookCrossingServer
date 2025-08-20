@@ -8,10 +8,12 @@ import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 
 import javax.annotation.concurrent.Immutable;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+import lombok.extern.jackson.Jacksonized;
 
 @SuperBuilder
+@Jacksonized
 @Immutable
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)

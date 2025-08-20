@@ -1,13 +1,11 @@
 package io.github.enkarin.bookcrossing.books.controllers;
 
-import io.github.enkarin.bookcrossing.support.BookCrossingBaseTests;
 import io.github.enkarin.bookcrossing.books.dto.BookFiltersRequest;
 import io.github.enkarin.bookcrossing.books.dto.BookModelDto;
-import io.github.enkarin.bookcrossing.books.service.BookService;
+import io.github.enkarin.bookcrossing.support.BookCrossingBaseTests;
 import io.github.enkarin.bookcrossing.support.TestDataProvider;
 import io.github.enkarin.bookcrossing.user.dto.UserDto;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 
@@ -16,9 +14,6 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class BookControllerTest extends BookCrossingBaseTests {
-
-    @Autowired
-    private BookService bookService;
 
     @Test
     void booksShouldnWork() {
