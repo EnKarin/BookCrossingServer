@@ -1,17 +1,17 @@
 package io.github.enkarin.bookcrossing.books.model;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.MapsId;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.MapsId;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
@@ -28,6 +28,7 @@ public class Attachment implements Serializable {
     private static final long serialVersionUID = 4600249981575739954L;
 
     @Id
+    @Column(name = "attach_id", nullable = false)
     private int attachId;
 
     @MapsId

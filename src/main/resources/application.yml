@@ -54,6 +54,6 @@ spring:
         enabled: true
         default-schema: bookcrossing
 jwt:
-    secret: scjwtmaster
+    secret: dmVyeV92ZXJ5X2xvbmdfc2VjcmV0X2tleV9mb3Jfand0X3NpZ25hdHVyZQ== # very_very_long_secret_key_for_jwt_signature
 time:
     zone-offset: 7

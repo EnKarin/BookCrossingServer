@@ -14,7 +14,9 @@ import java.time.ZoneOffset;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+// TODO Convert to unit test
 class TimeSettingsTest extends BookCrossingBaseTests {
+
     @Autowired
     private TimeSettings timeSettings;
 

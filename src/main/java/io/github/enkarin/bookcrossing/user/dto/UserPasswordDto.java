@@ -8,11 +8,13 @@ import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 
 import javax.annotation.concurrent.Immutable;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+import lombok.extern.jackson.Jacksonized;
 
 @Immutable
 @SuperBuilder
+@Jacksonized
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Schema(description = "Сущность для смены пароля", requiredProperties = "passwordConfirm")
