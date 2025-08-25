@@ -19,9 +19,9 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven.compiler.release>${java.version}</maven.compiler.release>
         <maven-enforcer-plugin.version>3.2.1</maven-enforcer-plugin.version>
-        <pitest.maven.version>1.20.1</pitest.maven.version>
+        <pitest.maven.version>1.20.2</pitest.maven.version>
         <pitest.junit5.version>1.2.3</pitest.junit5.version>
-        <stryker.reporter.version>0.3.6</stryker.reporter.version>
+        <stryker.reporter.version>0.3.7</stryker.reporter.version>
         <pmd.version>7.16.0</pmd.version>
     </properties>
 
@@ -66,7 +66,7 @@
             <dependency>
                 <groupId>io.jsonwebtoken</groupId>
                 <artifactId>jjwt-bom</artifactId>
-                <version>0.12.7</version>
+                <version>0.13.0</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
