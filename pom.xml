@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.5</version>
+        <version>3.5.6</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>io.github.enkarin</groupId>
@@ -19,9 +19,9 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven.compiler.release>${java.version}</maven.compiler.release>
         <maven-enforcer-plugin.version>3.2.1</maven-enforcer-plugin.version>
-        <pitest.maven.version>1.20.2</pitest.maven.version>
+        <pitest.maven.version>1.20.3</pitest.maven.version>
         <pitest.junit5.version>1.2.3</pitest.junit5.version>
-        <stryker.reporter.version>0.3.7</stryker.reporter.version>
+        <stryker.reporter.version>0.3.8</stryker.reporter.version>
         <pmd.version>7.16.0</pmd.version>
     </properties>
 
@@ -31,7 +31,7 @@
                 <!-- TODO try to remove -->
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
-                <version>3.5.5</version>
+                <version>3.5.6</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -59,7 +59,7 @@
             <dependency>
                 <groupId>org.assertj</groupId>
                 <artifactId>assertj-bom</artifactId>
-                <version>3.27.4</version>
+                <version>3.27.6</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
