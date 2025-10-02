@@ -18,19 +18,22 @@ public class AdviceController extends ResponseEntityExceptionHandler {
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(UserNotFoundException.class)
-    public @ResponseBody Map<String, String> userNotFound(final UserNotFoundException exc) {
+    @ResponseBody
+    public Map<String, String> userNotFound(final UserNotFoundException exc) {
         return Map.of("user", exc.getMessage());
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(BookNotFoundException.class)
-    public @ResponseBody Map<String, String> bookNotFound(final BookNotFoundException exc) {
+    @ResponseBody
+    public Map<String, String> bookNotFound(final BookNotFoundException exc) {
         return Map.of("book", exc.getMessage());
     }
 
     @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
     @ExceptionHandler(BindingErrorsException.class)
-    public @ResponseBody Map<String, String> bindingExc(final BindingErrorsException exc) {
+    @ResponseBody
+    public Map<String, String> bindingExc(final BindingErrorsException exc) {
         return exc.getErrors().stream()
                 .collect(Collectors.toMap(s -> s.split(":")[0].trim(), s -> s.split(":")[1].trim()));
     }
