@@ -59,6 +59,13 @@ class DatabaseStructureStaticAnalysisTest extends BookCrossingBaseTests {
                                         IndexWithColumns.ofSingle(PG_CONTEXT, "t_refresh", "t_refresh_pkey", 0L,
                                                 Column.ofNotNull(PG_CONTEXT, "t_refresh", "refresh_id"))
                                 );
+                        case TABLES_WHERE_ALL_COLUMNS_NULLABLE_EXCEPT_PK -> checkAssert
+                                .asInstanceOf(list(Table.class))
+                                .hasSize(2)
+                                .containsExactly(
+                                        Table.of(PG_CONTEXT, "t_attach"),
+                                        Table.of(PG_CONTEXT, "t_role")
+                                );
                         default -> checkAssert.isEmpty();
                     }
                 });
