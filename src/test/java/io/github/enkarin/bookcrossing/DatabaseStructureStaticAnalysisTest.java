@@ -41,16 +41,16 @@ class DatabaseStructureStaticAnalysisTest extends BookCrossingBaseTests {
                 .filter(DatabaseCheckOnHost::isStatic)
                 .forEach(check -> {
                     final ListAssert<? extends DbObject> checkAssert = assertThat(check.check(PG_CONTEXT, SkipFlywayTablesPredicate.of(PG_CONTEXT)))
-                            .as(check.getDiagnostic().name());
+                            .as(check.getName());
 
-                    switch (check.getDiagnostic()) {
-                        case COLUMNS_WITH_FIXED_LENGTH_VARCHAR -> checkAssert.hasSize(15);
-                        case COLUMNS_WITHOUT_DESCRIPTION -> checkAssert.hasSize(43);
-                        case TABLES_NOT_LINKED_TO_OTHERS -> checkAssert
+                    switch (check.getName()) {
+                        case "COLUMNS_WITH_FIXED_LENGTH_VARCHAR" -> checkAssert.hasSize(15);
+                        case "COLUMNS_WITHOUT_DESCRIPTION" -> checkAssert.hasSize(43);
+                        case "TABLES_NOT_LINKED_TO_OTHERS" -> checkAssert
                                 .asInstanceOf(list(Table.class))
                                 .hasSize(1)
                                 .containsExactly(Table.of(PG_CONTEXT, "t_refresh"));
-                        case PRIMARY_KEYS_THAT_MOST_LIKELY_NATURAL_KEYS -> checkAssert
+                        case "PRIMARY_KEYS_THAT_MOST_LIKELY_NATURAL_KEYS" -> checkAssert
                                 .asInstanceOf(list(IndexWithColumns.class))
                                 .hasSize(2)
                                 .containsExactly(
@@ -59,7 +59,7 @@ class DatabaseStructureStaticAnalysisTest extends BookCrossingBaseTests {
                                         IndexWithColumns.ofSingle(PG_CONTEXT, "t_refresh", "t_refresh_pkey", 0L,
                                                 Column.ofNotNull(PG_CONTEXT, "t_refresh", "refresh_id"))
                                 );
-                        case TABLES_WHERE_ALL_COLUMNS_NULLABLE_EXCEPT_PK -> checkAssert
+                        case "TABLES_WHERE_ALL_COLUMNS_NULLABLE_EXCEPT_PK" -> checkAssert
                                 .asInstanceOf(list(Table.class))
                                 .hasSize(2)
                                 .containsExactly(
