@@ -19,7 +19,7 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven.compiler.release>${java.version}</maven.compiler.release>
         <maven-enforcer-plugin.version>3.2.1</maven-enforcer-plugin.version>
-        <pitest.maven.version>1.20.4</pitest.maven.version>
+        <pitest.maven.version>1.21.0</pitest.maven.version>
         <pitest.junit5.version>1.2.3</pitest.junit5.version>
         <stryker.reporter.version>0.3.8</stryker.reporter.version>
         <pmd.version>7.17.0</pmd.version>
