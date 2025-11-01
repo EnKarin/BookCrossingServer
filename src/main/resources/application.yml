@@ -29,7 +29,7 @@ spring:
         open-in-view: false
         show-sql: false
     datasource:
-        url: jdbc:postgresql://localhost:5432/bookcrossing
+        url: jdbc:postgresql://localhost:6432/bookcrossing
         username: postgres
         password: 123456
         driver-class-name: org.postgresql.Driver
