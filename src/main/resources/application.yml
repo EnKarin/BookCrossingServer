@@ -57,3 +57,62 @@ jwt:
     secret: dmVyeV92ZXJ5X2xvbmdfc2VjcmV0X2tleV9mb3Jfand0X3NpZ25hdHVyZQ== # very_very_long_secret_key_for_jwt_signature
 time:
     zone-offset: 7
+
+management:
+    server:
+        port: 8090
+    endpoints:
+        web:
+            exposure.include: health,prometheus,info,threaddump,heapdump,swaggerui,flyway
+            cors:
+                allowed-methods: '*'
+                allowed-origins: '*'
+                allowed-headers: '*'
+        access:
+            default: read_only
+    endpoint:
+        health:
+            probes.enabled: true
+            group:
+                readiness:
+                    include: readinessState,db
+                    additional-path: server:/readyz # To collect probes from application main port
+            access: read_only
+        prometheus:
+            access: read_only
+        info:
+            access: read_only
+        threaddump:
+            access: read_only
+        heapdump:
+            access: read_only
+        flyway:
+            access: read_only
+    metrics:
+        distribution:
+            percentiles-histogram:
+                http.server.requests: true
+            minimum-expected-value:
+                http.server.requests: 10ms
+            maximum-expected-value:
+                http.server.requests: 10s
+            slo:
+                http.server.requests: 1s
+    info:
+        env.enabled: true
+    health:
+        livenessstate:
+            enabled: true
+        readinessstate:
+            enabled: true
+    prometheus:
+        metrics:
+            export:
+                enabled: true
+
+springdoc:
+    show-actuator: true
+    use-management-port: true
+
+info:
+    app.version: @project.version@

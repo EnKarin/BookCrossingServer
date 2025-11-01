@@ -102,7 +102,7 @@ class MyBookControllerTest extends BookCrossingBaseTests {
     }
 
     private WebTestClient.ResponseSpec checkPost(final String access, final Object body, final int status) {
-        return webClient.post()
+        return webTestClient.post()
                 .uri("/user/myBook")
                 .headers(headers -> headers.setBearerAuth(access))
                 .contentType(MediaType.APPLICATION_JSON)
@@ -112,7 +112,7 @@ class MyBookControllerTest extends BookCrossingBaseTests {
     }
 
     private WebTestClient.ResponseSpec checkGet(final String access) {
-        return webClient.get()
+        return webTestClient.get()
                 .uri("/user/myBook")
                 .headers(headers -> headers.setBearerAuth(access))
                 .exchange()
@@ -120,7 +120,7 @@ class MyBookControllerTest extends BookCrossingBaseTests {
     }
 
     private WebTestClient.ResponseSpec checkDelete(final String access, final int bookId, final int status) {
-        return webClient.delete()
+        return webTestClient.delete()
                 .uri("/user/myBook?bookId={bookId}", bookId)
                 .headers(headers -> headers.setBearerAuth(access))
                 .exchange()

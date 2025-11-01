@@ -9,7 +9,7 @@ class PasswordResetControllerTest extends BookCrossingBaseTests {
 
     @Test
     void sendMessageShouldFailWithUserNotFound() {
-        webClient.post()
+        webTestClient.post()
                 .uri(uriBuilder -> uriBuilder
                         .pathSegment("reset", "send")
                         .queryParam("email", "k@mail.ru")
@@ -24,7 +24,7 @@ class PasswordResetControllerTest extends BookCrossingBaseTests {
     @Test
     void updatePasswordShouldWork() {
         createAndSaveUser(TestDataProvider.buildBot());
-        webClient.post()
+        webTestClient.post()
                 .uri(uriBuilder -> uriBuilder
                         .pathSegment("reset", "send")
                         .queryParam("email", "k.test@mail.ru")
@@ -33,7 +33,7 @@ class PasswordResetControllerTest extends BookCrossingBaseTests {
                 .expectStatus().isEqualTo(200);
 
         final var token = jdbcTemplate.queryForObject("select confirmation_mail from bookcrossing.t_action_mail_user where type = 1", String.class);
-        webClient.post()
+        webTestClient.post()
                 .uri(uriBuilder -> uriBuilder
                         .pathSegment("reset", "update")
                         .queryParam("token", token)
@@ -56,7 +56,7 @@ class PasswordResetControllerTest extends BookCrossingBaseTests {
     }
 
     private void assertThatReturnException(final UserPasswordDto userPasswordDto, final int status, final String path, final String message) {
-        webClient.post()
+        webTestClient.post()
                 .uri(uriBuilder -> uriBuilder
                         .pathSegment("reset", "update")
                         .queryParam("token", "easd")

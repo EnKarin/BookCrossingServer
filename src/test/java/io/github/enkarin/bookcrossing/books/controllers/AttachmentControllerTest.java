@@ -37,7 +37,7 @@ class AttachmentControllerTest extends BookCrossingBaseTests {
         final int name = attachmentService.saveAttachment(AttachmentMultipartDto.fromFile(book1, multipartFile),
                 userRegistrationDto.getLogin()).getAttachment().getAttachId();
 
-        webClient.delete()
+        webTestClient.delete()
                 .uri(uriBuilder -> uriBuilder.path("/user/myBook/attachment")
                         .queryParam("bookId", book1)
                         .build())

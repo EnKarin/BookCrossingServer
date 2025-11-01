@@ -150,7 +150,7 @@ class RegistrationControllerTest extends BookCrossingBaseTests {
     }
 
     private WebTestClient.ResponseSpec checkPost(final String uri, final Object body, final int status) {
-        return webClient.post()
+        return webTestClient.post()
                 .uri(uri)
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(body)
@@ -159,7 +159,7 @@ class RegistrationControllerTest extends BookCrossingBaseTests {
     }
 
     private WebTestClient.ResponseSpec checkToken(final String token, final int status) {
-        return webClient.get()
+        return webTestClient.get()
                 .uri("/registration/confirmation?token={token}", token)
                 .exchange()
                 .expectStatus().isEqualTo(status);
