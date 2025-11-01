@@ -17,7 +17,7 @@ class UserProfileControllerTest extends BookCrossingBaseTests {
         enabledUser(user.getUserId());
         createAndSaveBooks(user.getLogin());
 
-        final var response = webClient.get()
+        final var response = webTestClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .pathSegment("user", "profile")
                         .queryParam("zone", 0)
@@ -51,7 +51,7 @@ class UserProfileControllerTest extends BookCrossingBaseTests {
 
         createAndSaveBooks(userBot.getLogin());
 
-        final var response = webClient.get()
+        final var response = webTestClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .pathSegment("user", "profile")
                         .queryParam("zone", 0)
@@ -75,7 +75,7 @@ class UserProfileControllerTest extends BookCrossingBaseTests {
         final var userBot = createAndSaveUser(TestDataProvider.buildBot());
         enabledUser(userBot.getUserId());
 
-        final var response = webClient.put()
+        final var response = webTestClient.put()
                 .uri(uriBuilder -> uriBuilder
                         .pathSegment("user", "profile")
                         .build())
@@ -121,7 +121,7 @@ class UserProfileControllerTest extends BookCrossingBaseTests {
         enabledUser(user.getUserId());
         createAndSaveBooks(user.getLogin());
 
-        final var response = webClient.get()
+        final var response = webTestClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .pathSegment("user", "profile", "users")
                         .queryParam("zone", 0)
@@ -150,7 +150,7 @@ class UserProfileControllerTest extends BookCrossingBaseTests {
     }
 
     private void assertThatReturnException(final UserPutProfileDto putProfileDto, final int status, final String message) {
-        webClient.put()
+        webTestClient.put()
                 .uri(uriBuilder -> uriBuilder
                         .pathSegment("user", "profile")
                         .build())

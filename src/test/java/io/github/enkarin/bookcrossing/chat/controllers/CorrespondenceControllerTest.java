@@ -195,7 +195,7 @@ class CorrespondenceControllerTest extends BookCrossingBaseTests {
         final var key = correspondenceService.createChat(userAlexId, userBot.getLogin());
         final var message = messageService.sendMessage(MessageRequest.create(key, "Hi"), userBot.getLogin());
 
-        final var response = webClient.get()
+        final var response = webTestClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .pathSegment("user", "correspondence")
                         .queryParam("zone", 0)
@@ -262,7 +262,7 @@ class CorrespondenceControllerTest extends BookCrossingBaseTests {
     }
 
     private WebTestClient.ResponseSpec execute(final HttpMethod httpMethod, final int userId, final int status) {
-        return webClient.method(httpMethod)
+        return webTestClient.method(httpMethod)
                 .uri(uriBuilder -> uriBuilder
                         .pathSegment("user", "correspondence")
                         .build())
@@ -275,7 +275,7 @@ class CorrespondenceControllerTest extends BookCrossingBaseTests {
     }
 
     private WebTestClient.ResponseSpec execute(final int firstUserId, final int secondUserId, final int status) {
-        return webClient.get()
+        return webTestClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .pathSegment("user", "correspondence")
                         .queryParam("zone", 0)

@@ -16,8 +16,7 @@ import java.util.Map;
                 title = "BookCrossing",
                 version = "1.0.0",
                 description = "Server implementation for a book exchange application",
-                contact = @io.swagger.v3.oas.annotations.info.Contact(name = "Karina Elagina",
-                        email = "karina.elagina2013@yandex.ru")
+                contact = @io.swagger.v3.oas.annotations.info.Contact(name = "Karina Elagina", email = "karina.elagina2013@yandex.ru")
         )
 )
 public class SwaggerConfig {

@@ -21,7 +21,7 @@ class AdminControllerTest extends BookCrossingBaseTests {
 
     @Test
     void userListShouldWorkWithEmptyUserList() {
-        final var response = webClient.get()
+        final var response = webTestClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .pathSegment("adm")
                         .queryParam("zone", 0)
@@ -38,7 +38,7 @@ class AdminControllerTest extends BookCrossingBaseTests {
     @Test
     void userListShouldWork() {
         final var user = createAndSaveUser(TestDataProvider.buildBot());
-        final var response = webClient.get()
+        final var response = webTestClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .pathSegment("adm")
                         .queryParam("zone", 0)
@@ -61,7 +61,7 @@ class AdminControllerTest extends BookCrossingBaseTests {
 
     @Test
     void lockedUserShouldFailWithBindingError() {
-        webClient.post()
+        webTestClient.post()
                 .uri(uriBuilder -> uriBuilder
                         .pathSegment("adm", "locked")
                         .queryParam("zone", 0)
@@ -81,7 +81,7 @@ class AdminControllerTest extends BookCrossingBaseTests {
     @Test
     void lockedUserShouldWork() {
         createAndSaveUser(TestDataProvider.buildBot());
-        webClient.post()
+        webTestClient.post()
                 .uri(uriBuilder -> uriBuilder
                         .pathSegment("adm", "locked")
                         .queryParam("zone", 0)
@@ -97,7 +97,7 @@ class AdminControllerTest extends BookCrossingBaseTests {
     void nonLockedUserShouldWork() {
         createAndSaveUser(TestDataProvider.buildBot());
         adminService.lockedUser(LockedUserDto.create("Bot", "Заблокировано"));
-        webClient.post()
+        webTestClient.post()
                 .uri(uriBuilder -> uriBuilder
                         .pathSegment("adm", "nonLocked")
                         .queryParam("login", "Bot")

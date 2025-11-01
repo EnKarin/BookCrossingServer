@@ -32,7 +32,7 @@ public abstract class BookCrossingBaseTests {
     @Autowired
     protected JdbcTemplate jdbcTemplate;
     @Autowired
-    protected WebTestClient webClient;
+    protected WebTestClient webTestClient;
     @Autowired
     protected UserService userService;
     @Autowired

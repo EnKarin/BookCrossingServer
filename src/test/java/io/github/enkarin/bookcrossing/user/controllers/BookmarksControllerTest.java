@@ -72,7 +72,7 @@ class BookmarksControllerTest extends BookCrossingBaseTests {
         enabledUser(user.getUserId());
         final var books = createAndSaveBooks(user.getLogin());
         books.forEach(b -> bookmarksService.saveBookmarks(b, user.getLogin()));
-        final var response = webClient.get()
+        final var response = webTestClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .pathSegment("user", "bookmarks")
                         .build())
@@ -88,7 +88,7 @@ class BookmarksControllerTest extends BookCrossingBaseTests {
     }
 
     private WebTestClient.ResponseSpec execute(final HttpMethod method, final String access, final int bookId, final int status) {
-        return webClient
+        return webTestClient
                 .method(method)
                 .uri(uriBuilder -> uriBuilder
                         .pathSegment("user", "bookmarks")

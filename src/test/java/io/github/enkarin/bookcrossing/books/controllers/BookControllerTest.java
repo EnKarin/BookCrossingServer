@@ -24,7 +24,7 @@ class BookControllerTest extends BookCrossingBaseTests {
         enabledUser(user.getUserId());
 
         final var booksId = createAndSaveBooks(user.getLogin());
-        final var response = webClient.get()
+        final var response = webTestClient.get()
                 .uri("/books/all")
                 .exchange()
                 .expectStatus().isEqualTo(200)
@@ -37,7 +37,7 @@ class BookControllerTest extends BookCrossingBaseTests {
 
     @Test
     void booksShouldnWorkWithEmptyTableBook() {
-        final var response = webClient.get()
+        final var response = webTestClient.get()
                 .uri("/books/all")
                 .exchange()
                 .expectStatus().isEqualTo(200)
@@ -55,7 +55,7 @@ class BookControllerTest extends BookCrossingBaseTests {
                 .orElseThrow();
         enabledUser(user.getUserId());
         final var bookId = bookService.saveBook(TestDataProvider.buildDorian(), user.getLogin()).getBookId();
-        final var response = webClient.get()
+        final var response = webTestClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .pathSegment("books", "info")
                         .queryParam("bookId", String.valueOf(bookId))
@@ -70,7 +70,7 @@ class BookControllerTest extends BookCrossingBaseTests {
 
     @Test
     void bookInfoShouldnFailBecauseBookNotFound() {
-        webClient.get()
+        webTestClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .pathSegment("books", "info")
                         .queryParam("bookId", String.valueOf(Integer.MAX_VALUE))
@@ -91,7 +91,7 @@ class BookControllerTest extends BookCrossingBaseTests {
         enabledUser(user.getUserId());
         final var firstBookId = bookService.saveBook(TestDataProvider.buildDandelion(), user.getLogin()).getBookId();
         final var secondBookId = bookService.saveBook(TestDataProvider.buildDandelion(), user.getLogin()).getBookId();
-        final var response = webClient.get()
+        final var response = webTestClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .pathSegment("books", "searchByTitle")
                         .queryParam("title", "Dandelion")
@@ -108,7 +108,7 @@ class BookControllerTest extends BookCrossingBaseTests {
 
     @Test
     void searchByTitleShouldnWorkWithoutBooks() {
-        final var response = webClient.get()
+        final var response = webTestClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .pathSegment("books", "searchByTitle")
                         .queryParam("title", "TestName") //books not contains in db
@@ -131,7 +131,7 @@ class BookControllerTest extends BookCrossingBaseTests {
 
         final var booksId = createAndSaveBooks(user);
 
-        final var response = webClient
+        final var response = webTestClient
                 .method(HttpMethod.GET)
                 .uri(uriBuilder -> uriBuilder
                         .pathSegment("books", "searchWithFilters")
