@@ -63,7 +63,7 @@ management:
         port: 8090
     endpoints:
         web:
-            exposure.include: health,prometheus,info,threaddump,heapdump,swaggerui,flyway
+            exposure.include: health,prometheus,info,threaddump,heapdump,openapi,swaggerui,flyway
             cors:
                 allowed-methods: '*'
                 allowed-origins: '*'

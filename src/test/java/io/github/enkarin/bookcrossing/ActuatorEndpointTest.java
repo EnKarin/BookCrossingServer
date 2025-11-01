@@ -46,12 +46,14 @@ class ActuatorEndpointTest extends BookCrossingBaseTests {
 
     @ParameterizedTest
     @CsvSource(value = {
-            "prometheus|jvm_threads_live_threads|text/plain",
-            "health|{\"status\":\"UP\",\"groups\":[\"liveness\",\"readiness\"]}|application/json",
-            "health/liveness|{\"status\":\"UP\"}|application/json",
-            "health/readiness|{\"status\":\"UP\"}|application/json",
-            "info|\"version\":|application/json",
-            "flyway|\"migrations\"|application/json"
+        "prometheus|jvm_threads_live_threads|text/plain",
+        "health|{\"status\":\"UP\",\"groups\":[\"liveness\",\"readiness\"]}|application/json",
+        "health/liveness|{\"status\":\"UP\"}|application/json",
+        "health/readiness|{\"status\":\"UP\"}|application/json",
+        "info|\"version\":|application/json",
+        "openapi/springdocDefault|{\"openapi\":\"3.1.0\",\"info\":{\"title\":\"BookCrossing\"|application/json",
+        "openapi/x-actuator|{\"openapi\":\"3.1.0\",\"info\":{\"title\":\"BookCrossing\"|application/json",
+        "flyway|\"migrations\"|application/json"
     }, delimiter = '|')
     void actuatorEndpointShouldReturnOk(@Nonnull final String endpointName,
                                         @Nonnull final String expectedSubstring,
