@@ -21,7 +21,7 @@ class RefreshControllerTest extends BookCrossingBaseTests {
         final UserDto user = createAndSaveUser(TestDataProvider.buildAlex());
         final AuthResponse tokens = refreshService.createTokens(user.getLogin());
 
-        final AuthResponse body = webClient.post()
+        final AuthResponse body = webTestClient.post()
                 .uri("/refresh")
                 .bodyValue(RefreshRequest.create(tokens.getRefreshToken()))
                 .exchange()

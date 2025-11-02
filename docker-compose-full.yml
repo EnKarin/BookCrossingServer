@@ -10,6 +10,7 @@ services:
             JAVA_TOOL_OPTIONS: -XX:+ExitOnOutOfMemoryError -XX:ActiveProcessorCount=1 -XX:MaxDirectMemorySize=10M -Xmx1470031K -XX:MaxMetaspaceSize=115120K -XX:ReservedCodeCacheSize=240M -Xss1M -XX:+UnlockDiagnosticVMOptions -XX:NativeMemoryTracking=summary -XX:+PrintNMTStatistics
         ports:
             - "8443:8443"
+            - "8090:8090"
         restart: unless-stopped
         depends_on:
             postgres:

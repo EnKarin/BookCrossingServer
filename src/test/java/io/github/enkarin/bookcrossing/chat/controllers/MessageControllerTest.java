@@ -250,7 +250,7 @@ class MessageControllerTest extends BookCrossingBaseTests {
     }
 
     private WebTestClient.ResponseSpec execute(final HttpMethod method, final Object body, final int status) {
-        return webClient.method(method)
+        return webTestClient.method(method)
                 .uri(uriBuilder -> uriBuilder
                         .pathSegment("user", "correspondence", "message")
                         .build())
@@ -261,7 +261,7 @@ class MessageControllerTest extends BookCrossingBaseTests {
     }
 
     private WebTestClient.ResponseSpec execute(final long messageId, final int status) {
-        return webClient.delete()
+        return webTestClient.delete()
                 .uri(uriBuilder -> uriBuilder
                         .pathSegment("user", "correspondence", "message")
                         .queryParam("messageId", messageId)
@@ -272,7 +272,7 @@ class MessageControllerTest extends BookCrossingBaseTests {
     }
 
     private WebTestClient.ResponseSpec executeDeleteForMe(final long messageId, final String token, final int status) {
-        return webClient.delete()
+        return webTestClient.delete()
                 .uri(uriBuilder -> uriBuilder
                         .pathSegment("user", "correspondence", "message", "deleteForMe")
                         .queryParam("messageId", messageId)
