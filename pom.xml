@@ -22,7 +22,7 @@
         <pitest.maven.version>1.21.1</pitest.maven.version>
         <pitest.junit5.version>1.2.3</pitest.junit5.version>
         <stryker.reporter.version>0.3.9</stryker.reporter.version>
-        <pmd.version>7.17.0</pmd.version>
+        <pmd.version>7.18.0</pmd.version>
     </properties>
 
     <dependencyManagement>
