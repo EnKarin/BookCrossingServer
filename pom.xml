@@ -512,7 +512,7 @@
                     <dependency>
                         <groupId>io.moderne.recipe</groupId>
                         <artifactId>rewrite-spring</artifactId>
-                        <version>0.15.0</version>
+                        <version>0.18.0</version>
                     </dependency>
                     <dependency>
                         <groupId>org.openrewrite.recipe</groupId>
