@@ -1,0 +1,41 @@
+language: java
+
+dist: jammy
+
+jdk:
+  - openjdk21
+
+services:
+  - docker
+
+env:
+  global:
+    - MAVEN_OPTS="-Xmx3072m"
+    - MAVEN_CLI_OPTS="-B -Dorg.slf4j.simpleLogger.showDateTime=false -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn"
+    - TEST_EXCLUSIONS="-Dtest=**/*Test,!ActuatorEndpointTest"
+
+before_cache:
+  - rm -f $HOME/.m2/repository/**/*-SNAPSHOT.jar
+  - rm -fr $HOME/.sonar/cache
+
+cache:
+  directories:
+    - $HOME/.m2/repository
+    - $HOME/.sonar/cache
+
+install: skip
+
+script:
+  - mvn clean verify $MAVEN_CLI_OPTS $TEST_EXCLUSIONS -Dlogging.level.org.hibernate.SQL=WARN -Dlogging.level.org.springframework.orm.jpa=WARN -Dspring.jpa.show-sql=false
+  - mvn package docker:build -DskipTests $MAVEN_CLI_OPTS
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
+
+after_failure:
+  - echo "Build failed - check logs above"
+
+notifications:
+  email:
+    on_success: change
+    on_failure: always
