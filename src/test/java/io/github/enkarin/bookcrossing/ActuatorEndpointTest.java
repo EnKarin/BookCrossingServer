@@ -35,6 +35,9 @@ class ActuatorEndpointTest extends BookCrossingBaseTests {
     void setUp() {
         this.actuatorClient = WebTestClient.bindToServer()
                 .baseUrl("http://localhost:" + actuatorPort + "/actuator/")
+                .codecs(configurer ->
+                        configurer.defaultCodecs().maxInMemorySize(1024 * 1024) // 1 MB
+                )
                 .build();
     }
 
