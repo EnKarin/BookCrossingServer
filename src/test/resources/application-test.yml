@@ -7,9 +7,11 @@ spring:
         banner-mode: off
     jpa:
         show-sql: true
+
 server:
     ssl:
         enabled: false
+
 logging:
     level:
         org.testcontainers: INFO
