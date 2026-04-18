@@ -53,8 +53,12 @@ spring:
     flyway:
         enabled: true
         default-schema: bookcrossing
+    codec:
+        max-in-memory-size: 1MB
+
 jwt:
     secret: dmVyeV92ZXJ5X2xvbmdfc2VjcmV0X2tleV9mb3Jfand0X3NpZ25hdHVyZQ== # very_very_long_secret_key_for_jwt_signature
+
 time:
     zone-offset: 7
 
