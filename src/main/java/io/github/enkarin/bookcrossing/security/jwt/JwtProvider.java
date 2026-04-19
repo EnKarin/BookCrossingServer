@@ -32,6 +32,7 @@ public class JwtProvider {
                 .compact();
     }
 
+    @SuppressWarnings("PMD.AvoidCatchingGenericException")
     public boolean validateToken(final String token) {
         try {
             Jwts.parser()
