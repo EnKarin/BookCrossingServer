@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
+import java.time.ZoneOffset;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 class MessageControllerTest extends BookCrossingBaseTests {
@@ -157,9 +159,9 @@ class MessageControllerTest extends BookCrossingBaseTests {
 
         execute(messageId, 200);
 
-        assertThat(correspondenceService.getChat(key.getFirstUserId(), key.getSecondUserId(), 0, userBot.getLogin()))
+        assertThat(correspondenceService.getChat(key.getFirstUserId(), key.getSecondUserId(), ZoneOffset.UTC, userBot.getLogin()))
                 .isEmpty();
-        assertThat(correspondenceService.getChat(key.getFirstUserId(), key.getSecondUserId(), 0, userAlex.getLogin()))
+        assertThat(correspondenceService.getChat(key.getFirstUserId(), key.getSecondUserId(), ZoneOffset.UTC, userAlex.getLogin()))
                 .isEmpty();
     }
 
@@ -200,9 +202,9 @@ class MessageControllerTest extends BookCrossingBaseTests {
 
         executeDeleteForMe(messageId, generateAccessToken(TestDataProvider.buildAuthBot()), 200);
 
-        assertThat(correspondenceService.getChat(key.getFirstUserId(), key.getSecondUserId(), 0, userBot.getLogin()))
+        assertThat(correspondenceService.getChat(key.getFirstUserId(), key.getSecondUserId(), ZoneOffset.UTC, userBot.getLogin()))
                 .isEmpty();
-        assertThat(correspondenceService.getChat(key.getFirstUserId(), key.getSecondUserId(), 0, userAlex.getLogin()))
+        assertThat(correspondenceService.getChat(key.getFirstUserId(), key.getSecondUserId(), ZoneOffset.UTC, userAlex.getLogin()))
                 .hasSize(1);
     }
 
@@ -218,9 +220,9 @@ class MessageControllerTest extends BookCrossingBaseTests {
 
         executeDeleteForMe(messageId, generateAccessToken(TestDataProvider.buildAuthAlex()), 200);
 
-        assertThat(correspondenceService.getChat(key.getFirstUserId(), key.getSecondUserId(), 0, userBot.getLogin()))
+        assertThat(correspondenceService.getChat(key.getFirstUserId(), key.getSecondUserId(), ZoneOffset.UTC, userBot.getLogin()))
                 .hasSize(1);
-        assertThat(correspondenceService.getChat(key.getFirstUserId(), key.getSecondUserId(), 0, userAlex.getLogin()))
+        assertThat(correspondenceService.getChat(key.getFirstUserId(), key.getSecondUserId(), ZoneOffset.UTC, userAlex.getLogin()))
                 .isEmpty();
     }
 
