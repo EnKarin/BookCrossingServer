@@ -12,6 +12,8 @@ import javax.annotation.concurrent.Immutable;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
+import java.time.ZoneOffset;
+
 @Immutable
 @Getter
 @EqualsAndHashCode
@@ -28,10 +30,10 @@ public class LoginRequest {
     private final String password;
 
     @Schema(description = "Часовой пояс пользователя", example = "7")
-    private final int zone;
+    private final ZoneOffset zone;
 
     @JsonCreator
-    public static LoginRequest create(final String login, final String password, final int zone) {
+    public static LoginRequest create(final String login, final String password, final ZoneOffset zone) {
         return new LoginRequest(login, password, zone);
     }
 }

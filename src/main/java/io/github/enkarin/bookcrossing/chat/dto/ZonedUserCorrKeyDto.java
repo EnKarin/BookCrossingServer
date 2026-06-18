@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import javax.annotation.concurrent.Immutable;
+import java.time.ZoneOffset;
 
 @Immutable
 @Getter
@@ -21,10 +22,10 @@ public class ZonedUserCorrKeyDto {
     private final int secondUserId;
 
     @Schema(description = "Часовой пояс")
-    private final int zone;
+    private final ZoneOffset zone;
 
     @JsonCreator
-    public static ZonedUserCorrKeyDto create(final int firstUserId, final int secondUserId, final int zone) {
+    public static ZonedUserCorrKeyDto create(final int firstUserId, final int secondUserId, final ZoneOffset zone) {
         return new ZonedUserCorrKeyDto(firstUserId, secondUserId, zone);
     }
 }

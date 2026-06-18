@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.ZoneOffset;
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.Predicate;
@@ -22,7 +23,7 @@ public class CorrespondenceServiceHelper {
 
     @Transactional
     public List<MessageDto> getMessages(final Predicate<Message> rules, final Correspondence correspondence,
-                                        final int zone, final User user) {
+                                        final ZoneOffset zone, final User user) {
         final var messages = correspondence.getMessage();
         final var response = messages.stream()
                 .filter(rules)

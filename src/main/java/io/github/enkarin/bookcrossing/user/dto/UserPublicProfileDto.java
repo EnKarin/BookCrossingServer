@@ -40,13 +40,13 @@ public class UserPublicProfileDto {
     @Schema(description = "Книги пользователя")
     private final Set<BookModelDto> books;
 
-    public static UserPublicProfileDto fromUser(final User user, final int zone) {
+    public static UserPublicProfileDto fromUser(final User user, final ZoneOffset zone) {
         final Set<BookModelDto> books = user.getBooks().stream()
                 .map(BookModelDto::fromBook)
                 .collect(Collectors.toUnmodifiableSet());
         return new UserPublicProfileDto(user.getUserId(), user.getName(), user.getCity(),
                 user.getLoginDate() == 0 ? "0" :
-                        LocalDateTime.ofEpochSecond(user.getLoginDate(), 0, ZoneOffset.ofHours(zone))
+                        LocalDateTime.ofEpochSecond(user.getLoginDate(), 0, zone)
                                 .toString(),
                 books);
     }

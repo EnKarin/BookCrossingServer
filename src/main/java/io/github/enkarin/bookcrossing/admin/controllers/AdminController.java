@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.validation.Valid;
 import java.util.LinkedList;
 import java.util.List;
+import java.time.ZoneOffset;
 
 @Tag(
         name = "Управление пользователями для администратора",
@@ -48,7 +49,7 @@ public class AdminController {
         }
     )
     @GetMapping
-    public ResponseEntity<List<InfoUsersDto>> userList(@RequestParam @Parameter(description = "Часовой пояс") final int zone) {
+    public ResponseEntity<List<InfoUsersDto>> userList(@RequestParam ZoneOffset zone) {
         return ResponseEntity.ok(adminService.findAllUsers(zone));
     }
 

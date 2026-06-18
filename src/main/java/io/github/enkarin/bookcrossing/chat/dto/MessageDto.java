@@ -30,7 +30,7 @@ public class MessageDto {
 
     private final boolean declaim;
 
-    public static MessageDto fromMessageAndZone(final Message message, final int zone) {
+    public static MessageDto fromMessageAndZone(final Message message, final ZoneOffset zone) {
         return new MessageDto(message.getMessageId(), message.getSender().getUserId(), message.getText(),
                 LocalDateTime.ofEpochSecond(message.getDepartureDate(),
                         0, ZoneOffset.ofHours(zone)).toString(), message.isDeclaim());

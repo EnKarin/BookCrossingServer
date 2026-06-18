@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.security.Principal;
+import java.time.ZoneOffset;
 import java.util.Map;
 
 @Tag(
@@ -106,7 +107,7 @@ public class CorrespondenceController {
     @GetMapping
     public ResponseEntity<Object[]> getCorrespondence(@RequestHeader(FIRST_USER_ID) final int firstUserId,
                                                       @RequestHeader(SECOND_USER_ID) final int secondUserId,
-                                                      @RequestParam final int zone,
+                                                      @RequestParam final ZoneOffset zone,
                                                       final Principal principal) {
         return ResponseEntity.ok(correspondenceService.getChat(firstUserId, secondUserId, zone, principal.getName()).toArray());
     }

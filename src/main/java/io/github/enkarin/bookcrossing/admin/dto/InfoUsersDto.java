@@ -27,21 +27,21 @@ public class InfoUsersDto {
     @Schema(description = "Время последнего входа", example = "2022-11-03T23:15:09.61")
     private final String loginDate;
 
-    public static InfoUsersDto fromUser(final User user, final int zone) {
+    public static InfoUsersDto fromUser(final User user, final ZoneOffset zone) {
         return new InfoUsersDto(UserParentDto.create(user.getUserId(), user.getName(), user.getLogin(), user.getEmail(),
                 user.getCity(), user.isAccountNonLocked(), user.isEnabled()),
                 loginDateToString(user.getLoginDate(), zone));
     }
 
-    public static InfoUsersDto fromUserDto(final UserDto user, final int zone) {
+    public static InfoUsersDto fromUserDto(final UserDto user, final ZoneOffset zone) {
         return new InfoUsersDto(UserParentDto.create(user.getUserId(), user.getName(), user.getLogin(), user.getEmail(),
                 user.getCity(), user.isAccountNonLocked(), user.isEnabled()),
                 loginDateToString(user.getLoginDate(), zone));
     }
 
-    private static String loginDateToString(final long loginDate, final int zone) {
+    private static String loginDateToString(final long loginDate, final ZoneOffset zone) {
         return loginDate == 0 ? "0" :
-                LocalDateTime.ofEpochSecond(loginDate, 0, ZoneOffset.ofHours(zone))
+                LocalDateTime.ofEpochSecond(loginDate, 0, zone)
                         .toString();
     }
 }

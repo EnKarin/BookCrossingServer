@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 import java.security.Principal;
+import java.time.ZoneOffset;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -59,7 +60,7 @@ public class UserProfileController {
     )
     @GetMapping
     public ResponseEntity<?> getProfile(@RequestHeader(defaultValue = "-1") @Parameter(description = "Идентификатор пользователя") final int userId, // NOSONAR
-                                        @RequestParam @Parameter(description = "Часовой пояс пользователя") final int zone,
+                                        @RequestParam @Parameter(description = "Часовой пояс пользователя") final ZoneOffset zone,
                                         final Principal principal) {
         if (userId == -1) {
             return ResponseEntity.ok(userService.getProfile(principal.getName()));
@@ -108,7 +109,7 @@ public class UserProfileController {
                     schema = @Schema(implementation = UserPublicProfileDto[].class))})
     })
     @GetMapping("/users")
-    public ResponseEntity<Object[]> getAllProfile(@RequestParam final int zone) {
+    public ResponseEntity<Object[]> getAllProfile(@RequestParam final ZoneOffset zone) {
         return ResponseEntity.ok(userService.findAllUsers(zone).toArray());
     }
 

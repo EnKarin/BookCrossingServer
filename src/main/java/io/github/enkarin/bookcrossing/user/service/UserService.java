@@ -30,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Set;
+import java.time.ZoneOffset;
 
 @RequiredArgsConstructor
 @Service
@@ -74,7 +75,7 @@ public class UserService {
         return userRepository.findByLogin(login).orElseThrow(UserNotFoundException::new);
     }
 
-    public UserPublicProfileDto findById(final int userId, final int zone) {
+    public UserPublicProfileDto findById(final int userId, final ZoneOffset zone) {
         return UserPublicProfileDto.fromUser(userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new), zone);
     }
@@ -84,7 +85,7 @@ public class UserService {
         return UserProfileDto.fromUser(user);
     }
 
-    public List<UserPublicProfileDto> findAllUsers(final int zone) {
+    public List<UserPublicProfileDto> findAllUsers(final ZoneOffset zone) {
         // TODO Performance! Too many sql queries. Should retrieve all data within single select query
         final Role role = roleRepository.getRoleByName("ROLE_USER");
         return userRepository.findByUserRolesOrderByUserId(role).stream()

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.time.ZoneOffset;
 
 @RequiredArgsConstructor
 @Service
@@ -42,7 +43,7 @@ public class AdminService {
         return user.isAccountNonLocked();
     }
 
-    public List<InfoUsersDto> findAllUsers(final int zone) {
+    public List<InfoUsersDto> findAllUsers(final ZoneOffset zone) {
         final Role role = roleRepository.getRoleByName("ROLE_USER");
         return userRepository.findByUserRolesOrderByUserId(role).stream()
                 .map(u -> InfoUsersDto.fromUser(u, zone))

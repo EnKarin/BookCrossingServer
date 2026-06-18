@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.ZoneOffset;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -60,7 +61,7 @@ public class CorrespondenceService {
         correspondenceRepository.delete(correspondence);
     }
 
-    public List<MessageDto> getChat(final int firstUserId, final int secondUserId, final int zone, final String login) {
+    public List<MessageDto> getChat(final int firstUserId, final int secondUserId, final ZoneOffset zone, final String login) {
         final User user = userRepository.findByLogin(login).orElseThrow();
         final User fUser = userRepository.findById(firstUserId)
                 .orElseThrow(UserNotFoundException::new);
