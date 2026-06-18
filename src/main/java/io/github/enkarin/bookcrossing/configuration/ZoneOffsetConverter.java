@@ -9,17 +9,15 @@ import java.time.ZoneOffset;
 public class ZoneOffsetConverter implements Converter<String, ZoneOffset> {
 
     @Override
-    public ZoneOffset convert(String source) {
+    public ZoneOffset convert(final String source) {
         if (source == null || source.isEmpty()) {
             return ZoneOffset.UTC;
         }
 
-        // Try parsing as hours first (e.g., "0", "2", "-5")
         try {
-            int hours = Integer.parseInt(source);
+            final int hours = Integer.parseInt(source);
             return ZoneOffset.ofHours(hours);
         } catch (NumberFormatException e) {
-            // Fall back to parsing as ISO format (e.g., "+02:00", "Z")
             return ZoneOffset.of(source);
         }
     }

@@ -48,7 +48,7 @@ public class AdminController {
         }
     )
     @GetMapping
-    public ResponseEntity<List<InfoUsersDto>> userList(@RequestParam ZoneOffset zone) {
+    public ResponseEntity<List<InfoUsersDto>> userList(@RequestParam final ZoneOffset zone) {
         return ResponseEntity.ok(adminService.findAllUsers(zone));
     }
 
