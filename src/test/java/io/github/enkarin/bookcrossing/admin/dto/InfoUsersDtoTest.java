@@ -4,13 +4,15 @@ import io.github.enkarin.bookcrossing.support.BookCrossingBaseTests;
 import io.github.enkarin.bookcrossing.support.TestDataProvider;
 import org.junit.jupiter.api.Test;
 
+import java.time.ZoneOffset;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 class InfoUsersDtoTest extends BookCrossingBaseTests {
 
     @Test
     void fromUserDtoShouldWorkWithLoginDate() {
-        assertThat(InfoUsersDto.fromUserDto(TestDataProvider.buildUserDto(), 0))
+        assertThat(InfoUsersDto.fromUserDto(TestDataProvider.buildUserDto(), ZoneOffset.UTC))
                 .isNotNull()
                 .satisfies(i -> {
                     assertThat(i.getLoginDate())

@@ -9,6 +9,7 @@ import io.github.enkarin.bookcrossing.user.dto.UserDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.time.ZoneOffset;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -52,15 +53,15 @@ class AdminServiceTest extends BookCrossingBaseTests {
         final List<UserDto> users = TestDataProvider.buildUsers().stream()
                 .map(this::createAndSaveUser)
                 .toList();
-        assertThat(adminService.findAllUsers(0))
+        assertThat(adminService.findAllUsers(ZoneOffset.UTC))
                 .hasSize(3)
                 .hasSameElementsAs(users.stream()
-                        .map(u -> InfoUsersDto.fromUserDto(u, 0))
+                        .map(u -> InfoUsersDto.fromUserDto(u, ZoneOffset.UTC))
                         .toList());
     }
 
     @Test
     void findAllUsersEmpty() {
-        assertThat(adminService.findAllUsers(0)).isEmpty();
+        assertThat(adminService.findAllUsers(ZoneOffset.UTC)).isEmpty();
     }
 }

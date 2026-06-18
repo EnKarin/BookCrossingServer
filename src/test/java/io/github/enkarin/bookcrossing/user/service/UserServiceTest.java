@@ -13,6 +13,7 @@ import io.github.enkarin.bookcrossing.user.dto.UserProfileDto;
 import io.github.enkarin.bookcrossing.user.dto.UserPublicProfileDto;
 import io.github.enkarin.bookcrossing.user.dto.UserPutProfileDto;
 
+import java.time.ZoneOffset;
 import java.util.Comparator;
 
 import org.junit.jupiter.api.Test;
@@ -25,7 +26,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 
 class UserServiceTest extends BookCrossingBaseTests {
-    private static final int GM_TIME_ZERO = 0;
+    private static final ZoneOffset GM_TIME_ZERO = ZoneOffset.UTC;
 
     @Test
     void saveUserCorrectUserTest() {

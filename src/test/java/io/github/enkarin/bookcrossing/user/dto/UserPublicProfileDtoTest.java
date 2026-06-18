@@ -4,6 +4,7 @@ import io.github.enkarin.bookcrossing.books.model.Book;
 import io.github.enkarin.bookcrossing.user.model.User;
 import org.junit.jupiter.api.Test;
 
+import java.time.ZoneOffset;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -18,7 +19,7 @@ class UserPublicProfileDtoTest {
         user.setName("name");
         user.setBooks(Stream.of(new Book()).collect(Collectors.toSet()));
 
-        final UserPublicProfileDto userProfileDto = UserPublicProfileDto.fromUser(user, 3);
+        final UserPublicProfileDto userProfileDto = UserPublicProfileDto.fromUser(user, ZoneOffset.ofHours(3));
         assertThat(userProfileDto)
                 .isNotNull()
                 .satisfies(u -> {
@@ -42,7 +43,7 @@ class UserPublicProfileDtoTest {
         user.setLoginDate(123_567);
         user.setBooks(Stream.of(new Book()).collect(Collectors.toSet()));
 
-        final UserPublicProfileDto userProfileDto = UserPublicProfileDto.fromUser(user, 3);
+        final UserPublicProfileDto userProfileDto = UserPublicProfileDto.fromUser(user, ZoneOffset.ofHours(3));
         assertThat(userProfileDto)
                 .isNotNull()
                 .satisfies(u -> {

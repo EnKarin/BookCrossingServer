@@ -17,6 +17,8 @@ import io.github.enkarin.bookcrossing.user.dto.UserPutProfileDto;
 import lombok.experimental.UtilityClass;
 
 import jakarta.annotation.Nonnull;
+
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Set;
 
@@ -65,7 +67,7 @@ public class TestDataProvider {
     public static LoginRequest.LoginRequestBuilder<?, ?> prepareLogin() {
         return LoginRequest.builder()
                 .password("123456")
-                .zone(0);
+                .zone(ZoneOffset.UTC);
     }
 
     @Nonnull
