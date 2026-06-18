@@ -33,7 +33,7 @@ public class MessageDto {
     public static MessageDto fromMessageAndZone(final Message message, final ZoneOffset zone) {
         return new MessageDto(message.getMessageId(), message.getSender().getUserId(), message.getText(),
                 LocalDateTime.ofEpochSecond(message.getDepartureDate(),
-                        0, ZoneOffset.ofHours(zone)).toString(), message.isDeclaim());
+                        0, zone).toString(), message.isDeclaim());
     }
 
     public static MessageDto fromMessage(final Message message) {
