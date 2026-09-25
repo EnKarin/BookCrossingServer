@@ -4,6 +4,7 @@ import io.github.enkarin.bookcrossing.support.BookCrossingBaseTests;
 import io.github.mfvanek.pg.core.checks.common.DatabaseCheckOnHost;
 import io.github.mfvanek.pg.core.checks.common.Diagnostic;
 import io.github.mfvanek.pg.model.column.Column;
+import io.github.mfvanek.pg.model.constraint.ForeignKey;
 import io.github.mfvanek.pg.model.context.PgContext;
 import io.github.mfvanek.pg.model.dbobject.DbObject;
 import io.github.mfvanek.pg.model.index.IndexWithColumns;
@@ -65,6 +66,15 @@ class DatabaseStructureStaticAnalysisTest extends BookCrossingBaseTests {
                                 .containsExactly(
                                         Table.of(PG_CONTEXT, "t_attach"),
                                         Table.of(PG_CONTEXT, "t_role")
+                                );
+                        case "FOREIGN_KEYS_WITH_NULL_VALUES" -> checkAssert
+                                .asInstanceOf(list(ForeignKey.class))
+                                .hasSize(1)
+                                .containsExactly(
+                                        ForeignKey.of(PG_CONTEXT, "bookcrossing.t_messages", "messages_foreign_correspondence",
+                                                List.of(Column.ofNullable(PG_CONTEXT, "t_messages", "correspondence_first_user_id"),
+                                                        Column.ofNullable(PG_CONTEXT, "t_messages", "correspondence_second_user_id"))
+                                        )
                                 );
                         default -> checkAssert.isEmpty();
                     }

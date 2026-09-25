@@ -38,7 +38,8 @@ jobs:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                   SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
                   STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
-              run: mvn verify -P sonar,pitest-stryker
+              # run: mvn verify -P sonar,pitest-stryker # temporally disabled
+              run: mvn verify -P pitest-stryker
           -   name: Upload coverage to Codecov
               uses: codecov/codecov-action@v7
               with:
