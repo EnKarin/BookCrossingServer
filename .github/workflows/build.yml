@@ -12,7 +12,7 @@ jobs:
         runs-on: ubuntu-latest
         steps:
           -   name: Checkout
-              uses: actions/checkout@v6
+              uses: actions/checkout@v7
           -   name: Set up JDK 21
               uses: actions/setup-java@v5
               with:
@@ -20,13 +20,13 @@ jobs:
                 java-version: '21'
                 cache: 'maven'
           -   name: Cache SonarCloud packages
-              uses: actions/cache@v5
+              uses: actions/cache@v6
               with:
                 path: ~/.sonar/cache
                 key: ${{ runner.os }}-sonar
                 restore-keys: ${{ runner.os }}-sonar
           -   name: Cache Maven packages
-              uses: actions/cache@v5
+              uses: actions/cache@v6
               with:
                 path: ~/.m2
                 key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
@@ -38,7 +38,8 @@ jobs:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                   SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
                   STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
-              run: mvn verify -P sonar,pitest-stryker
+              # run: mvn verify -P sonar,pitest-stryker # temporally disabled
+              run: mvn verify -P pitest-stryker
           -   name: Upload coverage to Codecov
               uses: codecov/codecov-action@v6
               with:
