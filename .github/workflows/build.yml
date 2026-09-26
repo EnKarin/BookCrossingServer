@@ -41,7 +41,7 @@ jobs:
               # run: mvn verify -P sonar,pitest-stryker # temporally disabled
               run: mvn verify -P pitest-stryker
           -   name: Upload coverage to Codecov
-              uses: codecov/codecov-action@v6
+              uses: codecov/codecov-action@v7
               with:
                 fail_ci_if_error: true
                 verbose: false
